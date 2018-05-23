@@ -10,7 +10,6 @@ module.exports = function e(env) {
   return {
     entry: {
       shell: [
-        "./src/js/cJs/p1HTML",
         "./src/js/cJs/footer.json",
         "./src/js/cJs/footerContent",
         "./src/js/cJs/menuContent",
