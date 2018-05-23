@@ -9,13 +9,8 @@ const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 module.exports = function e(env) {
   return {
     entry: {
-      shell: [
-        "./src/js/cJs/footer.json",
-        "./src/js/cJs/footerContent",
-        "./src/js/cJs/menuContent",
-        "materialize-css",
-        "./src/sass/materialize.scss"
-      ],
+      shell: ["./src/js/main/start.js"],
+      babylon: "babylonjs",
       shims: "airbnb-browser-shims"
     },
     optimization: {
