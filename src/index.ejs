@@ -8,24 +8,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#2a2a2a">
-    <link href="./js/shell.js" rel="preload" as="script">
-    <link href="./js/main.js" rel="preload" as="script">
+    <link href="./js/main/start.js" rel="preload" as="script">
+    <script src="https://code.jquery.com/pep/0.4.1/pep.js"></script>
 
 </head>
 
 <body id="body">
     <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
 
     </style>
 
-    <header id="header"></header>
-    <main id="main"></main>
-    <footer id="footer" class="page-footer" style="margin-top: -20px"></footer>
-
-    <section id="loader" class="">
-
-    </section>
+    <main id="main">
+        <canvas id="renderCanvas"></canvas>
+    </main>
 
 </body>
 

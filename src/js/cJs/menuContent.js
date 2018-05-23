@@ -1,4 +1,4 @@
-const lequinoxLogo = require(/* webpackPreload: true */ "./../../img/Lequinox_logo.svg");
+const logo = "Defend";
 
 export default function menuContentGenerator(content) {
   return /* html */ `<!-- Dropdown Structure -->
@@ -16,7 +16,7 @@ export default function menuContentGenerator(content) {
       </form>
       <div class="container">
         <a id="logo-container" class="p1Link brand-logo logo">
-          <img src="${lequinoxLogo}" alt="" class="responsive-img">
+          <img src="${logo}" alt="" class="responsive-img">
         </a>
 
         <ul class="right hide-on-med-and-down">
@@ -82,20 +82,10 @@ export default function menuContentGenerator(content) {
 
   <a class="p1Link">
     <li>
-      <img src="${lequinoxLogo}" alt="" class="responsive-img pointer" style="margin-left: 1.5rem;">
+      <img src="${logo}" alt="" class="responsive-img pointer" style="margin-left: 1.5rem;">
     </li>
   </a>
-  <!--  <li class="nav-wrapper">
-    <form style="margin: 0" lpformnum="1">
-      <div class="input-field">
-        <input id="search" type="search" required="" class="white-text" style="width: 14rem">
-        <label class="label-icon" for="search">
-          <i class="material-icons" style="line-height: 1.5;">search</i>
-        </label>
-        <i class="material-icons" style="line-height: 1.5;">close</i>
-      </div>
-    </form>
-  </li> -->
+
 
   <!-- Dropdown Trigger -->
   <li>
@@ -139,10 +129,7 @@ export default function menuContentGenerator(content) {
     </ul>
   </li>
 
-  <li class="hide">
-    <a class="hide portalLink btn z-depth-1 roundBtn whiteBtn waves-effect waves-light" style="padding: 0 !important; font-variant: normal; font-size: 1rem">Customer Portal
-    </a>
-  </li>
+
 
 </ul>
 `;
