@@ -24,7 +24,7 @@
       "npm run queryVersion & npm run lint && node ./node/rmDir.js && npm run manifest && node ./node/cpDir.js",
     "exportp": "webpack",
     "postexportp":
-      "npm run test & npm run lighthouse && node ./node/cpReport && npm run archive",
+      "npm run lighthouse && node ./node/cpReport && npm run archive",
     "pretoTest": "npm run exportp && node ./node/cpDirProd.js",
     "toTest": "webpack",
     "posttoTest":
