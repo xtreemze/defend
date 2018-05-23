@@ -1,0 +1,7 @@
+{
+  "name": "Defend",
+  "short_name": "Defend",
+  "start_url": "./",
+  "display": "standalone",
+  "version": "0.0.1"
+}
