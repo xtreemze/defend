@@ -16,7 +16,7 @@ const createScene = function createScene() {
   // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
   const camera = new BABYLON.FreeCamera(
     "camera1",
-    new BABYLON.Vector3(0, 150, 0),
+    new BABYLON.Vector3(0, 130, 0),
     scene
   );
   // Target the camera to scene origin
@@ -30,16 +30,26 @@ const createScene = function createScene() {
     scene
   );
   // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
-  const sphere = BABYLON.MeshBuilder.CreateSphere(
+  const sphereStart = BABYLON.MeshBuilder.CreateSphere(
     "sphere1",
     {
-      segments: 16,
+      segments: 2,
+      diameter: 2
+    },
+    scene
+  );
+  const sphereEnd = BABYLON.MeshBuilder.CreateSphere(
+    "sphere1",
+    {
+      segments: 2,
       diameter: 2
     },
     scene
   );
   // Move the sphere upward 1/2 of its height
-  sphere.position.y = 1;
+  // sphere.position.y = 1;
+  sphereStart.position = new BABYLON.Vector3(-50, 1, -50);
+  sphereEnd.position = new BABYLON.Vector3(50, 1, 50);
   // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
   const ground = BABYLON.MeshBuilder.CreateGround(
     "ground1",

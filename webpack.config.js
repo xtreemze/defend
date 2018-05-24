@@ -11,21 +11,21 @@ module.exports = function e(env, argv) {
   return {
     entry: {
       shell: ["./src/js/main/start.js"],
-      babylon: "babylonjs",
       shims: "airbnb-browser-shims"
     },
     optimization: {
+      runtimeChunk: true,
       splitChunks: {
         cacheGroups: {
           common: {
-            minChunks: 3,
+            minChunks: 2,
             chunks: "all",
             reuseExistingChunk: true
           }
         }
       }
     },
-    devtool: "source-map",
+    devtool: "none",
     output: {
       path: `${__dirname}/dist`,
       filename: "./js/[name].js",
@@ -116,6 +116,7 @@ module.exports = function e(env, argv) {
       rules: [
         {
           test: /\.(scss|sass|css)$/,
+          include: `${__dirname}/src`,
           use: [
             "style-loader",
             {
@@ -131,12 +132,14 @@ module.exports = function e(env, argv) {
           ]
         },
         {
-          test: /\.(ttf|otf)$/,
+          test: /\.(ttf|otf|woff|woff2)$/,
+          include: `${__dirname}/src`,
           use: ["file-loader?name=./assets/[name].[ext]"]
         },
         {
           test: /\.js$/,
           exclude: [/node_modules/],
+          include: `${__dirname}/src`,
           loader: "babel-loader",
           query: {
             presets: [
@@ -154,11 +157,12 @@ module.exports = function e(env, argv) {
         },
         {
           test: /\.(gif|png|jpe?g|svg)$/i,
+          include: `${__dirname}/src`,
           loaders: [
-            "file-loader?name=./assets/[name].[ext]",
-            {
-              loader: "image-webpack-loader"
-            }
+            "file-loader?name=./assets/[name].[ext]"
+            // {
+            //   loader: "image-webpack-loader"
+            // }
           ]
         }
       ]
