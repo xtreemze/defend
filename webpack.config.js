@@ -6,7 +6,8 @@ const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 // const ExtractTextPlugin = require("extract-text-webpack-plugin");
 // const PreloadWebpackPlugin = require("preload-webpack-plugin");
 
-module.exports = function e(env) {
+module.exports = function e(env, argv) {
+  console.log(argv.mode);
   return {
     entry: {
       shell: ["./src/js/main/start.js"],
@@ -17,14 +18,13 @@ module.exports = function e(env) {
       splitChunks: {
         cacheGroups: {
           common: {
-            minChunks: 2,
+            minChunks: 3,
             chunks: "all",
             reuseExistingChunk: true
           }
         }
       }
     },
-    mode: "production",
     devtool: "source-map",
     output: {
       path: `${__dirname}/dist`,
@@ -32,7 +32,7 @@ module.exports = function e(env) {
       chunkFilename: "./js/[id].js"
     },
     cache: true,
-    devServer: { contentBase: "./dist" },
+    devServer: { contentBase: "./dist", compress: true, hot: true },
     stats: {
       // Add asset Information
       assets: true,
@@ -164,43 +164,43 @@ module.exports = function e(env) {
       ]
     },
     plugins: [
-      new UglifyJSPlugin({
-        uglifyOptions: {
-          cache: true,
-          parallel: true,
-          sourceMap: true,
-          compress: {
-            unsafe: true,
-            unsafe_comps: true,
-            unsafe_Function: true
-          },
-          mangle: {},
-          ecma: 8,
-          output: {
-            comments: false
-          }
-        }
-      }),
+      // new UglifyJSPlugin({
+      //   uglifyOptions: {
+      //     cache: true,
+      //     parallel: true,
+      //     sourceMap: true,
+      //     compress: {
+      //       unsafe: true,
+      //       unsafe_comps: true,
+      //       unsafe_Function: true
+      //     },
+      //     mangle: {},
+      //     ecma: 8,
+      //     output: {
+      //       comments: false
+      //     }
+      //   }
+      // }),
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
-      }),
-      new HtmlMinifierPlugin({
-        minifyCSS: true,
-        minifyJS: true,
-        removeComments: true,
-        removeEmptyAttributes: true,
-        removeEmtpyElements: false,
-        removeOptionalTags: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        removeStyleLinkTypeAttributes: true,
-        sortAttributes: true,
-        sortClassName: true,
-        minifyURLs: true,
-        collapseWhitespace: true,
-        collapseInlineTagWhitespace: true,
-        collapseBooleanAttributes: true
       })
+      // new HtmlMinifierPlugin({
+      //   minifyCSS: true,
+      //   minifyJS: true,
+      //   removeComments: true,
+      //   removeEmptyAttributes: true,
+      //   removeEmtpyElements: false,
+      //   removeOptionalTags: true,
+      //   removeRedundantAttributes: true,
+      //   useShortDoctype: true,
+      //   removeStyleLinkTypeAttributes: true,
+      //   sortAttributes: true,
+      //   sortClassName: true,
+      //   minifyURLs: true,
+      //   collapseWhitespace: true,
+      //   collapseInlineTagWhitespace: true,
+      //   collapseBooleanAttributes: true
+      // })
 
       // new OfflinePlugin({
       //   externals: [],

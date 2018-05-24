@@ -19,10 +19,10 @@
     "update": "npm up -D --depth 2 && npm outdated --depth 2",
     "eslint-check":
       "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
-    "dev": "webpack --env.directory=/var/www/html/dev/ --watch",
+    "dev": "webpack-dev-server --mode development --hot",
     "preexportp":
       "npm run queryVersion & npm run lint && node ./node/rmDir.js && npm run manifest && node ./node/cpDir.js",
-    "exportp": "webpack",
+    "exportp": "webpack --mode production",
     "postexport":
       "npm run lighthouse && node ./node/cpReport && npm run archive",
     "pretoTest": "npm run exportp && node ./node/cpDirProd.js",
