@@ -14,7 +14,7 @@ module.exports = function e(env, argv) {
       shims: "airbnb-browser-shims"
     },
     optimization: {
-      runtimeChunk: true,
+      runtimeChunk: "single",
       splitChunks: {
         cacheGroups: {
           common: {

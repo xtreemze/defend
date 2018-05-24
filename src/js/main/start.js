@@ -33,7 +33,7 @@ const createScene = function createScene() {
   const sphereStart = BABYLON.MeshBuilder.CreateSphere(
     "sphere1",
     {
-      segments: 2,
+      segments: 3,
       diameter: 2
     },
     scene
