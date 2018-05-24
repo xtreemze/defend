@@ -34,7 +34,7 @@ const createScene = function createScene() {
     "sphere1",
     {
       segments: 3,
-      diameter: 2
+      diameter: 5
     },
     scene
   );
@@ -42,24 +42,31 @@ const createScene = function createScene() {
     "sphere1",
     {
       segments: 2,
-      diameter: 2
+      diameter: 5
     },
     scene
   );
-  // Move the sphere upward 1/2 of its height
-  // sphere.position.y = 1;
-  sphereStart.position = new BABYLON.Vector3(-50, 1, -50);
-  sphereEnd.position = new BABYLON.Vector3(50, 1, 50);
+  // Move the sphere upward
+  sphereStart.position = new BABYLON.Vector3(-45, 2.5, -45);
+  sphereEnd.position = new BABYLON.Vector3(45, 2.5, 45);
+
   // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
   const ground = BABYLON.MeshBuilder.CreateGround(
     "ground1",
     {
       height: 100,
       width: 100,
-      subdivisions: 100
+      subdivisions: 10
     },
     scene
   );
+  const standardMaterial = new BABYLON.StandardMaterial(
+    "standardMaterial",
+    scene
+  );
+  ground.material = standardMaterial;
+
+  standardMaterial.wireframe = true;
   // Return the created scene
   return scene;
 };
