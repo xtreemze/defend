@@ -5,6 +5,7 @@ import * as BABYLON from "babylonjs";
 import enemies from "./enemies";
 import towers from "./towers";
 import map1 from "./map1";
+import projectiles from "./projectiles";
 
 // Get the canvas DOM element
 const canvas = document.getElementById("renderCanvas");
@@ -20,6 +21,7 @@ const createScene = function createScene() {
 
   enemies(scene);
   towers(scene);
+  projectiles(scene);
   map1(scene, canvas);
 
   return scene;
