@@ -1,10 +1,4 @@
-// const OfflinePlugin = require("offline-plugin");
-// const webpack = require("webpack");
-// const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-// const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
-// const ExtractTextPlugin = require("extract-text-webpack-plugin");
-// const PreloadWebpackPlugin = require("preload-webpack-plugin");
 
 module.exports = function e(env, argv) {
   console.log(argv.mode);
@@ -115,28 +109,6 @@ module.exports = function e(env, argv) {
     module: {
       rules: [
         {
-          test: /\.(scss|sass|css)$/,
-          include: `${__dirname}/src`,
-          use: [
-            "style-loader",
-            {
-              loader: "css-loader",
-              options: {
-                minimize: false,
-                sourceMap: false,
-                importLoaders: 1
-              }
-            },
-            "postcss-loader",
-            { loader: "sass-loader" }
-          ]
-        },
-        {
-          test: /\.(ttf|otf|woff|woff2)$/,
-          include: `${__dirname}/src`,
-          use: ["file-loader?name=./assets/[name].[ext]"]
-        },
-        {
           test: /\.js$/,
           exclude: [/node_modules/],
           include: `${__dirname}/src`,
@@ -168,58 +140,9 @@ module.exports = function e(env, argv) {
       ]
     },
     plugins: [
-      // new UglifyJSPlugin({
-      //   uglifyOptions: {
-      //     cache: true,
-      //     parallel: true,
-      //     sourceMap: true,
-      //     compress: {
-      //       unsafe: true,
-      //       unsafe_comps: true,
-      //       unsafe_Function: true
-      //     },
-      //     mangle: {},
-      //     ecma: 8,
-      //     output: {
-      //       comments: false
-      //     }
-      //   }
-      // }),
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
       })
-      // new HtmlMinifierPlugin({
-      //   minifyCSS: true,
-      //   minifyJS: true,
-      //   removeComments: true,
-      //   removeEmptyAttributes: true,
-      //   removeEmtpyElements: false,
-      //   removeOptionalTags: true,
-      //   removeRedundantAttributes: true,
-      //   useShortDoctype: true,
-      //   removeStyleLinkTypeAttributes: true,
-      //   sortAttributes: true,
-      //   sortClassName: true,
-      //   minifyURLs: true,
-      //   collapseWhitespace: true,
-      //   collapseInlineTagWhitespace: true,
-      //   collapseBooleanAttributes: true
-      // })
-
-      // new OfflinePlugin({
-      //   externals: [],
-      //   caches: "all",
-      //   responseStrategy: "network-first",
-      //   updateStrategy: "all",
-      //   minify: "true",
-      //   autoUpdate: 1000 * 60 * 60 * 2,
-      //   ServiceWorker: {
-      //     events: "true"
-      //   },
-      //   AppCache: {
-      //     events: "true"
-      //   }
-      // })
     ]
   };
 };
