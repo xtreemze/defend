@@ -3,7 +3,7 @@
 import * as BABYLON from "babylonjs";
 
 class Tower {
-  constructor(level, position = { x: -25, z: -25 }, scene) {
+  constructor(level = 1, position = { x: -25, z: -25 }, scene) {
     this.name = `tower${level}`;
     this.levelBase = `towerBase${level}`;
     this.levelTop = `towerTop${level}`;
@@ -11,27 +11,14 @@ class Tower {
     this[this.levelBase] = BABYLON.MeshBuilder.CreateBox(
       this.levelBase,
       {
-        size: 10
+        size: 10,
+        height: 1
       },
       scene
     );
-
-    this[this.levelTop] = BABYLON.MeshBuilder.CreateBox(
-      this.levelTop,
-      {
-        size: 5
-      },
-      scene
-    );
-
     this[this.levelBase].position = new BABYLON.Vector3(
       position.x,
-      -5,
-      position.z
-    );
-    this[this.levelTop].position = new BABYLON.Vector3(
-      position.x,
-      2.5,
+      0.5,
       position.z
     );
 
@@ -39,36 +26,35 @@ class Tower {
     towerMaterial.diffuseColor = new BABYLON.Color3(0, 0.85, 0.85);
 
     this[this.levelBase].material = towerMaterial;
-    this[this.levelTop].material = towerMaterial;
+
+    switch (level) {
+      case 1:
+      default:
+        break;
+      case 2:
+      case 3:
+        this[this.levelTop] = BABYLON.MeshBuilder.CreateBox(
+          this.levelTop,
+          {
+            size: 6,
+            height: 2.5,
+            width: 5
+          },
+          scene
+        );
+        this[this.levelTop].position = new BABYLON.Vector3(
+          position.x,
+          3,
+          position.z
+        );
+        this[this.levelTop].material = towerMaterial;
+        break;
+    }
   }
 }
 
 export default function towers(scene) {
   const tower1 = new Tower(1, { x: -45, z: 45 });
-
-  const tower2 = BABYLON.MeshBuilder.CreateBox(
-    "tower2",
-    {
-      size: 5
-    },
-    scene
-  );
-  const tower3 = BABYLON.MeshBuilder.CreateBox(
-    "tower3",
-    {
-      size: 5
-    },
-    scene
-  );
-
-  tower1.position = new BABYLON.Vector3(-45, 2.5, 45);
-  tower2.position = new BABYLON.Vector3(45, 2.5, -45);
-  tower3.position = new BABYLON.Vector3(5, 2.5, -45);
-
-  const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
-  towerMaterial.diffuseColor = new BABYLON.Color3(0, 0.85, 0.85);
-
-  tower1.material = towerMaterial;
-  tower2.material = towerMaterial;
-  tower3.material = towerMaterial;
+  const tower2 = new Tower(2, { x: 45, z: -45 });
+  const tower3 = new Tower(3, { x: 5, z: 45 });
 }
