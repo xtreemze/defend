@@ -8,27 +8,20 @@
     "manifest": "node ./node/generateManifest.js",
     "commits": "git log --graph --oneline --decorate -5",
     "queryVersion": "node ./node/queryVersion.js",
-    "test":
-      "npx babel-node ./src/js/tests/test.js -- -directory https://xtreemze.github.io/defend/",
-    "lighthouse":
-      "npx lighthouse https://xtreemze.github.io/defend/ --quiet --perf --chrome-flags='--headless' --output html --output-path=./release/lighthouse.html",
+    "test": "npx babel-node ./src/js/tests/test.js -- -directory https://xtreemze.github.io/defend/",
+    "lighthouse": "npx lighthouse https://xtreemze.github.io/defend/ --quiet --perf --chrome-flags='--headless' --output html --output-path=./release/lighthouse.html",
     "lighthouse2": "npx babel-node ./src/js/tests/lighthouse.js",
     "lint": "npx eslint ./src/js --quiet",
-    "clean":
-      "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
+    "clean": "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
     "update": "npm up -D --depth 2 && npm outdated --depth 2",
-    "eslint-check":
-      "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
+    "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
     "dev": "webpack-dev-server --mode development --hot",
-    "preexportp":
-      "npm run queryVersion & npm run lint && node ./node/rmDir.js && npm run manifest && node ./node/cpDir.js",
+    "preexportp": "npm run queryVersion & npm run lint && node ./node/rmDir.js && npm run manifest && node ./node/cpDir.js",
     "exportp": "webpack --mode production",
-    "postexport":
-      "npm run lighthouse && node ./node/cpReport && npm run archive",
+    "postexport": "npm run lighthouse && node ./node/cpReport && npm run archive",
     "pretoTest": "npm run exportp && node ./node/cpDirProd.js",
     "toTest": "webpack",
-    "posttoTest":
-      "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags"
+    "posttoTest": "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -41,7 +34,10 @@
     "url": "https://github.com/xtreemze/defend/issues"
   },
   "homepage": "https://github.com/xtreemze/defend#readme",
-  "browserslist": ["> 1%", "last 2 versions"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "dependencies": {},
   "devDependencies": {
     "airbnb-browser-shims": "^2.1.0",
@@ -55,9 +51,11 @@
     "babel-preset-env": "^1.7.0",
     "babylonjs": "^3.2.0",
     "browserslist": "^3.2.8",
+    "cannon": "^0.6.2",
     "css-loader": "^0.28.11",
     "cssnano": "^3.10.0",
     "cssnano-preset-advanced": "^4.0.0-rc.2",
+    "earcut": "^2.1.3",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^2.9.0",
@@ -72,6 +70,7 @@
     "html-webpack-plugin": "^3.2.0",
     "image-webpack-loader": "^4.2.0",
     "offline-plugin": "^5.0.3",
+    "oimo": "^1.0.9",
     "postcss": "^6.0.22",
     "postcss-loader": "^2.1.5",
     "postcss-scss": "^1.0.5",
@@ -90,5 +89,11 @@
     "webpack-dev-server": "^3.1.4"
   },
   "main": "index.html",
-  "keywords": ["BabylonJS", "PWA", "JavaScript", "Mobile", "Game"]
+  "keywords": [
+    "BabylonJS",
+    "PWA",
+    "JavaScript",
+    "Mobile",
+    "Game"
+  ]
 }
