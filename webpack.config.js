@@ -1,8 +1,8 @@
 // const OfflinePlugin = require("offline-plugin");
 // const webpack = require("webpack");
-const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
+// const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
+// const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 // const ExtractTextPlugin = require("extract-text-webpack-plugin");
 // const PreloadWebpackPlugin = require("preload-webpack-plugin");
 
