@@ -13,7 +13,7 @@ export default function map1(scene, canvas) {
 
   const light = new BABYLON.HemisphericLight(
     "light1",
-    new BABYLON.Vector3(0.1, 1, 0),
+    new BABYLON.Vector3(0.3, 1, 0),
     scene
   );
 

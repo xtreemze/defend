@@ -12,7 +12,7 @@ class Projectile {
       "projectileMaterial",
       scene
     );
-    projectileMaterial.diffuseColor = new BABYLON.Color3(1, 0.7, 0.7);
+    projectileMaterial.diffuseColor = new BABYLON.Color3(1, 0.9, 1);
 
     this[this.name] = BABYLON.MeshBuilder.CreateBox(
       this.level,
@@ -32,4 +32,6 @@ class Projectile {
 
 export default function projectiles(scene) {
   const projectile1 = new Projectile(1, { x: 5, z: 15 }, scene);
+  const projectile2 = new Projectile(1, { x: 5, z: 25 }, scene);
+  const projectile3 = new Projectile(1, { x: 5, z: 35 }, scene);
 }
