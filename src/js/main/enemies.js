@@ -33,19 +33,15 @@ export default function enemies(scene) {
     "enemyMove",
     "position",
     2,
-    BABYLON.Animation.ANIMATIONTYPE_VECTOR2,
+    BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
     BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
   );
 
   const keys = [];
 
-  //   keys.push({ frame: 0, value: new BABYLON.Vector3(45, 2.5, 45) });
-  //   keys.push({ frame: 50, value: new BABYLON.Vector3(-45, 2.5, -45) });
-  //   keys.push({ frame: 100, value: new BABYLON.Vector3(45, 2.5, 45) });
-
-  keys.push({ frame: 0, value: new BABYLON.Vector2(45, 45) });
-  keys.push({ frame: 50, value: new BABYLON.Vector2(-45, -45) });
-  keys.push({ frame: 100, value: new BABYLON.Vector2(45, 45) });
+  keys.push({ frame: 0, value: new BABYLON.Vector3(45, 2.5, 45) });
+  keys.push({ frame: 50, value: new BABYLON.Vector3(-45, 2.5, -45) });
+  keys.push({ frame: 100, value: new BABYLON.Vector3(45, 2.5, 45) });
 
   enemyMove.setKeys(keys);
 
