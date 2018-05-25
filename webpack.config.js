@@ -1,7 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-module.exports = function e(env, argv) {
-  console.log(argv.mode);
+module.exports = function e() {
   return {
     entry: {
       shell: ["./src/js/main/start.js"],

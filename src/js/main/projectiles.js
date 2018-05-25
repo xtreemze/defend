@@ -12,7 +12,7 @@ class Projectile {
       "projectileMaterial",
       scene
     );
-    projectileMaterial.diffuseColor = new BABYLON.Color3(1, 0.9, 1);
+    projectileMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1);
 
     this[this.name] = BABYLON.MeshBuilder.CreateBox(
       this.level,

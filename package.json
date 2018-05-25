@@ -8,20 +8,18 @@
     "manifest": "node ./node/generateManifest.js",
     "commits": "git log --graph --oneline --decorate -5",
     "queryVersion": "node ./node/queryVersion.js",
-    "test": "npx babel-node ./src/js/tests/test.js -- -directory https://xtreemze.github.io/defend/",
-    "lighthouse": "npx lighthouse https://xtreemze.github.io/defend/ --quiet --perf --chrome-flags='--headless' --output html --output-path=./release/lighthouse.html",
-    "lighthouse2": "npx babel-node ./src/js/tests/lighthouse.js",
     "lint": "npx eslint ./src/js --quiet",
-    "clean": "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
+    "clean":
+      "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
     "update": "npm up -D --depth 2 && npm outdated --depth 2",
-    "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
+    "eslint-check":
+      "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
     "dev": "webpack-dev-server --mode development --hot",
-    "preexportp": "npm run queryVersion & npm run lint && node ./node/rmDir.js && npm run manifest && node ./node/cpDir.js",
+    "preexportp":
+      "npm run queryVersion & npm run lint && node ./node/rmDir.js && npm run manifest && node ./node/cpDir.js",
     "exportp": "webpack --mode production",
-    "postexport": "npm run lighthouse && node ./node/cpReport && npm run archive",
-    "pretoTest": "npm run exportp && node ./node/cpDirProd.js",
-    "toTest": "webpack",
-    "posttoTest": "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags"
+    "posttoTest":
+      "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -34,10 +32,7 @@
     "url": "https://github.com/xtreemze/defend/issues"
   },
   "homepage": "https://github.com/xtreemze/defend#readme",
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ],
+  "browserslist": ["> 1%", "last 2 versions"],
   "dependencies": {},
   "devDependencies": {
     "airbnb-browser-shims": "^2.1.0",
@@ -89,11 +84,5 @@
     "webpack-dev-server": "^3.1.4"
   },
   "main": "index.html",
-  "keywords": [
-    "BabylonJS",
-    "PWA",
-    "JavaScript",
-    "Mobile",
-    "Game"
-  ]
+  "keywords": ["BabylonJS", "PWA", "JavaScript", "Mobile", "Game"]
 }

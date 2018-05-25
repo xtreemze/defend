@@ -23,7 +23,7 @@ class Tower {
     );
 
     const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
-    towerMaterial.diffuseColor = new BABYLON.Color3(0, 0.85, 0.85);
+    towerMaterial.diffuseColor = new BABYLON.Color3(0, 1, 0.85);
 
     this[this.levelBase].material = towerMaterial;
 

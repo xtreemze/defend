@@ -8,7 +8,7 @@ class Enemy {
     this.hitPoints = level * 100;
 
     const enemyMaterial = new BABYLON.StandardMaterial("enemyMaterial", scene);
-    enemyMaterial.diffuseColor = new BABYLON.Color3(0, 0.6, 1);
+    enemyMaterial.diffuseColor = new BABYLON.Color3(0, 0.7, 1);
 
     let diameter = 5;
     switch (level) {
