@@ -25,7 +25,7 @@ module.exports = function e(env, argv) {
         }
       }
     },
-    devtool: "none",
+    devtool: "eval",
     output: {
       path: `${__dirname}/dist`,
       filename: "./js/[name].js",

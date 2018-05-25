@@ -2,6 +2,10 @@
 
 import * as BABYLON from "babylonjs";
 
+import enemies from "./enemies";
+import towers from "./towers";
+import map1 from "./map1";
+
 // Get the canvas DOM element
 const canvas = document.getElementById("renderCanvas");
 // Load the 3D engine
@@ -9,19 +13,16 @@ const engine = new BABYLON.Engine(canvas, true, {
   preserveDrawingBuffer: true,
   stencil: true
 });
+
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {
-  // Create a basic BJS Scene object
   const scene = new BABYLON.Scene(engine);
-  // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
   const camera = new BABYLON.FreeCamera(
     "camera1",
     new BABYLON.Vector3(0, 130, 0),
     scene
   );
-  // Target the camera to scene origin
   camera.setTarget(BABYLON.Vector3.Zero());
-  // Attach the camera to the canvas
   camera.attachControl(canvas, false);
   // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
   const light = new BABYLON.HemisphericLight(
@@ -29,44 +30,10 @@ const createScene = function createScene() {
     new BABYLON.Vector3(0, 1, 0),
     scene
   );
-  // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
-  const sphereStart = BABYLON.MeshBuilder.CreateSphere(
-    "sphere1",
-    {
-      segments: 3,
-      diameter: 5
-    },
-    scene
-  );
-  const sphereEnd = BABYLON.MeshBuilder.CreateSphere(
-    "sphere1",
-    {
-      segments: 2,
-      diameter: 5
-    },
-    scene
-  );
-  // Move the sphere upward
-  sphereStart.position = new BABYLON.Vector3(-45, 2.5, -45);
-  sphereEnd.position = new BABYLON.Vector3(45, 2.5, 45);
+  enemies(scene);
+  towers(scene);
+  map1(scene);
 
-  // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
-  const ground = BABYLON.MeshBuilder.CreateGround(
-    "ground1",
-    {
-      height: 100,
-      width: 100,
-      subdivisions: 10
-    },
-    scene
-  );
-  const standardMaterial = new BABYLON.StandardMaterial(
-    "standardMaterial",
-    scene
-  );
-  ground.material = standardMaterial;
-
-  standardMaterial.wireframe = true;
   // Return the created scene
   return scene;
 };
