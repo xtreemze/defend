@@ -27,6 +27,12 @@ class Projectile {
     this[this.name].position = new BABYLON.Vector3(position.x, 3, position.z);
 
     this[this.name].material = projectileMaterial;
+
+    BABYLON.Tags.AddTagsTo(this[this.name], "projectile");
+  }
+
+  destroy() {
+    this[this.name].dispose();
   }
 }
 

@@ -36,3 +36,7 @@ engine.runRenderLoop(() => {
 window.addEventListener("resize", () => {
   engine.resize();
 });
+
+window.babylon = BABYLON;
+
+window.scene = scene;
