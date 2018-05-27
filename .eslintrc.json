@@ -17,6 +17,7 @@
     "import/no-dynamic-require": "off",
     "no-undef": "warn",
     "prefer-rest-params": "warn",
-    "spaced-comment": "warn"
+    "spaced-comment": "warn",
+    "no-new": "off"
   }
 }

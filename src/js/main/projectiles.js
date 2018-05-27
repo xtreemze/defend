@@ -3,16 +3,9 @@
 import * as BABYLON from "babylonjs";
 
 class Projectile {
-  constructor(level, position = { x: -45, z: -45 }, scene) {
+  constructor(level, originMesh, scene) {
     this.name = `projectile${level}`;
     this.level = level;
-    this.hitPoints = level * 10;
-
-    const projectileMaterial = new BABYLON.StandardMaterial(
-      "projectileMaterial",
-      scene
-    );
-    projectileMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1);
 
     this[this.name] = BABYLON.MeshBuilder.CreateBox(
       this.level,
@@ -23,21 +16,53 @@ class Projectile {
       },
       scene
     );
+    this[this.name].hitPoints = level * 2;
+    this[this.name].position = originMesh.position;
+    this[this.name].rotation = new BABYLON.Vector3(
+      originMesh.rotation.x,
+      originMesh.rotation.y,
+      originMesh.rotation.z
+    );
 
-    this[this.name].position = new BABYLON.Vector3(position.x, 3, position.z);
+    this[this.name].material = scene.getMaterialByID("projectileMaterial");
 
-    this[this.name].material = projectileMaterial;
+    this.impulse(scene);
 
-    BABYLON.Tags.AddTagsTo(this[this.name], "projectile");
+    setTimeout(() => {
+      this[this.name].dispose();
+      const propertyArray = Object.keys(this);
+      for (let index = 0; index < propertyArray.length; index += 1) {
+        delete propertyArray[index];
+      }
+    }, 800);
   }
+  intersect(scene) {
+    const enemies = scene.getMeshesByTags("enemy");
+    for (let index = 0; index < enemies.length; index += 1) {
+      const enemy = enemies[index];
 
-  destroy() {
-    this[this.name].dispose();
+      if (this[this.name].intersectsMesh(enemy, false)) {
+        enemy.hitPoints -= this[this.name].hitPoints;
+        if (enemy.hitPoints === 0) {
+          enemy.dispose();
+        } else if (enemy.hitPoints < 50) {
+          enemy.material = scene.getMaterialByID("damagedMaterial");
+        }
+        this[this.name].hitPoints = 0;
+        this[this.name].dispose();
+      }
+    }
+  }
+  impulse(scene) {
+    scene.registerAfterRender(() => {
+      if (this[this.name].hitPoints > 0) {
+        this[this.name].translate(BABYLON.Axis.Z, 3 * -1, BABYLON.Space.LOCAL);
+        this.intersect(scene);
+      }
+    });
   }
 }
 
-export default function projectiles(scene) {
-  const projectile1 = new Projectile(1, { x: 5, z: 15 }, scene);
-  const projectile2 = new Projectile(1, { x: 5, z: 25 }, scene);
-  const projectile3 = new Projectile(1, { x: 5, z: 35 }, scene);
+export default function fire(scene, originMesh) {
+  const projectile = new Projectile(1, originMesh, scene);
 }

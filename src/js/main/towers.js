@@ -1,6 +1,7 @@
 // @ts-check
 
 import * as BABYLON from "babylonjs";
+import fire from "./projectiles";
 
 class Tower {
   constructor(level = 1, position = { x: -25, z: -25 }, scene) {
@@ -17,10 +18,7 @@ class Tower {
     );
     this[this.name].position = new BABYLON.Vector3(position.x, 0.5, position.z);
 
-    const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
-    towerMaterial.diffuseColor = new BABYLON.Color3(0, 1, 0.85);
-
-    this[this.name].material = towerMaterial;
+    this[this.name].material = scene.getMaterialByID("towerMaterial");
 
     switch (level) {
       case 1:
@@ -42,19 +40,39 @@ class Tower {
           3,
           position.z
         );
-        this[this.levelTop].setParent(this[this.name]);
-        this[this.levelTop].material = towerMaterial;
+        this[this.levelTop].material = scene.getMaterialByID("towerMaterial");
+        this.rotateTurret(scene);
+
         break;
     }
     BABYLON.Tags.AddTagsTo(this[this.name], "tower");
   }
-  destroy() {
-    this[this.name].dispose();
+  rotateTurret(scene) {
+    const { y } = this[this.levelTop].position;
+
+    let enemy;
+    setInterval(() => {
+      enemy = scene.getMeshesByTags("enemy");
+      if (enemy.length > 0) {
+        this.shoot(scene);
+      }
+    }, 200);
+    scene.registerAfterRender(() => {
+      if (enemy !== undefined && enemy[0]) {
+        this[this.levelTop].lookAt(
+          new BABYLON.Vector3(enemy[0].position.x, y, enemy[0].position.z)
+        );
+      }
+    });
+  }
+
+  shoot(scene) {
+    fire(scene, this[this.levelTop]);
   }
 }
 
 export default function towers(scene) {
-  const tower1 = new Tower(1, { x: -45, z: 45 }, scene);
-  const tower2 = new Tower(2, { x: 45, z: -45 }, scene);
-  const tower3 = new Tower(3, { x: 5, z: 45 }, scene);
+  new Tower(1, { x: -45, z: 45 }, scene);
+  new Tower(2, { x: 45, z: -45 }, scene);
+  new Tower(3, { x: 5, z: 45 }, scene);
 }

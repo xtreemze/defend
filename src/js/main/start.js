@@ -5,24 +5,25 @@ import * as BABYLON from "babylonjs";
 import enemies from "./enemies";
 import towers from "./towers";
 import map1 from "./map1";
-import projectiles from "./projectiles";
 
 // Get the canvas DOM element
 const canvas = document.getElementById("renderCanvas");
 // Load the 3D engine
 const engine = new BABYLON.Engine(canvas, true, {
-  preserveDrawingBuffer: true,
-  stencil: true
+  // preserveDrawingBuffer: true,
+  // stencil: true
 });
 
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {
   const scene = new BABYLON.Scene(engine);
+  const options = new BABYLON.SceneOptimizerOptions();
+  const optimizer = new BABYLON.SceneOptimizer(scene, options);
 
-  enemies(scene);
-  towers(scene);
-  projectiles(scene);
+  optimizer.start();
   map1(scene, canvas);
+  towers(scene);
+  enemies(scene);
 
   return scene;
 };
@@ -36,7 +37,5 @@ engine.runRenderLoop(() => {
 window.addEventListener("resize", () => {
   engine.resize();
 });
-
-window.babylon = BABYLON;
 
 window.scene = scene;

@@ -3,8 +3,8 @@
 import * as BABYLON from "babylonjs";
 
 const distance = 10; // 1 cube distance = 10m
-const time = 300; // 3 seconds
-const iterationDelay = 8; // animation resolution
+const time = 120; // 3 seconds
+const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
 /**
@@ -47,9 +47,7 @@ function move(enemy, direction) {
   }
 }
 
-function orient(enemy, decision) {
-  const result = randomNumberRange(1, 4);
-
+function orient(enemy, decision, result) {
   switch (result) {
     case 1:
       if (decision.down) {
@@ -101,9 +99,24 @@ function orient(enemy, decision) {
   }
 }
 
-export default function enemyAi(enemy, enemyClass, scene) {
-  setInterval(() => {
-    enemyClass.intersect(enemy, scene);
-    orient(enemy, enemyClass.decide());
+export default function enemyAi(enemy, enemyClass) {
+  let result = 1;
+
+  const numberTimer = setInterval(() => {
+    result = randomNumberRange(1, 4);
+  }, time * 3);
+  const orientTimer = setInterval(() => {
+    orient(enemy, enemyClass.decide(), result);
+
+    if (enemy.hitPoints < 0) {
+      clearInterval(numberTimer);
+      clearInterval(orientTimer);
+      enemy.dispose();
+    }
   }, time);
+
+  setTimeout(() => {
+    clearInterval(numberTimer);
+    clearInterval(orientTimer);
+  }, 15000);
 }
