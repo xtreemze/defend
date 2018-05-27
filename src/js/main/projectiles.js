@@ -64,5 +64,5 @@ class Projectile {
 }
 
 export default function fire(scene, originMesh) {
-  const projectile = new Projectile(1, originMesh, scene);
+  new Projectile(1, originMesh, scene);
 }

@@ -9,10 +9,7 @@ import map1 from "./map1";
 // Get the canvas DOM element
 const canvas = document.getElementById("renderCanvas");
 // Load the 3D engine
-const engine = new BABYLON.Engine(canvas, true, {
-  // preserveDrawingBuffer: true,
-  // stencil: true
-});
+const engine = new BABYLON.Engine(canvas, true);
 
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {

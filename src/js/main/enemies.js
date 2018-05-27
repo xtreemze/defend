@@ -92,14 +92,14 @@ class Enemy {
 }
 export default function enemies(scene) {
   setInterval(() => {
-    let enemy3 = new Enemy(1, { x: 25, z: 45 }, scene);
+    new Enemy(1, { x: 25, z: 45 }, scene);
   }, 5000);
 
   setInterval(() => {
-    let enemy4 = new Enemy(2, { x: 45, z: 45 }, scene);
+    new Enemy(2, { x: 45, z: 45 }, scene);
   }, 10000);
 
   setInterval(() => {
-    let enemy5 = new Enemy(3, { x: -25, z: 45 }, scene);
+    new Enemy(3, { x: -25, z: 45 }, scene);
   }, 25000);
 }
