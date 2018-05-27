@@ -10,6 +10,12 @@ export default function map1(scene, canvas) {
   );
   camera.setTarget(BABYLON.Vector3.Zero());
   camera.attachControl(canvas, false);
+  camera.fov = 1;
+  camera.inertia = 0.7;
+  camera.speed = 8;
+  camera.angularSensibility = 1200;
+  camera.touchMoveSensibility = 200;
+  camera.touchAngularSensibility = 13000;
 
   new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.3, 1, 0), scene);
 
