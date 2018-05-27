@@ -51,11 +51,31 @@ class Enemy {
     BABYLON.Tags.AddTagsTo(this[this.name], "enemy");
 
     enemyAi(this[this.name], this);
+    this.checkHitPoints(scene);
 
     setTimeout(() => {
-      this[this.name].hitPoints = 0;
-      this[this.name].dispose();
+      this.destroy();
     }, 15000);
+  }
+
+  checkHitPoints(scene) {
+    scene.registerAfterRender(() => {
+      if (this[this.name].hitPoints === 0) {
+        this.destroy();
+      } else if (this[this.name].hitPoints < 50) {
+        this[this.name].material = scene.getMaterialByID("damagedMaterial");
+      }
+    });
+  }
+  destroy() {
+    this[this.name].hitPoints = 0;
+    this[this.name].dispose();
+
+    const propertyArray = Object.keys(this);
+    for (let index = 0; index < propertyArray.length; index += 1) {
+      propertyArray[index] = null;
+      delete propertyArray[index];
+    }
   }
   // intersectTower(scene) {
   //   let collided = false;

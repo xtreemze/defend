@@ -32,6 +32,7 @@ class Projectile {
       this[this.name].dispose();
       const propertyArray = Object.keys(this);
       for (let index = 0; index < propertyArray.length; index += 1) {
+        propertyArray[index] = null;
         delete propertyArray[index];
       }
     }, 800);
@@ -43,11 +44,7 @@ class Projectile {
 
       if (this[this.name].intersectsMesh(enemy, false)) {
         enemy.hitPoints -= this[this.name].hitPoints;
-        if (enemy.hitPoints === 0) {
-          enemy.dispose();
-        } else if (enemy.hitPoints < 50) {
-          enemy.material = scene.getMaterialByID("damagedMaterial");
-        }
+
         this[this.name].hitPoints = 0;
         this[this.name].dispose();
       }

@@ -3,7 +3,7 @@
 import * as BABYLON from "babylonjs";
 
 const distance = 10; // 1 cube distance = 10m
-const time = 120; // 3 seconds
+const time = 300; // 3 seconds
 const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
