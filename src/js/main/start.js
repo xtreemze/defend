@@ -24,11 +24,12 @@ const createScene = function createScene() {
   const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
   const optimizer = new BABYLON.SceneOptimizer(scene, options);
 
+  optimizer.start();
+
   map1(scene, canvas);
   towers(scene);
   enemies(scene);
 
-  optimizer.start();
   return scene;
 };
 
