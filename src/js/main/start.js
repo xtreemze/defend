@@ -1,7 +1,7 @@
 // @ts-check
 
-import "./../inspector";
-import "./../pep";
+import "./../../vendor/inspector";
+import "./../../vendor/pep";
 
 import * as BABYLON from "babylonjs";
 
