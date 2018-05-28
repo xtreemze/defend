@@ -7,7 +7,7 @@ class Enemy {
   constructor(level, position = { x: -45, z: -45 }, scene) {
     this.name = `enemy${level}`;
     this.level = level;
-    this.diameter = 5 + level;
+    this.diameter = 4 + level;
 
     this[this.name] = BABYLON.MeshBuilder.CreateSphere(
       name,
