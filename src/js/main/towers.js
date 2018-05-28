@@ -56,7 +56,7 @@ class Tower {
       if (enemy.length > 0) {
         this.shoot(scene);
       }
-    }, 200);
+    }, 100);
     scene.registerAfterRender(() => {
       if (enemy !== undefined && enemy[0]) {
         this[this.levelTop].lookAt(

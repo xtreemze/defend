@@ -99,24 +99,8 @@ function orient(enemy, decision, result) {
   }
 }
 
-export default function enemyAi(enemy, enemyClass) {
-  let result = 1;
+export default function enemyAi(enemy, enemyClass, scene) {
+  const result = randomNumberRange(1, 4);
 
-  const numberTimer = setInterval(() => {
-    result = randomNumberRange(1, 4);
-  }, time * 3);
-  const orientTimer = setInterval(() => {
-    orient(enemy, enemyClass.decide(), result);
-
-    if (enemy.hitPoints < 0) {
-      clearInterval(numberTimer);
-      clearInterval(orientTimer);
-      enemy.dispose();
-    }
-  }, time);
-
-  setTimeout(() => {
-    clearInterval(numberTimer);
-    clearInterval(orientTimer);
-  }, 15000);
+  orient(enemy, enemyClass.decide(), result);
 }

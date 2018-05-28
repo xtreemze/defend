@@ -14,7 +14,7 @@ const engine = new BABYLON.Engine(canvas, true);
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {
   const scene = new BABYLON.Scene(engine);
-  const options = new BABYLON.SceneOptimizerOptions();
+  const options = BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed();
   const optimizer = new BABYLON.SceneOptimizer(scene, options);
 
   optimizer.start();

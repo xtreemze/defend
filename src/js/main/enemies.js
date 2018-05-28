@@ -2,73 +2,53 @@
 
 import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
+import { clearInterval } from "timers";
 
 class Enemy {
   constructor(level, position = { x: -45, z: -45 }, scene) {
     this.name = `enemy${level}`;
+    this.level = level;
+    this.diameter = 5 + level;
 
-    let diameter = 5;
-    switch (level) {
-      case 1:
-      default:
-      case 2:
-        this[this.name] = BABYLON.MeshBuilder.CreateSphere(
-          name,
-          {
-            segments: 3,
-            diameter
-          },
-          scene
-        );
+    this[this.name] = BABYLON.MeshBuilder.CreateSphere(
+      name,
+      {
+        segments: 3,
+        diameter: this.diameter
+      },
+      scene
+    );
 
-        this[this.name].position = new BABYLON.Vector3(
-          position.x,
-          diameter / 2,
-          position.z
-        );
-
-        break;
-      case 3:
-        diameter = 8;
-        this[this.name] = BABYLON.MeshBuilder.CreateSphere(
-          name,
-          {
-            segments: 3,
-            diameter
-          },
-          scene
-        );
-        this[this.name].position = new BABYLON.Vector3(
-          position.x,
-          diameter / 2,
-          position.z
-        );
-        break;
-    }
-    this[this.name].material = scene.getMaterialByID("enemyMaterial");
-    this[this.name].hitPoints = level * 100;
+    this.revive(scene);
 
     BABYLON.Tags.AddTagsTo(this[this.name], "enemy");
 
-    enemyAi(this[this.name], this);
-    this.checkHitPoints(scene);
+    this.loop(scene);
+  }
 
-    setTimeout(() => {
-      this.destroy();
-    }, 15000);
+  loop(scene) {
+    this.loopTimer = setInterval(() => {
+      this.checkHitPoints(scene);
+      enemyAi(this[this.name], this, scene);
+    }, 300);
   }
 
   checkHitPoints(scene) {
-    scene.registerAfterRender(() => {
-      if (this[this.name].hitPoints === 0) {
-        this.destroy();
-      } else if (this[this.name].hitPoints < 50) {
-        this[this.name].material = scene.getMaterialByID("damagedMaterial");
-      }
-    });
+    if (this[this.name].hitPoints === 0) {
+      this.destroy();
+    } else if (this[this.name].hitPoints < 50) {
+      this[this.name].material = scene.getMaterialByID("damagedMaterial");
+    }
+  }
+
+  revive(scene) {
+    this[this.name].position = new BABYLON.Vector3(0, this.diameter / 2, 0);
+    this[this.name].hitPoints = this.level * 100;
+    this[this.name].material = scene.getMaterialByID("enemyMaterial");
   }
   destroy() {
     this[this.name].hitPoints = 0;
+    clearTimeout(this.loopTimer);
     this[this.name].dispose();
 
     const propertyArray = Object.keys(this);
@@ -111,15 +91,19 @@ class Enemy {
   }
 }
 export default function enemies(scene) {
+  // new Enemy(1, { x: 0, z: 0 }, scene);
+  // new Enemy(2, { x: 0, z: 0 }, scene);
+  // new Enemy(3, { x: 0, z: 0 }, scene);
+
   setInterval(() => {
-    new Enemy(1, { x: 25, z: 45 }, scene);
+    new Enemy(1, { x: 0, z: 0 }, scene);
   }, 5000);
 
   setInterval(() => {
-    new Enemy(2, { x: 45, z: 45 }, scene);
+    new Enemy(2, { x: 0, z: 0 }, scene);
   }, 10000);
 
   setInterval(() => {
-    new Enemy(3, { x: -25, z: 45 }, scene);
+    new Enemy(3, { x: 0, z: 0 }, scene);
   }, 25000);
 }
