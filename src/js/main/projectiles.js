@@ -39,13 +39,17 @@ class Projectile {
         propertyArray[index] = null;
         delete propertyArray[index];
       }
-    }, 800);
+    }, 400);
   }
   intersect(scene, enemies) {
     for (let index = 0; index < enemies.length; index += 1) {
       const enemy = enemies[index];
 
       if (this[this.name].intersectsMesh(enemy, false)) {
+        enemy.material = scene.getMaterialByID("hitMaterial");
+        setTimeout(() => {
+          enemy.material = scene.getMaterialByID("enemyMaterial");
+        }, 60);
         enemy.hitPoints -= this[this.name].hitPoints;
 
         this[this.name].hitPoints = 0;
@@ -60,7 +64,7 @@ class Projectile {
         enemies !== undefined &&
         enemies.length > 0
       ) {
-        this[this.name].translate(BABYLON.Axis.Z, 3 * -1, BABYLON.Space.LOCAL);
+        this[this.name].translate(BABYLON.Axis.Z, 5 * -1, BABYLON.Space.LOCAL);
         this.intersect(scene, enemies);
       }
     });

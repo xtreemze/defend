@@ -50,6 +50,18 @@ export default function map1(scene, canvas) {
   camera3.touchMoveSensibility = 200;
   camera3.touchAngularSensibility = 13000;
 
+  const camDuration = 5000;
+  setInterval(() => {
+    scene.setActiveCameraByName("3/4");
+    setTimeout(() => {
+      scene.setActiveCameraByName("closeup");
+
+      setTimeout(() => {
+        scene.setActiveCameraByName("overhead");
+      }, camDuration);
+    }, camDuration);
+  }, camDuration * 3);
+
   new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.3, 1, 0), scene);
 
   const ground = BABYLON.MeshBuilder.CreateGround(
@@ -90,4 +102,8 @@ export default function map1(scene, canvas) {
   );
   damagedMaterial.diffuseColor = new BABYLON.Color3(0.9, 0.2, 0);
   damagedMaterial.freeze(); // if material is immutable
+
+  const hitMaterial = new BABYLON.StandardMaterial("hitMaterial", scene);
+  hitMaterial.diffuseColor = new BABYLON.Color3(0.5, 0, 0.5);
+  hitMaterial.freeze(); // if material is immutable
 }
