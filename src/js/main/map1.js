@@ -10,7 +10,7 @@ export default function map1(scene, canvas) {
     scene
   );
   camera.setTarget(BABYLON.Vector3.Zero());
-  // camera.attachControl(canvas, false);
+  camera.attachControl(canvas, false);
   camera.fov = 1;
   camera.inertia = 0.7;
   camera.speed = 8;
@@ -26,7 +26,7 @@ export default function map1(scene, canvas) {
     scene
   );
   camera2.setTarget(BABYLON.Vector3.Zero());
-  // camera2.attachControl(canvas, false);
+  camera2.attachControl(canvas, false);
   camera2.fov = 1;
   camera2.inertia = 0.7;
   camera2.speed = 8;
@@ -42,7 +42,7 @@ export default function map1(scene, canvas) {
     scene
   );
   camera3.setTarget(BABYLON.Vector3.Zero());
-  // camera3.attachControl(canvas, false);
+  camera3.attachControl(canvas, false);
   camera3.fov = 1;
   camera3.inertia = 0.7;
   camera3.speed = 8;
