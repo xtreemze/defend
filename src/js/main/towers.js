@@ -41,33 +41,34 @@ class Tower {
           position.z
         );
         this[this.levelTop].material = scene.getMaterialByID("towerMaterial");
-        this.rotateTurret(scene);
+
+        this.enemyWatch(scene);
 
         break;
     }
     BABYLON.Tags.AddTagsTo(this[this.name], "tower");
   }
-  rotateTurret(scene) {
-    const { y } = this[this.levelTop].position;
 
-    let enemy;
+  enemyWatch(scene) {
     setInterval(() => {
-      enemy = scene.getMeshesByTags("enemy");
-      if (enemy.length > 0) {
-        this.shoot(scene);
-      }
+      this.rotateTurret(scene, scene.getMeshesByTags("enemy"));
     }, 100);
-    scene.registerAfterRender(() => {
-      if (enemy !== undefined && enemy[0]) {
-        this[this.levelTop].lookAt(
-          new BABYLON.Vector3(enemy[0].position.x, y, enemy[0].position.z)
-        );
-      }
-    });
   }
+  rotateTurret(scene, enemyArray) {
+    if (enemyArray !== undefined && enemyArray.length > 0) {
+      fire(scene, this[this.levelTop], enemyArray);
+    }
 
-  shoot(scene) {
-    fire(scene, this[this.levelTop]);
+    if (enemyArray[0]) {
+      const { y } = this[this.levelTop].position;
+      this[this.levelTop].lookAt(
+        new BABYLON.Vector3(
+          enemyArray[0].position.x,
+          y,
+          enemyArray[0].position.z
+        )
+      );
+    }
   }
 }
 

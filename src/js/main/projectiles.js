@@ -3,7 +3,7 @@
 import * as BABYLON from "babylonjs";
 
 class Projectile {
-  constructor(level, originMesh, scene) {
+  constructor(level, originMesh, scene, enemies) {
     this.name = `projectile${level}`;
     this.level = level;
 
@@ -16,6 +16,10 @@ class Projectile {
       },
       scene
     );
+
+    this.startLife(scene, originMesh, level, enemies);
+  }
+  startLife(scene, originMesh, level, enemies) {
     this[this.name].hitPoints = level * 2;
     this[this.name].position = originMesh.position;
     this[this.name].rotation = new BABYLON.Vector3(
@@ -26,7 +30,7 @@ class Projectile {
 
     this[this.name].material = scene.getMaterialByID("projectileMaterial");
 
-    this.impulse(scene);
+    this.impulse(scene, enemies);
 
     setTimeout(() => {
       this[this.name].dispose();
@@ -37,8 +41,7 @@ class Projectile {
       }
     }, 800);
   }
-  intersect(scene) {
-    const enemies = scene.getMeshesByTags("enemy");
+  intersect(scene, enemies) {
     for (let index = 0; index < enemies.length; index += 1) {
       const enemy = enemies[index];
 
@@ -50,16 +53,20 @@ class Projectile {
       }
     }
   }
-  impulse(scene) {
-    scene.registerAfterRender(() => {
-      if (this[this.name].hitPoints > 0) {
+  impulse(scene, enemies) {
+    scene.registerBeforeRender(() => {
+      if (
+        this[this.name].hitPoints > 0 &&
+        enemies !== undefined &&
+        enemies.length > 0
+      ) {
         this[this.name].translate(BABYLON.Axis.Z, 3 * -1, BABYLON.Space.LOCAL);
-        this.intersect(scene);
+        this.intersect(scene, enemies);
       }
     });
   }
 }
 
-export default function fire(scene, originMesh) {
-  new Projectile(1, originMesh, scene);
+export default function fire(scene, originMesh, enemies) {
+  new Projectile(1, originMesh, scene, enemies);
 }

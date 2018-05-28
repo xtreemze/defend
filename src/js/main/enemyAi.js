@@ -39,6 +39,7 @@ function vector(enemy, direction) {
 
 function move(enemy, direction) {
   let delay = 0;
+
   for (let iterations = 0; iterations < iterationDelay; iterations += 1) {
     setTimeout(() => {
       vector(enemy, direction);
@@ -99,8 +100,8 @@ function orient(enemy, decision, result) {
   }
 }
 
-export default function enemyAi(enemy, enemyClass, scene) {
+export default function enemyAi(enemy, decision) {
   const result = randomNumberRange(1, 4);
 
-  orient(enemy, enemyClass.decide(), result);
+  orient(enemy, decision, result);
 }

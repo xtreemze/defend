@@ -2,7 +2,6 @@
 
 import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
-import { clearInterval } from "timers";
 
 class Enemy {
   constructor(level, position = { x: -45, z: -45 }, scene) {
@@ -18,37 +17,41 @@ class Enemy {
       },
       scene
     );
-
-    this.revive(scene);
+    this.revive(scene, position);
 
     BABYLON.Tags.AddTagsTo(this[this.name], "enemy");
 
-    this.loop(scene);
-  }
-
-  loop(scene) {
     this.loopTimer = setInterval(() => {
       this.checkHitPoints(scene);
-      enemyAi(this[this.name], this, scene);
+      enemyAi(this[this.name], this.decide());
     }, 300);
   }
 
   checkHitPoints(scene) {
-    if (this[this.name].hitPoints === 0) {
+    if (this[this.name].hitPoints <= 0) {
       this.destroy();
-    } else if (this[this.name].hitPoints < 50) {
+    } else if (
+      this[this.name].hitPoints < 50 &&
+      this[this.name].material !== scene.getMaterialByID("damagedMaterial")
+    ) {
       this[this.name].material = scene.getMaterialByID("damagedMaterial");
+    } else {
+      this[this.name].hitPoints -= 1;
     }
   }
 
-  revive(scene) {
-    this[this.name].position = new BABYLON.Vector3(0, this.diameter / 2, 0);
+  revive(scene, position) {
+    this[this.name].position = new BABYLON.Vector3(
+      position.x,
+      this.diameter / 2,
+      position.z
+    );
     this[this.name].hitPoints = this.level * 100;
     this[this.name].material = scene.getMaterialByID("enemyMaterial");
   }
   destroy() {
     this[this.name].hitPoints = 0;
-    clearTimeout(this.loopTimer);
+    clearInterval(this.loopTimer);
     this[this.name].dispose();
 
     const propertyArray = Object.keys(this);
@@ -96,14 +99,14 @@ export default function enemies(scene) {
   // new Enemy(3, { x: 0, z: 0 }, scene);
 
   setInterval(() => {
-    new Enemy(1, { x: 0, z: 0 }, scene);
+    new Enemy(1, { x: 5, z: 5 }, scene);
   }, 5000);
 
   setInterval(() => {
-    new Enemy(2, { x: 0, z: 0 }, scene);
+    new Enemy(1, { x: 5, z: 5 }, scene);
   }, 10000);
 
   setInterval(() => {
-    new Enemy(3, { x: 0, z: 0 }, scene);
+    new Enemy(3, { x: 5, z: 5 }, scene);
   }, 25000);
 }
