@@ -6,7 +6,11 @@ import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 
 class Tower {
-  constructor(level = 1, position = { x: -25, z: -25 }, scene) {
+  constructor(
+    level = 1,
+    position = { x: -25, z: -25 },
+    scene = BABYLON.Scene.prototype
+  ) {
     const name = `tower${level}`;
     const levelTop = `towerTop${level}`;
 
@@ -58,7 +62,11 @@ class Tower {
     BABYLON.Tags.AddTagsTo(tower, "tower");
   }
 
-  enemyWatch(scene = BABYLON.Scene, tower = BABYLON.Mesh, levelTop = "") {
+  enemyWatch(
+    scene = BABYLON.Scene.prototype,
+    tower = BABYLON.Mesh.prototype,
+    levelTop = ""
+  ) {
     const rotateDelay = 200;
     setInterval(() => {
       this.rotateTurret(
@@ -72,10 +80,10 @@ class Tower {
   }
 
   rotateTurret(
-    scene = BABYLON.Scene,
+    scene = BABYLON.Scene.prototype,
     enemyArray,
     rotateDelay = 0,
-    tower = BABYLON.Mesh,
+    tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
     if (enemyArray !== undefined && enemyArray.length > 0) {
@@ -95,12 +103,12 @@ class Tower {
   }
 }
 
-function towerGenerator(scene = BABYLON.Scene, quantity = 0) {
+function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
   new Tower(3, positionGenerator(), scene);
   for (let index = 2; index < quantity; index += 1) {
     new Tower(randomNumberRange(1, 3), positionGenerator(), scene);
   }
 }
-export default function towers(scene = BABYLON.Scene) {
+export default function towers(scene = BABYLON.Scene.prototype) {
   towerGenerator(scene, randomNumberRange(4, 25));
 }

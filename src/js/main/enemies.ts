@@ -6,7 +6,11 @@ import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 
 class Enemy {
-  constructor(level = 1, position = { x: -45, z: -45 }, scene = {}) {
+  constructor(
+    level = 1,
+    position = { x: 0, y: 0, z: 0 },
+    scene = BABYLON.Scene
+  ) {
     const name = `enemy${level}`;
 
     const diameter = 4 + level;
@@ -31,14 +35,8 @@ class Enemy {
   }
 
   checkHitPoints(
-    scene = {},
-    sphereMesh = {
-      hitPoints: 0,
-      material: {},
-      position: { x: 0, y: 0, z: 0 },
-      physicsImpostor: {},
-      dispose: function() {}
-    },
+    scene = BABYLON.Scene.prototype,
+    sphereMesh = BABYLON.Mesh.prototype,
     loopTimer = setInterval(() => {}, 0)
   ) {
     if (sphereMesh.hitPoints <= 0) {
@@ -53,7 +51,13 @@ class Enemy {
     }
   }
 
-  revive(scene, position, sphereMesh, diameter, level) {
+  revive(
+    scene = BABYLON.Scene.prototype,
+    position: BABYLON.Vector3,
+    sphereMesh = BABYLON.Mesh.prototype,
+    diameter = 0,
+    level = 1
+  ) {
     sphereMesh.position = new BABYLON.Vector3(
       position.x,
       diameter / 2,
@@ -71,13 +75,7 @@ class Enemy {
   }
 
   destroy(
-    sphereMesh = {
-      hitPoints: 0,
-      material: {},
-      position: { x: 0, y: 0, z: 0 },
-      physicsImpostor: {},
-      dispose: function() {}
-    },
+    sphereMesh = BABYLON.Mesh.prototype,
     loopTimer = setInterval(() => {}, 0)
   ) {
     sphereMesh.hitPoints = 0;
@@ -94,9 +92,9 @@ class Enemy {
   decide(
     sphereMesh = {
       hitPoints: 0,
-      material: {},
+      material: BABYLON.Material,
       position: { x: 0, y: 0, z: 0 },
-      physicsImpostor: {}
+      physicsImpostor: BABYLON.PhysicsImpostor
     }
   ) {
     const decide = { up: true, left: true, right: true, down: true };
@@ -120,14 +118,14 @@ class Enemy {
   }
 }
 
-function enemyGenerator(scene = {}, quantity = 0) {
+function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
   new Enemy(1, positionGenerator(), scene);
   for (let index = 2; index < quantity; index += 1) {
     new Enemy(randomNumberRange(1, 3), positionGenerator(), scene);
   }
 }
 
-export default function enemies(scene = {}) {
+export default function enemies(scene = BABYLON.Scene.prototype) {
   enemyGenerator(scene, 2);
 
   setInterval(() => {

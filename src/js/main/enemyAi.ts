@@ -8,7 +8,7 @@ const time = 300; // 3 seconds
 const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
-function vector(enemy, direction = "") {
+function vector(enemy = BABYLON.Mesh.prototype, direction = "") {
   switch (direction) {
     case "down":
       enemy.translate(BABYLON.Axis.Z, speed * -1, BABYLON.Space.LOCAL);
@@ -28,7 +28,7 @@ function vector(enemy, direction = "") {
   }
 }
 
-function move(enemy, direction = "") {
+function move(enemy = BABYLON.Mesh.prototype, direction = "") {
   let delay = 0;
 
   for (let iterations = 0; iterations < iterationDelay; iterations += 1) {
@@ -40,7 +40,7 @@ function move(enemy, direction = "") {
 }
 
 function orient(
-  enemy,
+  enemy = BABYLON.Mesh.prototype,
   decision = { up: true, down: true, left: true, right: true },
   result = 1
 ) {
@@ -96,7 +96,7 @@ function orient(
 }
 
 export default function enemyAi(
-  enemy,
+  enemy = BABYLON.Mesh.prototype,
   decision = { up: true, down: true, left: true, right: true }
 ) {
   const result = randomNumberRange(1, 4);
