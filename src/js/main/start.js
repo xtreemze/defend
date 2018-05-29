@@ -21,10 +21,10 @@ const engine = new BABYLON.Engine(canvas, true, {
 const createScene = function createScene() {
   const scene = new BABYLON.Scene(engine);
 
-  const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
-  const optimizer = new BABYLON.SceneOptimizer(scene, options);
+  // const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
+  // const optimizer = new BABYLON.SceneOptimizer(scene, options);
 
-  optimizer.start();
+  // optimizer.start();
 
   map1(scene, canvas);
   towers(scene);

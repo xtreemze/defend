@@ -50,11 +50,12 @@ class Tower {
   }
 
   enemyWatch(scene) {
+    const rotateDelay = 160;
     setInterval(() => {
-      this.rotateTurret(scene, scene.getMeshesByTags("enemy"));
-    }, 100);
+      this.rotateTurret(scene, scene.getMeshesByTags("enemy"), rotateDelay);
+    }, rotateDelay);
   }
-  rotateTurret(scene, enemyArray) {
+  rotateTurret(scene, enemyArray, rotateDelay) {
     if (enemyArray !== undefined && enemyArray.length > 0) {
       fire(scene, this[this.levelTop], enemyArray);
     }
@@ -68,12 +69,50 @@ class Tower {
           enemyArray[0].position.z
         )
       );
+      setTimeout(() => {
+        this[this.levelTop].lookAt(
+          new BABYLON.Vector3(
+            enemyArray[0].position.x,
+            y,
+            enemyArray[0].position.z
+          )
+        );
+        setTimeout(() => {
+          this[this.levelTop].lookAt(
+            new BABYLON.Vector3(
+              enemyArray[0].position.x,
+              y,
+              enemyArray[0].position.z
+            )
+          );
+        }, rotateDelay / 3);
+      }, rotateDelay / 3);
     }
   }
 }
 
+/**
+ * Returns a random interger from a given range.
+ * @param {number} Min
+ * @param {number} Max
+ * @returns {number}
+ */
+function randomNumberRange(Min, Max) {
+  return Math.floor(Math.random() * (Max - Min + 1)) + Min;
+}
+
+function positionGenerator() {
+  const x = randomNumberRange(-4, 4) * 10 + 5;
+  const z = randomNumberRange(-4, 4) * 10 + 5;
+  return { x, z };
+}
+
+function towerGenerator(scene, quantity) {
+  new Tower(3, positionGenerator(), scene);
+  for (let index = 2; index < quantity; index += 1) {
+    new Tower(randomNumberRange(1, 3), positionGenerator(), scene);
+  }
+}
 export default function towers(scene) {
-  new Tower(1, { x: -45, z: 45 }, scene);
-  new Tower(2, { x: 45, z: -45 }, scene);
-  new Tower(3, { x: 5, z: 45 }, scene);
+  towerGenerator(scene, randomNumberRange(3, 10));
 }

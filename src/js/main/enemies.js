@@ -36,7 +36,7 @@ class Enemy {
     ) {
       this[this.name].material = scene.getMaterialByID("damagedMaterial");
     } else {
-      this[this.name].hitPoints -= 1;
+      this[this.name].hitPoints -= 4;
     }
   }
 
