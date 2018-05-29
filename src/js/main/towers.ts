@@ -58,7 +58,7 @@ class Tower {
     BABYLON.Tags.AddTagsTo(tower, "tower");
   }
 
-  enemyWatch(scene, tower, levelTop) {
+  enemyWatch(scene = BABYLON.Scene, tower = BABYLON.Mesh, levelTop = "") {
     const rotateDelay = 200;
     setInterval(() => {
       this.rotateTurret(
@@ -71,7 +71,13 @@ class Tower {
     }, rotateDelay);
   }
 
-  rotateTurret(scene, enemyArray, rotateDelay, tower, levelTop) {
+  rotateTurret(
+    scene = BABYLON.Scene,
+    enemyArray,
+    rotateDelay = 0,
+    tower = BABYLON.Mesh,
+    levelTop = ""
+  ) {
     if (enemyArray !== undefined && enemyArray.length > 0) {
       fire(scene, tower[levelTop], enemyArray);
     }
@@ -89,12 +95,12 @@ class Tower {
   }
 }
 
-function towerGenerator(scene, quantity) {
+function towerGenerator(scene = BABYLON.Scene, quantity = 0) {
   new Tower(3, positionGenerator(), scene);
   for (let index = 2; index < quantity; index += 1) {
     new Tower(randomNumberRange(1, 3), positionGenerator(), scene);
   }
 }
-export default function towers(scene) {
+export default function towers(scene = BABYLON.Scene) {
   towerGenerator(scene, randomNumberRange(4, 25));
 }
