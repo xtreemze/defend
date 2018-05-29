@@ -2,6 +2,8 @@
 
 import * as BABYLON from "babylonjs";
 import fire from "./projectiles";
+import positionGenerator from "./positionGenerator";
+import randomNumberRange from "./randomNumberRange";
 
 class Tower {
   constructor(level = 1, position = { x: -25, z: -25 }, scene) {
@@ -18,6 +20,13 @@ class Tower {
     );
     this[this.name].position = new BABYLON.Vector3(position.x, 0.5, position.z);
 
+    this[this.name].physicsImpostor = new BABYLON.PhysicsImpostor(
+      this[this.name],
+      BABYLON.PhysicsImpostor.BoxImpostor,
+      { mass: 0, restitution: 0.8 },
+      scene
+    );
+
     this[this.name].material = scene.getMaterialByID("towerMaterial");
 
     switch (level) {
@@ -31,7 +40,7 @@ class Tower {
           {
             size: 6,
             height: 2.5,
-            width: 5
+            width: 4
           },
           scene
         );
@@ -50,7 +59,7 @@ class Tower {
   }
 
   enemyWatch(scene) {
-    const rotateDelay = 160;
+    const rotateDelay = 200;
     setInterval(() => {
       this.rotateTurret(scene, scene.getMeshesByTags("enemy"), rotateDelay);
     }, rotateDelay);
@@ -59,52 +68,19 @@ class Tower {
     if (enemyArray !== undefined && enemyArray.length > 0) {
       fire(scene, this[this.levelTop], enemyArray);
     }
-
-    if (enemyArray[0]) {
-      const { y } = this[this.levelTop].position;
-      this[this.levelTop].lookAt(
-        new BABYLON.Vector3(
-          enemyArray[0].position.x,
-          y,
-          enemyArray[0].position.z
-        )
-      );
-      setTimeout(() => {
+    scene.registerBeforeRender(() => {
+      if (enemyArray[0]) {
+        const { y } = this[this.levelTop].position;
         this[this.levelTop].lookAt(
           new BABYLON.Vector3(
             enemyArray[0].position.x,
-            y,
+            enemyArray[0].position.y,
             enemyArray[0].position.z
           )
         );
-        setTimeout(() => {
-          this[this.levelTop].lookAt(
-            new BABYLON.Vector3(
-              enemyArray[0].position.x,
-              y,
-              enemyArray[0].position.z
-            )
-          );
-        }, rotateDelay / 3);
-      }, rotateDelay / 3);
-    }
+      }
+    });
   }
-}
-
-/**
- * Returns a random interger from a given range.
- * @param {number} Min
- * @param {number} Max
- * @returns {number}
- */
-function randomNumberRange(Min, Max) {
-  return Math.floor(Math.random() * (Max - Min + 1)) + Min;
-}
-
-function positionGenerator() {
-  const x = randomNumberRange(-4, 4) * 10 + 5;
-  const z = randomNumberRange(-4, 4) * 10 + 5;
-  return { x, z };
 }
 
 function towerGenerator(scene, quantity) {
@@ -114,5 +90,5 @@ function towerGenerator(scene, quantity) {
   }
 }
 export default function towers(scene) {
-  towerGenerator(scene, randomNumberRange(3, 10));
+  towerGenerator(scene, randomNumberRange(4, 25));
 }

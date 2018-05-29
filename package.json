@@ -44,6 +44,7 @@
     "babel-preset-airbnb": "^2.4.0",
     "babel-preset-env": "^1.7.0",
     "babylonjs": "^3.2.0",
+    "babylonjs-inspector": "^3.3.0-alpha.1",
     "browserslist": "^3.2.8",
     "cannon": "^0.6.2",
     "css-loader": "^0.28.11",

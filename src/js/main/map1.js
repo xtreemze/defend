@@ -65,7 +65,7 @@ export default function map1(scene, canvas) {
   new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.3, 1, 0), scene);
 
   const ground = BABYLON.MeshBuilder.CreateGround(
-    "ground1",
+    "ground",
     {
       height: 100,
       width: 100,
@@ -74,6 +74,13 @@ export default function map1(scene, canvas) {
     scene
   );
   ground.freezeWorldMatrix(); // freeze ground
+
+  ground.physicsImpostor = new BABYLON.PhysicsImpostor(
+    ground,
+    BABYLON.PhysicsImpostor.BoxImpostor,
+    { mass: 0, restitution: 0.5 },
+    scene
+  );
 
   const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
 

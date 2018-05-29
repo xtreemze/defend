@@ -2,7 +2,8 @@
 
 import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
-
+import positionGenerator from "./positionGenerator";
+import randomNumberRange from "./randomNumberRange";
 class Enemy {
   constructor(level, position = { x: -45, z: -45 }, scene) {
     this.name = `enemy${level}`;
@@ -48,7 +49,15 @@ class Enemy {
     );
     this[this.name].hitPoints = this.level * 100;
     this[this.name].material = scene.getMaterialByID("enemyMaterial");
+
+    this[this.name].physicsImpostor = new BABYLON.PhysicsImpostor(
+      this[this.name],
+      BABYLON.PhysicsImpostor.SphereImpostor,
+      { mass: 0, restitution: 0.8 },
+      scene
+    );
   }
+
   destroy() {
     this[this.name].hitPoints = 0;
     clearInterval(this.loopTimer);
@@ -60,18 +69,7 @@ class Enemy {
       delete propertyArray[index];
     }
   }
-  // intersectTower(scene) {
-  //   let collided = false;
-  //   const towers = scene.getMeshesByTags("tower");
-  //   for (let index = 0; index < towers.length; index += 1) {
-  //     const tower = towers[index];
 
-  //     if (this[this.name].intersectsMesh(tower, false)) {
-  //       collided = true;
-  //     }
-  //   }
-  //   return collided;
-  // }
   decide() {
     const decide = { up: true, left: true, right: true, down: true };
     if (this[this.name].position.z <= -45) {
@@ -93,20 +91,18 @@ class Enemy {
     return decide;
   }
 }
+
+function enemyGenerator(scene, quantity) {
+  new Enemy(1, positionGenerator(), scene);
+  for (let index = 2; index < quantity; index += 1) {
+    new Enemy(randomNumberRange(1, 3), positionGenerator(), scene);
+  }
+}
+
 export default function enemies(scene) {
-  // new Enemy(1, { x: 0, z: 0 }, scene);
-  // new Enemy(2, { x: 0, z: 0 }, scene);
-  // new Enemy(3, { x: 0, z: 0 }, scene);
+  enemyGenerator(scene, 2);
 
   setInterval(() => {
-    new Enemy(1, { x: 5, z: 5 }, scene);
-  }, 5000);
-
-  setInterval(() => {
-    new Enemy(1, { x: 5, z: 5 }, scene);
-  }, 10000);
-
-  setInterval(() => {
-    new Enemy(3, { x: 5, z: 5 }, scene);
-  }, 25000);
+    enemyGenerator(scene, 2);
+  }, 1000);
 }
