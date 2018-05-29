@@ -1,23 +1,14 @@
 // @ts-check
 
 import * as BABYLON from "babylonjs";
+import randomNumberRange from "./randomNumberRange";
 
 const distance = 10; // 1 cube distance = 10m
 const time = 300; // 3 seconds
 const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
-/**
- * Returns a random interger from a given range.
- * @param {number} Min
- * @param {number} Max
- * @returns {number}
- */
-function randomNumberRange(Min, Max) {
-  return Math.floor(Math.random() * (Max - Min + 1)) + Min;
-}
-
-function vector(enemy, direction) {
+function vector(enemy, direction = "") {
   switch (direction) {
     case "down":
       enemy.translate(BABYLON.Axis.Z, speed * -1, BABYLON.Space.LOCAL);
@@ -37,7 +28,7 @@ function vector(enemy, direction) {
   }
 }
 
-function move(enemy, direction) {
+function move(enemy, direction = "") {
   let delay = 0;
 
   for (let iterations = 0; iterations < iterationDelay; iterations += 1) {
@@ -48,7 +39,11 @@ function move(enemy, direction) {
   }
 }
 
-function orient(enemy, decision, result) {
+function orient(
+  enemy,
+  decision = { up: true, down: true, left: true, right: true },
+  result = 1
+) {
   switch (result) {
     case 1:
       if (decision.down) {
@@ -100,7 +95,10 @@ function orient(enemy, decision, result) {
   }
 }
 
-export default function enemyAi(enemy, decision) {
+export default function enemyAi(
+  enemy,
+  decision = { up: true, down: true, left: true, right: true }
+) {
   const result = randomNumberRange(1, 4);
 
   orient(enemy, decision, result);

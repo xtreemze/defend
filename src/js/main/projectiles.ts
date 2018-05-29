@@ -5,12 +5,11 @@ import * as BABYLON from "babylonjs";
 const life = 500;
 
 class Projectile {
-  constructor(level, originMesh, scene, enemies) {
-    this.name = `projectile${level}`;
-    this.level = level;
+  constructor(level = 1, originMesh, scene, enemies) {
+    const name = `projectile${level}`;
 
-    this[this.name] = BABYLON.MeshBuilder.CreateBox(
-      this.level,
+    const projectile = BABYLON.MeshBuilder.CreateBox(
+      level,
       {
         size: 2,
         height: 1.5,
@@ -19,30 +18,29 @@ class Projectile {
       scene
     );
 
-    this.startLife(scene, originMesh, level, enemies);
+    this.startLife(scene, originMesh, level, enemies, projectile);
   }
-  startLife(scene, originMesh, level, enemies) {
-    this[this.name].position.copyFrom(originMesh.position);
-    this[this.name].rotation.copyFrom(originMesh.rotation);
+  startLife(scene, originMesh, level = 1, enemies, projectile) {
+    projectile.position.copyFrom(originMesh.position);
+    projectile.rotation.copyFrom(originMesh.rotation);
 
-    this[this.name].hitPoints = level * 2;
+    projectile.hitPoints = level * 2;
 
-    this[this.name].material = scene.getMaterialByID("projectileMaterial");
+    projectile.material = scene.getMaterialByID("projectileMaterial");
 
     // For Physics
-    this[this.name].physicsImpostor = new BABYLON.PhysicsImpostor(
-      this[this.name],
+    projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
+      projectile,
       BABYLON.PhysicsImpostor.BoxImpostor,
       { mass: 50, restitution: 0.7 },
       scene
     );
 
-    this.impulsePhys(scene, enemies, originMesh); // Moves the projectile with physics
-    this.intersectPhys(scene, enemies); // Detects collissions with enemies
-    this.intersectPhys(scene, scene.getMeshesByTags("ground")); // Detects collissions with enemies
+    this.impulsePhys(scene, enemies, originMesh, projectile); // Moves the projectile with physics
+    this.intersectPhys(scene, enemies, projectile); // Detects collissions with enemies
 
     setTimeout(() => {
-      this[this.name].dispose();
+      projectile.dispose();
       const propertyArray = Object.keys(this);
       for (let index = 0; index < propertyArray.length; index += 1) {
         propertyArray[index] = null;
@@ -51,35 +49,35 @@ class Projectile {
     }, life);
   }
 
-  intersectPhys(scene, enemies) {
+  intersectPhys(scene, enemies, projectile) {
     // Enemies ONLY
     for (let index = 0; index < enemies.length; index += 1) {
       const enemy = enemies[index];
 
-      this[this.name].physicsImpostor.registerOnPhysicsCollide(
+      projectile.physicsImpostor.registerOnPhysicsCollide(
         enemy.physicsImpostor,
         () => {
           enemy.material = scene.getMaterialByID("hitMaterial");
           setTimeout(() => {
             enemy.material = scene.getMaterialByID("enemyMaterial");
           }, 60);
-          enemy.hitPoints -= this[this.name].hitPoints;
-          this.destroy();
+          enemy.hitPoints -= projectile.hitPoints;
+          this.destroy(projectile);
         }
       );
     }
   }
 
-  impulsePhys(scene, enemies, originMesh) {
+  impulsePhys(scene, enemies, originMesh, projectile) {
     const forwardLocal = new BABYLON.Vector3(0, 0, -180);
     const speed = originMesh.getDirection(forwardLocal);
-    this[this.name].physicsImpostor.setLinearVelocity(speed);
+    projectile.physicsImpostor.setLinearVelocity(speed);
   }
 
-  destroy() {
-    this[this.name].hitPoints = 0;
+  destroy(projectile) {
+    projectile.hitPoints = 0;
     setTimeout(() => {
-      this[this.name].dispose();
+      projectile.dispose();
     }, 1);
 
     const propertyArray = Object.keys(this);
