@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = function e() {
   return {
     entry: {
-      shell: ["./src/js/main/start.js"],
+      shell: "./src/js/main/start.ts",
       shims: "airbnb-browser-shims"
     },
     optimization: {
@@ -127,6 +127,13 @@ module.exports = function e() {
           }
         },
         {
+          test: /\.tsx?$/,
+          use: "ts-loader",
+          exclude: /node_modules/,
+          include: `${__dirname}/src`
+        },
+
+        {
           test: /\.(gif|png|jpe?g|svg)$/i,
           include: `${__dirname}/src`,
           loaders: [
@@ -137,6 +144,9 @@ module.exports = function e() {
           ]
         }
       ]
+    },
+    resolve: {
+      extensions: [".tsx", ".ts", ".js"]
     },
     plugins: [
       new HtmlWebpackPlugin({

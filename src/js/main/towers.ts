@@ -70,7 +70,6 @@ class Tower {
     }
     scene.registerBeforeRender(() => {
       if (enemyArray[0]) {
-        const { y } = this[this.levelTop].position;
         this[this.levelTop].lookAt(
           new BABYLON.Vector3(
             enemyArray[0].position.x,
