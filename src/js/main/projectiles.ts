@@ -9,12 +9,13 @@ class Projectile {
     level = 1,
     originMesh = BABYLON.Mesh,
     scene = BABYLON.Scene.prototype,
+    // @ts-ignore
     enemies
   ) {
     const name = `projectile${level}`;
 
     const projectile = BABYLON.MeshBuilder.CreateBox(
-      level,
+      name,
       {
         size: 2,
         height: 1.5,
@@ -29,6 +30,7 @@ class Projectile {
     scene = BABYLON.Scene.prototype,
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
     level = 1,
+    // @ts-ignore
     enemies,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {

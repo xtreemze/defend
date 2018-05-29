@@ -39,6 +39,7 @@ class Tower {
         break;
       case 2:
       case 3:
+        // @ts-ignore
         tower[levelTop] = BABYLON.MeshBuilder.CreateBox(
           levelTop,
           {
@@ -48,11 +49,13 @@ class Tower {
           },
           scene
         );
+        // @ts-ignore
         tower[levelTop].position = new BABYLON.Vector3(
           position.x,
           3,
           position.z
         );
+        // @ts-ignore
         tower[levelTop].material = scene.getMaterialByID("towerMaterial");
 
         this.enemyWatch(scene, tower, levelTop);
@@ -81,16 +84,19 @@ class Tower {
 
   rotateTurret(
     scene = BABYLON.Scene.prototype,
+    // @ts-ignore
     enemyArray,
     rotateDelay = 0,
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
     if (enemyArray !== undefined && enemyArray.length > 0) {
+      // @ts-ignore
       fire(scene, tower[levelTop], enemyArray);
     }
     scene.registerBeforeRender(() => {
       if (enemyArray[0]) {
+        // @ts-ignore
         tower[levelTop].lookAt(
           new BABYLON.Vector3(
             enemyArray[0].position.x,

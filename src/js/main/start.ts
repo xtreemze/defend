@@ -11,6 +11,7 @@ import map1 from "./map1";
 // Get the canvas DOM element
 const canvas = document.getElementById("renderCanvas");
 // Load the 3D engine
+// @ts-ignore
 const engine = new BABYLON.Engine(canvas, true, {
   // deterministicLockstep: true,
   // lockstepMaxSteps: 4
@@ -43,4 +44,5 @@ window.addEventListener("resize", () => {
   engine.resize();
 });
 
+// @ts-ignore
 window.scene = scene;

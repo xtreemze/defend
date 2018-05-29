@@ -2,10 +2,8 @@
 
 import * as BABYLON from "babylonjs";
 
-export default function map1(
-  scene = BABYLON.Scene.prototype,
-  canvas = HTMLCanvasElement
-) {
+// @ts-ignore
+export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   // Camera1
   const camera = new BABYLON.UniversalCamera(
     "overhead",

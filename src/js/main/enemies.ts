@@ -8,7 +8,7 @@ import randomNumberRange from "./randomNumberRange";
 class Enemy {
   constructor(
     level = 1,
-    position = { x: 0, y: 0, z: 0 },
+    position = { x: 0, z: 0 },
     scene = BABYLON.Scene.prototype
   ) {
     const name = `enemy${level}`;
@@ -37,23 +37,27 @@ class Enemy {
   checkHitPoints(
     scene = BABYLON.Scene.prototype,
     sphereMesh = BABYLON.Mesh.prototype,
-    loopTimer = setInterval(() => {}, 0)
+    // @ts-ignore
+    loopTimer
   ) {
+    // @ts-ignore
     if (sphereMesh.hitPoints <= 0) {
       this.destroy(sphereMesh, loopTimer);
     } else if (
+      // @ts-ignore
       sphereMesh.hitPoints < 50 &&
       sphereMesh.material !== scene.getMaterialByID("damagedMaterial")
     ) {
       sphereMesh.material = scene.getMaterialByID("damagedMaterial");
     } else {
+      // @ts-ignore
       sphereMesh.hitPoints -= 4;
     }
   }
 
   revive(
     scene = BABYLON.Scene.prototype,
-    position = { x: 0, y: 0, z: 0 },
+    position = { x: 0, z: 0 },
     sphereMesh = BABYLON.Mesh.prototype,
     diameter = 0,
     level = 1
@@ -63,6 +67,7 @@ class Enemy {
       diameter / 2,
       position.z
     );
+    // @ts-ignore
     sphereMesh.hitPoints = level * 100;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
 
@@ -73,11 +78,9 @@ class Enemy {
       scene
     );
   }
-
-  destroy(
-    sphereMesh = BABYLON.Mesh.prototype,
-    loopTimer = setInterval(() => {}, 0)
-  ) {
+  // @ts-ignore
+  destroy(sphereMesh = BABYLON.Mesh.prototype, loopTimer) {
+    // @ts-ignore
     sphereMesh.hitPoints = 0;
     clearInterval(loopTimer);
     sphereMesh.dispose();
@@ -89,14 +92,7 @@ class Enemy {
     }
   }
 
-  decide(
-    sphereMesh = {
-      hitPoints: 0,
-      material: BABYLON.Material,
-      position: { x: 0, y: 0, z: 0 },
-      physicsImpostor: BABYLON.PhysicsImpostor
-    }
-  ) {
+  decide(sphereMesh = BABYLON.Mesh.prototype) {
     const decide = { up: true, left: true, right: true, down: true };
     if (sphereMesh.position.z <= -45) {
       decide.down = false;
