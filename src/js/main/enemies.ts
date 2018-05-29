@@ -9,7 +9,7 @@ class Enemy {
   constructor(
     level = 1,
     position = { x: 0, y: 0, z: 0 },
-    scene = BABYLON.Scene
+    scene = BABYLON.Scene.prototype
   ) {
     const name = `enemy${level}`;
 
@@ -53,7 +53,7 @@ class Enemy {
 
   revive(
     scene = BABYLON.Scene.prototype,
-    position: BABYLON.Vector3,
+    position = { x: 0, y: 0, z: 0 },
     sphereMesh = BABYLON.Mesh.prototype,
     diameter = 0,
     level = 1
