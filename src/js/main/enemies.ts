@@ -164,6 +164,6 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
   enemyGenerator(scene, 5);
 
   setInterval(() => {
-    enemyGenerator(scene, 1);
+    enemyGenerator(scene, randomNumberRange(2, 5));
   }, 5000);
 }

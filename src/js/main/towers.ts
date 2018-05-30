@@ -66,7 +66,7 @@ class Tower {
         //   scene
         // );
         tower[levelTop].material = scene.getMaterialByID("towerMaterial");
-
+        // tower.addChild(tower[levelTop]);
         this.enemyWatch(scene, tower, levelTop);
 
         break;
