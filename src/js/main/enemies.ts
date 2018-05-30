@@ -30,27 +30,19 @@ class Enemy {
 
     const loopTimer = setInterval(() => {
       this.checkHitPoints(scene, sphereMesh, loopTimer);
-      enemyAi(sphereMesh, this.decide());
+      enemyAi(sphereMesh, this.decide(sphereMesh));
     }, 300);
   }
 
-  checkHitPoints(
-    scene = BABYLON.Scene.prototype,
-    sphereMesh = BABYLON.Mesh.prototype,
-    // @ts-ignore
-    loopTimer
-  ) {
-    // @ts-ignore
+  checkHitPoints(scene: any, sphereMesh: any, loopTimer: any) {
     if (sphereMesh.hitPoints <= 0) {
       this.destroy(sphereMesh, loopTimer);
     } else if (
-      // @ts-ignore
       sphereMesh.hitPoints < 50 &&
       sphereMesh.material !== scene.getMaterialByID("damagedMaterial")
     ) {
       sphereMesh.material = scene.getMaterialByID("damagedMaterial");
     } else {
-      // @ts-ignore
       sphereMesh.hitPoints -= 4;
     }
   }
@@ -58,7 +50,7 @@ class Enemy {
   revive(
     scene = BABYLON.Scene.prototype,
     position = { x: 0, z: 0 },
-    sphereMesh = BABYLON.Mesh.prototype,
+    sphereMesh: any,
     diameter = 0,
     level = 1
   ) {
@@ -67,7 +59,6 @@ class Enemy {
       diameter / 2,
       position.z
     );
-    // @ts-ignore
     sphereMesh.hitPoints = level * 100;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
 
@@ -78,9 +69,7 @@ class Enemy {
       scene
     );
   }
-  // @ts-ignore
-  destroy(sphereMesh = BABYLON.Mesh.prototype, loopTimer) {
-    // @ts-ignore
+  destroy(sphereMesh: any, loopTimer: any) {
     sphereMesh.hitPoints = 0;
     clearInterval(loopTimer);
     sphereMesh.dispose();
@@ -92,7 +81,7 @@ class Enemy {
     }
   }
 
-  decide(sphereMesh = BABYLON.Mesh.prototype) {
+  decide(sphereMesh: BABYLON.Mesh) {
     const decide = { up: true, left: true, right: true, down: true };
     if (sphereMesh.position.z <= -45) {
       decide.down = false;

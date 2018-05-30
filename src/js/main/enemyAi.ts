@@ -39,11 +39,7 @@ function move(enemy = BABYLON.Mesh.prototype, direction = "") {
   }
 }
 
-function orient(
-  enemy = BABYLON.Mesh.prototype,
-  decision = { up: true, down: true, left: true, right: true },
-  result = 1
-) {
+function orient(enemy = BABYLON.Mesh.prototype, decision: any, result = 1) {
   switch (result) {
     case 1:
       if (decision.down) {
@@ -95,10 +91,7 @@ function orient(
   }
 }
 
-export default function enemyAi(
-  enemy = BABYLON.Mesh.prototype,
-  decision = { up: true, down: true, left: true, right: true }
-) {
+export default function enemyAi(enemy: any, decision: object) {
   const result = randomNumberRange(1, 4);
 
   orient(enemy, decision, result);

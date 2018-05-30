@@ -9,8 +9,7 @@ class Projectile {
     level = 1,
     originMesh = BABYLON.Mesh,
     scene = BABYLON.Scene.prototype,
-    // @ts-ignore
-    enemies
+    enemies: any
   ) {
     const name = `projectile${level}`;
 
@@ -30,8 +29,7 @@ class Projectile {
     scene = BABYLON.Scene.prototype,
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
     level = 1,
-    // @ts-ignore
-    enemies,
+    enemies: any,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
     projectile.position.copyFrom(originMesh.position);
@@ -64,7 +62,7 @@ class Projectile {
 
   intersectPhys(
     scene = BABYLON.Scene.prototype,
-    enemies,
+    enemies: any,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
     // Enemies ONLY
@@ -87,7 +85,7 @@ class Projectile {
 
   impulsePhys(
     scene = BABYLON.Scene.prototype,
-    enemies,
+    enemies: any,
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
@@ -113,7 +111,7 @@ class Projectile {
 export default function fire(
   scene = BABYLON.Scene.prototype,
   originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
-  enemies
+  enemies: any
 ) {
   new Projectile(1, originMesh, scene, enemies);
 }
