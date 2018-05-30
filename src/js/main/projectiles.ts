@@ -142,7 +142,7 @@ class Projectile {
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
-    const forwardLocal = new BABYLON.Vector3(0, 0, -1200);
+    const forwardLocal = new BABYLON.Vector3(0, 1200, 0);
     const speed = originMesh.getDirection(forwardLocal);
     projectile.physicsImpostor.applyImpulse(
       speed,

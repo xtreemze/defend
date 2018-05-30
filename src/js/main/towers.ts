@@ -74,23 +74,31 @@ class Tower {
     BABYLON.Tags.AddTagsTo(tower, "tower");
   }
 
+  /**
+   * Enemys watch
+   * @param [scene]
+   * @param [tower]
+   * @param [levelTop]
+   */
   enemyWatch(
     scene = BABYLON.Scene.prototype,
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
     const rotateDelay = 200;
-    setInterval(() => {
-      this.rotateTurret(
-        scene,
-        scene.getMeshesByTags("enemy"),
-        rotateDelay,
-        tower,
-        levelTop
-      );
-    }, rotateDelay);
+    this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
+    // setInterval(() => {
+    // }, rotateDelay);
   }
 
+  /**
+   * Rotates turret
+   * @param [scene]
+   * @param enemyArray
+   * @param [rotateDelay]
+   * @param [tower]
+   * @param [levelTop]
+   */
   rotateTurret(
     scene = BABYLON.Scene.prototype,
     enemyArray,
@@ -113,8 +121,83 @@ class Tower {
       }
     });
   }
+
+  /**
+   * Slow Rotate turret
+   * @param [scene]
+   * @param enemyArray
+   * @param [rotateDelay]
+   * @param [tower]
+   * @param [levelTop]
+   */
+  slowRotateTurret(
+    scene = BABYLON.Scene.prototype,
+    rotateDelay = 0,
+    tower = BABYLON.Mesh.prototype,
+    levelTop = ""
+  ) {
+    let enemyArray = scene.getMeshesByTags("enemy");
+    setInterval(() => {
+      enemyArray = scene.getMeshesByTags("enemy");
+    }, rotateDelay);
+
+    tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
+    let lookTarget = scene.getMeshByID("ground");
+    let lookTargetPos = lookTarget.position.clone();
+    let orgQuat = tower[levelTop].rotationQuaternion.clone();
+    tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+    let lookQuat = tower[levelTop].rotationQuaternion.clone();
+    let percent = 0;
+    let percentAdd = 1 / 200;
+
+    scene.registerBeforeRender(() => {
+      if (enemyArray.length > 0) {
+        if (lookTarget === undefined) {
+          lookTarget = enemyArray[0];
+
+          lookTargetPos = lookTarget.position.clone();
+
+          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+
+          orgQuat = tower[levelTop].rotationQuaternion.clone();
+          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+          lookQuat = tower[levelTop].rotationQuaternion.clone();
+        }
+        if (
+          // Reset the rotation values when the target has moved
+          lookTarget !== undefined &&
+          BABYLON.Vector3.Distance(lookTargetPos, lookTarget.position) >
+            BABYLON.Epsilon
+        ) {
+          orgQuat = tower[levelTop].rotationQuaternion.clone();
+          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+          lookQuat = tower[levelTop].rotationQuaternion.clone();
+          lookTargetPos = lookTarget.position.clone();
+          percent = 0;
+        }
+
+        // Set the tower[levelTop] rotation, increase the percentage
+        if (percent !== 1) {
+          tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Slerp(
+            orgQuat,
+            lookQuat,
+            percent
+          );
+          percent += percentAdd;
+          if (percent > 1) {
+            percent = 1;
+          }
+        }
+      }
+    });
+  }
 }
 
+/**
+ * Towers generator
+ * @param [scene]
+ * @param [quantity]
+ */
 function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
   new Tower(3, positionGenerator(), scene);
   for (let index = 2; index < quantity; index += 1) {
