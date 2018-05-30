@@ -1,6 +1,6 @@
 // @ts-check
 
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
 import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";

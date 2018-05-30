@@ -1,7 +1,7 @@
 import "babylonjs-inspector";
 import "./../../vendor/pep";
 
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
 
 import enemies from "./enemies";
 import towers from "./towers";

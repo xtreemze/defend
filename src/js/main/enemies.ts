@@ -1,8 +1,14 @@
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 
+/**
+ * Creates an instance of enemy.
+ * @param [level]
+ * @param [position]
+ * @param [scene]
+ */
 class Enemy {
   constructor(
     level = 1,
@@ -32,7 +38,17 @@ class Enemy {
     }, 300);
   }
 
-  checkHitPoints(scene, sphereMesh, loopTimer) {
+  /**
+   * Checks hit points
+   * @param [scene]
+   * @param sphereMesh
+   * @param [loopTimer]
+   */
+  checkHitPoints(
+    scene: any = BABYLON.Scene.prototype,
+    sphereMesh: any,
+    loopTimer: any = {}
+  ) {
     if (sphereMesh.hitPoints <= 0) {
       this.destroy(sphereMesh, loopTimer);
     } else if (
@@ -45,12 +61,20 @@ class Enemy {
     }
   }
 
+  /**
+   * Revives enemy
+   * @param [scene]
+   * @param [position]
+   * @param sphereMesh
+   * @param [diameter]
+   * @param [level]
+   */
   revive(
-    scene = BABYLON.Scene.prototype,
-    position = { x: 0, z: 0 },
-    sphereMesh,
-    diameter = 0,
-    level = 1
+    scene: any = BABYLON.Scene.prototype,
+    position: any = { x: 0, z: 0 },
+    sphereMesh: any,
+    diameter: number = 0,
+    level: number = 1
   ) {
     sphereMesh.position = new BABYLON.Vector3(
       position.x,
@@ -67,19 +91,25 @@ class Enemy {
       scene
     );
   }
-  destroy(sphereMesh, loopTimer) {
+
+  destroy(
+    sphereMesh = {
+      hitPoints: 0,
+      dispose: function dispose() {}
+    },
+    loopTimer
+  ) {
     sphereMesh.hitPoints = 0;
     clearInterval(loopTimer);
     sphereMesh.dispose();
-
-    const propertyArray = Object.keys(this);
-    for (let index = 0; index < propertyArray.length; index += 1) {
-      propertyArray[index] = null;
-      delete propertyArray[index];
-    }
   }
 
-  decide(sphereMesh) {
+  /**
+   * Decides enemy
+   * @param sphereMesh
+   * @returns
+   */
+  decide(sphereMesh = BABYLON.Mesh.prototype) {
     const decide = { up: true, left: true, right: true, down: true };
     if (sphereMesh.position.z <= -45) {
       decide.down = false;

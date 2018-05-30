@@ -1,4 +1,4 @@
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
 
 const life = 500; // How long the enemies live in milliseconds
 

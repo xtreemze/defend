@@ -3,14 +3,12 @@
     "outDir": "./dist/",
     "sourceMap": true,
     // "noImplicitAny": true,
-    "module": "commonjs",
+    "module": "es6",
     "target": "es6",
-    "allowJs": true,
+    // "allowJs": true,
     "removeComments": true,
-    "alwaysStrict": true,
     "declaration": true,
-    "pretty": true,
-    "strict": true
+    "pretty": true
   },
   "include": ["src"],
   "exclude": ["node_modules"]

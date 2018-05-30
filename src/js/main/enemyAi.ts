@@ -1,4 +1,4 @@
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
 import randomNumberRange from "./randomNumberRange";
 
 const distance = 10; // 1 cube distance = 10m
@@ -7,14 +7,14 @@ const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
 /**
- * Find Enemy Vector
+ * Enemy Find Vector
  *
  * @param {any} [enemy=BABYLON.MeshBuilder.CreateBox.prototype]
  * @param {string} [direction=""]
  */
 function vector(
-  enemy = BABYLON.MeshBuilder.CreateBox.prototype,
-  direction = ""
+  enemy: any = BABYLON.MeshBuilder.CreateBox.prototype,
+  direction: string = ""
 ) {
   switch (direction) {
     case "down":
@@ -36,7 +36,7 @@ function vector(
 }
 
 /**
- * Move Enemy
+ * Move Enemy with AI
  *
  * @param {any} [enemy={
  *     physicsImpostor: {},
@@ -47,13 +47,13 @@ function vector(
  * @param {string} [direction=""]
  */
 function move(
-  enemy = {
+  enemy: any = {
     physicsImpostor: {},
     length: 0,
     material: BABYLON.Material,
     hitPoints: 0
   },
-  direction = ""
+  direction: string = ""
 ) {
   let delay = 0;
 
@@ -65,27 +65,15 @@ function move(
   }
 }
 
-/**
- * Orient Enemy
- *
- * @param {any} [enemy={
- *     physicsImpostor: {},
- *     length: 0,
- *     material: BABYLON.Material,
- *     hitPoints: 0
- *   }]
- * @param {boolean} [decision={ up: true, left: true, right: true, down: true }]
- * @param {number} [result=1]
- */
 function orient(
-  enemy = {
+  enemy: any = {
     physicsImpostor: {},
     length: 0,
     material: BABYLON.Material,
     hitPoints: 0
   },
   decision = { up: true, left: true, right: true, down: true },
-  result = 1
+  result: number = 1
 ) {
   switch (result) {
     case 1:
@@ -138,24 +126,12 @@ function orient(
   }
 }
 /**
- * Enemy AI
- *
- * @export
- * @param {any} [enemy={
- *     physicsImpostor: {},
- *     length: 0,
- *     material: BABYLON.Material,
- *     hitPoints: 0
- *   }]
- * @param {boolean} [decision={ up: true, left: true, right: true, down: true }]
+ * Enemys ai
+ * @param enemy
+ * @param [decision]
  */
 export default function enemyAi(
-  enemy = {
-    physicsImpostor: {},
-    length: 0,
-    material: BABYLON.Material,
-    hitPoints: 0
-  },
+  enemy = BABYLON.Mesh.prototype,
   decision = { up: true, left: true, right: true, down: true }
 ) {
   const result = randomNumberRange(1, 4);

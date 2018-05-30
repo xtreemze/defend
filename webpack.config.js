@@ -18,11 +18,14 @@ module.exports = function e() {
         }
       }
     },
-    devtool: "eval",
+    devtool: "eval-source-map",
     output: {
       path: `${__dirname}/dist`,
       filename: "./js/[name].js",
       chunkFilename: "./js/[id].js"
+    },
+    resolve: {
+      extensions: [".tsx", ".ts", ".js"]
     },
     cache: true,
     devServer: { contentBase: "./dist", compress: true, hot: true },
@@ -127,26 +130,22 @@ module.exports = function e() {
           }
         },
         {
-          test: /\.tsx?$/,
+          test: /\.(ts|tsx)?$/,
           use: "ts-loader",
-          exclude: /node_modules/,
-          include: `${__dirname}/src`
-        },
-
-        {
-          test: /\.(gif|png|jpe?g|svg)$/i,
-          include: `${__dirname}/src`,
-          loaders: [
-            "file-loader?name=./assets/[name].[ext]"
-            // {
-            //   loader: "image-webpack-loader"
-            // }
-          ]
+          exclude: /node_modules/
+          // include: `${__dirname}/src`
         }
+        // {
+        //   test: /\.(gif|png|jpe?g|svg)$/i,
+        //   include: `${__dirname}/src`,
+        //   loaders: [
+        //     "file-loader?name=./assets/[name].[ext]"
+        //     // {
+        //     //   loader: "image-webpack-loader"
+        //     // }
+        //   ]
+        // }
       ]
-    },
-    resolve: {
-      extensions: [".tsx", ".ts", ".js"]
     },
     plugins: [
       new HtmlWebpackPlugin({
