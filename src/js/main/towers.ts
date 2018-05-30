@@ -86,9 +86,16 @@ class Tower {
     levelTop = ""
   ) {
     const rotateDelay = 200;
-    this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
-    // setInterval(() => {
-    // }, rotateDelay);
+    // this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
+    setInterval(() => {
+      this.rotateTurret(
+        scene,
+        scene.getMeshesByTags("enemy"),
+        rotateDelay,
+        tower,
+        levelTop
+      );
+    }, rotateDelay);
   }
 
   /**
@@ -137,23 +144,32 @@ class Tower {
     levelTop = ""
   ) {
     let enemyArray = scene.getMeshesByTags("enemy");
-    setInterval(() => {
-      enemyArray = scene.getMeshesByTags("enemy");
-    }, rotateDelay);
 
     tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
-    let lookTarget = scene.getMeshByID("ground");
+    let lookTarget = enemyArray[0];
     let lookTargetPos = lookTarget.position.clone();
+
+    // let lookTarget = scene.getMeshByID("ground");
+    // let lookTargetPos = lookTarget.position.clone();
     let orgQuat = tower[levelTop].rotationQuaternion.clone();
     tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
     let lookQuat = tower[levelTop].rotationQuaternion.clone();
     let percent = 0;
-    let percentAdd = 1 / 200;
+    let percentAdd = 100;
+
+    setInterval(() => {
+      enemyArray = scene.getMeshesByTags("enemy");
+      if (enemyArray !== undefined && enemyArray.length > 0) {
+        lookTarget = enemyArray[0];
+        lookTargetPos = lookTarget.position.clone();
+        fire(scene, tower[levelTop], enemyArray);
+      }
+    }, rotateDelay);
 
     scene.registerBeforeRender(() => {
       if (enemyArray.length > 0) {
-        if (lookTarget === undefined) {
-          lookTarget = enemyArray[0];
+        if (lookTarget === null) {
+          // lookTarget = enemyArray[0];
 
           lookTargetPos = lookTarget.position.clone();
 
@@ -165,9 +181,9 @@ class Tower {
         }
         if (
           // Reset the rotation values when the target has moved
-          lookTarget !== undefined &&
+
           BABYLON.Vector3.Distance(lookTargetPos, lookTarget.position) >
-            BABYLON.Epsilon
+          BABYLON.Epsilon
         ) {
           orgQuat = tower[levelTop].rotationQuaternion.clone();
           tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);

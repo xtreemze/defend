@@ -34,8 +34,8 @@ const createScene = function createScene() {
   // optimizer.start();
 
   map1(scene, canvas);
-  towers(scene);
   enemies(scene);
+  towers(scene);
 
   return scene;
 };
