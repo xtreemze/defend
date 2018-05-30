@@ -24,7 +24,7 @@ class Projectile {
       {
         physicsImpostor: {},
         length: 0,
-        material: BABYLON.material,
+        material: BABYLON.Material,
         hitPoints: 0
       }
     ]
@@ -52,7 +52,7 @@ class Projectile {
       {
         physicsImpostor: {},
         length: 0,
-        material: BABYLON.material,
+        material: BABYLON.Material,
         hitPoints: 0
       }
     ],
@@ -98,14 +98,7 @@ class Projectile {
    */
   intersectPhys(
     scene = BABYLON.Scene.prototype,
-    enemies = [
-      {
-        physicsImpostor: {},
-        length: 0,
-        material: BABYLON.material,
-        hitPoints: 0
-      }
-    ],
+    enemies = BABYLON.MeshBuilder.CreateBox.prototype,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
     // Enemies ONLY
@@ -176,7 +169,7 @@ export default function fire(
     {
       physicsImpostor: {},
       length: 0,
-      material: BABYLON.material,
+      material: BABYLON.Material,
       hitPoints: 0
     }
   ]

@@ -9,13 +9,7 @@ const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
 function vector(
-  enemy = {
-    physicsImpostor: {},
-    length: 0,
-    material: BABYLON.Material,
-    hitPoints: 0,
-    translate: function translate() {}
-  },
+  enemy = BABYLON.MeshBuilder.CreateBox.prototype,
   direction = ""
 ) {
   switch (direction) {
