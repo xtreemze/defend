@@ -149,17 +149,21 @@ class Enemy {
   }
 }
 
+/**
+ * Enemy generator
+ * @param [scene]
+ * @param [quantity]
+ */
 function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
-  new Enemy(randomNumberRange(1, 3), positionGenerator(), scene);
-  for (let index = 2; index < quantity; index += 1) {
-    new Enemy(randomNumberRange(1, 3), positionGenerator(), scene);
+  for (let index = 0; index < quantity; index += 1) {
+    new Enemy(randomNumberRange(2, 3), positionGenerator(), scene);
   }
 }
 
 export default function enemies(scene = BABYLON.Scene.prototype) {
-  enemyGenerator(scene, 2);
+  enemyGenerator(scene, 5);
 
   setInterval(() => {
-    enemyGenerator(scene, 2);
-  }, 1000);
+    enemyGenerator(scene, 1);
+  }, 5000);
 }
