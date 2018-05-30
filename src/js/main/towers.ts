@@ -89,17 +89,20 @@ class Tower {
     // this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
 
     setInterval(() => {
-      const enemyArray = scene.getMeshesByID("enemy");
+      const enemyArray = scene.getMeshesByTags("enemy");
       const enemyDistances = [];
+
       for (let index = 0; index < enemyArray.length; index++) {
         const enemy = enemyArray[index];
-        enemyDistances.push(
-          BABYLON.Vector3.Distance(tower.position, enemy.position)
-        );
+        enemyDistances.push([
+          BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position),
+          [enemy]
+        ]);
       }
+
       const sortedDistances = enemyDistances.sort();
 
-      this.rotateTurret(scene, sortedDistances, rotateDelay, tower, levelTop);
+      this.rotateTurret(scene, sortedDistances[0][1], rotateDelay, tower, levelTop);
     }, rotateDelay);
   }
 

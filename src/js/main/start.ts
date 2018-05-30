@@ -27,7 +27,7 @@ const createScene = function createScene() {
     // new BABYLON.CannonJSPlugin()
   );
 
-  scene.debugLayer.show({ popup: true, initialTab: 2 });
+  // scene.debugLayer.show({ popup: true, initialTab: 2 });
   // const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
   // const optimizer = new BABYLON.SceneOptimizer(scene, options);
 
