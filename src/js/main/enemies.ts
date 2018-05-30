@@ -43,13 +43,13 @@ class Enemy {
     BABYLON.Tags.AddTagsTo(sphereMesh, "enemy");
 
     const loopTimer = setInterval(() => {
-      this.checkHitPoints(scene, sphereMesh, loopTimer);
       enemyAi(sphereMesh, this.decide(sphereMesh));
-    }, 300);
+      this.checkHitPoints(scene, sphereMesh, loopTimer);
+    }, 500);
   }
 
   /**
-   * Checks hit points
+   * Checks hit points and height. Destroys items when hitpoints and height conditions are met
    * @param [scene]
    * @param sphereMesh
    * @param [loopTimer]
@@ -59,7 +59,7 @@ class Enemy {
     sphereMesh: any,
     loopTimer: any = {}
   ) {
-    if (sphereMesh.hitPoints <= 0) {
+    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < 5) {
       this.destroy(sphereMesh, loopTimer);
     } else if (
       sphereMesh.hitPoints < 50 &&
@@ -110,9 +110,11 @@ class Enemy {
     },
     loopTimer
   ) {
-    sphereMesh.hitPoints = 0;
     clearInterval(loopTimer);
-    sphereMesh.dispose();
+    sphereMesh.hitPoints = 0;
+    setTimeout(() => {
+      sphereMesh.dispose();
+    }, 1);
   }
 
   /**

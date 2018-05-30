@@ -134,9 +134,12 @@ class Projectile {
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
-    const forwardLocal = new BABYLON.Vector3(0, 0, -180);
+    const forwardLocal = new BABYLON.Vector3(0, 0, -1200);
     const speed = originMesh.getDirection(forwardLocal);
-    projectile.physicsImpostor.setLinearVelocity(speed);
+    projectile.physicsImpostor.applyImpulse(
+      speed,
+      projectile.getAbsolutePosition()
+    );
   }
 
   destroy(projectile = BABYLON.MeshBuilder.CreateBox.prototype) {

@@ -100,7 +100,7 @@ class Tower {
         tower[levelTop].lookAt(
           new BABYLON.Vector3(
             enemyArray[0].position.x,
-            enemyArray[0].position.y,
+            tower[levelTop].position.y,
             enemyArray[0].position.z
           )
         );
