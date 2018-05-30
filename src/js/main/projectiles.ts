@@ -34,9 +34,9 @@ class Projectile {
     const projectile = BABYLON.MeshBuilder.CreateBox(
       name,
       {
-        size: 2,
-        height: 1.5,
-        width: 1.5
+        size: 1.5,
+        height: 1,
+        width: 1
       },
       scene
     );
@@ -44,6 +44,14 @@ class Projectile {
     this.startLife(scene, originMesh, level, enemies, projectile);
   }
 
+  /**
+   * Starts life
+   * @param [scene]
+   * @param [originMesh]
+   * @param [level]
+   * @param [enemies]
+   * @param [projectile]
+   */
   startLife(
     scene = BABYLON.Scene.prototype,
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
@@ -110,10 +118,10 @@ class Projectile {
         () => {
           enemy.material = scene.getMaterialByID("hitMaterial");
           setTimeout(() => {
+            enemy.hitPoints -= projectile.hitPoints;
+            this.destroy(projectile);
             enemy.material = scene.getMaterialByID("enemyMaterial");
-          }, 60);
-          enemy.hitPoints -= projectile.hitPoints;
-          this.destroy(projectile);
+          }, 40);
         }
       );
     }
@@ -142,6 +150,10 @@ class Projectile {
     );
   }
 
+  /**
+   * Destroys projectile
+   * @param [projectile]
+   */
   destroy(projectile = BABYLON.MeshBuilder.CreateBox.prototype) {
     projectile.hitPoints = 0;
     setTimeout(() => {

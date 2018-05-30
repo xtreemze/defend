@@ -17,7 +17,7 @@ class Enemy {
   ) {
     const name = `enemy${level}`;
 
-    const diameter = 2 + level * 2;
+    const diameter = level * 1.5;
 
     const sphereMesh = BABYLON.MeshBuilder.CreateSphere(
       name,
@@ -83,7 +83,7 @@ class Enemy {
   ) {
     sphereMesh.position = new BABYLON.Vector3(
       position.x,
-      diameter / 2,
+      (diameter / 2) * 8,
       position.z
     );
     sphereMesh.hitPoints = level * 100;
@@ -93,12 +93,17 @@ class Enemy {
       sphereMesh,
       BABYLON.PhysicsImpostor.SphereImpostor,
       // BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: 200, restitution: 0.1 },
+      { mass: 2000, restitution: 0.4 },
       scene
     );
 
     const loopTimer = setInterval(() => {
-      enemyAi(sphereMesh, this.decide(sphereMesh));
+      if (
+        sphereMesh.position.y > diameter / 2 &&
+        sphereMesh.position.y < diameter
+      ) {
+        enemyAi(sphereMesh, this.decide(sphereMesh));
+      }
       this.checkHitPoints(scene, sphereMesh, loopTimer);
     }, 500);
   }

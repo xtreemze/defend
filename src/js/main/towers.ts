@@ -5,6 +5,12 @@ import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 
+/**
+ * Creates an instance of tower.
+ * @param [level]
+ * @param [position]
+ * @param [scene]
+ */
 class Tower {
   constructor(
     level = 1,
@@ -42,8 +48,8 @@ class Tower {
         tower[levelTop] = BABYLON.MeshBuilder.CreateBox(
           levelTop,
           {
-            size: 6,
-            height: 2.5,
+            size: 2,
+            height: 2,
             width: 4
           },
           scene
@@ -53,12 +59,12 @@ class Tower {
           3,
           position.z
         );
-        tower[levelTop].physicsImpostor = new BABYLON.PhysicsImpostor(
-          tower[levelTop],
-          BABYLON.PhysicsImpostor.BoxImpostor,
-          { mass: 0, restitution: 0.8 },
-          scene
-        );
+        // tower[levelTop].physicsImpostor = new BABYLON.PhysicsImpostor(
+        //   tower[levelTop],
+        //   BABYLON.PhysicsImpostor.BoxImpostor,
+        //   { mass: 0, restitution: 0.8 },
+        //   scene
+        // );
         tower[levelTop].material = scene.getMaterialByID("towerMaterial");
 
         this.enemyWatch(scene, tower, levelTop);
