@@ -1,5 +1,3 @@
-// @ts-check
-
 import * as BABYLON from "babylonjs";
 // @ts-ignore
 export default function map1(scene = BABYLON.Scene.prototype, canvas) {

@@ -1,5 +1,3 @@
-// @ts-check
-
 import * as BABYLON from "babylonjs";
 import randomNumberRange from "./randomNumberRange";
 

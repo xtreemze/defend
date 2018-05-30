@@ -1,4 +1,3 @@
-// @ts-check
 import "babylonjs-inspector";
 import "./../../vendor/pep";
 
