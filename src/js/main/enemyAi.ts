@@ -8,6 +8,12 @@ const time = 300; // 3 seconds
 const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
+/**
+ * Find Enemy Vector
+ *
+ * @param {any} [enemy=BABYLON.MeshBuilder.CreateBox.prototype]
+ * @param {string} [direction=""]
+ */
 function vector(
   enemy = BABYLON.MeshBuilder.CreateBox.prototype,
   direction = ""
@@ -31,6 +37,17 @@ function vector(
   }
 }
 
+/**
+ * Move Enemy
+ *
+ * @param {any} [enemy={
+ *     physicsImpostor: {},
+ *     length: 0,
+ *     material: BABYLON.Material,
+ *     hitPoints: 0
+ *   }]
+ * @param {string} [direction=""]
+ */
 function move(
   enemy = {
     physicsImpostor: {},
@@ -50,6 +67,18 @@ function move(
   }
 }
 
+/**
+ * Orient Enemy
+ *
+ * @param {any} [enemy={
+ *     physicsImpostor: {},
+ *     length: 0,
+ *     material: BABYLON.Material,
+ *     hitPoints: 0
+ *   }]
+ * @param {boolean} [decision={ up: true, left: true, right: true, down: true }]
+ * @param {number} [result=1]
+ */
 function orient(
   enemy = {
     physicsImpostor: {},
@@ -110,7 +139,18 @@ function orient(
       break;
   }
 }
-
+/**
+ * Enemy AI
+ *
+ * @export
+ * @param {any} [enemy={
+ *     physicsImpostor: {},
+ *     length: 0,
+ *     material: BABYLON.Material,
+ *     hitPoints: 0
+ *   }]
+ * @param {boolean} [decision={ up: true, left: true, right: true, down: true }]
+ */
 export default function enemyAi(
   enemy = {
     physicsImpostor: {},
