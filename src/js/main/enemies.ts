@@ -17,7 +17,7 @@ class Enemy {
   ) {
     const name = `enemy${level}`;
 
-    const diameter = 4 + level;
+    const diameter = 2 + level * 2;
 
     const sphereMesh = BABYLON.MeshBuilder.CreateSphere(
       name,
@@ -41,11 +41,6 @@ class Enemy {
     this.revive(scene, position, sphereMesh, diameter, level);
 
     BABYLON.Tags.AddTagsTo(sphereMesh, "enemy");
-
-    const loopTimer = setInterval(() => {
-      enemyAi(sphereMesh, this.decide(sphereMesh));
-      this.checkHitPoints(scene, sphereMesh, loopTimer);
-    }, 500);
   }
 
   /**
@@ -57,9 +52,9 @@ class Enemy {
   checkHitPoints(
     scene: any = BABYLON.Scene.prototype,
     sphereMesh: any,
-    loopTimer: any = {}
+    loopTimer: any
   ) {
-    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < 5) {
+    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < -3) {
       this.destroy(sphereMesh, loopTimer);
     } else if (
       sphereMesh.hitPoints < 50 &&
@@ -101,6 +96,11 @@ class Enemy {
       { mass: 200, restitution: 0.1 },
       scene
     );
+
+    const loopTimer = setInterval(() => {
+      enemyAi(sphereMesh, this.decide(sphereMesh));
+      this.checkHitPoints(scene, sphereMesh, loopTimer);
+    }, 500);
   }
 
   destroy(
@@ -145,7 +145,7 @@ class Enemy {
 }
 
 function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
-  new Enemy(1, positionGenerator(), scene);
+  new Enemy(randomNumberRange(1, 3), positionGenerator(), scene);
   for (let index = 2; index < quantity; index += 1) {
     new Enemy(randomNumberRange(1, 3), positionGenerator(), scene);
   }
