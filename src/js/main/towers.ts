@@ -94,15 +94,29 @@ class Tower {
 
       for (let index = 0; index < enemyArray.length; index++) {
         const enemy = enemyArray[index];
-        enemyDistances.push([
-          BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position),
-          [enemy]
-        ]);
+        if (
+          enemy.position.y < 4 &&
+          enemy.position.y > 1.5 &&
+          //@ts-ignore
+          enemy.hitPoints > 50
+        ) {
+          enemyDistances.push([
+            BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position),
+            [enemy]
+          ]);
+        }
       }
 
       const sortedDistances = enemyDistances.sort();
-
-      this.rotateTurret(scene, sortedDistances[0][1], rotateDelay, tower, levelTop);
+      if (sortedDistances.length > 0) {
+        this.rotateTurret(
+          scene,
+          sortedDistances[0][1],
+          rotateDelay,
+          tower,
+          levelTop
+        );
+      }
     }, rotateDelay);
   }
 
@@ -223,11 +237,36 @@ class Tower {
  * @param [quantity]
  */
 function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
-  new Tower(3, positionGenerator(), scene);
-  for (let index = 2; index < quantity; index += 1) {
-    new Tower(randomNumberRange(1, 3), positionGenerator(), scene);
+  const occupiedPositions = [];
+
+  let newLocation = positionGenerator();
+
+  while (
+    occupiedPositions.find(existingLocation => {
+      return existingLocation === newLocation;
+    }) !== undefined
+  ) {
+    newLocation = positionGenerator();
   }
+  occupiedPositions.unshift(newLocation);
+
+  new Tower(3, occupiedPositions[0], scene);
+
+  for (let index = 2; index < quantity; index += 1) {
+    let newLocation = positionGenerator();
+
+    while (
+      occupiedPositions.find(existingLocation => {
+        return existingLocation === newLocation;
+      }) !== undefined
+    ) {
+      newLocation = positionGenerator();
+    }
+    occupiedPositions.unshift(newLocation);
+    new Tower(randomNumberRange(1, 3), occupiedPositions[0], scene);
+  }
+  console.log(occupiedPositions);
 }
 export default function towers(scene = BABYLON.Scene.prototype) {
-  towerGenerator(scene, randomNumberRange(4, 25));
+  towerGenerator(scene, randomNumberRange(6, 25));
 }

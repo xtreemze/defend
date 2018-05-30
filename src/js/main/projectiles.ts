@@ -117,11 +117,11 @@ class Projectile {
         enemy.physicsImpostor,
         () => {
           enemy.material = scene.getMaterialByID("hitMaterial");
+          enemy.hitPoints -= projectile.hitPoints;
+          this.destroy(projectile);
           setTimeout(() => {
-            enemy.hitPoints -= projectile.hitPoints;
-            this.destroy(projectile);
             enemy.material = scene.getMaterialByID("enemyMaterial");
-          }, 40);
+          }, 35);
         }
       );
     }
