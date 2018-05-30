@@ -34,7 +34,7 @@ class Enemy {
     }, 300);
   }
 
-  checkHitPoints(scene: any, sphereMesh: any, loopTimer: any) {
+  checkHitPoints(scene, sphereMesh, loopTimer) {
     if (sphereMesh.hitPoints <= 0) {
       this.destroy(sphereMesh, loopTimer);
     } else if (
@@ -50,7 +50,7 @@ class Enemy {
   revive(
     scene = BABYLON.Scene.prototype,
     position = { x: 0, z: 0 },
-    sphereMesh: any,
+    sphereMesh,
     diameter = 0,
     level = 1
   ) {
@@ -69,7 +69,7 @@ class Enemy {
       scene
     );
   }
-  destroy(sphereMesh: any, loopTimer: any) {
+  destroy(sphereMesh, loopTimer) {
     sphereMesh.hitPoints = 0;
     clearInterval(loopTimer);
     sphereMesh.dispose();
@@ -81,7 +81,7 @@ class Enemy {
     }
   }
 
-  decide(sphereMesh: BABYLON.Mesh) {
+  decide(sphereMesh) {
     const decide = { up: true, left: true, right: true, down: true };
     if (sphereMesh.position.z <= -45) {
       decide.down = false;

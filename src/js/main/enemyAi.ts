@@ -8,7 +8,16 @@ const time = 300; // 3 seconds
 const iterationDelay = 30; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
-function vector(enemy = BABYLON.Mesh.prototype, direction = "") {
+function vector(
+  enemy = {
+    physicsImpostor: {},
+    length: 0,
+    material: BABYLON.Material,
+    hitPoints: 0,
+    translate: function translate() {}
+  },
+  direction = ""
+) {
   switch (direction) {
     case "down":
       enemy.translate(BABYLON.Axis.Z, speed * -1, BABYLON.Space.LOCAL);
@@ -28,7 +37,15 @@ function vector(enemy = BABYLON.Mesh.prototype, direction = "") {
   }
 }
 
-function move(enemy = BABYLON.Mesh.prototype, direction = "") {
+function move(
+  enemy = {
+    physicsImpostor: {},
+    length: 0,
+    material: BABYLON.Material,
+    hitPoints: 0
+  },
+  direction = ""
+) {
   let delay = 0;
 
   for (let iterations = 0; iterations < iterationDelay; iterations += 1) {
@@ -39,7 +56,16 @@ function move(enemy = BABYLON.Mesh.prototype, direction = "") {
   }
 }
 
-function orient(enemy = BABYLON.Mesh.prototype, decision: any, result = 1) {
+function orient(
+  enemy = {
+    physicsImpostor: {},
+    length: 0,
+    material: BABYLON.Material,
+    hitPoints: 0
+  },
+  decision = { up: true, left: true, right: true, down: true },
+  result = 1
+) {
   switch (result) {
     case 1:
       if (decision.down) {
@@ -91,7 +117,15 @@ function orient(enemy = BABYLON.Mesh.prototype, decision: any, result = 1) {
   }
 }
 
-export default function enemyAi(enemy: any, decision: object) {
+export default function enemyAi(
+  enemy = {
+    physicsImpostor: {},
+    length: 0,
+    material: BABYLON.Material,
+    hitPoints: 0
+  },
+  decision = { up: true, left: true, right: true, down: true }
+) {
   const result = randomNumberRange(1, 4);
 
   orient(enemy, decision, result);

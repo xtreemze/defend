@@ -1,15 +1,33 @@
-// @ts-check
-
 import * as BABYLON from "babylonjs";
 
-const life = 500;
+const life = 500; // How long the enemies live in milliseconds
 
+/**
+ * Creates an instance of Projectile.
+ * @param {number} [level=1]
+ * @param {any} [originMesh=BABYLON.Mesh]
+ * @param {any} [scene=BABYLON.Scene.prototype]
+ * @param {any} [enemy={
+ *       physicsImpostor: {},
+ *       length: 0,
+ *       material: BABYLON.material,
+ *       hitPoints: 0
+ *     }]
+ * @memberof Projectile
+ */
 class Projectile {
   constructor(
     level = 1,
     originMesh = BABYLON.Mesh,
     scene = BABYLON.Scene.prototype,
-    enemies: any
+    enemies = [
+      {
+        physicsImpostor: {},
+        length: 0,
+        material: BABYLON.material,
+        hitPoints: 0
+      }
+    ]
   ) {
     const name = `projectile${level}`;
 
@@ -25,11 +43,19 @@ class Projectile {
 
     this.startLife(scene, originMesh, level, enemies, projectile);
   }
+
   startLife(
     scene = BABYLON.Scene.prototype,
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
     level = 1,
-    enemies: any,
+    enemies = [
+      {
+        physicsImpostor: {},
+        length: 0,
+        material: BABYLON.material,
+        hitPoints: 0
+      }
+    ],
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
     projectile.position.copyFrom(originMesh.position);
@@ -52,17 +78,34 @@ class Projectile {
 
     setTimeout(() => {
       projectile.dispose();
-      const propertyArray = Object.keys(this);
-      for (let index = 0; index < propertyArray.length; index += 1) {
-        propertyArray[index] = null;
-        delete propertyArray[index];
-      }
     }, life);
   }
 
+  /**
+   * Intersect with Physics
+   *
+   * @param {any} [scene=BABYLON.Scene.prototype]
+   * @param {any} [enemies=[
+   *       {
+   *         physicsImpostor: {},
+   *         length: 0,
+   *         material: BABYLON.material,
+   *         hitPoints: 0
+   *       }
+   *     ]]
+   * @param {any} [projectile=BABYLON.MeshBuilder.CreateBox.prototype]
+   * @memberof Projectile
+   */
   intersectPhys(
     scene = BABYLON.Scene.prototype,
-    enemies: any,
+    enemies = [
+      {
+        physicsImpostor: {},
+        length: 0,
+        material: BABYLON.material,
+        hitPoints: 0
+      }
+    ],
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
     // Enemies ONLY
@@ -83,9 +126,18 @@ class Projectile {
     }
   }
 
+  /**
+   * Impulse with Physics
+   *
+   * @param {any} [scene=BABYLON.Scene.prototype]
+   * @param {any} enemies
+   * @param {any} [originMesh=BABYLON.MeshBuilder.CreateBox.prototype]
+   * @param {any} [projectile=BABYLON.MeshBuilder.CreateBox.prototype]
+   * @memberof Projectile
+   */
   impulsePhys(
     scene = BABYLON.Scene.prototype,
-    enemies: any,
+    enemies = { length: 0 },
     originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
     projectile = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
@@ -99,19 +151,35 @@ class Projectile {
     setTimeout(() => {
       projectile.dispose();
     }, 1);
-
-    const propertyArray = Object.keys(this);
-    for (let index = 0; index < propertyArray.length; index += 1) {
-      propertyArray[index] = null;
-      delete propertyArray[index];
-    }
   }
 }
 
+/**
+ * Fire Projectiles
+ *
+ * @export
+ * @param {any} [scene=BABYLON.Scene.prototype]
+ * @param {any} [originMesh=BABYLON.MeshBuilder.CreateBox.prototype]
+ * @param {any} [enemies=[
+ *     {
+ *       physicsImpostor: {},
+ *       length: 0,
+ *       material: BABYLON.material,
+ *       hitPoints: 0
+ *     }
+ *   ]]
+ */
 export default function fire(
   scene = BABYLON.Scene.prototype,
   originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
-  enemies: any
+  enemies = [
+    {
+      physicsImpostor: {},
+      length: 0,
+      material: BABYLON.material,
+      hitPoints: 0
+    }
+  ]
 ) {
   new Projectile(1, originMesh, scene, enemies);
 }
