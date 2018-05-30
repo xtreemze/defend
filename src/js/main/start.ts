@@ -1,7 +1,8 @@
-import "babylonjs-inspector";
+// import "babylonjs-inspector";
 import "./../../vendor/pep";
 
-import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
+// import * as BABYLON from "./../../../node_modules/babylonjs/es6";
+import * as BABYLON from "babylonjs";
 
 import enemies from "./enemies";
 import towers from "./towers";
@@ -20,12 +21,17 @@ const engine = new BABYLON.Engine(canvas, true, {
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {
   const scene = new BABYLON.Scene(engine);
+  scene.enablePhysics();
+  // scene.enablePhysics(
+  //   new BABYLON.Vector3(0, -9.81, 0),
+  //   new BABYLON.CannonJSPlugin()
+  // );
+
   scene.debugLayer.show({ popup: true, initialTab: 2 });
   // const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
   // const optimizer = new BABYLON.SceneOptimizer(scene, options);
 
   // optimizer.start();
-  scene.enablePhysics();
 
   map1(scene, canvas);
   towers(scene);
@@ -44,5 +50,5 @@ window.addEventListener("resize", () => {
   engine.resize();
 });
 
-// @ts-ignore
+//@ts-ignore
 window.scene = scene;

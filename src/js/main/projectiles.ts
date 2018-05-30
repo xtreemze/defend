@@ -1,4 +1,4 @@
-import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
+import * as BABYLON from "babylonjs";
 
 const life = 500; // How long the enemies live in milliseconds
 
@@ -69,7 +69,7 @@ class Projectile {
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
       projectile,
       BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: 50, restitution: 0.7 },
+      { mass: 10, restitution: 0.5 },
       scene
     );
 

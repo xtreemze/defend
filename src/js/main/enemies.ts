@@ -1,4 +1,4 @@
-import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
+import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
@@ -27,6 +27,16 @@ class Enemy {
       },
       scene
     );
+
+    // const sphereMesh = BABYLON.MeshBuilder.CreateBox(
+    //   name,
+    //   {
+    //     size: diameter
+    //     // height: 2.5,
+    //     // width: 4
+    //   },
+    //   scene
+    // );
 
     this.revive(scene, position, sphereMesh, diameter, level);
 
@@ -87,7 +97,8 @@ class Enemy {
     sphereMesh.physicsImpostor = new BABYLON.PhysicsImpostor(
       sphereMesh,
       BABYLON.PhysicsImpostor.SphereImpostor,
-      { mass: 0, restitution: 0.8 },
+      // BABYLON.PhysicsImpostor.BoxImpostor,
+      { mass: 200, restitution: 0.1 },
       scene
     );
   }

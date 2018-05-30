@@ -1,18 +1,23 @@
-import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
+import * as BABYLON from "babylonjs";
 import randomNumberRange from "./randomNumberRange";
 
-const distance = 10; // 1 cube distance = 10m
+// const distance = 10; // 1 cube distance = 10m
+// const time = 300; // 3 seconds
+// const iterationDelay = 30; // animation resolution keep below 20
+// const speed = distance / iterationDelay;
+
+const distance = 100; // 1 cube distance = 10m
 const time = 300; // 3 seconds
-const iterationDelay = 30; // animation resolution keep below 20
+const iterationDelay = 4; // animation resolution keep below 20
 const speed = distance / iterationDelay;
 
 /**
- * Enemy Find Vector
+ * Enemy Find Vector No Physics
  *
  * @param {any} [enemy=BABYLON.MeshBuilder.CreateBox.prototype]
  * @param {string} [direction=""]
  */
-function vector(
+function vectorNoPhysics(
   enemy: any = BABYLON.MeshBuilder.CreateBox.prototype,
   direction: string = ""
 ) {
@@ -28,6 +33,38 @@ function vector(
       break;
     case "left":
       enemy.translate(BABYLON.Axis.X, speed * -1, BABYLON.Space.LOCAL);
+      break;
+
+    default:
+      break;
+  }
+}
+/**
+ * Enemy Find Vector
+ *
+ * @param {any} [enemy=BABYLON.MeshBuilder.CreateBox.prototype]
+ * @param {string} [direction=""]
+ */
+function vector(
+  enemy: any = BABYLON.MeshBuilder.CreateBox.prototype,
+  direction: string = ""
+) {
+  switch (direction) {
+    case "down":
+      enemy.physicsImpostor.setLinearVelocity(
+        new BABYLON.Vector3(0, 0, speed * -1)
+      ); // Z speed * -1, BABYLON.Space.LOCAL);
+      break;
+    case "right":
+      enemy.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(speed, 0, 0)); // X speed, BABYLON.Space.LOCAL);
+      break;
+    case "up":
+      enemy.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(0, 0, speed)); // Z speed, BABYLON.Space.LOCAL);
+      break;
+    case "left":
+      enemy.physicsImpostor.setLinearVelocity(
+        new BABYLON.Vector3(speed * -1, 0, 0)
+      ); // X speed * -1, BABYLON.Space.LOCAL);
       break;
 
     default:

@@ -3,13 +3,20 @@
     "outDir": "./dist/",
     "sourceMap": true,
     // "noImplicitAny": true,
-    "module": "es6",
+    "module": "commonjs",
     "target": "es6",
     // "allowJs": true,
-    "removeComments": true,
+    // "removeComments": true,
     "declaration": true,
     "pretty": true
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "types": [
+    "babylonjs",
+    "babylonjs-gui",
+    "babylonjs-materials",
+    "OIMO",
+    "CANNON"
+  ]
 }

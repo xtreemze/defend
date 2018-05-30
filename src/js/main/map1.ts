@@ -1,5 +1,5 @@
-import * as BABYLON from "./../../../node_modules/babylonjs/es6.js";
-// @ts-ignore
+import * as BABYLON from "babylonjs";
+
 export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   // Camera1
   const camera = new BABYLON.UniversalCamera(
