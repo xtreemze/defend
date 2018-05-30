@@ -265,7 +265,6 @@ function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
     occupiedPositions.unshift(newLocation);
     new Tower(randomNumberRange(1, 3), occupiedPositions[0], scene);
   }
-  console.log(occupiedPositions);
 }
 export default function towers(scene = BABYLON.Scene.prototype) {
   towerGenerator(scene, randomNumberRange(6, 25));

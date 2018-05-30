@@ -61,6 +61,9 @@ class Enemy {
       sphereMesh.material !== scene.getMaterialByID("damagedMaterial")
     ) {
       sphereMesh.material = scene.getMaterialByID("damagedMaterial");
+      sphereMesh.physicsImpostor.setLinearVelocity(
+        new BABYLON.Vector3(0, 10, 0)
+      );
     } else {
       sphereMesh.hitPoints -= 4;
     }
@@ -99,8 +102,9 @@ class Enemy {
 
     const loopTimer = setInterval(() => {
       if (
-        sphereMesh.position.y > diameter / 2 &&
-        sphereMesh.position.y < diameter
+        sphereMesh.position.y > diameter / 2.5 &&
+        sphereMesh.position.y < diameter * 1.2 &&
+        sphereMesh.hitPoints > 50
       ) {
         enemyAi(sphereMesh, this.decide(sphereMesh));
       }
@@ -128,20 +132,21 @@ class Enemy {
    * @returns
    */
   decide(sphereMesh = BABYLON.Mesh.prototype) {
+    const limit = 15;
     const decide = { up: true, left: true, right: true, down: true };
-    if (sphereMesh.position.z <= -45) {
+    if (sphereMesh.position.z <= limit * -1) {
       decide.down = false;
       decide.up = true;
     }
-    if (sphereMesh.position.z >= 45) {
+    if (sphereMesh.position.z >= limit) {
       decide.up = false;
       decide.down = true;
     }
-    if (sphereMesh.position.x >= 45) {
+    if (sphereMesh.position.x >= limit) {
       decide.right = false;
       decide.left = true;
     }
-    if (sphereMesh.position.x <= -45) {
+    if (sphereMesh.position.x <= limit * -1) {
       decide.left = false;
       decide.right = true;
     }

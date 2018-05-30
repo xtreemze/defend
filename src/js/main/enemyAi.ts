@@ -1,8 +1,8 @@
 import * as BABYLON from "babylonjs";
 import randomNumberRange from "./randomNumberRange";
 
-const distance = 8000; // 1 cube distance = 10m
-const time = 250; // 3 seconds
+const distance = 10000; // 1 cube distance = 10m
+const time = 50; // 3 seconds
 const iterationDelay = 1; // animation resolution
 const speed = distance / iterationDelay;
 

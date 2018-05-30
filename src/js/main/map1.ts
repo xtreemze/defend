@@ -48,7 +48,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   camera3.touchMoveSensibility = 200;
   camera3.touchAngularSensibility = 13000;
 
-  const camDuration = 5000;
+  const camDuration = 3000;
   setInterval(() => {
     scene.setActiveCameraByName("3/4");
     setTimeout(() => {
