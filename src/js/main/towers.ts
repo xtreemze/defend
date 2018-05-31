@@ -99,7 +99,7 @@ class Tower {
         const enemy = enemyGlobals.allEnemies[index];
         if (
           enemy.position.y < 4 &&
-          enemy.position.y > 1.5 &&
+          enemy.position.y > 1 &&
           enemy.hitPoints > enemyGlobals.deadHitPoints
         ) {
           enemyDistances.push([
@@ -135,20 +135,18 @@ class Tower {
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
+    if (enemyArray[0]) {
+      tower[levelTop].lookAt(
+        new BABYLON.Vector3(
+          enemyArray[0].position.x,
+          tower[levelTop].position.y,
+          enemyArray[0].position.z
+        )
+      );
+    }
     if (enemyArray !== undefined && enemyArray.length > 0) {
       fire(scene, tower[levelTop], enemyArray);
     }
-    scene.registerBeforeRender(() => {
-      if (enemyArray[0]) {
-        tower[levelTop].lookAt(
-          new BABYLON.Vector3(
-            enemyArray[0].position.x,
-            tower[levelTop].position.y,
-            enemyArray[0].position.z
-          )
-        );
-      }
-    });
   }
 
   /**
@@ -240,9 +238,11 @@ function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
   let newLocation = positionGenerator();
 
   while (
-    towerGlobals.occupiedSpaces.find(existingLocation => {
-      return existingLocation === [newLocation.x, newLocation.z];
-    }) !== undefined
+    towerGlobals.occupiedSpaces.find(
+      existingLocation =>
+        existingLocation[0] === newLocation.x &&
+        existingLocation[1] === newLocation.z
+    ) !== undefined
   ) {
     newLocation = positionGenerator();
   }
@@ -261,9 +261,11 @@ function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
     let newLocation = positionGenerator();
 
     while (
-      towerGlobals.occupiedSpaces.find(existingLocation => {
-        return existingLocation === [newLocation.x, newLocation.z];
-      }) !== undefined
+      towerGlobals.occupiedSpaces.find(
+        existingLocation =>
+          existingLocation[0] === newLocation.x &&
+          existingLocation[1] === newLocation.z
+      ) !== undefined
     ) {
       newLocation = positionGenerator();
     }

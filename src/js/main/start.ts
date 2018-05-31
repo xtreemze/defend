@@ -30,8 +30,8 @@ const createScene = function createScene() {
   );
 
   scene.debugLayer.show({ popup: true, initialTab: 2 });
-  // const options = BABYLON.SceneOptimizerOptions.HighDegradationAllowed();
-  // const optimizer = new BABYLON.SceneOptimizer(scene, options);
+  const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
+  const optimizer = new BABYLON.SceneOptimizer(scene, options);
 
   // optimizer.start();
 

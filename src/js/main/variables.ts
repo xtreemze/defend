@@ -1,5 +1,14 @@
 import { Color3 } from "babylonjs";
 
+const projectileGlobals = {
+  lifeTime: 800, // milliseconds
+  speed: 4000,
+  mass: 60,
+  restitution: 0.1,
+  baseHitPoints: 20,
+  livingColor: new BABYLON.Color3(1, 1, 1)
+};
+
 const towerGlobals = {
   minNumber: 6,
   maxNumber: 25,
@@ -20,9 +29,9 @@ const enemyGlobals = {
   baseHitPoints: 100,
   deadHitPoints: 30,
   originHeight: 180,
-  mass: 2000,
-  restitution: 0.2,
   speed: 10000,
+  mass: 2000,
+  restitution: 0.3,
   jumpForce: 10,
   allEnemies: [],
   occupiedSpaces: [],
@@ -32,13 +41,7 @@ const enemyGlobals = {
   deadColor: new BABYLON.Color3(0.9, 0.2, 0)
 };
 
-const projectileGlobals = {
-  lifeTime: 500, // milliseconds
-  mass: 20,
-  restitution: 0,
-  baseHitPoints: 20,
-  speed: 1200,
-  livingColor: new BABYLON.Color3(1, 1, 1)
-};
+//@ts-ignore
+window.globals = { projectileGlobals, towerGlobals, enemyGlobals };
 
-export { towerGlobals, enemyGlobals, projectileGlobals };
+export { projectileGlobals, towerGlobals, enemyGlobals };

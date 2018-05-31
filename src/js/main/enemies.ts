@@ -171,9 +171,11 @@ function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
     let newLocation = positionGenerator();
 
     while (
-      enemyGlobals.occupiedSpaces.find(existingLocation => {
-        return existingLocation === [newLocation.x, newLocation.z];
-      }) !== undefined
+      enemyGlobals.occupiedSpaces.find(
+        existingLocation =>
+          existingLocation[0] === newLocation.x &&
+          existingLocation[1] === newLocation.z
+      ) !== undefined
     ) {
       newLocation = positionGenerator();
     }

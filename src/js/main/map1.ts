@@ -88,7 +88,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(
     ground,
     BABYLON.PhysicsImpostor.BoxImpostor,
-    { mass: 0, restitution: 0.5 },
+    { mass: 0, restitution: 0.9 },
     scene
   );
 
@@ -123,4 +123,34 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   const hitMaterial = new BABYLON.StandardMaterial("hitMaterial", scene);
   hitMaterial.diffuseColor = enemyGlobals.hitColor;
   hitMaterial.freeze(); // if material is immutable
+
+  const pipeline = new BABYLON.DefaultRenderingPipeline(
+    "default", // The name of the pipeline
+    false,
+    scene, // The scene instance
+    [camera, camera2, camera3] // The list of cameras to be attached to
+  );
+
+  // Depth of Field
+  pipeline.depthOfFieldEnabled = true;
+  pipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Low;
+  pipeline.depthOfField.focusDistance = 20 * 1000; // distance of the current focus point from the camera in millimeters considering 1 scene unit is 1 meter
+  pipeline.depthOfField.focalLength = 400; // focal length of the camera in millimeters
+  pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
+
+  // Antialiasing
+  pipeline.samples = 4;
+  pipeline.fxaaEnabled = true;
+
+  // Sharpen
+  pipeline.sharpenEnabled = true;
+  pipeline.sharpen.edgeAmount = 0.4;
+  pipeline.sharpen.colorAmount = 1;
+
+  // Bloom
+  pipeline.bloomEnabled = true;
+  pipeline.bloomThreshold = 0.8;
+  pipeline.bloomWeight = 0.3;
+  pipeline.bloomKernel = 64;
+  pipeline.bloomScale = 0.5;
 }
