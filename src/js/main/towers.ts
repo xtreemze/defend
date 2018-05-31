@@ -241,29 +241,45 @@ function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
 
   while (
     towerGlobals.occupiedSpaces.find(existingLocation => {
-      return existingLocation === newLocation;
+      return existingLocation === [newLocation.x, newLocation.z];
     }) !== undefined
   ) {
     newLocation = positionGenerator();
   }
-  towerGlobals.occupiedSpaces.unshift(newLocation);
+  towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
-  new Tower(3, towerGlobals.occupiedSpaces[0], scene);
+  new Tower(
+    3,
+    {
+      x: towerGlobals.occupiedSpaces[0][0],
+      z: towerGlobals.occupiedSpaces[0][1]
+    },
+    scene
+  );
 
   for (let index = 2; index < quantity; index += 1) {
     let newLocation = positionGenerator();
 
     while (
       towerGlobals.occupiedSpaces.find(existingLocation => {
-        return existingLocation === newLocation;
+        return existingLocation === [newLocation.x, newLocation.z];
       }) !== undefined
     ) {
       newLocation = positionGenerator();
     }
-    towerGlobals.occupiedSpaces.unshift(newLocation);
-    new Tower(randomNumberRange(1, 3), towerGlobals.occupiedSpaces[0], scene);
+    towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
+
+    new Tower(
+      randomNumberRange(1, 3),
+      {
+        x: towerGlobals.occupiedSpaces[0][0],
+        z: towerGlobals.occupiedSpaces[0][1]
+      },
+      scene
+    );
   }
 }
+
 export default function towers(scene = BABYLON.Scene.prototype) {
   towerGenerator(
     scene,

@@ -76,7 +76,10 @@ class Projectile {
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
       projectile,
       BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: projectileGlobals.mass, restitution: 0.5 },
+      {
+        mass: projectileGlobals.mass,
+        restitution: projectileGlobals.restitution
+      },
       scene
     );
 

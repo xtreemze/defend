@@ -1,52 +1,64 @@
 import * as BABYLON from "babylonjs";
+import { enemyGlobals, towerGlobals, projectileGlobals } from "./variables";
 
 export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   // Camera1
-  const camera = new BABYLON.UniversalCamera(
+  const camera = new BABYLON.ArcRotateCamera(
     "overhead",
-    new BABYLON.Vector3(0, 200, 0),
+    0,
+    0,
+    200,
+    BABYLON.Vector3.Zero(),
     scene
   );
-  camera.setTarget(BABYLON.Vector3.Zero());
   camera.attachControl(canvas, false);
-  camera.fov = 1;
-  camera.inertia = 0.7;
-  camera.speed = 8;
-  camera.angularSensibility = 1200;
-  camera.touchMoveSensibility = 200;
-  camera.touchAngularSensibility = 13000;
+  // camera.fov = 1;
+  // camera.inertia = 0.7;
+  // camera.speed = 8;
 
   // Camera 2
 
-  const camera2 = new BABYLON.UniversalCamera(
+  const camera2 = new BABYLON.ArcRotateCamera(
     "3/4",
-    new BABYLON.Vector3(100, 100, 100),
+    Math.PI / 3,
+    Math.PI / 3,
+    200,
+    BABYLON.Vector3.Zero(),
     scene
   );
-  camera2.setTarget(BABYLON.Vector3.Zero());
   camera2.attachControl(canvas, false);
-  camera2.fov = 1;
-  camera2.inertia = 0.7;
-  camera2.speed = 8;
-  camera2.angularSensibility = 1200;
-  camera2.touchMoveSensibility = 200;
-  camera2.touchAngularSensibility = 13000;
+  // camera2.fov = 1;
+  // camera2.inertia = 0.7;
+  // camera2.speed = 8;
 
   // Camera 3
 
-  const camera3 = new BABYLON.UniversalCamera(
+  const camera3 = new BABYLON.ArcRotateCamera(
     "closeup",
-    new BABYLON.Vector3(25, 50, 75),
+    Math.PI / 1,
+    Math.PI / 5,
+    120,
+    BABYLON.Vector3.Zero(),
     scene
   );
-  camera3.setTarget(BABYLON.Vector3.Zero());
   camera3.attachControl(canvas, false);
-  camera3.fov = 1;
-  camera3.inertia = 0.7;
-  camera3.speed = 8;
-  camera3.angularSensibility = 1200;
-  camera3.touchMoveSensibility = 200;
-  camera3.touchAngularSensibility = 13000;
+  // camera3.fov = 1;
+  // camera3.inertia = 0.7;
+  // camera3.speed = 8;
+
+  const rotateCamera = camera => {
+    scene.registerBeforeRender(() => {
+      camera.alpha += Math.PI / (360 * 9);
+      if (camera.alpha <= Math.PI) {
+      } else {
+        // camera.alpha = Math.PI / 360;
+      }
+    });
+  };
+
+  rotateCamera(camera);
+  rotateCamera(camera2);
+  rotateCamera(camera3);
 
   const camDuration = 3000;
   setInterval(() => {
@@ -87,28 +99,28 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   groundMaterial.freeze(); // if material is immutable
 
   const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
-  towerMaterial.diffuseColor = new BABYLON.Color3(0, 1, 0.85);
+  towerMaterial.diffuseColor = towerGlobals.livingColor;
   towerMaterial.freeze(); // if material is immutable
 
   const projectileMaterial = new BABYLON.StandardMaterial(
     "projectileMaterial",
     scene
   );
-  projectileMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1);
+  projectileMaterial.diffuseColor = projectileGlobals.livingColor;
   projectileMaterial.freeze(); // if material is immutable
 
   const enemyMaterial = new BABYLON.StandardMaterial("enemyMaterial", scene);
-  enemyMaterial.diffuseColor = new BABYLON.Color3(0, 0.7, 1);
+  enemyMaterial.diffuseColor = enemyGlobals.livingColor;
   enemyMaterial.freeze(); // if material is immutable
 
   const damagedMaterial = new BABYLON.StandardMaterial(
     "damagedMaterial",
     scene
   );
-  damagedMaterial.diffuseColor = new BABYLON.Color3(0.9, 0.2, 0);
+  damagedMaterial.diffuseColor = enemyGlobals.deadColor;
   damagedMaterial.freeze(); // if material is immutable
 
   const hitMaterial = new BABYLON.StandardMaterial("hitMaterial", scene);
-  hitMaterial.diffuseColor = new BABYLON.Color3(0.5, 0, 0.5);
+  hitMaterial.diffuseColor = enemyGlobals.hitColor;
   hitMaterial.freeze(); // if material is immutable
 }

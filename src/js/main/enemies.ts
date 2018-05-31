@@ -87,7 +87,7 @@ class Enemy {
   ) {
     sphereMesh.position = new BABYLON.Vector3(
       position.x,
-      (diameter / 2) * 8,
+      (diameter / 2) * enemyGlobals.originHeight,
       position.z
     );
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
@@ -97,7 +97,7 @@ class Enemy {
       sphereMesh,
       BABYLON.PhysicsImpostor.SphereImpostor,
       // BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: enemyGlobals.mass, restitution: 0.4 },
+      { mass: enemyGlobals.mass, restitution: enemyGlobals.restitution },
       scene
     );
 
@@ -172,13 +172,20 @@ function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
 
     while (
       enemyGlobals.occupiedSpaces.find(existingLocation => {
-        return existingLocation === newLocation;
+        return existingLocation === [newLocation.x, newLocation.z];
       }) !== undefined
     ) {
       newLocation = positionGenerator();
     }
-    enemyGlobals.occupiedSpaces.unshift(newLocation);
-    new Enemy(randomNumberRange(2, 3), enemyGlobals.occupiedSpaces[0], scene);
+    enemyGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
+    new Enemy(
+      randomNumberRange(2, 3),
+      {
+        x: enemyGlobals.occupiedSpaces[0][0],
+        z: enemyGlobals.occupiedSpaces[0][1]
+      },
+      scene
+    );
   }
 
   enemyGlobals.occupiedSpaces = [];
