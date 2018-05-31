@@ -71,7 +71,6 @@
     "postcss-scss": "^1.0.5",
     "postcss-uncss": "^0.16.1",
     "precss": "^3.1.2",
-    "preload-webpack-plugin": "^2.3.0",
     "prettier": "^1.13.2",
     "request": "^2.87.0",
     "sass-loader": "^7.0.1",

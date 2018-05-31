@@ -41,7 +41,15 @@ const enemyGlobals = {
   deadColor: new BABYLON.Color3(0.9, 0.2, 0)
 };
 
+const mapGlobals = {
+  pipelineOn: false,
+  diagnosticsOn: false,
+  optimizerOn: false,
+  cameraCutDelay: 3000,
+  rotateCameras: true,
+  rotationSpeedMultiplier: 9
+};
 //@ts-ignore
 window.globals = { projectileGlobals, towerGlobals, enemyGlobals };
 
-export { projectileGlobals, towerGlobals, enemyGlobals };
+export { projectileGlobals, towerGlobals, enemyGlobals, mapGlobals };

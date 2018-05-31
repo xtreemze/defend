@@ -4,7 +4,7 @@ import "./../../vendor/pep";
 // import * as BABYLON from "./../../../node_modules/babylonjs/es6";
 import * as BABYLON from "babylonjs";
 
-import { enemyGlobals } from "./variables";
+import { enemyGlobals, mapGlobals } from "./variables";
 
 import enemies from "./enemies";
 import towers from "./towers";
@@ -29,11 +29,16 @@ const createScene = function createScene() {
     // new BABYLON.CannonJSPlugin()
   );
 
-  scene.debugLayer.show({ popup: true, initialTab: 2 });
-  const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
-  const optimizer = new BABYLON.SceneOptimizer(scene, options);
+  if (mapGlobals.diagnosticsOn) {
+    scene.debugLayer.show({ popup: true, initialTab: 2 });
+  }
 
-  // optimizer.start();
+  if (mapGlobals.optimizerOn) {
+    const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
+    const optimizer = new BABYLON.SceneOptimizer(scene, options);
+
+    optimizer.start();
+  }
 
   map1(scene, canvas);
   enemies(scene);

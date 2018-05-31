@@ -1,5 +1,10 @@
 import * as BABYLON from "babylonjs";
-import { enemyGlobals, towerGlobals, projectileGlobals } from "./variables";
+import {
+  enemyGlobals,
+  towerGlobals,
+  projectileGlobals,
+  mapGlobals
+} from "./variables";
 
 export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   // Camera1
@@ -12,9 +17,6 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
   camera.attachControl(canvas, false);
-  // camera.fov = 1;
-  // camera.inertia = 0.7;
-  // camera.speed = 8;
 
   // Camera 2
 
@@ -27,9 +29,6 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
   camera2.attachControl(canvas, false);
-  // camera2.fov = 1;
-  // camera2.inertia = 0.7;
-  // camera2.speed = 8;
 
   // Camera 3
 
@@ -42,25 +41,21 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
   camera3.attachControl(canvas, false);
-  // camera3.fov = 1;
-  // camera3.inertia = 0.7;
-  // camera3.speed = 8;
 
   const rotateCamera = camera => {
     scene.registerBeforeRender(() => {
-      camera.alpha += Math.PI / (360 * 9);
+      camera.alpha += Math.PI / (360 * mapGlobals.rotationSpeedMultiplier);
       if (camera.alpha <= Math.PI) {
-      } else {
-        // camera.alpha = Math.PI / 360;
       }
     });
   };
 
-  rotateCamera(camera);
-  rotateCamera(camera2);
-  rotateCamera(camera3);
+  if (mapGlobals.rotateCameras) {
+    rotateCamera(camera);
+    rotateCamera(camera2);
+    rotateCamera(camera3);
+  }
 
-  const camDuration = 3000;
   setInterval(() => {
     scene.setActiveCameraByName("3/4");
     setTimeout(() => {
@@ -68,9 +63,9 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
       setTimeout(() => {
         scene.setActiveCameraByName("overhead");
-      }, camDuration);
-    }, camDuration);
-  }, camDuration * 3);
+      }, mapGlobals.cameraCutDelay);
+    }, mapGlobals.cameraCutDelay);
+  }, mapGlobals.cameraCutDelay * 3);
 
   new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.3, 1, 0), scene);
 
@@ -124,33 +119,35 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   hitMaterial.diffuseColor = enemyGlobals.hitColor;
   hitMaterial.freeze(); // if material is immutable
 
-  const pipeline = new BABYLON.DefaultRenderingPipeline(
-    "default", // The name of the pipeline
-    false,
-    scene, // The scene instance
-    [camera, camera2, camera3] // The list of cameras to be attached to
-  );
+  if (mapGlobals.pipelineOn) {
+    const pipeline = new BABYLON.DefaultRenderingPipeline(
+      "default", // The name of the pipeline
+      false,
+      scene, // The scene instance,
+      [camera, camera2, camera3] // The list of cameras to be attached to
+    );
 
-  // Depth of Field
-  pipeline.depthOfFieldEnabled = true;
-  pipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Low;
-  pipeline.depthOfField.focusDistance = 20 * 1000; // distance of the current focus point from the camera in millimeters considering 1 scene unit is 1 meter
-  pipeline.depthOfField.focalLength = 400; // focal length of the camera in millimeters
-  pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
+    // Depth of Field
+    pipeline.depthOfFieldEnabled = false;
+    pipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Low;
+    pipeline.depthOfField.focusDistance = 20 * 1000; // distance of the current focus point from the camera in millimeters considering 1 scene unit is 1 meter
+    pipeline.depthOfField.focalLength = 400; // focal length of the camera in millimeters
+    pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
 
-  // Antialiasing
-  pipeline.samples = 2;
-  pipeline.fxaaEnabled = true;
+    // Antialiasing
+    pipeline.samples = 2;
+    pipeline.fxaaEnabled = true;
 
-  // Sharpen
-  pipeline.sharpenEnabled = true;
-  pipeline.sharpen.edgeAmount = 0.4;
-  pipeline.sharpen.colorAmount = 1;
+    // Sharpen
+    pipeline.sharpenEnabled = true;
+    pipeline.sharpen.edgeAmount = 0.4;
+    pipeline.sharpen.colorAmount = 1;
 
-  // Bloom
-  pipeline.bloomEnabled = true;
-  pipeline.bloomThreshold = 0.8;
-  pipeline.bloomWeight = 0.3;
-  pipeline.bloomKernel = 64;
-  pipeline.bloomScale = 0.5;
+    // Bloom
+    pipeline.bloomEnabled = false;
+    pipeline.bloomThreshold = 0.8;
+    pipeline.bloomWeight = 0.3;
+    pipeline.bloomKernel = 64;
+    pipeline.bloomScale = 0.5;
+  }
 }
