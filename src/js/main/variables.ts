@@ -1,10 +1,10 @@
 import { Color3 } from "babylonjs";
 
 const projectileGlobals = {
-  lifeTime: 800, // milliseconds
-  speed: 4000,
-  mass: 60,
-  restitution: 0.1,
+  lifeTime: 500, // milliseconds
+  speed: 9000,
+  mass: 50,
+  restitution: 0,
   baseHitPoints: 20,
   livingColor: new BABYLON.Color3(1, 1, 1)
 };
@@ -12,7 +12,7 @@ const projectileGlobals = {
 const towerGlobals = {
   minNumber: 6,
   maxNumber: 25,
-  rateOfFire: 200, // milliseconds between each shot
+  rateOfFire: 180, // milliseconds between each shot
   mass: 0,
   baseHitPoints: 0,
   occupiedSpaces: [],
