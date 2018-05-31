@@ -20,7 +20,8 @@ const enemyGlobals = {
   speed: 10000,
   jumpForce: 10,
   allEnemies: [],
-  occupiedSpaces: []
+  occupiedSpaces: [],
+  boundaryLimit: 15 // meters
 };
 
 const projectileGlobals = {

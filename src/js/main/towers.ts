@@ -165,7 +165,7 @@ class Tower {
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
-    let enemyArray = scene.getMeshesByTags("enemy");
+    let enemyArray = enemyGlobals.allEnemies;
 
     tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
     let lookTarget = enemyArray[0];
@@ -180,7 +180,7 @@ class Tower {
     let percentAdd = 100;
 
     setInterval(() => {
-      enemyArray = scene.getMeshesByTags("enemy");
+      enemyArray = enemyGlobals.allEnemies;
       if (enemyArray !== undefined && enemyArray.length > 0) {
         lookTarget = enemyArray[0];
         lookTargetPos = lookTarget.position.clone();

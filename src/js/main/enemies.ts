@@ -138,25 +138,24 @@ class Enemy {
    * @returns
    */
   decide(sphereMesh = BABYLON.Mesh.prototype) {
-    const limit = 15;
-    const decide = { up: true, left: true, right: true, down: true };
-    if (sphereMesh.position.z <= limit * -1) {
-      decide.down = false;
-      decide.up = true;
+    const decideToMove = { up: true, left: true, right: true, down: true };
+    if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1) {
+      decideToMove.down = false;
+      decideToMove.up = true;
     }
-    if (sphereMesh.position.z >= limit) {
-      decide.up = false;
-      decide.down = true;
+    if (sphereMesh.position.z >= enemyGlobals.boundaryLimit) {
+      decideToMove.up = false;
+      decideToMove.down = true;
     }
-    if (sphereMesh.position.x >= limit) {
-      decide.right = false;
-      decide.left = true;
+    if (sphereMesh.position.x >= enemyGlobals.boundaryLimit) {
+      decideToMove.right = false;
+      decideToMove.left = true;
     }
-    if (sphereMesh.position.x <= limit * -1) {
-      decide.left = false;
-      decide.right = true;
+    if (sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1) {
+      decideToMove.left = false;
+      decideToMove.right = true;
     }
-    return decide;
+    return decideToMove;
   }
 }
 
