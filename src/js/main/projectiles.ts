@@ -72,6 +72,16 @@ class Projectile {
 
     projectile.material = scene.getMaterialByID("projectileMaterial");
 
+    // Glow Layer
+    // const glowLayer = new BABYLON.GlowLayer("glow", scene, {
+    // mainTextureFixedSize: 1024,
+    // blurKernelSize: 64,
+    // mainTextureSamples: 4
+    // });
+    // glowLayer.intensity = 0.5;
+
+    // glowLayer.addIncludedOnlyMesh(projectile);
+
     // For Physics
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
       projectile,

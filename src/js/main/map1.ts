@@ -139,7 +139,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
 
   // Antialiasing
-  pipeline.samples = 4;
+  pipeline.samples = 2;
   pipeline.fxaaEnabled = true;
 
   // Sharpen
