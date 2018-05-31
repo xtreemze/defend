@@ -22,6 +22,7 @@ const towerGlobals = {
 const enemyGlobals = {
   minNumber: 3,
   maxNumber: 4,
+  limit: 12,
   generationRate: 5000, // milliseconds
   lifeTime: 15000, // milliseconds
   decisionRate: 200, // milliseconds
