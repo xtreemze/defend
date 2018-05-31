@@ -1,10 +1,6 @@
 import * as BABYLON from "babylonjs";
 import randomNumberRange from "./randomNumberRange";
-
-const distance = 10000; // 1 cube distance = 10m
-const time = 50; // 3 seconds
-const iterationDelay = 1; // animation resolution
-const speed = distance / iterationDelay;
+import { enemyGlobals } from "./variables";
 
 /**
  * Enemy Find Vector with Physics for Movement
@@ -19,25 +15,25 @@ function vector(
   switch (direction) {
     case "down":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(0, 0, speed * -1),
+        new BABYLON.Vector3(0, 0, enemyGlobals.speed * -1),
         enemy.getAbsolutePosition()
       );
       break;
     case "right":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(speed, 0, 0),
+        new BABYLON.Vector3(enemyGlobals.speed, 0, 0),
         enemy.getAbsolutePosition()
       );
       break;
     case "up":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(0, 0, speed),
+        new BABYLON.Vector3(0, 0, enemyGlobals.speed),
         enemy.getAbsolutePosition()
       );
       break;
     case "left":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(speed * -1, 0, 0),
+        new BABYLON.Vector3(enemyGlobals.speed * -1, 0, 0),
         enemy.getAbsolutePosition()
       );
       break;

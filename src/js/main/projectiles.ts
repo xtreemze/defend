@@ -1,6 +1,5 @@
 import * as BABYLON from "babylonjs";
-
-const life = 500; // How long the enemies live in milliseconds
+import { projectileGlobals } from "./variables";
 
 /**
  * Creates an instance of Projectile.
@@ -77,7 +76,7 @@ class Projectile {
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
       projectile,
       BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: 10, restitution: 0.5 },
+      { mass: projectileGlobals.mass, restitution: 0.5 },
       scene
     );
 
@@ -86,7 +85,7 @@ class Projectile {
 
     setTimeout(() => {
       projectile.dispose();
-    }, life);
+    }, projectileGlobals.lifeTime);
   }
 
   /**
@@ -105,9 +104,9 @@ class Projectile {
    * @memberof Projectile
    */
   intersectPhys(
-    scene = BABYLON.Scene.prototype,
-    enemies = BABYLON.MeshBuilder.CreateBox.prototype,
-    projectile = BABYLON.MeshBuilder.CreateBox.prototype
+    scene: any = BABYLON.Scene.prototype,
+    enemies: any = BABYLON.MeshBuilder.CreateBox.prototype,
+    projectile: any = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
     // Enemies ONLY
     for (let index = 0; index < enemies.length; index += 1) {
@@ -137,12 +136,16 @@ class Projectile {
    * @memberof Projectile
    */
   impulsePhys(
-    scene = BABYLON.Scene.prototype,
-    enemies = { length: 0 },
-    originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
-    projectile = BABYLON.MeshBuilder.CreateBox.prototype
+    scene: any = BABYLON.Scene.prototype,
+    enemies: any = { length: 0 },
+    originMesh: any = BABYLON.MeshBuilder.CreateBox.prototype,
+    projectile: any = BABYLON.MeshBuilder.CreateBox.prototype
   ) {
-    const forwardLocal = new BABYLON.Vector3(0, 0, -1200);
+    const forwardLocal = new BABYLON.Vector3(
+      0,
+      0,
+      projectileGlobals.speed * -1
+    );
     const speed = originMesh.getDirection(forwardLocal);
     projectile.physicsImpostor.applyImpulse(
       speed,
@@ -178,8 +181,8 @@ class Projectile {
  *   ]]
  */
 export default function fire(
-  scene = BABYLON.Scene.prototype,
-  originMesh = BABYLON.MeshBuilder.CreateBox.prototype,
+  scene: any = BABYLON.Scene.prototype,
+  originMesh: any = BABYLON.MeshBuilder.CreateBox.prototype,
   enemyArray
 ) {
   new Projectile(1, originMesh, scene, enemyArray);

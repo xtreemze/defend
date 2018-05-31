@@ -4,6 +4,7 @@ import * as BABYLON from "babylonjs";
 import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
+import { towerGlobals, enemyGlobals } from "./variables";
 
 /**
  * Creates an instance of tower.
@@ -86,19 +87,20 @@ class Tower {
     levelTop = ""
   ) {
     const rotateDelay = 200;
+
+    let deltaTime = Date.now();
+
     // this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
 
-    setInterval(() => {
-      const enemyArray = scene.getMeshesByTags("enemy");
+    scene.registerBeforeRender(() => {
       const enemyDistances = [];
 
-      for (let index = 0; index < enemyArray.length; index++) {
-        const enemy = enemyArray[index];
+      for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
+        const enemy = enemyGlobals.allEnemies[index];
         if (
           enemy.position.y < 4 &&
           enemy.position.y > 1.5 &&
-          //@ts-ignore
-          enemy.hitPoints > 50
+          enemy.hitPoints > enemyGlobals.deadHitPoints
         ) {
           enemyDistances.push([
             BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position),
@@ -108,30 +110,28 @@ class Tower {
       }
 
       const sortedDistances = enemyDistances.sort();
-      if (sortedDistances.length > 0) {
-        this.rotateTurret(
-          scene,
-          sortedDistances[0][1],
-          rotateDelay,
-          tower,
-          levelTop
-        );
+      if (
+        sortedDistances.length > 0 &&
+        Date.now() - deltaTime > towerGlobals.rateOfFire
+      ) {
+        deltaTime = Date.now();
+        1;
+
+        this.rotateTurret(scene, sortedDistances[0][1], tower, levelTop);
       }
-    }, rotateDelay);
+    });
   }
 
   /**
    * Rotates turret
    * @param [scene]
    * @param enemyArray
-   * @param [rotateDelay]
    * @param [tower]
    * @param [levelTop]
    */
   rotateTurret(
     scene = BABYLON.Scene.prototype,
     enemyArray,
-    rotateDelay = 0,
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
@@ -237,35 +237,36 @@ class Tower {
  * @param [quantity]
  */
 function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
-  const occupiedPositions = [];
-
   let newLocation = positionGenerator();
 
   while (
-    occupiedPositions.find(existingLocation => {
+    towerGlobals.occupiedSpaces.find(existingLocation => {
       return existingLocation === newLocation;
     }) !== undefined
   ) {
     newLocation = positionGenerator();
   }
-  occupiedPositions.unshift(newLocation);
+  towerGlobals.occupiedSpaces.unshift(newLocation);
 
-  new Tower(3, occupiedPositions[0], scene);
+  new Tower(3, towerGlobals.occupiedSpaces[0], scene);
 
   for (let index = 2; index < quantity; index += 1) {
     let newLocation = positionGenerator();
 
     while (
-      occupiedPositions.find(existingLocation => {
+      towerGlobals.occupiedSpaces.find(existingLocation => {
         return existingLocation === newLocation;
       }) !== undefined
     ) {
       newLocation = positionGenerator();
     }
-    occupiedPositions.unshift(newLocation);
-    new Tower(randomNumberRange(1, 3), occupiedPositions[0], scene);
+    towerGlobals.occupiedSpaces.unshift(newLocation);
+    new Tower(randomNumberRange(1, 3), towerGlobals.occupiedSpaces[0], scene);
   }
 }
 export default function towers(scene = BABYLON.Scene.prototype) {
-  towerGenerator(scene, randomNumberRange(6, 25));
+  towerGenerator(
+    scene,
+    randomNumberRange(towerGlobals.minNumber, towerGlobals.maxNumber)
+  );
 }

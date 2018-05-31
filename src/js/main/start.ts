@@ -4,6 +4,8 @@ import "./../../vendor/pep";
 // import * as BABYLON from "./../../../node_modules/babylonjs/es6";
 import * as BABYLON from "babylonjs";
 
+import { enemyGlobals } from "./variables";
+
 import enemies from "./enemies";
 import towers from "./towers";
 import map1 from "./map1";
@@ -52,3 +54,7 @@ window.addEventListener("resize", () => {
 
 //@ts-ignore
 window.scene = scene;
+
+scene.registerBeforeRender(() => {
+  enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+});

@@ -2,6 +2,7 @@ import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
+import { enemyGlobals } from "./variables";
 
 /**
  * Creates an instance of enemy.
@@ -57,15 +58,15 @@ class Enemy {
     if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < -3) {
       this.destroy(sphereMesh, loopTimer);
     } else if (
-      sphereMesh.hitPoints < 50 &&
+      sphereMesh.hitPoints < enemyGlobals.deadHitPoints &&
       sphereMesh.material !== scene.getMaterialByID("damagedMaterial")
     ) {
       sphereMesh.material = scene.getMaterialByID("damagedMaterial");
       sphereMesh.physicsImpostor.setLinearVelocity(
-        new BABYLON.Vector3(0, 10, 0)
+        new BABYLON.Vector3(0, enemyGlobals.jumpForce, 0)
       );
     } else {
-      sphereMesh.hitPoints -= 4;
+      sphereMesh.hitPoints -= enemyGlobals.decayRate;
     }
   }
 
@@ -89,14 +90,14 @@ class Enemy {
       (diameter / 2) * 8,
       position.z
     );
-    sphereMesh.hitPoints = level * 100;
+    sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
 
     sphereMesh.physicsImpostor = new BABYLON.PhysicsImpostor(
       sphereMesh,
       BABYLON.PhysicsImpostor.SphereImpostor,
       // BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: 2000, restitution: 0.4 },
+      { mass: enemyGlobals.mass, restitution: 0.4 },
       scene
     );
 
@@ -104,14 +105,19 @@ class Enemy {
       if (
         sphereMesh.position.y > diameter / 2.5 &&
         sphereMesh.position.y < diameter * 1.2 &&
-        sphereMesh.hitPoints > 50
+        sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
         enemyAi(sphereMesh, this.decide(sphereMesh));
       }
       this.checkHitPoints(scene, sphereMesh, loopTimer);
-    }, 500);
+    }, enemyGlobals.decisionRate);
   }
 
+  /**
+   * Destroys enemy
+   * @param [sphereMesh]
+   * @param loopTimer
+   */
   destroy(
     sphereMesh = {
       hitPoints: 0,
@@ -160,9 +166,23 @@ class Enemy {
  * @param [quantity]
  */
 function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
+  let newLocation = positionGenerator();
+
   for (let index = 0; index < quantity; index += 1) {
-    new Enemy(randomNumberRange(2, 3), positionGenerator(), scene);
+    let newLocation = positionGenerator();
+
+    while (
+      enemyGlobals.occupiedSpaces.find(existingLocation => {
+        return existingLocation === newLocation;
+      }) !== undefined
+    ) {
+      newLocation = positionGenerator();
+    }
+    enemyGlobals.occupiedSpaces.unshift(newLocation);
+    new Enemy(randomNumberRange(2, 3), enemyGlobals.occupiedSpaces[0], scene);
   }
+
+  enemyGlobals.occupiedSpaces = [];
 }
 
 export default function enemies(scene = BABYLON.Scene.prototype) {
@@ -170,5 +190,5 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
 
   setInterval(() => {
     enemyGenerator(scene, randomNumberRange(2, 5));
-  }, 5000);
+  }, enemyGlobals.generationRate);
 }
