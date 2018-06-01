@@ -25,16 +25,26 @@ class Tower {
       name,
       {
         size: 10,
-        height: 1
+        height: towerGlobals.height
       },
       scene
     );
-    tower.position = new BABYLON.Vector3(position.x, 0.5, position.z);
+    BABYLON.Tags.AddTagsTo(tower, "tower");
+
+    this.revive(scene, tower, position, level, levelTop);
+  }
+
+  revive(scene, tower, position, level, levelTop) {
+    tower.position = new BABYLON.Vector3(
+      position.x,
+      towerGlobals.height / 2,
+      position.z
+    );
 
     tower.physicsImpostor = new BABYLON.PhysicsImpostor(
       tower,
       BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: 0, restitution: 0.8 },
+      { mass: towerGlobals.mass, restitution: towerGlobals.restitution },
       scene
     );
 
@@ -50,31 +60,29 @@ class Tower {
           levelTop,
           {
             size: 2,
-            height: 2,
+            height: towerGlobals.height,
             width: 4
           },
           scene
         );
         tower[levelTop].position = new BABYLON.Vector3(
           position.x,
-          3,
+          towerGlobals.height * 1.5,
           position.z
         );
-        // tower[levelTop].physicsImpostor = new BABYLON.PhysicsImpostor(
-        //   tower[levelTop],
-        //   BABYLON.PhysicsImpostor.BoxImpostor,
-        //   { mass: 0, restitution: 0.8 },
-        //   scene
-        // );
+        tower[levelTop].physicsImpostor = new BABYLON.PhysicsImpostor(
+          tower[levelTop],
+          BABYLON.PhysicsImpostor.BoxImpostor,
+          { mass: towerGlobals.mass, restitution: towerGlobals.restitution },
+          scene
+        );
         tower[levelTop].material = scene.getMaterialByID("towerMaterial");
         // tower.addChild(tower[levelTop]);
         this.enemyWatch(scene, tower, levelTop);
 
         break;
     }
-    BABYLON.Tags.AddTagsTo(tower, "tower");
   }
-
   /**
    * Enemys watch
    * @param [scene]
@@ -116,8 +124,9 @@ class Tower {
       ) {
         deltaTime = Date.now();
         1;
-
-        this.rotateTurret(scene, sortedDistances[0][1], tower, levelTop);
+        if (enemyGlobals.allEnemies.length > 0) {
+          this.rotateTurret(scene, sortedDistances[0][1][0], tower, levelTop);
+        }
       }
     });
   }
@@ -125,28 +134,29 @@ class Tower {
   /**
    * Rotates turret
    * @param [scene]
-   * @param enemyArray
+   * @param [sortedDistances]
    * @param [tower]
    * @param [levelTop]
    */
   rotateTurret(
     scene = BABYLON.Scene.prototype,
-    enemyArray,
+    sortedDistances,
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
-    if (enemyArray[0]) {
-      tower[levelTop].lookAt(
-        new BABYLON.Vector3(
-          enemyArray[0].position.x,
-          tower[levelTop].position.y,
-          enemyArray[0].position.z
-        )
-      );
-    }
-    if (enemyArray !== undefined && enemyArray.length > 0) {
-      fire(scene, tower[levelTop], enemyArray);
-    }
+    tower[levelTop].lookAt(
+      new BABYLON.Vector3(
+        sortedDistances.position.x,
+        tower[levelTop].position.y,
+        sortedDistances.position.z
+      )
+    );
+
+    // setTimeout(() => {
+
+    fire(scene, tower[levelTop]);
+
+    // }, 2);
   }
 
   /**
@@ -161,12 +171,11 @@ class Tower {
     scene = BABYLON.Scene.prototype,
     rotateDelay = 0,
     tower = BABYLON.Mesh.prototype,
-    levelTop = ""
+    levelTop = "",
+    turretRotation = BABYLON.Quaternion.prototype
   ) {
-    let enemyArray = enemyGlobals.allEnemies;
-
     tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
-    let lookTarget = enemyArray[0];
+    let lookTarget = enemyGlobals.allEnemies[0];
     let lookTargetPos = lookTarget.position.clone();
 
     // let lookTarget = scene.getMeshByID("ground");
@@ -178,18 +187,20 @@ class Tower {
     let percentAdd = 100;
 
     setInterval(() => {
-      enemyArray = enemyGlobals.allEnemies;
-      if (enemyArray !== undefined && enemyArray.length > 0) {
-        lookTarget = enemyArray[0];
+      if (
+        enemyGlobals.allEnemies !== undefined &&
+        enemyGlobals.allEnemies.length > 0
+      ) {
+        lookTarget = enemyGlobals.allEnemies[0];
         lookTargetPos = lookTarget.position.clone();
-        fire(scene, tower[levelTop], enemyArray);
+        fire(scene, tower[levelTop]);
       }
     }, rotateDelay);
 
     scene.registerBeforeRender(() => {
-      if (enemyArray.length > 0) {
+      if (enemyGlobals.allEnemies.length > 0) {
         if (lookTarget === null) {
-          // lookTarget = enemyArray[0];
+          // lookTarget = enemyGlobals.allEnemies[0];
 
           lookTargetPos = lookTarget.position.clone();
 

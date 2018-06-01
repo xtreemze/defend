@@ -16,7 +16,6 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     BABYLON.Vector3.Zero(),
     scene
   );
-  camera.attachControl(canvas, false);
 
   // Camera 2
 
@@ -28,7 +27,6 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     BABYLON.Vector3.Zero(),
     scene
   );
-  camera2.attachControl(canvas, false);
 
   // Camera 3
 
@@ -40,7 +38,16 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     BABYLON.Vector3.Zero(),
     scene
   );
-  camera3.attachControl(canvas, false);
+
+  // Attach Control
+  camera.attachControl(canvas, true);
+  camera2.attachControl(canvas, true);
+  camera3.attachControl(canvas, true);
+
+  // Upper Beta Limit
+  camera.upperBetaLimit = Math.PI / 2.2;
+  camera2.upperBetaLimit = Math.PI / 2.2;
+  camera3.upperBetaLimit = Math.PI / 2.2;
 
   const rotateCamera = camera => {
     scene.registerBeforeRender(() => {
@@ -56,16 +63,17 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     rotateCamera(camera3);
   }
 
-  setInterval(() => {
-    scene.setActiveCameraByName("3/4");
-    setTimeout(() => {
-      scene.setActiveCameraByName("closeup");
+  const allCameras = scene.cameras;
 
-      setTimeout(() => {
-        scene.setActiveCameraByName("overhead");
-      }, mapGlobals.cameraCutDelay);
-    }, mapGlobals.cameraCutDelay);
-  }, mapGlobals.cameraCutDelay * 3);
+  setInterval(() => {
+    scene.setActiveCameraByID(allCameras[0].id);
+    const previousCamera = allCameras.shift();
+    allCameras.push(previousCamera);
+    scene.activeCamera.inertia = 0;
+    setTimeout(() => {
+      scene.activeCamera.inertia = 0.9;
+    }, 100);
+  }, mapGlobals.cameraCutDelay);
 
   new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.3, 1, 0), scene);
 

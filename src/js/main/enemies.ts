@@ -2,7 +2,7 @@ import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
-import { enemyGlobals } from "./variables";
+import { enemyGlobals, towerGlobals } from "./variables";
 
 /**
  * Creates an instance of enemy.
@@ -97,7 +97,10 @@ class Enemy {
       sphereMesh,
       BABYLON.PhysicsImpostor.SphereImpostor,
       // BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: enemyGlobals.mass, restitution: enemyGlobals.restitution },
+      {
+        mass: enemyGlobals.mass * level,
+        restitution: enemyGlobals.restitution
+      },
       scene
     );
 
@@ -166,13 +169,15 @@ class Enemy {
  */
 function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
   if (enemyGlobals.allEnemies.length < enemyGlobals.limit) {
-    let newLocation = positionGenerator();
-
     for (let index = 0; index < quantity; index += 1) {
       let newLocation = positionGenerator();
-
       while (
         enemyGlobals.occupiedSpaces.find(
+          existingLocation =>
+            existingLocation[0] === newLocation.x &&
+            existingLocation[1] === newLocation.z
+        ) !== undefined &&
+        towerGlobals.occupiedSpaces.find(
           existingLocation =>
             existingLocation[0] === newLocation.x &&
             existingLocation[1] === newLocation.z
@@ -180,7 +185,9 @@ function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
       ) {
         newLocation = positionGenerator();
       }
+
       enemyGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
+
       new Enemy(
         randomNumberRange(2, 3),
         {
@@ -189,9 +196,11 @@ function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
         },
         scene
       );
-    }
 
-    enemyGlobals.occupiedSpaces = [];
+      if (enemyGlobals.occupiedSpaces.length > enemyGlobals.limit) {
+        enemyGlobals.occupiedSpaces.pop();
+      }
+    }
   }
 }
 
