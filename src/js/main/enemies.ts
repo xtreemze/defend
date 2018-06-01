@@ -168,38 +168,36 @@ class Enemy {
  * @param [quantity]
  */
 function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
-  if (enemyGlobals.allEnemies.length < enemyGlobals.limit) {
-    for (let index = 0; index < quantity; index += 1) {
-      let newLocation = positionGenerator();
-      while (
-        enemyGlobals.occupiedSpaces.find(
-          existingLocation =>
-            existingLocation[0] === newLocation.x &&
-            existingLocation[1] === newLocation.z
-        ) !== undefined &&
-        towerGlobals.occupiedSpaces.find(
-          existingLocation =>
-            existingLocation[0] === newLocation.x &&
-            existingLocation[1] === newLocation.z
-        ) !== undefined
-      ) {
-        newLocation = positionGenerator();
-      }
+  for (let index = 0; index < quantity; index += 1) {
+    let newLocation = positionGenerator();
+    while (
+      enemyGlobals.occupiedSpaces.find(
+        existingLocation =>
+          existingLocation[0] === newLocation.x &&
+          existingLocation[1] === newLocation.z
+      ) === newLocation &&
+      towerGlobals.occupiedSpaces.find(
+        existingLocation =>
+          existingLocation[0] === newLocation.x &&
+          existingLocation[1] === newLocation.z
+      ) === newLocation
+    ) {
+      newLocation = positionGenerator();
+    }
 
-      enemyGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
+    enemyGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
-      new Enemy(
-        randomNumberRange(2, 3),
-        {
-          x: enemyGlobals.occupiedSpaces[0][0],
-          z: enemyGlobals.occupiedSpaces[0][1]
-        },
-        scene
-      );
+    new Enemy(
+      randomNumberRange(2, 3),
+      {
+        x: enemyGlobals.occupiedSpaces[0][0],
+        z: enemyGlobals.occupiedSpaces[0][1]
+      },
+      scene
+    );
 
-      if (enemyGlobals.occupiedSpaces.length > enemyGlobals.limit) {
-        enemyGlobals.occupiedSpaces.pop();
-      }
+    if (enemyGlobals.occupiedSpaces.length > enemyGlobals.limit) {
+      enemyGlobals.occupiedSpaces.pop();
     }
   }
 }
@@ -208,6 +206,8 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
   enemyGenerator(scene, 5);
 
   setInterval(() => {
-    enemyGenerator(scene, randomNumberRange(2, 5));
+    if (enemyGlobals.allEnemies.length < enemyGlobals.limit) {
+      enemyGenerator(scene, randomNumberRange(2, 5));
+    }
   }, enemyGlobals.generationRate);
 }
