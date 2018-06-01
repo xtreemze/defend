@@ -129,7 +129,7 @@ function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
         existingLocation =>
           existingLocation[0] === newLocation.x &&
           existingLocation[1] === newLocation.z
-      ) &&
+      ) ||
       towerGlobals.occupiedSpaces.find(
         existingLocation =>
           existingLocation[0] === newLocation.x &&

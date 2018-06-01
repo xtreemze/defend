@@ -1,13 +1,6 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals } from "./variables";
 
-/**
- * Creates an instance of Projectile.
- * @param {number} [level=1]
- * @param {any} [originMesh=BABYLON.Mesh]
- * @param {any} [scene=BABYLON.Scene.prototype]
- * @memberof Projectile
- */
 class Projectile {
   constructor(
     level = 1,
@@ -30,13 +23,6 @@ class Projectile {
     this.startLife(scene, originMesh, level, projectile);
   }
 
-  /**
-   * Starts life
-   * @param [scene]
-   * @param [originMesh]
-   * @param [level]
-   * @param [projectile]
-   */
   startLife(
     scene = BABYLON.Scene.prototype,
     originMesh = BABYLON.MeshBuilder.CreateSphere.prototype,
@@ -83,13 +69,6 @@ class Projectile {
     }, projectileGlobals.lifeTime);
   }
 
-  /**
-   * Intersect with Physics
-   *
-   * @param {any} [scene=BABYLON.Scene.prototype]
-   * @param {any} [projectile=BABYLON.MeshBuilder.CreateSphere.prototype]
-   * @memberof Projectile
-   */
   intersectPhys(
     scene: any = BABYLON.Scene.prototype,
     projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype
@@ -108,23 +87,17 @@ class Projectile {
           }, 35);
         }
       );
-      projectile.physicsImpostor.registerOnPhysicsCollide(
-        scene._physicsEngine.getImpostors(),
-        () => {
-          this.destroy(projectile);
-        }
-      );
     }
+
+    // Destroy when projectile hits any physics object
+    projectile.physicsImpostor.registerOnPhysicsCollide(
+      scene._physicsEngine.getImpostors(),
+      () => {
+        this.destroy(projectile);
+      }
+    );
   }
 
-  /**
-   * Impulse with Physics
-   *
-   * @param {any} [scene=BABYLON.Scene.prototype]
-   * @param {any} [originMesh=BABYLON.MeshBuilder.CreateSphere.prototype]
-   * @param {any} [projectile=BABYLON.MeshBuilder.CreateSphere.prototype]
-   * @memberof Projectile
-   */
   impulsePhys(
     scene: any = BABYLON.Scene.prototype,
     originMesh: any = BABYLON.MeshBuilder.CreateSphere.prototype,
@@ -142,10 +115,6 @@ class Projectile {
     );
   }
 
-  /**
-   * Destroys projectile
-   * @param [projectile]
-   */
   destroy(projectile = BABYLON.MeshBuilder.CreateSphere.prototype) {
     projectile.hitPoints = 0;
     setTimeout(() => {
@@ -154,13 +123,6 @@ class Projectile {
   }
 }
 
-/**
- * Fire Projectiles
- *
- * @export
- * @param {any} [scene=BABYLON.Scene.prototype]
- * @param {any} [originMesh=BABYLON.MeshBuilder.CreateSphere.prototype]
- */
 export default function fire(
   scene: any = BABYLON.Scene.prototype,
   originMesh: any = BABYLON.MeshBuilder.CreateSphere.prototype
