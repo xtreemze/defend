@@ -109,10 +109,11 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     "projectileMaterial",
     scene
   );
-  projectileMaterial.diffuseColor = projectileGlobals.livingColor;
+  projectileMaterial.emissiveColor = projectileGlobals.livingColor;
   projectileMaterial.freeze(); // if material is immutable
 
   const enemyMaterial = new BABYLON.StandardMaterial("enemyMaterial", scene);
+  enemyMaterial.wireframe = true;
   enemyMaterial.diffuseColor = enemyGlobals.livingColor;
   enemyMaterial.freeze(); // if material is immutable
 
@@ -121,6 +122,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
   damagedMaterial.diffuseColor = enemyGlobals.deadColor;
+  damagedMaterial.wireframe = true;
   damagedMaterial.freeze(); // if material is immutable
 
   const hitMaterial = new BABYLON.StandardMaterial("hitMaterial", scene);

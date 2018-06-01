@@ -160,7 +160,7 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
   enemyGenerator(scene, 5);
 
   setInterval(() => {
-    if (enemyGlobals.allEnemies.length < enemyGlobals.limit) {
+    if (enemyGlobals.allEnemies.length < enemyGlobals.limit - 5) {
       enemyGenerator(scene, randomNumberRange(2, 5));
     }
   }, enemyGlobals.generationRate);

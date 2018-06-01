@@ -95,7 +95,9 @@ class Tower {
         if (
           enemy.position.y < 4 &&
           enemy.position.y > 1 &&
-          enemy.hitPoints > enemyGlobals.deadHitPoints
+          enemy.hitPoints > enemyGlobals.deadHitPoints &&
+          BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position) <=
+            towerGlobals.range
         ) {
           enemyDistances.push([
             BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position),

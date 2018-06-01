@@ -19,7 +19,8 @@ const towerGlobals = {
   baseHitPoints: 0,
   allTowers: [],
   occupiedSpaces: [],
-  livingColor: new BABYLON.Color3(0, 1, 0.85)
+  livingColor: new BABYLON.Color3(0, 1, 0.85),
+  range: 50
 };
 
 const enemyGlobals = {
@@ -41,7 +42,7 @@ const enemyGlobals = {
   boundaryLimit: 15, // meters
   livingColor: new BABYLON.Color3(0, 0.7, 1),
   hitColor: new BABYLON.Color3(0.5, 0, 0.5),
-  deadColor: new BABYLON.Color3(0.9, 0.2, 0)
+  deadColor: new BABYLON.Color3(0.8, 0.2, 0)
 };
 
 const mapGlobals = {
