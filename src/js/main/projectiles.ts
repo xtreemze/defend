@@ -1,5 +1,5 @@
 import * as BABYLON from "babylonjs";
-import { projectileGlobals, enemyGlobals } from "./variables";
+import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
 
 class Projectile {
   constructor(
@@ -73,6 +73,8 @@ class Projectile {
     scene: any = BABYLON.Scene.prototype,
     projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype
   ) {
+    const engine = scene.getPhysicsEngine();
+
     // Enemies ONLY
     for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
       const enemy = enemyGlobals.allEnemies[index];
@@ -91,7 +93,7 @@ class Projectile {
 
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
-      scene._physicsEngine.getImpostors(),
+      engine.getImpostors(),
       () => {
         this.destroy(projectile);
       }
