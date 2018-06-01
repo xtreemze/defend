@@ -4,12 +4,6 @@ import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 import { enemyGlobals, towerGlobals } from "./variables";
 
-/**
- * Creates an instance of enemy.
- * @param [level]
- * @param [position]
- * @param [scene]
- */
 class Enemy {
   constructor(
     level = 1,
@@ -29,27 +23,11 @@ class Enemy {
       scene
     );
 
-    // const sphereMesh = BABYLON.MeshBuilder.CreateBox(
-    //   name,
-    //   {
-    //     size: diameter
-    //     // height: 2.5,
-    //     // width: 4
-    //   },
-    //   scene
-    // );
-
     this.revive(scene, position, sphereMesh, diameter, level);
 
     BABYLON.Tags.AddTagsTo(sphereMesh, "enemy");
   }
 
-  /**
-   * Checks hit points and height. Destroys items when hitpoints and height conditions are met
-   * @param [scene]
-   * @param sphereMesh
-   * @param [loopTimer]
-   */
   checkHitPoints(
     scene: any = BABYLON.Scene.prototype,
     sphereMesh: any,
@@ -70,14 +48,6 @@ class Enemy {
     }
   }
 
-  /**
-   * Revives enemy
-   * @param [scene]
-   * @param [position]
-   * @param sphereMesh
-   * @param [diameter]
-   * @param [level]
-   */
   revive(
     scene: any = BABYLON.Scene.prototype,
     position: any = { x: 0, z: 0 },
@@ -96,7 +66,6 @@ class Enemy {
     sphereMesh.physicsImpostor = new BABYLON.PhysicsImpostor(
       sphereMesh,
       BABYLON.PhysicsImpostor.SphereImpostor,
-      // BABYLON.PhysicsImpostor.BoxImpostor,
       {
         mass: enemyGlobals.mass * level,
         restitution: enemyGlobals.restitution
@@ -116,11 +85,6 @@ class Enemy {
     }, enemyGlobals.decisionRate);
   }
 
-  /**
-   * Destroys enemy
-   * @param [sphereMesh]
-   * @param loopTimer
-   */
   destroy(
     sphereMesh = {
       hitPoints: 0,
@@ -135,11 +99,6 @@ class Enemy {
     }, 1);
   }
 
-  /**
-   * Decides enemy
-   * @param sphereMesh
-   * @returns
-   */
   decide(sphereMesh = BABYLON.Mesh.prototype) {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1) {
@@ -162,11 +121,6 @@ class Enemy {
   }
 }
 
-/**
- * Enemy generator
- * @param [scene]
- * @param [quantity]
- */
 function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
   for (let index = 0; index < quantity; index += 1) {
     let newLocation = positionGenerator();

@@ -1,17 +1,9 @@
-// @ts-check
-
 import * as BABYLON from "babylonjs";
 import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 import { towerGlobals, enemyGlobals } from "./variables";
 
-/**
- * Creates an instance of tower.
- * @param [level]
- * @param [position]
- * @param [scene]
- */
 class Tower {
   constructor(
     level = 1,
@@ -83,12 +75,7 @@ class Tower {
         break;
     }
   }
-  /**
-   * Enemys watch
-   * @param [scene]
-   * @param [tower]
-   * @param [levelTop]
-   */
+
   enemyWatch(
     scene = BABYLON.Scene.prototype,
     tower = BABYLON.Mesh.prototype,
@@ -131,13 +118,6 @@ class Tower {
     });
   }
 
-  /**
-   * Rotates turret
-   * @param [scene]
-   * @param [sortedDistances]
-   * @param [tower]
-   * @param [levelTop]
-   */
   rotateTurret(
     scene = BABYLON.Scene.prototype,
     sortedDistances,
@@ -159,14 +139,6 @@ class Tower {
     // }, 2);
   }
 
-  /**
-   * Slow Rotate turret (not working yet)
-   * @param [scene]
-   * @param enemyArray
-   * @param [rotateDelay]
-   * @param [tower]
-   * @param [levelTop]
-   */
   slowRotateTurret(
     scene = BABYLON.Scene.prototype,
     rotateDelay = 0,
@@ -240,11 +212,6 @@ class Tower {
   }
 }
 
-/**
- * Towers generator
- * @param [scene]
- * @param [quantity]
- */
 function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
   let newLocation = positionGenerator();
 
