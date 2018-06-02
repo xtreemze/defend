@@ -98,6 +98,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
   ground.material = groundMaterial;
   groundMaterial.wireframe = true;
+  groundMaterial.diffuseColor = enemyGlobals.hitColor;
   groundMaterial.freeze(); // if material is immutable
 
   const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
@@ -109,7 +110,16 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
   projectileMaterial.emissiveColor = projectileGlobals.livingColor;
+  projectileMaterial.linkEmissiveWithDiffuse = true;
+  // projectileMaterial.alpha = 0.9;
   projectileMaterial.freeze(); // if material is immutable
+
+  const transparentMaterial = new BABYLON.StandardMaterial(
+    "transparentMaterial",
+    scene
+  );
+  transparentMaterial.alpha = 0;
+  transparentMaterial.freeze(); // if material is immutable
 
   const enemyMaterial = new BABYLON.StandardMaterial("enemyMaterial", scene);
   enemyMaterial.wireframe = true;
@@ -154,16 +164,16 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
     // Bloom
     pipeline.bloomEnabled = renderGlobals.bloom;
-    pipeline.bloomThreshold = 0.8;
-    pipeline.bloomWeight = 0.3;
-    pipeline.bloomKernel = 32;
-    pipeline.bloomScale = 0.5;
+    pipeline.bloomThreshold = 0.2;
+    pipeline.bloomWeight = 0.5;
+    pipeline.bloomKernel = 8;
+    pipeline.bloomScale = 0.4;
   }
 
   // Glow
   if (renderGlobals.glow) {
     const glowLayer = new BABYLON.GlowLayer("glow", scene, {
-      mainTextureFixedSize: 128,
+      mainTextureFixedSize: 32,
       blurKernelSize: 8,
       mainTextureSamples: 2
     });

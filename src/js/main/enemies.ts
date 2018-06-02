@@ -102,12 +102,12 @@ class Enemy {
     sphereMesh.hitPoints = 0;
 
     setTimeout(() => {
+      enemyGlobals.allEnemies = [];
+
+      sphereMesh.physicsImpostor.dispose();
       sphereMesh.dispose();
 
-      setTimeout(() => {
-        mapGlobals.allImpostors = engine.getImpostors();
-        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-      }, 2);
+      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
     }, 1);
   }
 
@@ -174,7 +174,7 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
   setInterval(() => {
     if (
       enemyGlobals.allEnemies.length < enemyGlobals.limit - 5 &&
-      mapGlobals.allImpostors.length < 80
+      mapGlobals.allImpostors.length < mapGlobals.impostorLimit
     ) {
       enemyGenerator(scene, randomNumberRange(2, 5));
     }

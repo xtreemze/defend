@@ -21,35 +21,27 @@ class Projectile {
       scene
     );
 
-    const flash = BABYLON.MeshBuilder.CreateSphere(
-      name,
-      {
-        diameter: 4,
-        segments: 1
-      },
-      scene
-    );
+    // const flash = BABYLON.MeshBuilder.CreateSphere(
+    //   name,
+    //   {
+    //     diameter: 4,
+    //     segments: 1
+    //   },
+    //   scene
+    // );
 
     //@ts-ignore
-    this.startLife(scene, originMesh, level, projectile, flash);
+    this.startLife(scene, originMesh, level, projectile);
   }
 
   startLife(
     scene: any = BABYLON.Scene.prototype,
     originMesh: any = BABYLON.Mesh.prototype,
     level: number = 1,
-    projectile: any = BABYLON.Mesh.prototype,
-    flash: any = BABYLON.Mesh.prototype
+    projectile: any = BABYLON.Mesh.prototype
   ) {
     const forwardLocal = new BABYLON.Vector3(0, 0, 6);
     const space = originMesh.getDirection(forwardLocal);
-
-    const flashLocal = new BABYLON.Vector3(0, 0, 2.5);
-    const flashSpace = originMesh.getDirection(flashLocal);
-
-    flash.position = originMesh.position.subtract(flashSpace);
-    flash.material = scene.getMaterialByID("projectileMaterial");
-    flash.rotation = originMesh.rotation.clone();
 
     projectile.position = originMesh.position.subtract(space);
 
@@ -78,10 +70,6 @@ class Projectile {
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
 
     setTimeout(() => {
-      flash.dispose();
-    }, 10);
-
-    setTimeout(() => {
       this.destroy(projectile, scene);
     }, projectileGlobals.lifeTime);
   }
@@ -95,10 +83,6 @@ class Projectile {
       mapGlobals.allImpostors,
       () => {
         this.destroy(projectile, scene);
-
-        const physicsEngine = scene.getPhysicsEngine();
-
-        mapGlobals.allImpostors = physicsEngine.getImpostors();
       }
     );
 
@@ -141,15 +125,16 @@ class Projectile {
     scene = BABYLON.Scene.prototype
   ) {
     projectile.hitPoints = 0;
+
     setTimeout(() => {
+      mapGlobals.allImpostors = [];
+      projectile.physicsImpostor.dispose();
+
       projectile.dispose();
 
-      setTimeout(() => {
-        const physicsEngine = scene.getPhysicsEngine();
+      const physicsEngine = scene.getPhysicsEngine();
 
-        mapGlobals.allImpostors = physicsEngine.getImpostors();
-        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-      }, 2);
+      mapGlobals.allImpostors = physicsEngine.getImpostors();
     }, 1);
   }
 }
@@ -160,7 +145,7 @@ export default function fire(
 ) {
   if (
     enemyGlobals.allEnemies.length <= 12 &&
-    mapGlobals.allImpostors.length < 80
+    mapGlobals.allImpostors.length < mapGlobals.impostorLimit
   ) {
     new Projectile(1, originMesh, scene);
   }

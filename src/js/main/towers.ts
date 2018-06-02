@@ -73,11 +73,28 @@ class Tower {
           scene
         );
 
+        const flash = BABYLON.MeshBuilder.CreateSphere(
+          name,
+          {
+            diameter: 4,
+            segments: 1
+          },
+          scene
+        );
+
+        const flashLocal = new BABYLON.Vector3(0, 0, 2.5);
+        const flashSpace = tower[levelTop].getDirection(flashLocal);
+
+        flash.position = tower[levelTop].position.subtract(flashSpace);
+        flash.rotation = tower[levelTop].rotation.clone();
+        tower[levelTop].material = scene.getMaterialByID("towerMaterial");
+        tower[levelTop].addChild(flash);
+
         mapGlobals.allImpostors.unshift(tower[levelTop].physicsImpostor);
 
-        tower[levelTop].material = scene.getMaterialByID("towerMaterial");
+        flash.material = scene.getMaterialByID("transparentMaterial");
         // tower.addChild(tower[levelTop]);
-        this.enemyWatch(scene, tower, levelTop);
+        this.enemyWatch(scene, tower, levelTop, flash);
 
         break;
     }
@@ -86,10 +103,10 @@ class Tower {
   enemyWatch(
     scene = BABYLON.Scene.prototype,
     tower = BABYLON.Mesh.prototype,
-    levelTop = ""
+    levelTop = "",
+    flash
   ) {
     const rotateDelay = 200;
-
     let deltaTime = Date.now();
 
     // this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
@@ -119,8 +136,12 @@ class Tower {
 
         if (Date.now() - deltaTime > towerGlobals.rateOfFire) {
           deltaTime = Date.now();
-
+          flash.material = scene.getMaterialByID("projectileMaterial");
           fire(scene, tower[levelTop]);
+
+          setTimeout(() => {
+            flash.material = scene.getMaterialByID("transparentMaterial");
+          }, 5);
         }
       }
     });

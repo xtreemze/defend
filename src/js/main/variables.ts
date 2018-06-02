@@ -6,7 +6,7 @@ const projectileGlobals = {
   mass: 60,
   restitution: 0,
   baseHitPoints: 40,
-  livingColor: new BABYLON.Color3(1, 1, 1)
+  livingColor: new BABYLON.Color3(1, 0.4, 0.6)
 };
 
 const towerGlobals = {
@@ -51,16 +51,17 @@ const mapGlobals = {
   cameraCutDelay: 3000,
   rotateCameras: true,
   rotationSpeedMultiplier: 9,
-  allImpostors: []
+  allImpostors: [],
+  impostorLimit: 100
 };
 
 const renderGlobals = {
-  pipelineOn: false,
-  glow: false,
-  sharpenning: true,
-  antialiasing: true,
+  pipelineOn: true,
+  glow: true,
+  sharpenning: false,
+  antialiasing: false,
   depthOfField: false,
-  bloom: false
+  bloom: true
 };
 
 //@ts-ignore
