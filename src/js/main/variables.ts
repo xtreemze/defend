@@ -55,12 +55,12 @@ const mapGlobals = {
 };
 
 const renderGlobals = {
-  pipelineOn: true,
-  glow: true,
-  sharpenning: true,
-  antialiasing: true,
+  pipelineOn: false,
+  glow: false,
+  sharpenning: false,
+  antialiasing: false,
   depthOfField: false,
-  bloom: true
+  bloom: false
 };
 
 //@ts-ignore
