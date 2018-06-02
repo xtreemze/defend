@@ -20,8 +20,6 @@ const engine = new BABYLON.Engine(canvas, true, {
   // lockstepMaxSteps: 4
 });
 
-
-
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {
   const scene = new BABYLON.Scene(engine);
@@ -39,8 +37,8 @@ const createScene = function createScene() {
   }
 
   map1(scene, canvas);
-  enemies(scene);
   towers(scene);
+  enemies(scene);
 
   return scene;
 };
@@ -57,7 +55,6 @@ window.addEventListener("resize", () => {
 
 //@ts-ignore
 window.scene = scene;
-
 
 const physicsEngine = scene.getPhysicsEngine();
 

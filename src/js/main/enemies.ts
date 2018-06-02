@@ -2,7 +2,7 @@ import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
-import { enemyGlobals, towerGlobals } from "./variables";
+import { enemyGlobals, towerGlobals, mapGlobals } from "./variables";
 
 class Enemy {
   constructor(
@@ -160,7 +160,7 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
   enemyGenerator(scene, 5);
 
   setInterval(() => {
-    if (enemyGlobals.allEnemies.length < enemyGlobals.limit - 5) {
+    if (enemyGlobals.allEnemies.length < enemyGlobals.limit - 5 && mapGlobals.allImpostors.length < 80) {
       enemyGenerator(scene, randomNumberRange(2, 5));
     }
   }, enemyGlobals.generationRate);

@@ -57,14 +57,20 @@ const mapGlobals = {
 const renderGlobals = {
   pipelineOn: false,
   glow: false,
-  sharpenning: false,
-  antialiasing: false,
+  sharpenning: true,
+  antialiasing: true,
   depthOfField: false,
   bloom: false
 };
 
 //@ts-ignore
-window.globals = { projectileGlobals, towerGlobals, enemyGlobals };
+window.globals = {
+  projectileGlobals,
+  towerGlobals,
+  enemyGlobals,
+  mapGlobals,
+  renderGlobals
+};
 
 export {
   projectileGlobals,

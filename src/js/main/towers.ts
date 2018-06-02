@@ -2,7 +2,7 @@ import * as BABYLON from "babylonjs";
 import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
-import { towerGlobals, enemyGlobals } from "./variables";
+import { towerGlobals, enemyGlobals, mapGlobals } from "./variables";
 
 class Tower {
   constructor(
@@ -126,15 +126,15 @@ class Tower {
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
-    fire(scene, tower[levelTop]);
+      fire(scene, tower[levelTop]);
 
-    tower[levelTop].lookAt(
-      new BABYLON.Vector3(
-        sortedDistances.position.x,
-        tower[levelTop].position.y,
-        sortedDistances.position.z
-      )
-    );
+      tower[levelTop].lookAt(
+        new BABYLON.Vector3(
+          sortedDistances.position.x,
+          tower[levelTop].position.y,
+          sortedDistances.position.z
+        )
+      );
   }
 
   slowRotateTurret(

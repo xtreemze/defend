@@ -145,7 +145,7 @@ export default function fire(
   scene: any = BABYLON.Scene.prototype,
   originMesh: any = BABYLON.MeshBuilder.CreateSphere.prototype
 ) {
-  if (enemyGlobals.allEnemies.length <= 12) {
+  if (enemyGlobals.allEnemies.length <= 12 && mapGlobals.allImpostors.length < 80) {
     new Projectile(1, originMesh, scene);
   }
 }

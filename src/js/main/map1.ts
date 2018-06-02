@@ -144,7 +144,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
 
     // Antialiasing
-    pipeline.samples = 8;
+    pipeline.samples = 4;
     pipeline.fxaaEnabled = renderGlobals.antialiasing;
 
     // Sharpen
@@ -156,16 +156,16 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     pipeline.bloomEnabled = renderGlobals.bloom;
     pipeline.bloomThreshold = 0.8;
     pipeline.bloomWeight = 0.3;
-    pipeline.bloomKernel = 64;
+    pipeline.bloomKernel = 32;
     pipeline.bloomScale = 0.5;
   }
 
   // Glow
   if (renderGlobals.glow) {
     const glowLayer = new BABYLON.GlowLayer("glow", scene, {
-      mainTextureFixedSize: 256,
-      blurKernelSize: 32,
-      mainTextureSamples: 4
+      mainTextureFixedSize: 128,
+      blurKernelSize: 8,
+      mainTextureSamples: 2
     });
 
     glowLayer.intensity = 0.8;
