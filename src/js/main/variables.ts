@@ -32,10 +32,10 @@ const enemyGlobals = {
   decayRate: 0.7, // hitpoints per decision
   baseHitPoints: 100,
   deadHitPoints: 25,
-  originHeight: 170,
+  originHeight: 160,
   speed: 6000,
   mass: 1000,
-  restitution: 0.5,
+  restitution: 0.3,
   jumpForce: 8,
   allEnemies: [],
   occupiedSpaces: [],

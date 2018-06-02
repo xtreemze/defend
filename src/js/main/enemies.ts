@@ -22,6 +22,7 @@ class Enemy {
       },
       scene
     );
+    enemyGlobals.allEnemies.unshift(sphereMesh);
 
     this.revive(scene, position, sphereMesh, diameter, level);
 
@@ -31,10 +32,11 @@ class Enemy {
   checkHitPoints(
     scene: any = BABYLON.Scene.prototype,
     sphereMesh: any,
-    loopTimer: any
+    loopTimer: any,
+    engine = BABYLON.PhysicsEngine.prototype
   ) {
     if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < -3) {
-      this.destroy(sphereMesh, loopTimer);
+      this.destroy(sphereMesh, loopTimer, scene, engine);
     } else if (
       sphereMesh.hitPoints < enemyGlobals.deadHitPoints &&
       sphereMesh.material !== scene.getMaterialByID("damagedMaterial")
@@ -73,6 +75,10 @@ class Enemy {
       scene
     );
 
+    mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
+
+    const physicsEngine = scene.getPhysicsEngine();
+
     const loopTimer = setInterval(() => {
       if (
         sphereMesh.position.y > diameter / 2.5 &&
@@ -81,21 +87,27 @@ class Enemy {
       ) {
         enemyAi(sphereMesh, this.decide(sphereMesh));
       }
-      this.checkHitPoints(scene, sphereMesh, loopTimer);
+      this.checkHitPoints(scene, sphereMesh, loopTimer, physicsEngine);
     }, enemyGlobals.decisionRate);
   }
 
   destroy(
-    sphereMesh = {
-      hitPoints: 0,
-      dispose: function dispose() {}
-    },
-    loopTimer
+    sphereMesh = BABYLON.Mesh.prototype,
+    loopTimer,
+    scene = BABYLON.Scene.prototype,
+    engine = BABYLON.PhysicsEngine.prototype
   ) {
     clearInterval(loopTimer);
+    //@ts-ignore
     sphereMesh.hitPoints = 0;
+
     setTimeout(() => {
       sphereMesh.dispose();
+
+      setTimeout(() => {
+        mapGlobals.allImpostors = engine.getImpostors();
+        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+      }, 2);
     }, 1);
   }
 
@@ -160,7 +172,10 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
   enemyGenerator(scene, 5);
 
   setInterval(() => {
-    if (enemyGlobals.allEnemies.length < enemyGlobals.limit - 5 && mapGlobals.allImpostors.length < 80) {
+    if (
+      enemyGlobals.allEnemies.length < enemyGlobals.limit - 5 &&
+      mapGlobals.allImpostors.length < 80
+    ) {
       enemyGenerator(scene, randomNumberRange(2, 5));
     }
   }, enemyGlobals.generationRate);

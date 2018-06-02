@@ -23,6 +23,8 @@ class Tower {
     );
     BABYLON.Tags.AddTagsTo(tower, "tower");
 
+    towerGlobals.allTowers.unshift(this);
+
     this.revive(scene, tower, position, level, levelTop);
   }
 
@@ -39,6 +41,8 @@ class Tower {
       { mass: towerGlobals.mass, restitution: towerGlobals.restitution },
       scene
     );
+
+    mapGlobals.allImpostors.unshift(tower.physicsImpostor);
 
     tower.material = scene.getMaterialByID("towerMaterial");
 
@@ -68,6 +72,9 @@ class Tower {
           { mass: towerGlobals.mass, restitution: towerGlobals.restitution },
           scene
         );
+
+        mapGlobals.allImpostors.unshift(tower[levelTop].physicsImpostor);
+
         tower[levelTop].material = scene.getMaterialByID("towerMaterial");
         // tower.addChild(tower[levelTop]);
         this.enemyWatch(scene, tower, levelTop);
@@ -107,34 +114,26 @@ class Tower {
       }
 
       const sortedDistances = enemyDistances.sort();
-      if (
-        sortedDistances.length > 0
-      ) {
+      if (sortedDistances.length > 0) {
         this.rotateTurret(sortedDistances[0][1][0], tower, levelTop);
 
-        if (Date.now() - deltaTime > towerGlobals.rateOfFire){
-        deltaTime = Date.now();
-        1;
-        if (enemyGlobals.allEnemies.length > 0) {
+        if (Date.now() - deltaTime > towerGlobals.rateOfFire) {
+          deltaTime = Date.now();
+
           fire(scene, tower[levelTop]);
         }
-      }
       }
     });
   }
 
-  rotateTurret(
-    sortedDistances,
-    tower = BABYLON.Mesh.prototype,
-    levelTop = ""
-  ) {
-      tower[levelTop].lookAt(
-        new BABYLON.Vector3(
-          sortedDistances.position.x,
-          tower[levelTop].position.y,
-          sortedDistances.position.z
-        )
-      );
+  rotateTurret(sortedDistances, tower = BABYLON.Mesh.prototype, levelTop = "") {
+    tower[levelTop].lookAt(
+      new BABYLON.Vector3(
+        sortedDistances.position.x,
+        tower[levelTop].position.y,
+        sortedDistances.position.z
+      )
+    );
   }
 
   slowRotateTurret(

@@ -30,8 +30,6 @@ class Projectile {
       scene
     );
 
-
-
     //@ts-ignore
     this.startLife(scene, originMesh, level, projectile, flash);
   }
@@ -69,6 +67,7 @@ class Projectile {
       },
       scene
     );
+    mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
     const clonedRotation = originMesh.rotationQuaternion.clone();
     projectile.rotationQuaternion.copyFrom(clonedRotation);
@@ -83,19 +82,23 @@ class Projectile {
     }, 10);
 
     setTimeout(() => {
-      this.destroy(projectile);
+      this.destroy(projectile, scene);
     }, projectileGlobals.lifeTime);
   }
 
   intersectPhys(
     scene: any = BABYLON.Scene.prototype,
-    projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype,
+    projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype
   ) {
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors,
       () => {
-        this.destroy(projectile);
+        this.destroy(projectile, scene);
+
+        const physicsEngine = scene.getPhysicsEngine();
+
+        mapGlobals.allImpostors = physicsEngine.getImpostors();
       }
     );
 
@@ -133,10 +136,20 @@ class Projectile {
     );
   }
 
-  destroy(projectile = BABYLON.MeshBuilder.CreateSphere.prototype) {
+  destroy(
+    projectile = BABYLON.MeshBuilder.CreateSphere.prototype,
+    scene = BABYLON.Scene.prototype
+  ) {
     projectile.hitPoints = 0;
     setTimeout(() => {
       projectile.dispose();
+
+      setTimeout(() => {
+        const physicsEngine = scene.getPhysicsEngine();
+
+        mapGlobals.allImpostors = physicsEngine.getImpostors();
+        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+      }, 2);
     }, 1);
   }
 }
@@ -145,7 +158,10 @@ export default function fire(
   scene: any = BABYLON.Scene.prototype,
   originMesh: any = BABYLON.MeshBuilder.CreateSphere.prototype
 ) {
-  if (enemyGlobals.allEnemies.length <= 12 && mapGlobals.allImpostors.length < 80) {
+  if (
+    enemyGlobals.allEnemies.length <= 12 &&
+    mapGlobals.allImpostors.length < 80
+  ) {
     new Projectile(1, originMesh, scene);
   }
 }

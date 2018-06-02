@@ -55,10 +55,3 @@ window.addEventListener("resize", () => {
 
 //@ts-ignore
 window.scene = scene;
-
-const physicsEngine = scene.getPhysicsEngine();
-
-scene.registerBeforeRender(() => {
-  mapGlobals.allImpostors = physicsEngine.getImpostors();
-  enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-});
