@@ -50,7 +50,8 @@ const mapGlobals = {
   optimizerOn: false,
   cameraCutDelay: 3000,
   rotateCameras: true,
-  rotationSpeedMultiplier: 9
+  rotationSpeedMultiplier: 9,
+  allImpostors: []
 };
 
 const renderGlobals = {

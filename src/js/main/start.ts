@@ -16,16 +16,16 @@ const canvas = document.getElementById("renderCanvas");
 // Load the 3D engine
 //@ts-ignore
 const engine = new BABYLON.Engine(canvas, true, {
-  deterministicLockstep: true,
-  lockstepMaxSteps: 4
+  // deterministicLockstep: true,
+  // lockstepMaxSteps: 4
 });
+
+
 
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {
   const scene = new BABYLON.Scene(engine);
-  scene.enablePhysics(
-    new BABYLON.Vector3(0, -9.81, 0)
-  );
+  scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0));
 
   if (mapGlobals.diagnosticsOn) {
     scene.debugLayer.show({ popup: true, initialTab: 2 });
@@ -58,6 +58,10 @@ window.addEventListener("resize", () => {
 //@ts-ignore
 window.scene = scene;
 
+
+const physicsEngine = scene.getPhysicsEngine();
+
 scene.registerBeforeRender(() => {
+  mapGlobals.allImpostors = physicsEngine.getImpostors();
   enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
 });

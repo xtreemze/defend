@@ -21,10 +21,19 @@ class Projectile {
       scene
     );
 
-    const engine = scene.getPhysicsEngine();
+    const flash = BABYLON.MeshBuilder.CreateSphere(
+      name,
+      {
+        diameter: 4,
+        segments: 1
+      },
+      scene
+    );
+
+
 
     //@ts-ignore
-    this.startLife(scene, originMesh, level, projectile, engine);
+    this.startLife(scene, originMesh, level, projectile, flash);
   }
 
   startLife(
@@ -32,14 +41,17 @@ class Projectile {
     originMesh: any = BABYLON.Mesh.prototype,
     level: number = 1,
     projectile: any = BABYLON.Mesh.prototype,
-    engine: any = BABYLON.Engine.prototype
+    flash: any = BABYLON.Mesh.prototype
   ) {
-    setTimeout(() => {
-      this.destroy(projectile);
-    }, projectileGlobals.lifeTime);
-
-    const forwardLocal = new BABYLON.Vector3(0, 0, 5);
+    const forwardLocal = new BABYLON.Vector3(0, 0, 6);
     const space = originMesh.getDirection(forwardLocal);
+
+    const flashLocal = new BABYLON.Vector3(0, 0, 2.5);
+    const flashSpace = originMesh.getDirection(flashLocal);
+
+    flash.position = originMesh.position.subtract(flashSpace);
+    flash.material = scene.getMaterialByID("projectileMaterial");
+    flash.rotation = originMesh.rotation.clone();
 
     projectile.position = originMesh.position.subtract(space);
 
@@ -50,7 +62,6 @@ class Projectile {
     // For Physics
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
       projectile,
-      // BABYLON.PhysicsImpostor.SphereImpostor,
       BABYLON.PhysicsImpostor.BoxImpostor,
       {
         mass: projectileGlobals.mass,
@@ -60,23 +71,29 @@ class Projectile {
     );
 
     const clonedRotation = originMesh.rotationQuaternion.clone();
-
     projectile.rotationQuaternion.copyFrom(clonedRotation);
     // projectile.rotationQuaternion.copyFrom(originMesh.rotation);
 
-    this.intersectPhys(scene, projectile, engine); // Detects collissions with enemies
-
     this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
+
+    this.intersectPhys(scene, projectile); // Detects collissions with enemies
+
+    setTimeout(() => {
+      flash.dispose();
+    }, 10);
+
+    setTimeout(() => {
+      this.destroy(projectile);
+    }, projectileGlobals.lifeTime);
   }
 
   intersectPhys(
     scene: any = BABYLON.Scene.prototype,
     projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype,
-    engine: any
   ) {
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
-      engine.getImpostors(),
+      mapGlobals.allImpostors,
       () => {
         this.destroy(projectile);
       }
@@ -120,7 +137,7 @@ class Projectile {
     projectile.hitPoints = 0;
     setTimeout(() => {
       projectile.dispose();
-    }, 0.01);
+    }, 1);
   }
 }
 
