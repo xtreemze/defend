@@ -9,51 +9,49 @@ class Projectile {
   ) {
     const name = `projectile${level}`;
 
-    const projectile = BABYLON.MeshBuilder.CreateSphere(
+    const projectile = BABYLON.MeshBuilder.CreateBox(
       name,
       {
-        diameter: 1.5,
-        segments: 2
-        // height: 1,
-        // width: 1
+        // diameter: 1.2,
+        size: 1.8,
+        // segments: 1,
+        height: 0.7,
+        width: 0.7
       },
       scene
     );
 
-    this.startLife(scene, originMesh, level, projectile);
+    const engine = scene.getPhysicsEngine();
+
+    //@ts-ignore
+    this.startLife(scene, originMesh, level, projectile, engine);
   }
 
   startLife(
-    scene = BABYLON.Scene.prototype,
-    originMesh = BABYLON.MeshBuilder.CreateSphere.prototype,
-    level = 1,
-    projectile = BABYLON.MeshBuilder.CreateSphere.prototype
+    scene: any = BABYLON.Scene.prototype,
+    originMesh: any = BABYLON.Mesh.prototype,
+    level: number = 1,
+    projectile: any = BABYLON.Mesh.prototype,
+    engine: any = BABYLON.Engine.prototype
   ) {
+    setTimeout(() => {
+      this.destroy(projectile);
+    }, projectileGlobals.lifeTime);
+
     const forwardLocal = new BABYLON.Vector3(0, 0, 5);
     const space = originMesh.getDirection(forwardLocal);
 
     projectile.position = originMesh.position.subtract(space);
 
+    //@ts-ignore
     projectile.hitPoints = level * 2;
-
     projectile.material = scene.getMaterialByID("projectileMaterial");
-
-    // projectile.rotationQuaternion = originMesh.rotationQuaternion.clone();
-
-    // Glow Layer
-    // const glowLayer = new BABYLON.GlowLayer("glow", scene, {
-    // mainTextureFixedSize: 1024,
-    // blurKernelSize: 64,
-    // mainTextureSamples: 4
-    // });
-    // glowLayer.intensity = 0.5;
-
-    // glowLayer.addIncludedOnlyMesh(projectile);
 
     // For Physics
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
       projectile,
-      BABYLON.PhysicsImpostor.SphereImpostor,
+      // BABYLON.PhysicsImpostor.SphereImpostor,
+      BABYLON.PhysicsImpostor.BoxImpostor,
       {
         mass: projectileGlobals.mass,
         restitution: projectileGlobals.restitution
@@ -61,19 +59,28 @@ class Projectile {
       scene
     );
 
-    this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
-    this.intersectPhys(scene, projectile); // Detects collissions with enemies
+    const clonedRotation = originMesh.rotationQuaternion.clone();
 
-    setTimeout(() => {
-      projectile.dispose();
-    }, projectileGlobals.lifeTime);
+    projectile.rotationQuaternion.copyFrom(clonedRotation);
+    // projectile.rotationQuaternion.copyFrom(originMesh.rotation);
+
+    this.intersectPhys(scene, projectile, engine); // Detects collissions with enemies
+
+    this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
   }
 
   intersectPhys(
     scene: any = BABYLON.Scene.prototype,
-    projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype
+    projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype,
+    engine: any
   ) {
-    const engine = scene.getPhysicsEngine();
+    // Destroy when projectile hits any physics object
+    projectile.physicsImpostor.registerOnPhysicsCollide(
+      engine.getImpostors(),
+      () => {
+        this.destroy(projectile);
+      }
+    );
 
     // Enemies ONLY
     for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
@@ -90,14 +97,6 @@ class Projectile {
         }
       );
     }
-
-    // Destroy when projectile hits any physics object
-    projectile.physicsImpostor.registerOnPhysicsCollide(
-      engine.getImpostors(),
-      () => {
-        this.destroy(projectile);
-      }
-    );
   }
 
   impulsePhys(
@@ -121,7 +120,7 @@ class Projectile {
     projectile.hitPoints = 0;
     setTimeout(() => {
       projectile.dispose();
-    }, 1);
+    }, 0.01);
   }
 }
 

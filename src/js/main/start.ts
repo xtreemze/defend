@@ -23,10 +23,8 @@ const engine = new BABYLON.Engine(canvas, true, {
 // CreateScene function that creates and return the scene
 const createScene = function createScene() {
   const scene = new BABYLON.Scene(engine);
-  // scene.enablePhysics();
   scene.enablePhysics(
     new BABYLON.Vector3(0, -9.81, 0)
-    // new BABYLON.CannonJSPlugin()
   );
 
   if (mapGlobals.diagnosticsOn) {

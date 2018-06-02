@@ -3,7 +3,8 @@ import {
   enemyGlobals,
   towerGlobals,
   projectileGlobals,
-  mapGlobals
+  mapGlobals,
+  renderGlobals
 } from "./variables";
 
 export default function map1(scene = BABYLON.Scene.prototype, canvas) {
@@ -18,7 +19,6 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   );
 
   // Camera 2
-
   const camera2 = new BABYLON.ArcRotateCamera(
     "3/4",
     Math.PI / 3,
@@ -29,7 +29,6 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   );
 
   // Camera 3
-
   const camera3 = new BABYLON.ArcRotateCamera(
     "closeup",
     Math.PI / 1,
@@ -129,7 +128,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   hitMaterial.diffuseColor = enemyGlobals.hitColor;
   hitMaterial.freeze(); // if material is immutable
 
-  if (mapGlobals.pipelineOn) {
+  if (renderGlobals.pipelineOn) {
     const pipeline = new BABYLON.DefaultRenderingPipeline(
       "default", // The name of the pipeline
       false,
@@ -138,26 +137,38 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     );
 
     // Depth of Field
-    pipeline.depthOfFieldEnabled = false;
+    pipeline.depthOfFieldEnabled = renderGlobals.depthOfField;
     pipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Low;
     pipeline.depthOfField.focusDistance = 20 * 1000; // distance of the current focus point from the camera in millimeters considering 1 scene unit is 1 meter
     pipeline.depthOfField.focalLength = 400; // focal length of the camera in millimeters
     pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
 
     // Antialiasing
-    pipeline.samples = 4;
-    pipeline.fxaaEnabled = true;
+    pipeline.samples = 8;
+    pipeline.fxaaEnabled = renderGlobals.antialiasing;
 
     // Sharpen
-    pipeline.sharpenEnabled = true;
-    pipeline.sharpen.edgeAmount = 0.4;
+    pipeline.sharpenEnabled = renderGlobals.sharpenning;
+    pipeline.sharpen.edgeAmount = 0.3;
     pipeline.sharpen.colorAmount = 1;
 
     // Bloom
-    pipeline.bloomEnabled = false;
+    pipeline.bloomEnabled = renderGlobals.bloom;
     pipeline.bloomThreshold = 0.8;
     pipeline.bloomWeight = 0.3;
     pipeline.bloomKernel = 64;
     pipeline.bloomScale = 0.5;
+  }
+
+  // Glow
+  if (renderGlobals.glow) {
+    const glowLayer = new BABYLON.GlowLayer("glow", scene, {
+      mainTextureFixedSize: 256,
+      blurKernelSize: 32,
+      mainTextureSamples: 4
+    });
+
+    glowLayer.intensity = 0.8;
+    // glowLayer.addIncludedOnlyMesh(projectile);
   }
 }

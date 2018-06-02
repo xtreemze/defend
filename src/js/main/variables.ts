@@ -46,14 +46,29 @@ const enemyGlobals = {
 };
 
 const mapGlobals = {
-  pipelineOn: false,
   diagnosticsOn: false,
   optimizerOn: false,
   cameraCutDelay: 3000,
   rotateCameras: true,
   rotationSpeedMultiplier: 9
 };
+
+const renderGlobals = {
+  pipelineOn: true,
+  glow: true,
+  sharpenning: true,
+  antialiasing: true,
+  depthOfField: false,
+  bloom: true
+};
+
 //@ts-ignore
 window.globals = { projectileGlobals, towerGlobals, enemyGlobals };
 
-export { projectileGlobals, towerGlobals, enemyGlobals, mapGlobals };
+export {
+  projectileGlobals,
+  towerGlobals,
+  enemyGlobals,
+  mapGlobals,
+  renderGlobals
+};

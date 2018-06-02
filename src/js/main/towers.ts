@@ -126,6 +126,8 @@ class Tower {
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
+    fire(scene, tower[levelTop]);
+
     tower[levelTop].lookAt(
       new BABYLON.Vector3(
         sortedDistances.position.x,
@@ -133,12 +135,6 @@ class Tower {
         sortedDistances.position.z
       )
     );
-
-    // setTimeout(() => {
-
-    fire(scene, tower[levelTop]);
-
-    // }, 2);
   }
 
   slowRotateTurret(
