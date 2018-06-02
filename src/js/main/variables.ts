@@ -1,7 +1,7 @@
 import { Color3 } from "babylonjs";
 
 const projectileGlobals = {
-  lifeTime: 1000, // milliseconds
+  lifeTime: 800, // milliseconds
   speed: 5000,
   mass: 60,
   restitution: 0,
@@ -28,15 +28,15 @@ const enemyGlobals = {
   maxNumber: 4, // for one generation
   limit: 12,
   generationRate: 10000, // milliseconds
-  decisionRate: 100, // milliseconds
-  decayRate: 0.5, // hitpoints per decision
+  decisionRate: 200, // milliseconds
+  decayRate: 0.7, // hitpoints per decision
   baseHitPoints: 100,
-  deadHitPoints: 20,
-  originHeight: 180,
+  deadHitPoints: 25,
+  originHeight: 170,
   speed: 6000,
   mass: 1000,
   restitution: 0.5,
-  jumpForce: 10,
+  jumpForce: 8,
   allEnemies: [],
   occupiedSpaces: [],
   boundaryLimit: 15, // meters
