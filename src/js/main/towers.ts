@@ -108,26 +108,26 @@ class Tower {
 
       const sortedDistances = enemyDistances.sort();
       if (
-        sortedDistances.length > 0 &&
-        Date.now() - deltaTime > towerGlobals.rateOfFire
+        sortedDistances.length > 0
       ) {
+        this.rotateTurret(sortedDistances[0][1][0], tower, levelTop);
+
+        if (Date.now() - deltaTime > towerGlobals.rateOfFire){
         deltaTime = Date.now();
         1;
         if (enemyGlobals.allEnemies.length > 0) {
-          this.rotateTurret(scene, sortedDistances[0][1][0], tower, levelTop);
+          fire(scene, tower[levelTop]);
         }
+      }
       }
     });
   }
 
   rotateTurret(
-    scene = BABYLON.Scene.prototype,
     sortedDistances,
     tower = BABYLON.Mesh.prototype,
     levelTop = ""
   ) {
-      fire(scene, tower[levelTop]);
-
       tower[levelTop].lookAt(
         new BABYLON.Vector3(
           sortedDistances.position.x,
