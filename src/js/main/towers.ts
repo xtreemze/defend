@@ -63,7 +63,7 @@ class Tower {
         );
         tower[levelTop].position = new BABYLON.Vector3(
           position.x,
-          towerGlobals.height * 1.5,
+          towerGlobals.height * 5,
           position.z
         );
         tower[levelTop].physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -150,8 +150,7 @@ class Tower {
           if (
             Date.now() - deltaTime >
             towerGlobals.rateOfFire
-            // &&
-            // rayIntersections.length < 1
+            // && rayIntersections.length < 1
           ) {
             deltaTime = Date.now();
             setTimeout(() => {
