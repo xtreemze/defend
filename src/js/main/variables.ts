@@ -2,10 +2,10 @@ import { Color3 } from "babylonjs";
 
 const projectileGlobals = {
   lifeTime: 800, // milliseconds
-  speed: 5000,
-  mass: 60,
-  restitution: 0,
-  baseHitPoints: 40,
+  speed: 4000,
+  mass: 50,
+  restitution: 0.1,
+  baseHitPoints: 10,
   livingColor: new BABYLON.Color3(1, 0.4, 0.6)
 };
 
@@ -15,7 +15,7 @@ const towerGlobals = {
   rateOfFire: 200, // milliseconds between each shot,
   height: 2,
   mass: 0,
-  restitution: 0,
+  restitution: 0.1,
   baseHitPoints: 0,
   allTowers: [],
   occupiedSpaces: [],
@@ -28,18 +28,18 @@ const enemyGlobals = {
   maxNumber: 4, // for one generation
   limit: 12,
   generationRate: 10000, // milliseconds
-  decisionRate: 200, // milliseconds
-  decayRate: 0.7, // hitpoints per decision
-  baseHitPoints: 100,
-  deadHitPoints: 25,
+  decisionRate: 50, // milliseconds
+  decayRate: 1, // hitpoints per decision
+  baseHitPoints: 200,
+  deadHitPoints: 30,
   originHeight: 160,
-  speed: 6000,
+  speed: 15000,
   mass: 1000,
   restitution: 0.3,
   jumpForce: 8,
   allEnemies: [],
   occupiedSpaces: [],
-  boundaryLimit: 15, // meters
+  boundaryLimit: 45, // meters
   livingColor: new BABYLON.Color3(0, 0.7, 1),
   hitColor: new BABYLON.Color3(0.5, 0, 0.5),
   deadColor: new BABYLON.Color3(0.8, 0.2, 0)

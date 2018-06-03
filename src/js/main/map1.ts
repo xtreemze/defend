@@ -80,7 +80,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     "atmosphere",
     {
       radius: 250,
-      subdivisions: 5
+      subdivisions: 3
     },
     scene
   );
@@ -92,9 +92,9 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   const ground = BABYLON.MeshBuilder.CreateGround(
     "ground",
     {
-      height: 100,
-      width: 100,
-      subdivisions: 10
+      height: 200,
+      width: 200,
+      subdivisions: 20
     },
     scene
   );
@@ -195,5 +195,6 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     glowLayer.intensity = 0.8;
     // glowLayer.addIncludedOnlyMesh(projectile);
     glowLayer.addExcludedMesh(ground);
+    glowLayer.addExcludedMesh(atmosphere);
   }
 }

@@ -46,7 +46,7 @@ class Projectile {
     projectile.position = originMesh.position.subtract(space);
 
     //@ts-ignore
-    projectile.hitPoints = level * 2;
+    projectile.hitPoints = level * projectileGlobals.baseHitPoints;
     projectile.material = scene.getMaterialByID("projectileMaterial");
 
     // For Physics
@@ -65,9 +65,9 @@ class Projectile {
     projectile.rotationQuaternion.copyFrom(clonedRotation);
     // projectile.rotationQuaternion.copyFrom(originMesh.rotation);
 
+    this.intersectPhys(scene, projectile); // Detects collissions with enemies
     this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
 
-    this.intersectPhys(scene, projectile); // Detects collissions with enemies
 
     setTimeout(() => {
       this.destroy(projectile, scene);
@@ -93,8 +93,9 @@ class Projectile {
       projectile.physicsImpostor.registerOnPhysicsCollide(
         enemy.physicsImpostor,
         () => {
-          enemy.material = scene.getMaterialByID("hitMaterial");
           enemy.hitPoints -= projectile.hitPoints;
+
+          enemy.material = scene.getMaterialByID("hitMaterial");
           setTimeout(() => {
             enemy.material = scene.getMaterialByID("enemyMaterial");
           }, 35);
@@ -124,12 +125,12 @@ class Projectile {
     projectile = BABYLON.MeshBuilder.CreateSphere.prototype,
     scene = BABYLON.Scene.prototype
   ) {
-    projectile.hitPoints = 0;
 
     setTimeout(() => {
       mapGlobals.allImpostors = [];
       projectile.physicsImpostor.dispose();
 
+      projectile.hitPoints = 0;
       projectile.dispose();
 
       const physicsEngine = scene.getPhysicsEngine();

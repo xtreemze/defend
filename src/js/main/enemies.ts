@@ -35,7 +35,7 @@ class Enemy {
     loopTimer: any,
     engine = BABYLON.PhysicsEngine.prototype
   ) {
-    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < -50) {
+    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < towerGlobals.range * -1) {
       this.destroy(sphereMesh, loopTimer, scene, engine);
     } else if (
       sphereMesh.hitPoints < enemyGlobals.deadHitPoints &&

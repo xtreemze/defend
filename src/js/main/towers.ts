@@ -120,7 +120,7 @@ class Tower {
         for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
           const enemy = enemyGlobals.allEnemies[index];
           if (
-            enemy.position.y < 4 &&
+            enemy.position.y <= towerGlobals.range &&
             enemy.position.y > 1 &&
             enemy.hitPoints > enemyGlobals.deadHitPoints &&
             BABYLON.Vector3.Distance(
@@ -160,8 +160,11 @@ class Tower {
     tower[levelTop].lookAt(
       new BABYLON.Vector3(
         sortedDistances.position.x,
-        tower[levelTop].position.y,
+        sortedDistances.position.y,
         sortedDistances.position.z
+        // sortedDistances.position.x,
+        // tower[levelTop].position.y,
+        // sortedDistances.position.z
       )
     );
   }
