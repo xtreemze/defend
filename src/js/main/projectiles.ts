@@ -13,10 +13,10 @@ class Projectile {
       name,
       {
         // diameter: 1.2,
-        size: 1.8,
+        size: 2.3,
         // segments: 1,
-        height: 0.7,
-        width: 0.7
+        height: 0.6,
+        width: 0.6
       },
       scene
     );
