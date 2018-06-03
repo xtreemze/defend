@@ -12,9 +12,9 @@ const content = `{
 `;
 
 fsExtra.writeFile("./src/manifest.json", content, "utf-8", err => {
-  Error(err);
+  Error(err.toString());
 });
 
 fsExtra.writeFile("./dist/manifest.json", content, "utf-8", err => {
-  Error(err);
+  Error(err.toString());
 });

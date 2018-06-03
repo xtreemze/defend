@@ -1,57 +1,78 @@
 // import "babylonjs-inspector";
 import "./../../vendor/pep";
 
-// import * as BABYLON from "./../../../node_modules/babylonjs/es6";
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "./../../../node_modules/babylonjs/es6";
+import OIMO from "oimo";
+import CANNON from "cannon";
+// import * as BABYLON from "babylonjs";
 
 import { enemyGlobals, mapGlobals } from "./variables";
 
 import enemies from "./enemies";
 import towers from "./towers";
 import map1 from "./map1";
+import { CannonJSPlugin } from "babylonjs";
 
-// Get the canvas DOM element
-const canvas = document.getElementById("renderCanvas");
+class Game {
+  private _canvas: HTMLCanvasElement;
+  private _engine: BABYLON.Engine;
+  private _scene: BABYLON.Scene;
+  private _camera: BABYLON.FreeCamera;
+  private _light: BABYLON.Light;
 
-// Load the 3D engine
-//@ts-ignore
-const engine = new BABYLON.Engine(canvas, true, {
-  // deterministicLockstep: true,
-  // lockstepMaxSteps: 4
-});
-
-// CreateScene function that creates and return the scene
-const createScene = function createScene() {
-  const scene = new BABYLON.Scene(engine);
-  scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0));
-
-  if (mapGlobals.diagnosticsOn) {
-    scene.debugLayer.show({ popup: true, initialTab: 2 });
+  constructor(canvasElement: string) {
+    // Create canvas and engine.
+    this._canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
+    this._engine = new BABYLON.Engine(this._canvas, true);
   }
 
-  if (mapGlobals.optimizerOn) {
-    const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
-    const optimizer = new BABYLON.SceneOptimizer(scene, options);
+  createScene(): void {
+    // Create a basic BJS Scene object.
+    this._scene = new BABYLON.Scene(this._engine);
 
-    optimizer.start();
+    this._scene.enablePhysics(
+      new BABYLON.Vector3(0, -9.81, 0),
+      new CannonJSPlugin()
+    );
+    if (mapGlobals.diagnosticsOn) {
+      this._scene.debugLayer.show({ popup: true, initialTab: 2 });
+    }
+
+    if (mapGlobals.optimizerOn) {
+      const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
+      const optimizer = new BABYLON.SceneOptimizer(this._scene, options);
+
+      optimizer.start();
+    }
+
+    map1(this._scene, this._canvas);
+    towers(this._scene);
+    enemies(this._scene);
   }
 
-  map1(scene, canvas);
-  towers(scene);
-  enemies(scene);
+  doRender(): void {
+    // Run the render loop.
+    this._engine.runRenderLoop(() => {
+      this._scene.render();
+    });
 
-  return scene;
-};
+    // The canvas/window resize event handler.
+    window.addEventListener("resize", () => {
+      this._engine.resize();
+    });
+  }
+}
 
-const scene = createScene();
+window.addEventListener("DOMContentLoaded", () => {
+  // Create the game using the 'renderCanvas'.
+  let game = new Game("renderCanvas");
 
-engine.runRenderLoop(() => {
-  scene.render();
+  // Create the scene.
+  game.createScene();
+
+  // Start render loop.
+  game.doRender();
+
+  //@ts-ignore
+  window.scene = this._scene;
 });
-
-window.addEventListener("resize", () => {
-  engine.resize();
-});
-
-//@ts-ignore
-window.scene = scene;
