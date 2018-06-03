@@ -84,14 +84,15 @@ class Tower {
         );
         const flashLocal = new BABYLON.Vector3(0, 0, 2.5);
         const flashSpace = tower[levelTop].getDirection(flashLocal);
-        const ray = new BABYLON.Ray(
-          tower[levelTop.position],
-          flashLocal,
-          towerGlobals.range
-        );
 
         flash.position = tower[levelTop].position.subtract(flashSpace);
         flash.rotation = tower[levelTop].rotation.clone();
+
+        const ray = new BABYLON.Ray(
+          tower[levelTop].position,
+          flashSpace,
+          towerGlobals.range
+        );
         tower[levelTop].material = scene.getMaterialByID("towerMaterial");
         tower[levelTop].addChild(flash);
 
@@ -113,12 +114,25 @@ class Tower {
           position.x,
           towerGlobals.height * 2,
           position.z
-        )
-        pillar.material = scene.getMaterialByID(
-          'towerMaterial')
+        );
+        pillar.material = scene.getMaterialByID("towerMaterial");
 
         break;
     }
+  }
+
+  rayClearsTower(scene, ray) {
+    let result = true;
+    scene.pickWithRay(ray, mesh => {
+      for (let index = 0; index < towerGlobals.allTowers.length; index++) {
+        const element = towerGlobals.allTowers[index];
+
+        if (element == mesh) {
+          result = false;
+        }
+      }
+    });
+    return result;
   }
 
   enemyWatch(
@@ -126,7 +140,7 @@ class Tower {
     tower = BABYLON.Mesh.prototype,
     levelTop = "",
     flash = BABYLON.Mesh.prototype,
-    ray = BABYLON.Ray.prototype
+    ray
   ) {
     const rotateDelay = 200;
     let deltaTime = Date.now();
@@ -148,7 +162,8 @@ class Tower {
             BABYLON.Vector3.Distance(
               tower[levelTop].position,
               enemy.position
-            ) <= towerGlobals.range
+            ) <= towerGlobals.range &&
+            this.rayClearsTower(scene, ray)
           ) {
             enemyDistances.push([
               BABYLON.Vector3.Distance(
@@ -163,12 +178,8 @@ class Tower {
         const sortedDistances = enemyDistances.sort();
         if (sortedDistances.length > 0) {
           this.rotateTurret(sortedDistances[0][1][0], tower, levelTop);
-          // const rayIntersections = ray.intersectsMeshes(towerGlobals.allTowers);
-          if (
-            Date.now() - deltaTime >
-            towerGlobals.rateOfFire
-            // && rayIntersections.length < 1
-          ) {
+
+          if (Date.now() - deltaTime > towerGlobals.rateOfFire) {
             deltaTime = Date.now();
             setTimeout(() => {
               flash.material = scene.getMaterialByID("transparentMaterial");
@@ -187,85 +198,82 @@ class Tower {
         sortedDistances.position.x,
         sortedDistances.position.y,
         sortedDistances.position.z
-        // sortedDistances.position.x,
-        // tower[levelTop].position.y,
-        // sortedDistances.position.z
       )
     );
   }
 
-  slowRotateTurret(
-    scene = BABYLON.Scene.prototype,
-    rotateDelay = 0,
-    tower = BABYLON.Mesh.prototype,
-    levelTop = "",
-    turretRotation = BABYLON.Quaternion.prototype
-  ) {
-    tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
-    let lookTarget = enemyGlobals.allEnemies[0];
-    let lookTargetPos = lookTarget.position.clone();
+  //   slowRotateTurret(
+  //     scene = BABYLON.Scene.prototype,
+  //     rotateDelay = 0,
+  //     tower = BABYLON.Mesh.prototype,
+  //     levelTop = "",
+  //     turretRotation = BABYLON.Quaternion.prototype
+  //   ) {
+  //     tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
+  //     let lookTarget = enemyGlobals.allEnemies[0];
+  //     let lookTargetPos = lookTarget.position.clone();
 
-    // let lookTarget = scene.getMeshByID("ground");
-    // let lookTargetPos = lookTarget.position.clone();
-    let orgQuat = tower[levelTop].rotationQuaternion.clone();
-    tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-    let lookQuat = tower[levelTop].rotationQuaternion.clone();
-    let percent = 0;
-    let percentAdd = 100;
+  //     // let lookTarget = scene.getMeshByID("ground");
+  //     // let lookTargetPos = lookTarget.position.clone();
+  //     let orgQuat = tower[levelTop].rotationQuaternion.clone();
+  //     tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+  //     let lookQuat = tower[levelTop].rotationQuaternion.clone();
+  //     let percent = 0;
+  //     let percentAdd = 100;
 
-    setInterval(() => {
-      if (
-        enemyGlobals.allEnemies !== undefined &&
-        enemyGlobals.allEnemies.length > 0
-      ) {
-        lookTarget = enemyGlobals.allEnemies[0];
-        lookTargetPos = lookTarget.position.clone();
+  //     setInterval(() => {
+  //       if (
+  //         enemyGlobals.allEnemies !== undefined &&
+  //         enemyGlobals.allEnemies.length > 0
+  //       ) {
+  //         lookTarget = enemyGlobals.allEnemies[0];
+  //         lookTargetPos = lookTarget.position.clone();
 
-        fire(scene, tower[levelTop]);
-      }
-    }, rotateDelay);
+  //         fire(scene, tower[levelTop]);
+  //       }
+  //     }, rotateDelay);
 
-    scene.registerBeforeRender(() => {
-      if (enemyGlobals.allEnemies.length > 0) {
-        if (lookTarget === null) {
-          // lookTarget = enemyGlobals.allEnemies[0];
+  //     scene.registerBeforeRender(() => {
+  //       if (enemyGlobals.allEnemies.length > 0) {
+  //         if (lookTarget === null) {
+  //           // lookTarget = enemyGlobals.allEnemies[0];
 
-          lookTargetPos = lookTarget.position.clone();
+  //           lookTargetPos = lookTarget.position.clone();
 
-          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+  //           tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
 
-          orgQuat = tower[levelTop].rotationQuaternion.clone();
-          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-          lookQuat = tower[levelTop].rotationQuaternion.clone();
-        }
-        if (
-          // Reset the rotation values when the target has moved
+  //           orgQuat = tower[levelTop].rotationQuaternion.clone();
+  //           tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+  //           lookQuat = tower[levelTop].rotationQuaternion.clone();
+  //         }
+  //         if (
+  //           // Reset the rotation values when the target has moved
 
-          BABYLON.Vector3.Distance(lookTargetPos, lookTarget.position) >
-          BABYLON.Epsilon
-        ) {
-          orgQuat = tower[levelTop].rotationQuaternion.clone();
-          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-          lookQuat = tower[levelTop].rotationQuaternion.clone();
-          lookTargetPos = lookTarget.position.clone();
-          percent = 0;
-        }
+  //           BABYLON.Vector3.Distance(lookTargetPos, lookTarget.position) >
+  //           BABYLON.Epsilon
+  //         ) {
+  //           orgQuat = tower[levelTop].rotationQuaternion.clone();
+  //           tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+  //           lookQuat = tower[levelTop].rotationQuaternion.clone();
+  //           lookTargetPos = lookTarget.position.clone();
+  //           percent = 0;
+  //         }
 
-        // Set the tower[levelTop] rotation, increase the percentage
-        if (percent !== 1) {
-          tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Slerp(
-            orgQuat,
-            lookQuat,
-            percent
-          );
-          percent += percentAdd;
-          if (percent > 1) {
-            percent = 1;
-          }
-        }
-      }
-    });
-  }
+  //         // Set the tower[levelTop] rotation, increase the percentage
+  //         if (percent !== 1) {
+  //           tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Slerp(
+  //             orgQuat,
+  //             lookQuat,
+  //             percent
+  //           );
+  //           percent += percentAdd;
+  //           if (percent > 1) {
+  //             percent = 1;
+  //           }
+  //         }
+  //       }
+  //     });
+  //   }
 }
 
 function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
