@@ -21,6 +21,7 @@ class Tower {
       },
       scene
     );
+
     BABYLON.Tags.AddTagsTo(tower, "tower");
 
     towerGlobals.allTowers.unshift(this);
@@ -55,7 +56,7 @@ class Tower {
         tower[levelTop] = BABYLON.MeshBuilder.CreateBox(
           levelTop,
           {
-            size: 2,
+            size: 3,
             height: towerGlobals.height,
             width: 4
           },
@@ -63,7 +64,7 @@ class Tower {
         );
         tower[levelTop].position = new BABYLON.Vector3(
           position.x,
-          towerGlobals.height * 5,
+          towerGlobals.height * 4,
           position.z
         );
         tower[levelTop].physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -99,6 +100,22 @@ class Tower {
         flash.material = scene.getMaterialByID("transparentMaterial");
         // tower.addChild(tower[levelTop]);
         this.enemyWatch(scene, tower, levelTop, flash, ray);
+
+        const pillar = BABYLON.MeshBuilder.CreateBox(
+          name,
+          {
+            size: 1,
+            height: towerGlobals.height * 3
+          },
+          scene
+        );
+        pillar.position = new BABYLON.Vector3(
+          position.x,
+          towerGlobals.height * 2,
+          position.z
+        )
+        pillar.material = scene.getMaterialByID(
+          'towerMaterial')
 
         break;
     }
