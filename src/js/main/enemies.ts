@@ -14,11 +14,11 @@ class Enemy {
 
     const diameter = level * 1.5;
 
-    const sphereMesh = BABYLON.MeshBuilder.CreateSphere(
+    const sphereMesh = BABYLON.MeshBuilder.CreateIcoSphere(
       name,
       {
-        segments: 3,
-        diameter: diameter
+        subdivisions: 1,
+        radius: diameter / 2
       },
       scene
     );
@@ -35,7 +35,7 @@ class Enemy {
     loopTimer: any,
     engine = BABYLON.PhysicsEngine.prototype
   ) {
-    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < -3) {
+    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < -50) {
       this.destroy(sphereMesh, loopTimer, scene, engine);
     } else if (
       sphereMesh.hitPoints < enemyGlobals.deadHitPoints &&
@@ -81,8 +81,8 @@ class Enemy {
 
     const loopTimer = setInterval(() => {
       if (
-        sphereMesh.position.y > diameter / 2.5 &&
-        sphereMesh.position.y < diameter * 1.2 &&
+        sphereMesh.position.y > diameter / 2 &&
+        sphereMesh.position.y < diameter * 2 &&
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
         enemyAi(sphereMesh, this.decide(sphereMesh));

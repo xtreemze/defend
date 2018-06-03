@@ -61,7 +61,7 @@ const renderGlobals = {
   sharpenning: false,
   antialiasing: false,
   depthOfField: false,
-  bloom: true
+  bloom: false
 };
 
 //@ts-ignore

@@ -73,11 +73,11 @@ class Tower {
           scene
         );
 
-        const flash = BABYLON.MeshBuilder.CreateSphere(
+        const flash = BABYLON.MeshBuilder.CreateIcoSphere(
           name,
           {
-            diameter: 4,
-            segments: 1
+            radius: 3.5,
+            subdivisions: 1
           },
           scene
         );
@@ -112,36 +112,45 @@ class Tower {
     // this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
 
     scene.registerBeforeRender(() => {
-      const enemyDistances = [];
-
-      for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
-        const enemy = enemyGlobals.allEnemies[index];
-        if (
-          enemy.position.y < 4 &&
-          enemy.position.y > 1 &&
-          enemy.hitPoints > enemyGlobals.deadHitPoints &&
-          BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position) <=
-            towerGlobals.range
-        ) {
-          enemyDistances.push([
-            BABYLON.Vector3.Distance(tower[levelTop].position, enemy.position),
-            [enemy]
-          ]);
+      if (
+        enemyGlobals.allEnemies.length <= 12 &&
+        mapGlobals.allImpostors.length < mapGlobals.impostorLimit
+      ) {
+        const enemyDistances = [];
+        for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
+          const enemy = enemyGlobals.allEnemies[index];
+          if (
+            enemy.position.y < 4 &&
+            enemy.position.y > 1 &&
+            enemy.hitPoints > enemyGlobals.deadHitPoints &&
+            BABYLON.Vector3.Distance(
+              tower[levelTop].position,
+              enemy.position
+            ) <= towerGlobals.range
+          ) {
+            enemyDistances.push([
+              BABYLON.Vector3.Distance(
+                tower[levelTop].position,
+                enemy.position
+              ),
+              [enemy]
+            ]);
+          }
         }
-      }
 
-      const sortedDistances = enemyDistances.sort();
-      if (sortedDistances.length > 0) {
-        this.rotateTurret(sortedDistances[0][1][0], tower, levelTop);
+        const sortedDistances = enemyDistances.sort();
+        if (sortedDistances.length > 0) {
+          this.rotateTurret(sortedDistances[0][1][0], tower, levelTop);
 
-        if (Date.now() - deltaTime > towerGlobals.rateOfFire) {
-          deltaTime = Date.now();
-          flash.material = scene.getMaterialByID("projectileMaterial");
-          fire(scene, tower[levelTop]);
+          if (Date.now() - deltaTime > towerGlobals.rateOfFire) {
+            deltaTime = Date.now();
+            setTimeout(() => {
+              flash.material = scene.getMaterialByID("transparentMaterial");
+            }, 3);
+            flash.material = scene.getMaterialByID("projectileMaterial");
+            fire(scene, tower[levelTop]);
 
-          setTimeout(() => {
-            flash.material = scene.getMaterialByID("transparentMaterial");
-          }, 5);
+          }
         }
       }
     });
@@ -183,6 +192,7 @@ class Tower {
       ) {
         lookTarget = enemyGlobals.allEnemies[0];
         lookTargetPos = lookTarget.position.clone();
+
         fire(scene, tower[levelTop]);
       }
     }, rotateDelay);

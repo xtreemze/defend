@@ -76,6 +76,19 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
   new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.3, 1, 0), scene);
 
+  const atmosphere = BABYLON.MeshBuilder.CreateIcoSphere(
+    "atmosphere",
+    {
+      radius: 250,
+      subdivisions: 5
+    },
+    scene
+  );
+
+  atmosphere.freezeWorldMatrix(); // freeze ground
+  const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+  atmosphere.material = groundMaterial;
+
   const ground = BABYLON.MeshBuilder.CreateGround(
     "ground",
     {
@@ -94,11 +107,10 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
 
-  const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-
   ground.material = groundMaterial;
   groundMaterial.wireframe = true;
   groundMaterial.diffuseColor = enemyGlobals.hitColor;
+  groundMaterial.emissiveColor = enemyGlobals.hitColor;
   groundMaterial.freeze(); // if material is immutable
 
   const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
@@ -132,6 +144,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   );
   damagedMaterial.diffuseColor = enemyGlobals.deadColor;
   damagedMaterial.wireframe = true;
+  damagedMaterial.alpha = 0.5;
   damagedMaterial.freeze(); // if material is immutable
 
   const hitMaterial = new BABYLON.StandardMaterial("hitMaterial", scene);
@@ -164,21 +177,23 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
     // Bloom
     pipeline.bloomEnabled = renderGlobals.bloom;
-    pipeline.bloomThreshold = 0.2;
+    pipeline.bloomThreshold = 0.5;
     pipeline.bloomWeight = 0.5;
-    pipeline.bloomKernel = 8;
-    pipeline.bloomScale = 0.4;
+    pipeline.bloomKernel = 32;
+    pipeline.bloomScale = 0.8;
   }
 
   // Glow
   if (renderGlobals.glow) {
     const glowLayer = new BABYLON.GlowLayer("glow", scene, {
-      mainTextureFixedSize: 32,
-      blurKernelSize: 8,
-      mainTextureSamples: 2
+      // mainTextureFixedSize: 32,
+      // blurKernelSize: 8,
+      // mainTextureSamples: 2
+      mainTextureRatio: 0.2
     });
 
     glowLayer.intensity = 0.8;
     // glowLayer.addIncludedOnlyMesh(projectile);
+    glowLayer.addExcludedMesh(ground);
   }
 }

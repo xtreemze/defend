@@ -40,7 +40,7 @@ class Projectile {
     level: number = 1,
     projectile: any = BABYLON.Mesh.prototype
   ) {
-    const forwardLocal = new BABYLON.Vector3(0, 0, 6);
+    const forwardLocal = new BABYLON.Vector3(0, 0, 3);
     const space = originMesh.getDirection(forwardLocal);
 
     projectile.position = originMesh.position.subtract(space);
@@ -143,10 +143,5 @@ export default function fire(
   scene: any = BABYLON.Scene.prototype,
   originMesh: any = BABYLON.MeshBuilder.CreateSphere.prototype
 ) {
-  if (
-    enemyGlobals.allEnemies.length <= 12 &&
-    mapGlobals.allImpostors.length < mapGlobals.impostorLimit
-  ) {
-    new Projectile(1, originMesh, scene);
-  }
+  new Projectile(1, originMesh, scene);
 }
