@@ -1,4 +1,4 @@
-import { Color3 } from "babylonjs";
+import { Color3 } from "./../../../node_modules/babylonjs/es6";
 
 const projectileGlobals = {
   lifeTime: 800, // milliseconds
@@ -6,7 +6,7 @@ const projectileGlobals = {
   mass: 50,
   restitution: 0.1,
   baseHitPoints: 10,
-  livingColor: new BABYLON.Color3(1, 0.4, 0.6)
+  livingColor: new Color3(1, 0.4, 0.6)
 };
 
 const towerGlobals = {
@@ -19,7 +19,7 @@ const towerGlobals = {
   baseHitPoints: 0,
   allTowers: [],
   occupiedSpaces: [],
-  livingColor: new BABYLON.Color3(0, 1, 0.85),
+  livingColor: new Color3(0, 1, 0.85),
   range: 50
 };
 
@@ -27,8 +27,8 @@ const enemyGlobals = {
   minNumber: 3, // for one generation
   maxNumber: 4, // for one generation
   limit: 12,
-  generationRate: 10000, // milliseconds
-  decisionRate: 50, // milliseconds
+  generationRate: 8000, // milliseconds
+  decisionRate: 100, // milliseconds
   decayRate: 1, // hitpoints per decision
   baseHitPoints: 200,
   deadHitPoints: 30,
@@ -40,9 +40,9 @@ const enemyGlobals = {
   allEnemies: [],
   occupiedSpaces: [],
   boundaryLimit: 45, // meters
-  livingColor: new BABYLON.Color3(0, 0.7, 1),
-  hitColor: new BABYLON.Color3(0.5, 0, 0.5),
-  deadColor: new BABYLON.Color3(0.8, 0.2, 0)
+  livingColor: new Color3(0, 0.7, 1),
+  hitColor: new Color3(0.5, 0, 0.5),
+  deadColor: new Color3(0.8, 0.2, 0)
 };
 
 const mapGlobals = {

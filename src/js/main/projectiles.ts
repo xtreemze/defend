@@ -1,4 +1,4 @@
-import * as BABYLON from "babylonjs";
+   import * as  BABYLON from  'babylonjs';
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
 
 class Projectile {

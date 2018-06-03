@@ -1,4 +1,4 @@
-import * as BABYLON from "babylonjs";
+   import * as  BABYLON from  'babylonjs';
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
