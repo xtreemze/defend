@@ -10,7 +10,6 @@
   "rules": {
     "prettier/prettier": "error",
     "no-unused-vars": "warn",
-    "prefer-destructuring": "warn",
     "no-restricted-syntax": "warn",
     "import/no-extraneous-dependencies": "off",
     "no-restricted-globals": "off",
@@ -18,6 +17,13 @@
     "no-undef": "warn",
     "prefer-rest-params": "warn",
     "spaced-comment": "warn",
-    "no-new": "off"
+    "no-new": "off",
+    "newline-before-return": "error",
+    "function-paren-newline": "error",
+    "object-property-newline": "error",
+    "padded-blocks": "error",
+    "padding-line-between-statements": "error",
+    "linebreak-style": "error",
+    "implicit-arrow-linebreak": "error"
   }
 }

@@ -6,7 +6,7 @@ const projectileGlobals = {
   mass: 50,
   restitution: 0.1,
   baseHitPoints: 10,
-  livingColor: new Color3(1, 0.4, 0.6)
+  livingColor: new Color3(1, 0.5, 0.8)
 };
 
 const towerGlobals = {
@@ -19,7 +19,7 @@ const towerGlobals = {
   baseHitPoints: 0,
   allTowers: [],
   occupiedSpaces: [],
-  livingColor: new Color3(0, 1, 0.85),
+  livingColor: new Color3(0, 0.8, 0.6),
   range: 50
 };
 
@@ -40,9 +40,9 @@ const enemyGlobals = {
   allEnemies: [],
   occupiedSpaces: [],
   boundaryLimit: 45, // meters
-  livingColor: new Color3(0, 0.7, 1),
-  hitColor: new Color3(0.5, 0, 0.5),
-  deadColor: new Color3(0.8, 0.2, 0)
+  livingColor: new Color3(0.1, 0.8, 1),
+  hitColor: new Color3(0.3, 0, 0.4),
+  deadColor: new Color3(0.8, 0.2, 0.1)
 };
 
 const mapGlobals = {
@@ -52,7 +52,8 @@ const mapGlobals = {
   rotateCameras: true,
   rotationSpeedMultiplier: 9,
   allImpostors: [],
-  impostorLimit: 100
+  impostorLimit: 100,
+  lightIntensity: 0.5
 };
 
 const renderGlobals = {

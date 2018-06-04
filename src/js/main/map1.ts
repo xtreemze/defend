@@ -1,4 +1,4 @@
-   import * as  BABYLON from  'babylonjs';
+import * as BABYLON from "babylonjs";
 import {
   enemyGlobals,
   towerGlobals,
@@ -74,7 +74,13 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     }, 100);
   }, mapGlobals.cameraCutDelay);
 
-  new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.3, 1, 0), scene);
+  const light = new BABYLON.HemisphericLight(
+    "light1",
+    new BABYLON.Vector3(0.3, 1, 0),
+    scene
+  );
+
+  light.intensity = mapGlobals.lightIntensity;
 
   const atmosphere = BABYLON.MeshBuilder.CreateIcoSphere(
     "atmosphere",
@@ -102,8 +108,8 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(
     ground,
-    BABYLON.PhysicsImpostor.BoxImpostor,
-    { mass: 0, restitution: 0.9 },
+    BABYLON.PhysicsImpostor.PlaneImpostor,
+    { mass: 0, restitution: 0.9, friction: 0.2 },
     scene
   );
 
