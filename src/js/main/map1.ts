@@ -90,7 +90,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   );
   demoSphere.position = new BABYLON.Vector3(0, 40, 0);
 
-  skyLight.intensity = 0.8;
+  skyLight.intensity = mapGlobals.lightIntensity;
   skyLight.diffuse = new BABYLON.Color3(0.77, 0.72, 0.95);
   skyLight.groundColor = new BABYLON.Color3(0, 0, 0.2);
 

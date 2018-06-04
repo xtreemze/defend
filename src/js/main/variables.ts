@@ -53,7 +53,7 @@ const mapGlobals = {
   rotationSpeedMultiplier: 16, // higher is sloewr
   allImpostors: [],
   impostorLimit: 100,
-  lightIntensity: 0.8
+  lightIntensity: 0.9
 };
 
 const renderGlobals = {
