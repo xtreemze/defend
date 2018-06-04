@@ -20,7 +20,7 @@ const towerGlobals = {
   allTowers: [],
   occupiedSpaces: [],
   specularColor: new Color3(0.19, 0.05, 0.08),
-  livingColor: new Color3(0.05, 0.62, 0.41),
+  livingColor: new Color3(0.09, 0.57, 0.42),
   range: 50
 };
 

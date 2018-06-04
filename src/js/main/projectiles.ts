@@ -21,16 +21,6 @@ class Projectile {
       scene
     );
 
-    // const flash = BABYLON.MeshBuilder.CreateSphere(
-    //   name,
-    //   {
-    //     diameter: 4,
-    //     segments: 1
-    //   },
-    //   scene
-    // );
-
-    //@ts-ignore
     this.startLife(scene, originMesh, level, projectile);
   }
 
@@ -63,6 +53,7 @@ class Projectile {
     mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
     const clonedRotation = originMesh.rotationQuaternion.clone();
+
     projectile.rotationQuaternion.copyFrom(clonedRotation);
     // projectile.rotationQuaternion.copyFrom(originMesh.rotation);
 
