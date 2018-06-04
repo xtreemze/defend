@@ -119,7 +119,8 @@ class Tower {
           position.z
         );
         pillar.material = towerMaterial;
-
+        BABYLON.Tags.AddTagsTo(pillar, "tower");
+        BABYLON.Tags.AddTagsTo(tower[levelTop], "tower");
         break;
     }
   }
