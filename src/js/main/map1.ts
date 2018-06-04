@@ -8,6 +8,15 @@ import {
 } from "./variables";
 
 export default function map1(scene = BABYLON.Scene.prototype, canvas) {
+  const groundMaterial = scene.getMaterialByID("groundMaterial");
+  const projectileMaterial = scene.getMaterialByID("projectileMaterial");
+  const transparentMaterial = scene.getMaterialByID("transparentMaterial");
+  const damagedMaterial = scene.getMaterialByID("damagedMaterial");
+  const hitMaterial = scene.getMaterialByID("hitMaterial");
+  const towerMaterial = scene.getMaterialByID("towerMaterial");
+  const enemyMaterial = scene.getMaterialByID("enemyMaterial");
+  const skyMaterial = scene.getMaterialByID("skyMaterial");
+
   // Camera1
   const camera = new BABYLON.ArcRotateCamera(
     "overhead",
@@ -89,12 +98,12 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
   demoSphere.position = new BABYLON.Vector3(0, 40, 0);
-
+  demoSphere.material = skyMaterial;
   skyLight.intensity = mapGlobals.lightIntensity;
   skyLight.diffuse = new BABYLON.Color3(0.77, 0.72, 0.95);
   skyLight.groundColor = new BABYLON.Color3(0, 0, 0.2);
 
-  scene.ambientColor = new BABYLON.Color3(1, 0.5, 0.5);
+  scene.ambientColor = mapGlobals.sceneAmbient;
 
   const atmosphere = BABYLON.MeshBuilder.CreateIcoSphere(
     "atmosphere",
@@ -104,12 +113,10 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     },
     scene
   );
-
+  atmosphere.flipFaces(true);
   atmosphere.freezeWorldMatrix(); // freeze ground
 
-  const groundMaterial = scene.getMaterialByID("groundMaterial");
-
-  atmosphere.material = groundMaterial;
+  atmosphere.material = skyMaterial;
 
   const ground = BABYLON.MeshBuilder.CreateGround(
     "ground",
@@ -172,9 +179,10 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
       mainTextureRatio: 0.2
     });
 
-    glowLayer.intensity = 0.8;
+    glowLayer.intensity = 2.5;
     // glowLayer.addIncludedOnlyMesh(projectile);
     glowLayer.addExcludedMesh(ground);
     glowLayer.addExcludedMesh(atmosphere);
+    glowLayer.addExcludedMesh(demoSphere);
   }
 }

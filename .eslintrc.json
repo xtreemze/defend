@@ -19,11 +19,7 @@
     "spaced-comment": "warn",
     "no-new": "off",
     "newline-before-return": "error",
-    "function-paren-newline": "error",
-    "object-property-newline": "error",
-    "padded-blocks": "error",
     "padding-line-between-statements": "error",
-    "linebreak-style": "error",
-    "implicit-arrow-linebreak": "error"
+    "linebreak-style": "error"
   }
 }
