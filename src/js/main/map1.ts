@@ -13,8 +13,8 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   const transparentMaterial = scene.getMaterialByID("transparentMaterial");
   const damagedMaterial = scene.getMaterialByID("damagedMaterial");
   const hitMaterial = scene.getMaterialByID("hitMaterial");
-  const towerMaterial = scene.getMaterialByID("towerMaterial");
   const enemyMaterial = scene.getMaterialByID("enemyMaterial");
+  const towerMaterial = scene.getMaterialByID("towerMaterial");
   const skyMaterial = scene.getMaterialByID("skyMaterial");
 
   // Camera1
@@ -89,19 +89,9 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     scene
   );
 
-  const demoSphere = BABYLON.MeshBuilder.CreateSphere(
-    "demoSphere",
-    {
-      segments: 6,
-      diameter: 20
-    },
-    scene
-  );
-  demoSphere.position = new BABYLON.Vector3(0, 40, 0);
-  demoSphere.material = skyMaterial;
   skyLight.intensity = mapGlobals.lightIntensity;
-  skyLight.diffuse = new BABYLON.Color3(0.77, 0.72, 0.95);
-  skyLight.groundColor = new BABYLON.Color3(0, 0, 0.2);
+  skyLight.diffuse = new BABYLON.Color3(0.82, 0.89, 0.94);
+  skyLight.groundColor = new BABYLON.Color3(0.05, 0, 0.18);
 
   scene.ambientColor = mapGlobals.sceneAmbient;
 
@@ -179,10 +169,21 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
       mainTextureRatio: 0.2
     });
 
-    glowLayer.intensity = 2.5;
+    glowLayer.intensity = 2.2;
     // glowLayer.addIncludedOnlyMesh(projectile);
     glowLayer.addExcludedMesh(ground);
     glowLayer.addExcludedMesh(atmosphere);
-    glowLayer.addExcludedMesh(demoSphere);
+  }
+  if (mapGlobals.demoSphere) {
+    const demoSphere = BABYLON.MeshBuilder.CreateSphere(
+      "demoSphere",
+      {
+        segments: 6,
+        diameter: 20
+      },
+      scene
+    );
+    demoSphere.position = new BABYLON.Vector3(0, 40, 0);
+    demoSphere.material = groundMaterial;
   }
 }

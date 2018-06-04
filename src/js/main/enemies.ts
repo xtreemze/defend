@@ -1,4 +1,4 @@
-   import * as  BABYLON from  'babylonjs';
+import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
@@ -35,13 +35,18 @@ class Enemy {
     loopTimer: any,
     engine = BABYLON.PhysicsEngine.prototype
   ) {
-    if (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < towerGlobals.range * -1) {
+    const damagedMaterial = scene.getMaterialByID("damagedMaterial");
+
+    if (
+      sphereMesh.hitPoints <= 0 ||
+      sphereMesh.position.y < towerGlobals.range * -1
+    ) {
       this.destroy(sphereMesh, loopTimer, scene, engine);
     } else if (
       sphereMesh.hitPoints < enemyGlobals.deadHitPoints &&
-      sphereMesh.material !== scene.getMaterialByID("damagedMaterial")
+      sphereMesh.material !== damagedMaterial
     ) {
-      sphereMesh.material = scene.getMaterialByID("damagedMaterial");
+      sphereMesh.material = damagedMaterial;
       sphereMesh.physicsImpostor.setLinearVelocity(
         new BABYLON.Vector3(0, enemyGlobals.jumpForce, 0)
       );

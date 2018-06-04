@@ -19,7 +19,8 @@ const towerGlobals = {
   baseHitPoints: 0,
   allTowers: [],
   occupiedSpaces: [],
-  livingColor: new Color3(0, 0.5, 0.4),
+  specularColor: new Color3(0.19, 0.05, 0.08),
+  livingColor: new Color3(0.05, 0.62, 0.41),
   range: 50
 };
 
@@ -47,16 +48,15 @@ const enemyGlobals = {
 
 const mapGlobals = {
   diagnosticsOn: false,
+  demoSphere: false,
   optimizerOn: false,
   cameraCutDelay: 3000,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is sloewr
   allImpostors: [],
   impostorLimit: 100,
-  lightIntensity: 0.9,
+  lightIntensity: 1.8,
   ambientColor: new BABYLON.Color3(0.1, 0.5, 0.3),
-  // ambientColor: new BABYLON.Color3(0.8, 0.8, 0.8),
-  // ambientColor: new BABYLON.Color3(0.8, 0.8, 0.8),
   sceneAmbient: new BABYLON.Color3(0.1, 0.1, 0.3)
 };
 

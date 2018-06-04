@@ -30,6 +30,9 @@ class Tower {
   }
 
   revive(scene, tower, position, level, levelTop) {
+    const towerMaterial = scene.getMaterialByID("towerMaterial");
+    const transparentMaterial = scene.getMaterialByID("transparentMaterial");
+
     tower.position = new BABYLON.Vector3(
       position.x,
       towerGlobals.height / 2,
@@ -45,7 +48,7 @@ class Tower {
 
     mapGlobals.allImpostors.unshift(tower.physicsImpostor);
 
-    tower.material = scene.getMaterialByID("towerMaterial");
+    tower.material = towerMaterial;
 
     switch (level) {
       case 1:
@@ -93,12 +96,12 @@ class Tower {
           flashSpace,
           towerGlobals.range
         );
-        tower[levelTop].material = scene.getMaterialByID("towerMaterial");
+        tower[levelTop].material = towerMaterial;
         tower[levelTop].addChild(flash);
 
         mapGlobals.allImpostors.unshift(tower[levelTop].physicsImpostor);
 
-        flash.material = scene.getMaterialByID("transparentMaterial");
+        flash.material = transparentMaterial;
         // tower.addChild(tower[levelTop]);
         this.enemyWatch(scene, tower, levelTop, flash, ray);
 
@@ -115,7 +118,7 @@ class Tower {
           towerGlobals.height * 2,
           position.z
         );
-        pillar.material = scene.getMaterialByID("towerMaterial");
+        pillar.material = towerMaterial;
 
         break;
     }
@@ -142,6 +145,9 @@ class Tower {
     flash = BABYLON.Mesh.prototype,
     ray
   ) {
+    const transparentMaterial = scene.getMaterialByID("transparentMaterial");
+    const projectileMaterial = scene.getMaterialByID("projectileMaterial");
+
     const rotateDelay = 200;
     let deltaTime = Date.now();
 
@@ -182,9 +188,9 @@ class Tower {
           if (Date.now() - deltaTime > towerGlobals.rateOfFire) {
             deltaTime = Date.now();
             setTimeout(() => {
-              flash.material = scene.getMaterialByID("transparentMaterial");
+              flash.material = transparentMaterial;
             }, 3);
-            flash.material = scene.getMaterialByID("projectileMaterial");
+            flash.material = projectileMaterial;
             fire(scene, tower[levelTop]);
           }
         }

@@ -1,4 +1,4 @@
-   import * as  BABYLON from  'babylonjs';
+import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
 
 class Projectile {
@@ -13,10 +13,10 @@ class Projectile {
       name,
       {
         // diameter: 1.2,
-        size: 2.3,
+        size: 2.2,
         // segments: 1,
-        height: 0.6,
-        width: 0.6
+        height: 0.5,
+        width: 0.5
       },
       scene
     );
@@ -40,6 +40,7 @@ class Projectile {
     level: number = 1,
     projectile: any = BABYLON.Mesh.prototype
   ) {
+    const projectileMaterial = scene.getMaterialByID("projectileMaterial");
     const forwardLocal = new BABYLON.Vector3(0, 0, 3);
     const space = originMesh.getDirection(forwardLocal);
 
@@ -47,7 +48,7 @@ class Projectile {
 
     //@ts-ignore
     projectile.hitPoints = level * projectileGlobals.baseHitPoints;
-    projectile.material = scene.getMaterialByID("projectileMaterial");
+    projectile.material = projectileMaterial;
 
     // For Physics
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -68,7 +69,6 @@ class Projectile {
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
     this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
 
-
     setTimeout(() => {
       this.destroy(projectile, scene);
     }, projectileGlobals.lifeTime);
@@ -78,6 +78,8 @@ class Projectile {
     scene: any = BABYLON.Scene.prototype,
     projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype
   ) {
+    const hitMaterial = scene.getMaterialByID("hitMaterial");
+    const enemyMaterial = scene.getMaterialByID("enemyMaterial");
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors,
@@ -95,9 +97,9 @@ class Projectile {
         () => {
           enemy.hitPoints -= projectile.hitPoints;
 
-          enemy.material = scene.getMaterialByID("hitMaterial");
+          enemy.material = hitMaterial;
           setTimeout(() => {
-            enemy.material = scene.getMaterialByID("enemyMaterial");
+            enemy.material = enemyMaterial;
           }, 35);
         }
       );
@@ -125,7 +127,6 @@ class Projectile {
     projectile = BABYLON.MeshBuilder.CreateSphere.prototype,
     scene = BABYLON.Scene.prototype
   ) {
-
     setTimeout(() => {
       mapGlobals.allImpostors = [];
       projectile.physicsImpostor.dispose();

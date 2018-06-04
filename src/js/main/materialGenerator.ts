@@ -12,6 +12,8 @@ export default function generateMaterials(scene) {
   groundMaterial.wireframe = true;
   groundMaterial.diffuseColor = enemyGlobals.hitColor;
   groundMaterial.emissiveColor = enemyGlobals.hitColor;
+  // groundMaterial.specularColor = enemyGlobals.livingColor;
+  groundMaterial.specularColor = new BABYLON.Color3(0.68, 0.38, 0.1);
   groundMaterial.ambientColor = mapGlobals.ambientColor;
   groundMaterial.alpha = 0.5;
   groundMaterial.freeze(); // if material is immutable
@@ -26,6 +28,7 @@ export default function generateMaterials(scene) {
 
   const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
   towerMaterial.diffuseColor = towerGlobals.livingColor;
+  towerMaterial.specularColor = towerGlobals.specularColor;
   towerMaterial.ambientColor = mapGlobals.ambientColor;
   towerMaterial.freeze(); // if material is immutable
 
@@ -35,8 +38,6 @@ export default function generateMaterials(scene) {
   );
   projectileMaterial.emissiveColor = projectileGlobals.livingColor;
   projectileMaterial.linkEmissiveWithDiffuse = true;
-  // projectileMaterial.ambientColor = mapGlobals.ambientColor;
-  // projectileMaterial.alpha = 0.9;
   projectileMaterial.freeze(); // if material is immutable
 
   const transparentMaterial = new BABYLON.StandardMaterial(
