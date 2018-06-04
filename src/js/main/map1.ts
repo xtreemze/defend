@@ -74,25 +74,41 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     }, 100);
   }, mapGlobals.cameraCutDelay);
 
-  const light = new BABYLON.HemisphericLight(
-    "light1",
+  const skyLight = new BABYLON.HemisphericLight(
+    "skyLight",
     new BABYLON.Vector3(0.3, 1, 0),
     scene
   );
 
-  light.intensity = mapGlobals.lightIntensity;
+  const demoSphere = BABYLON.MeshBuilder.CreateSphere(
+    "demoSphere",
+    {
+      segments: 6,
+      diameter: 20
+    },
+    scene
+  );
+  demoSphere.position = new BABYLON.Vector3(0, 40, 0);
+
+  skyLight.intensity = 0.8;
+  skyLight.diffuse = new BABYLON.Color3(0.77, 0.72, 0.95);
+  skyLight.groundColor = new BABYLON.Color3(0, 0, 0.2);
+
+  scene.ambientColor = new BABYLON.Color3(1, 0.5, 0.5);
 
   const atmosphere = BABYLON.MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
-      radius: 250,
-      subdivisions: 3
+      radius: 9000,
+      subdivisions: 5
     },
     scene
   );
 
   atmosphere.freezeWorldMatrix(); // freeze ground
-  const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+
+  const groundMaterial = scene.getMaterialByID("groundMaterial");
+
   atmosphere.material = groundMaterial;
 
   const ground = BABYLON.MeshBuilder.CreateGround(
@@ -104,58 +120,16 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     },
     scene
   );
+
+  ground.material = groundMaterial;
   ground.freezeWorldMatrix(); // freeze ground
 
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(
     ground,
-    BABYLON.PhysicsImpostor.PlaneImpostor,
+    BABYLON.PhysicsImpostor.BoxImpostor,
     { mass: 0, restitution: 0.9, friction: 0.2 },
     scene
   );
-
-  ground.material = groundMaterial;
-  groundMaterial.wireframe = true;
-  groundMaterial.diffuseColor = enemyGlobals.hitColor;
-  groundMaterial.emissiveColor = enemyGlobals.hitColor;
-  groundMaterial.freeze(); // if material is immutable
-
-  const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
-  towerMaterial.diffuseColor = towerGlobals.livingColor;
-  towerMaterial.freeze(); // if material is immutable
-
-  const projectileMaterial = new BABYLON.StandardMaterial(
-    "projectileMaterial",
-    scene
-  );
-  projectileMaterial.emissiveColor = projectileGlobals.livingColor;
-  projectileMaterial.linkEmissiveWithDiffuse = true;
-  // projectileMaterial.alpha = 0.9;
-  projectileMaterial.freeze(); // if material is immutable
-
-  const transparentMaterial = new BABYLON.StandardMaterial(
-    "transparentMaterial",
-    scene
-  );
-  transparentMaterial.alpha = 0;
-  transparentMaterial.freeze(); // if material is immutable
-
-  const enemyMaterial = new BABYLON.StandardMaterial("enemyMaterial", scene);
-  enemyMaterial.wireframe = true;
-  enemyMaterial.diffuseColor = enemyGlobals.livingColor;
-  enemyMaterial.freeze(); // if material is immutable
-
-  const damagedMaterial = new BABYLON.StandardMaterial(
-    "damagedMaterial",
-    scene
-  );
-  damagedMaterial.diffuseColor = enemyGlobals.deadColor;
-  damagedMaterial.wireframe = true;
-  damagedMaterial.alpha = 0.5;
-  damagedMaterial.freeze(); // if material is immutable
-
-  const hitMaterial = new BABYLON.StandardMaterial("hitMaterial", scene);
-  hitMaterial.diffuseColor = enemyGlobals.hitColor;
-  hitMaterial.freeze(); // if material is immutable
 
   if (renderGlobals.pipelineOn) {
     const pipeline = new BABYLON.DefaultRenderingPipeline(

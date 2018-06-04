@@ -1,4 +1,4 @@
-import { Color3 } from "./../../../node_modules/babylonjs/es6";
+import { Color3 } from "babylonjs";
 
 const projectileGlobals = {
   lifeTime: 800, // milliseconds
@@ -6,7 +6,7 @@ const projectileGlobals = {
   mass: 50,
   restitution: 0.1,
   baseHitPoints: 10,
-  livingColor: new Color3(1, 0.5, 0.8)
+  livingColor: new Color3(1, 0.5, 0.94)
 };
 
 const towerGlobals = {
@@ -19,7 +19,7 @@ const towerGlobals = {
   baseHitPoints: 0,
   allTowers: [],
   occupiedSpaces: [],
-  livingColor: new Color3(0, 0.8, 0.6),
+  livingColor: new Color3(0, 0.5, 0.4),
   range: 50
 };
 
@@ -41,8 +41,8 @@ const enemyGlobals = {
   occupiedSpaces: [],
   boundaryLimit: 45, // meters
   livingColor: new Color3(0.1, 0.8, 1),
-  hitColor: new Color3(0.3, 0, 0.4),
-  deadColor: new Color3(0.8, 0.2, 0.1)
+  hitColor: new Color3(0.2, 0, 0.3),
+  deadColor: new Color3(0.7, 0.1, 0.05)
 };
 
 const mapGlobals = {
@@ -50,10 +50,10 @@ const mapGlobals = {
   optimizerOn: false,
   cameraCutDelay: 3000,
   rotateCameras: true,
-  rotationSpeedMultiplier: 9,
+  rotationSpeedMultiplier: 16, // higher is sloewr
   allImpostors: [],
   impostorLimit: 100,
-  lightIntensity: 0.5
+  lightIntensity: 0.8
 };
 
 const renderGlobals = {
@@ -64,6 +64,8 @@ const renderGlobals = {
   depthOfField: false,
   bloom: false
 };
+
+const allMaterials = {};
 
 //@ts-ignore
 window.globals = {

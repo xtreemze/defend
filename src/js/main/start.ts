@@ -11,6 +11,7 @@ import { enemyGlobals, mapGlobals } from "./variables";
 import enemies from "./enemies";
 import towers from "./towers";
 import map1 from "./map1";
+import materialGenerator from "./materialGenerator";
 
 class Game {
   private _canvas: HTMLCanvasElement;
@@ -44,7 +45,7 @@ class Game {
 
       optimizer.start();
     }
-
+    materialGenerator(this._scene);
     map1(this._scene, this._canvas);
     towers(this._scene);
     enemies(this._scene);
