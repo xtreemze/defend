@@ -55,7 +55,7 @@ const mapGlobals = {
   rotationSpeedMultiplier: 16, // higher is sloewr
   allImpostors: [],
   impostorLimit: 100,
-  lightIntensity: 1.8,
+  lightIntensity: 0.77,
   ambientColor: new BABYLON.Color3(0.1, 0.5, 0.3),
   sceneAmbient: new BABYLON.Color3(0.1, 0.1, 0.3)
 };

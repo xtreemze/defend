@@ -15,8 +15,8 @@ class Projectile {
         // diameter: 1.2,
         size: 2.2,
         // segments: 1,
-        height: 0.5,
-        width: 0.5
+        height: 0.2,
+        width: 0.6
       },
       scene
     );

@@ -20,9 +20,10 @@ export default function generateMaterials(scene) {
 
   const skyMaterial = new BABYLON.StandardMaterial("skyMaterial", scene);
 
-  skyMaterial.diffuseColor = new BABYLON.Color3(0.04, 0, 0.08);
-  skyMaterial.specularColor = new BABYLON.Color3(0.1, 0.04, 0.08);
-  skyMaterial.emissiveColor = new BABYLON.Color3(0.08, 0.03, 0.05);
+  // skyMaterial.diffuseColor = new BABYLON.Color3(0.04, 0, 0.08);
+  skyMaterial.diffuseColor = new BABYLON.Color3(0.12, 0.02, 0.19);
+  skyMaterial.specularColor = new BABYLON.Color3(0.12, 0.04, 0.08);
+  skyMaterial.emissiveColor = new BABYLON.Color3(0.06, 0.02, 0.05);
   skyMaterial.ambientColor = mapGlobals.ambientColor;
   skyMaterial.freeze(); // if material is immutable
 
@@ -60,11 +61,13 @@ export default function generateMaterials(scene) {
   damagedMaterial.diffuseColor = enemyGlobals.deadColor;
   damagedMaterial.wireframe = true;
   damagedMaterial.alpha = 0.5;
+  damagedMaterial.specularColor = mapGlobals.ambientColor;
   damagedMaterial.ambientColor = mapGlobals.ambientColor;
   damagedMaterial.freeze(); // if material is immutable
 
   const hitMaterial = new BABYLON.StandardMaterial("hitMaterial", scene);
   hitMaterial.diffuseColor = enemyGlobals.hitColor;
+  hitMaterial.specularColor = mapGlobals.sceneAmbient;
   hitMaterial.ambientColor = mapGlobals.ambientColor;
   hitMaterial.freeze(); // if material is immutable
 }

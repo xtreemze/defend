@@ -42,7 +42,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     "closeup",
     Math.PI / 1,
     Math.PI / 2,
-    120,
+    110,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -85,9 +85,19 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
   const skyLight = new BABYLON.HemisphericLight(
     "skyLight",
-    new BABYLON.Vector3(0.3, 1, 0),
+    new BABYLON.Vector3(1, -1.05, 0),
     scene
   );
+
+  const upLight = new BABYLON.DirectionalLight(
+    "upLight",
+    new BABYLON.Vector3(0.5, -1.2, -0.5),
+    scene
+  );
+
+  upLight.intensity = mapGlobals.lightIntensity * 2;
+  upLight.diffuse = new BABYLON.Color3(0.82, 0.89, 0.94);
+  // upLight.groundColor = new BABYLON.Color3(0.05, 0, 0.18);
 
   skyLight.intensity = mapGlobals.lightIntensity;
   skyLight.diffuse = new BABYLON.Color3(0.82, 0.89, 0.94);
@@ -169,7 +179,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
       mainTextureRatio: 0.2
     });
 
-    glowLayer.intensity = 2.2;
+    glowLayer.intensity = 2.7;
     // glowLayer.addIncludedOnlyMesh(projectile);
     glowLayer.addExcludedMesh(ground);
     glowLayer.addExcludedMesh(atmosphere);

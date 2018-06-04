@@ -209,78 +209,73 @@ class Tower {
     );
   }
 
-  //   slowRotateTurret(
-  //     scene = BABYLON.Scene.prototype,
-  //     rotateDelay = 0,
-  //     tower = BABYLON.Mesh.prototype,
-  //     levelTop = "",
-  //     turretRotation = BABYLON.Quaternion.prototype
-  //   ) {
-  //     tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
-  //     let lookTarget = enemyGlobals.allEnemies[0];
-  //     let lookTargetPos = lookTarget.position.clone();
+  slowRotateTurret(
+    scene = BABYLON.Scene.prototype,
+    rotateDelay = 0,
+    tower = BABYLON.Mesh.prototype,
+    levelTop = ""
+  ) {
+    tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
+    let lookTarget = enemyGlobals.allEnemies[0];
+    let lookTargetPos = lookTarget.position.clone();
 
-  //     // let lookTarget = scene.getMeshByID("ground");
-  //     // let lookTargetPos = lookTarget.position.clone();
-  //     let orgQuat = tower[levelTop].rotationQuaternion.clone();
-  //     tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-  //     let lookQuat = tower[levelTop].rotationQuaternion.clone();
-  //     let percent = 0;
-  //     let percentAdd = 100;
+    let orgQuat = tower[levelTop].rotationQuaternion.clone();
+    tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+    let lookQuat = tower[levelTop].rotationQuaternion.clone();
+    let percent = 0;
+    let percentAdd = 100;
 
-  //     setInterval(() => {
-  //       if (
-  //         enemyGlobals.allEnemies !== undefined &&
-  //         enemyGlobals.allEnemies.length > 0
-  //       ) {
-  //         lookTarget = enemyGlobals.allEnemies[0];
-  //         lookTargetPos = lookTarget.position.clone();
+    setInterval(() => {
+      if (
+        enemyGlobals.allEnemies !== undefined &&
+        enemyGlobals.allEnemies.length > 0
+      ) {
+        lookTarget = enemyGlobals.allEnemies[0];
+        lookTargetPos = lookTarget.position.clone();
+      }
+    }, rotateDelay);
 
-  //         fire(scene, tower[levelTop]);
-  //       }
-  //     }, rotateDelay);
+    scene.registerBeforeRender(() => {
+      if (enemyGlobals.allEnemies.length > 0) {
+        if (lookTarget === null) {
+          // lookTarget = enemyGlobals.allEnemies[0];
 
-  //     scene.registerBeforeRender(() => {
-  //       if (enemyGlobals.allEnemies.length > 0) {
-  //         if (lookTarget === null) {
-  //           // lookTarget = enemyGlobals.allEnemies[0];
+          lookTargetPos = lookTarget.position.clone();
 
-  //           lookTargetPos = lookTarget.position.clone();
+          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
 
-  //           tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+          orgQuat = tower[levelTop].rotationQuaternion.clone();
+          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+          lookQuat = tower[levelTop].rotationQuaternion.clone();
+        }
+        if (
+          // Reset the rotation values when the target has moved
 
-  //           orgQuat = tower[levelTop].rotationQuaternion.clone();
-  //           tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-  //           lookQuat = tower[levelTop].rotationQuaternion.clone();
-  //         }
-  //         if (
-  //           // Reset the rotation values when the target has moved
+          BABYLON.Vector3.Distance(lookTargetPos, lookTarget.position) >
+          BABYLON.Epsilon
+        ) {
+          orgQuat = tower[levelTop].rotationQuaternion.clone();
+          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
+          lookQuat = tower[levelTop].rotationQuaternion.clone();
+          lookTargetPos = lookTarget.position.clone();
+          percent = 0;
+        }
 
-  //           BABYLON.Vector3.Distance(lookTargetPos, lookTarget.position) >
-  //           BABYLON.Epsilon
-  //         ) {
-  //           orgQuat = tower[levelTop].rotationQuaternion.clone();
-  //           tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-  //           lookQuat = tower[levelTop].rotationQuaternion.clone();
-  //           lookTargetPos = lookTarget.position.clone();
-  //           percent = 0;
-  //         }
-
-  //         // Set the tower[levelTop] rotation, increase the percentage
-  //         if (percent !== 1) {
-  //           tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Slerp(
-  //             orgQuat,
-  //             lookQuat,
-  //             percent
-  //           );
-  //           percent += percentAdd;
-  //           if (percent > 1) {
-  //             percent = 1;
-  //           }
-  //         }
-  //       }
-  //     });
-  //   }
+        // Set the tower[levelTop] rotation, increase the percentage
+        if (percent !== 1) {
+          tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Slerp(
+            orgQuat,
+            lookQuat,
+            percent
+          );
+          percent += percentAdd;
+          if (percent > 1) {
+            percent = 1;
+          }
+        }
+      }
+    });
+  }
 }
 
 function towerGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
