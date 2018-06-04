@@ -23,7 +23,7 @@ export default function generateMaterials(scene) {
   // skyMaterial.diffuseColor = new BABYLON.Color3(0.04, 0, 0.08);
   skyMaterial.diffuseColor = new BABYLON.Color3(0.12, 0.02, 0.19);
   skyMaterial.specularColor = new BABYLON.Color3(0.12, 0.04, 0.08);
-  skyMaterial.emissiveColor = new BABYLON.Color3(0.06, 0.02, 0.05);
+  // skyMaterial.emissiveColor = new BABYLON.Color3(0.06, 0.02, 0.05);
   skyMaterial.ambientColor = mapGlobals.ambientColor;
   skyMaterial.freeze(); // if material is immutable
 

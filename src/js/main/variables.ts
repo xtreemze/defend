@@ -4,9 +4,9 @@ const projectileGlobals = {
   lifeTime: 800, // milliseconds
   speed: 4000,
   mass: 50,
-  restitution: 0.1,
-  baseHitPoints: 10,
-  livingColor: new Color3(1, 0.5, 0.94)
+  restitution: 0,
+  baseHitPoints: 5,
+  livingColor: new Color3(1, 0.5, 0.2)
 };
 
 const towerGlobals = {
@@ -21,26 +21,28 @@ const towerGlobals = {
   occupiedSpaces: [],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 50
+  range: 50,
+  shoot: true
 };
 
 const enemyGlobals = {
   minNumber: 3, // for one generation
   maxNumber: 4, // for one generation
   limit: 12,
+  originHeight: 80,
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
+  speed: 23000,
+  mass: 5000,
+  restitution: 0.1,
+  jumpForce: 40,
+  friction: 1,
   decayRate: 1, // hitpoints per decision
   baseHitPoints: 200,
   deadHitPoints: 30,
-  originHeight: 160,
-  speed: 15000,
-  mass: 1000,
-  restitution: 0.3,
-  jumpForce: 8,
   allEnemies: [],
   occupiedSpaces: [],
-  boundaryLimit: 45, // meters
+  boundaryLimit: 35, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05)
@@ -55,14 +57,15 @@ const mapGlobals = {
   rotationSpeedMultiplier: 16, // higher is sloewr
   allImpostors: [],
   impostorLimit: 100,
-  lightIntensity: 0.77,
-  ambientColor: new BABYLON.Color3(0.1, 0.5, 0.3),
-  sceneAmbient: new BABYLON.Color3(0.1, 0.1, 0.3)
+  lightIntensity: 0.79,
+  ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
+  sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
 };
 
 const renderGlobals = {
   pipelineOn: true,
   glow: true,
+  glowIntensity: 2.8,
   sharpenning: false,
   antialiasing: false,
   depthOfField: false,

@@ -13,10 +13,10 @@ class Projectile {
       name,
       {
         // diameter: 1.2,
-        size: 2.2,
+        size: 1.9,
         // segments: 1,
-        height: 0.2,
-        width: 0.6
+        height: 0.4,
+        width: 1
       },
       scene
     );
@@ -46,17 +46,19 @@ class Projectile {
       BABYLON.PhysicsImpostor.BoxImpostor,
       {
         mass: projectileGlobals.mass,
-        restitution: projectileGlobals.restitution
+        restitution: projectileGlobals.restitution,
+        friction: 1
       },
       scene
     );
     mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
     const clonedRotation = originMesh.rotationQuaternion.clone();
+    clonedRotation.normalize();
 
-    projectile.rotationQuaternion.copyFrom(clonedRotation);
     // projectile.rotationQuaternion.copyFrom(originMesh.rotation);
 
+    projectile.rotationQuaternion.copyFrom(clonedRotation);
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
     this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
 

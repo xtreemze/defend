@@ -80,7 +80,7 @@ class Tower {
         const flash = BABYLON.MeshBuilder.CreateIcoSphere(
           name,
           {
-            radius: 3.5,
+            radius: 3,
             subdivisions: 1
           },
           scene
@@ -186,7 +186,10 @@ class Tower {
         if (sortedDistances.length > 0) {
           this.rotateTurret(sortedDistances[0][1][0], tower, levelTop);
 
-          if (Date.now() - deltaTime > towerGlobals.rateOfFire) {
+          if (
+            Date.now() - deltaTime > towerGlobals.rateOfFire &&
+            towerGlobals.shoot
+          ) {
             deltaTime = Date.now();
             setTimeout(() => {
               flash.material = transparentMaterial;

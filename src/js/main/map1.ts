@@ -134,7 +134,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(
     ground,
     BABYLON.PhysicsImpostor.BoxImpostor,
-    { mass: 0, restitution: 0.9, friction: 0.2 },
+    { mass: 0, restitution: 0.9, friction: 1 },
     scene
   );
 
@@ -164,10 +164,10 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
 
     // Bloom
     pipeline.bloomEnabled = renderGlobals.bloom;
-    pipeline.bloomThreshold = 0.5;
-    pipeline.bloomWeight = 0.5;
-    pipeline.bloomKernel = 32;
-    pipeline.bloomScale = 0.8;
+    pipeline.bloomThreshold = 0.8;
+    pipeline.bloomWeight = 0.9;
+    pipeline.bloomKernel = 64;
+    pipeline.bloomScale = 0.9;
   }
 
   // Glow
@@ -179,7 +179,7 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
       mainTextureRatio: 0.2
     });
 
-    glowLayer.intensity = 2.7;
+    glowLayer.intensity = renderGlobals.glowIntensity;
     // glowLayer.addIncludedOnlyMesh(projectile);
     glowLayer.addExcludedMesh(ground);
     glowLayer.addExcludedMesh(atmosphere);

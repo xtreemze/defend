@@ -75,7 +75,8 @@ class Enemy {
       BABYLON.PhysicsImpostor.SphereImpostor,
       {
         mass: enemyGlobals.mass * level,
-        restitution: enemyGlobals.restitution
+        restitution: enemyGlobals.restitution,
+        friction: enemyGlobals.friction
       },
       scene
     );
@@ -86,8 +87,8 @@ class Enemy {
 
     const loopTimer = setInterval(() => {
       if (
-        sphereMesh.position.y > diameter / 2 &&
-        sphereMesh.position.y < diameter * 2 &&
+        sphereMesh.position.y > diameter / 2.5 &&
+        sphereMesh.position.y < diameter * 1 &&
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
         enemyAi(sphereMesh, this.decide(sphereMesh));
