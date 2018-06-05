@@ -9,18 +9,14 @@ class Projectile {
   ) {
     const name = `projectile${level}`;
 
-    const projectile = BABYLON.MeshBuilder.CreateBox(
-      name,
-      {
-        // diameter: 1.2,
-        size: 1.9,
-        // segments: 1,
-        height: 0.4,
-        width: 1,
-        updatable: false
-      },
-      scene
-    );
+    const projectile = BABYLON.MeshBuilder.CreateBox(name, {
+      // diameter: 1.2,
+      size: 1.9,
+      // segments: 1,
+      height: 0.4,
+      width: 1,
+      updatable: false
+    });
 
     this.startLife(scene, originMesh, level, projectile);
   }
@@ -101,9 +97,9 @@ class Projectile {
   }
 
   impulsePhys(
-    scene: any = BABYLON.Scene.prototype,
-    originMesh: any = BABYLON.Mesh.prototype,
-    projectile: any = BABYLON.Mesh.prototype
+    scene: any = BABYLON.Scene,
+    originMesh: any = BABYLON.Mesh,
+    projectile: any = BABYLON.Mesh
   ) {
     const forwardLocal = new BABYLON.Vector3(
       0,
@@ -117,10 +113,7 @@ class Projectile {
     );
   }
 
-  destroy(
-    projectile = BABYLON.Mesh.prototype,
-    scene = BABYLON.Scene.prototype
-  ) {
+  destroy(projectile: any = BABYLON.Mesh, scene: any = BABYLON.Scene) {
     setTimeout(() => {
       mapGlobals.allImpostors = [];
       projectile.physicsImpostor.dispose();

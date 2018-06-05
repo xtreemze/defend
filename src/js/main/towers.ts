@@ -108,15 +108,11 @@ class Tower {
         // tower.addChild(tower[levelTop]);
         this.enemyWatch(scene, tower, levelTop, flash, ray);
 
-        const pillar = BABYLON.MeshBuilder.CreateBox(
-          name,
-          {
-            size: 1,
-            height: towerGlobals.height * 3,
-            updatable: false
-          },
-          scene
-        );
+        const pillar = BABYLON.MeshBuilder.CreateBox(name, {
+          size: 1,
+          height: towerGlobals.height * 3,
+          updatable: false
+        });
         pillar.position = new BABYLON.Vector3(
           position.x,
           towerGlobals.height * 2,
