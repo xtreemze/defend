@@ -18,7 +18,8 @@ class Enemy {
       name,
       {
         subdivisions: 1,
-        radius: diameter / 2
+        radius: diameter / 2,
+        updatable: false
       },
       scene
     );

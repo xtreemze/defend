@@ -16,7 +16,8 @@ class Projectile {
         size: 1.9,
         // segments: 1,
         height: 0.4,
-        width: 1
+        width: 1,
+        updatable: false
       },
       scene
     );
@@ -69,7 +70,7 @@ class Projectile {
 
   intersectPhys(
     scene: any = BABYLON.Scene.prototype,
-    projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype
+    projectile: any = BABYLON.Mesh.prototype
   ) {
     const hitMaterial = scene.getMaterialByID("hitMaterial");
     const enemyMaterial = scene.getMaterialByID("enemyMaterial");
@@ -101,8 +102,8 @@ class Projectile {
 
   impulsePhys(
     scene: any = BABYLON.Scene.prototype,
-    originMesh: any = BABYLON.MeshBuilder.CreateSphere.prototype,
-    projectile: any = BABYLON.MeshBuilder.CreateSphere.prototype
+    originMesh: any = BABYLON.Mesh.prototype,
+    projectile: any = BABYLON.Mesh.prototype
   ) {
     const forwardLocal = new BABYLON.Vector3(
       0,
@@ -117,7 +118,7 @@ class Projectile {
   }
 
   destroy(
-    projectile = BABYLON.MeshBuilder.CreateSphere.prototype,
+    projectile = BABYLON.Mesh.prototype,
     scene = BABYLON.Scene.prototype
   ) {
     setTimeout(() => {
@@ -136,7 +137,7 @@ class Projectile {
 
 export default function fire(
   scene: any = BABYLON.Scene.prototype,
-  originMesh: any = BABYLON.MeshBuilder.CreateSphere.prototype
+  originMesh: any = BABYLON.Mesh.prototype
 ) {
   new Projectile(1, originMesh, scene);
 }

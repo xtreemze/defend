@@ -17,7 +17,8 @@ class Tower {
       name,
       {
         size: 10,
-        height: towerGlobals.height
+        height: towerGlobals.height,
+        updatable: false
       },
       scene
     );
@@ -61,7 +62,8 @@ class Tower {
           {
             size: 3,
             height: towerGlobals.height,
-            width: 4
+            width: 4,
+            updatable: false
           },
           scene
         );
@@ -81,7 +83,8 @@ class Tower {
           name,
           {
             radius: 3,
-            subdivisions: 1
+            subdivisions: 1,
+            updatable: false
           },
           scene
         );
@@ -109,7 +112,8 @@ class Tower {
           name,
           {
             size: 1,
-            height: towerGlobals.height * 3
+            height: towerGlobals.height * 3,
+            updatable: false
           },
           scene
         );

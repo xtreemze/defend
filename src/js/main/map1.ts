@@ -109,7 +109,8 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     "atmosphere",
     {
       radius: 3000,
-      subdivisions: 5
+      subdivisions: 5,
+      updatable: false
     },
     scene
   );
@@ -123,7 +124,8 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     {
       height: 200,
       width: 200,
-      subdivisions: 20
+      subdivisions: 20,
+      updatable: false
     },
     scene
   );
@@ -189,7 +191,8 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
       "demoSphere",
       {
         segments: 6,
-        diameter: 20
+        diameter: 20,
+        updatable: false
       },
       scene
     );
