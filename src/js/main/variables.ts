@@ -69,7 +69,8 @@ const renderGlobals = {
   sharpenning: false,
   antialiasing: false,
   depthOfField: false,
-  bloom: false
+  bloom: false,
+  screenshot: false
 };
 
 const allMaterials = {};

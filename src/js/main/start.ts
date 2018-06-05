@@ -23,7 +23,12 @@ class Game {
   constructor(canvasElement: string) {
     // Create canvas and engine.
     this._canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
-    this._engine = new BABYLON.Engine(this._canvas, true);
+    this._engine = new BABYLON.Engine(this._canvas, true, {
+      preserveDrawingBuffer: true,
+      stencil: true,
+      doNotHandleContextLost: true
+    });
+    this._engine.enableOfflineSupport = false;
   }
 
   createScene(): void {
@@ -46,7 +51,7 @@ class Game {
       optimizer.start();
     }
     materialGenerator(this._scene);
-    map1(this._scene, this._canvas);
+    map1(this._scene, this._canvas, this._engine);
     towers(this._scene);
     enemies(this._scene);
   }
@@ -73,7 +78,4 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // Start render loop.
   game.doRender();
-
-  //@ts-ignore
-  window.scene = this._scene;
 });

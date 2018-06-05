@@ -7,7 +7,7 @@ import {
   renderGlobals
 } from "./variables";
 
-export default function map1(scene = BABYLON.Scene.prototype, canvas) {
+export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const groundMaterial = scene.getMaterialByID("groundMaterial");
   const projectileMaterial = scene.getMaterialByID("projectileMaterial");
   const transparentMaterial = scene.getMaterialByID("transparentMaterial");
@@ -198,5 +198,15 @@ export default function map1(scene = BABYLON.Scene.prototype, canvas) {
     );
     demoSphere.position = new BABYLON.Vector3(0, 40, 0);
     demoSphere.material = groundMaterial;
+  }
+  if (renderGlobals.screenshot) {
+    setTimeout(() => {
+      var imgNm = 0;
+      scene.registerAfterRender(function() {
+        if (imgNm++ < 90) {
+          BABYLON.Tools.CreateScreenshot(engine, camera3, 1200);
+        }
+      });
+    }, 6000);
   }
 }
