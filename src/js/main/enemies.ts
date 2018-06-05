@@ -23,11 +23,28 @@ class Enemy {
       },
       scene
     );
+
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
     this.revive(scene, position, sphereMesh, diameter, level);
 
     BABYLON.Tags.AddTagsTo(sphereMesh, "enemy");
+  }
+
+  nearTower(ray, scene) {
+    let result = true;
+    scene.pickWithRay(ray, mesh => {
+      for (let index = 0; index < towerGlobals.allTowers.length; index++) {
+        const element = towerGlobals.allTowers[index];
+
+        if (element == mesh) {
+          result = false;
+          console.log(element);
+        }
+      }
+    });
+
+    return result;
   }
 
   checkHitPoints(
@@ -56,6 +73,45 @@ class Enemy {
     }
   }
 
+  makeRays(sphereMesh, scene) {
+    if (enemyGlobals.rayHelpers) {
+      let ray = {
+        up: new BABYLON.Ray(
+          sphereMesh.position,
+          new BABYLON.Vector3(0, 0, 1),
+          10
+        ),
+        down: new BABYLON.Ray(
+          sphereMesh.position,
+          new BABYLON.Vector3(0, 0, -1),
+          10
+        ),
+        left: new BABYLON.Ray(
+          sphereMesh.position,
+          new BABYLON.Vector3(-1, 0, 0),
+          10
+        ),
+        right: new BABYLON.Ray(
+          sphereMesh.position,
+          new BABYLON.Vector3(1, 0, 0),
+          10
+        )
+      };
+
+      var rayHelper = new BABYLON.RayHelper(ray.up);
+      rayHelper.show(scene, new BABYLON.Color3(1, 1, 0.1));
+
+      var rayHelper2 = new BABYLON.RayHelper(ray.down);
+      rayHelper2.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
+
+      var rayHelper3 = new BABYLON.RayHelper(ray.left);
+      rayHelper3.show(scene, new BABYLON.Color3(1, 1, 0.1));
+
+      var rayHelper4 = new BABYLON.RayHelper(ray.right);
+      rayHelper4.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
+    }
+  }
+
   revive(
     scene: any = BABYLON.Scene.prototype,
     position: any = { x: 0, z: 0 },
@@ -68,6 +124,7 @@ class Enemy {
       (diameter / 2) * enemyGlobals.originHeight,
       position.z
     );
+
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
 
@@ -92,7 +149,7 @@ class Enemy {
         sphereMesh.position.y < diameter * 1 &&
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
-        enemyAi(sphereMesh, this.decide(sphereMesh));
+        enemyAi(sphereMesh, this.decide(sphereMesh, scene));
       }
       this.checkHitPoints(scene, sphereMesh, loopTimer, physicsEngine);
     }, enemyGlobals.decisionRate);
@@ -118,21 +175,36 @@ class Enemy {
     }, 1);
   }
 
-  decide(sphereMesh = BABYLON.Mesh.prototype) {
+  decide(sphereMesh = BABYLON.Mesh.prototype, scene) {
+    this.makeRays(sphereMesh, scene);
+
     const decideToMove = { up: true, left: true, right: true, down: true };
-    if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1) {
+    let ray = decideToMove;
+    if (
+      sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
+      this.nearTower(ray.up, scene)
+    ) {
       decideToMove.down = false;
       decideToMove.up = true;
     }
-    if (sphereMesh.position.z >= enemyGlobals.boundaryLimit) {
+    if (
+      sphereMesh.position.z >= enemyGlobals.boundaryLimit &&
+      this.nearTower(ray.down, scene)
+    ) {
       decideToMove.up = false;
       decideToMove.down = true;
     }
-    if (sphereMesh.position.x >= enemyGlobals.boundaryLimit) {
+    if (
+      sphereMesh.position.x >= enemyGlobals.boundaryLimit &&
+      this.nearTower(ray.left, scene)
+    ) {
       decideToMove.right = false;
       decideToMove.left = true;
     }
-    if (sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1) {
+    if (
+      sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1 &&
+      this.nearTower(ray.right, scene)
+    ) {
       decideToMove.left = false;
       decideToMove.right = true;
     }

@@ -21,8 +21,9 @@ const towerGlobals = {
   occupiedSpaces: [],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 50,
-  shoot: true
+  range: 25,
+  shoot: true,
+  raysOn: false
 };
 
 const enemyGlobals = {
@@ -31,7 +32,7 @@ const enemyGlobals = {
   limit: 12,
   originHeight: 80,
   generationRate: 8000, // milliseconds
-  decisionRate: 100, // milliseconds
+  decisionRate: 200, // milliseconds
   speed: 23000,
   mass: 5000,
   restitution: 0.1,
@@ -45,7 +46,8 @@ const enemyGlobals = {
   boundaryLimit: 35, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
-  deadColor: new Color3(0.7, 0.1, 0.05)
+  deadColor: new Color3(0.7, 0.1, 0.05),
+  rayHelpers: false
 };
 
 const mapGlobals = {

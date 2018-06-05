@@ -88,17 +88,25 @@ class Tower {
           },
           scene
         );
-        const flashLocal = new BABYLON.Vector3(0, 0, 2.5);
+        const flashLocal = new BABYLON.Vector3(0, 0, -2.5);
         const flashSpace = tower[levelTop].getDirection(flashLocal);
 
-        flash.position = tower[levelTop].position.subtract(flashSpace);
+        flash.position = tower[levelTop].position.add(flashSpace);
         flash.rotation = tower[levelTop].rotation.clone();
-
         const ray = new BABYLON.Ray(
           tower[levelTop].position,
           flashSpace,
           towerGlobals.range
         );
+
+        if (towerGlobals.raysOn) {
+          var rayHelper = new BABYLON.RayHelper(ray);
+          rayHelper.show(scene, new BABYLON.Color3(1, 1, 0.3));
+
+          scene.registerBeforeRender(() => {
+            ray.direction = tower[levelTop].getDirection(flashLocal);
+          });
+        }
         tower[levelTop].material = towerMaterial;
         tower[levelTop].addChild(flash);
 
