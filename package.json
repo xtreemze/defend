@@ -9,17 +9,13 @@
     "commits": "git log --graph --oneline --decorate -5",
     "queryVersion": "node ./node/queryVersion.js",
     "lint": "npx eslint ./src/js --quiet",
-    "clean":
-      "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
+    "clean": "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
     "update": "npm up -D --depth 2 && npm outdated --depth 2",
-    "eslint-check":
-      "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
+    "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
     "dev": "webpack-dev-server --mode development --hot",
-    "preexportp":
-      "npm run queryVersion && node ./node/rmDir.js && node ./node/cpDir.js",
+    "preexportp": "npm run queryVersion && node ./node/rmDir.js && node ./node/cpDir.js",
     "exportp": "npm run manifest & webpack --mode production",
-    "posttoTest":
-      "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags"
+    "posttoTest": "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -32,7 +28,10 @@
     "url": "https://github.com/xtreemze/defend/issues"
   },
   "homepage": "https://github.com/xtreemze/defend#readme",
-  "browserslist": ["> 1%", "last 2 versions"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "dependencies": {},
   "devDependencies": {
     "@types/babylonjs": "^2.4.1",
@@ -75,8 +74,9 @@
     "precss": "^3.1.2",
     "prettier": "^1.13.4",
     "request": "^2.87.0",
-    "sass-loader": "^7.0.2",
+    "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
+    "tone": "^0.12.80",
     "ts-loader": "^4.3.1",
     "ts-node": "^6.1.0",
     "tslint": "^5.10.0",
@@ -84,10 +84,16 @@
     "uglifyjs-webpack-plugin": "^1.2.5",
     "uncss": "^0.16.2",
     "url-loader": "^1.0.1",
-    "webpack": "^4.10.2",
+    "webpack": "^4.11.1",
     "webpack-cli": "^2.1.5",
     "webpack-dev-server": "^3.1.4"
   },
   "main": "index.html",
-  "keywords": ["BabylonJS", "PWA", "JavaScript", "Mobile", "Game"]
+  "keywords": [
+    "BabylonJS",
+    "PWA",
+    "JavaScript",
+    "Mobile",
+    "Game"
+  ]
 }
