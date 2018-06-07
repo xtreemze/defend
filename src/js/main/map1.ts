@@ -21,8 +21,8 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const camera = new BABYLON.ArcRotateCamera(
     "overhead",
     Math.PI / 3,
-    Math.PI / 12,
-    mapGlobals.size / 5,
+    Math.PI / 14,
+    mapGlobals.size / 4,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -31,8 +31,8 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const camera2 = new BABYLON.ArcRotateCamera(
     "3/4",
     Math.PI / 6,
-    Math.PI / 5,
-    mapGlobals.size / 5,
+    Math.PI / 3.5,
+    mapGlobals.size / 4,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -108,7 +108,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const atmosphere = BABYLON.MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
-      radius: mapGlobals.size,
+      radius: mapGlobals.size / 2,
       subdivisions: 5,
       updatable: false
     },

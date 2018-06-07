@@ -9,7 +9,7 @@ const mapGlobals = {
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is sloewr
   allImpostors: [],
-  impostorLimit: 500,
+  impostorLimit: 150,
   lightIntensity: 0.79,
   ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
   sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
