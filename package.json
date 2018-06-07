@@ -12,7 +12,7 @@
     "clean": "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
     "update": "npm up -D --depth 2 && npm outdated --depth 2",
     "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
-    "dev": "webpack-dev-server --mode development --hot",
+    "dev": "webpack-dev-server --mode development --hot --host 0.0.0.0",
     "preexportp": "npm run queryVersion && node ./node/rmDir.js && node ./node/cpDir.js",
     "exportp": "npm run manifest & webpack --mode production",
     "posttoTest": "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags"

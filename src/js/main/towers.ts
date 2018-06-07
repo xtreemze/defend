@@ -118,11 +118,10 @@ class Tower {
 
         const rayLocal = new BABYLON.Vector3(0, 0, -1);
         const rayLocalOrigin = new BABYLON.Vector3(0, 0, -4);
-        const raySpace = towerTurret.getDirection(rayLocalOrigin);
-        const turretDirection = towerTurret.getDirection(rayLocal);
+        const turretDirection = towerTurret.getDirection(rayLocalOrigin);
 
         const ray = new BABYLON.Ray(
-          towerTurret.position.add(raySpace),
+          flash.getAbsolutePosition(),
           turretDirection,
           towerGlobals.range
         );
@@ -132,8 +131,7 @@ class Tower {
           rayHelper.show(scene, new BABYLON.Color3(1, 1, 0.3));
         }
         scene.registerBeforeRender(() => {
-          ray.direction = turretDirection;
-          // ray.direction = towerTurret.getDirection(rayLocal);
+          ray.direction = towerTurret.getDirection(rayLocal);
         });
 
         // tower.addChild(towerTurret);
@@ -152,10 +150,10 @@ class Tower {
 
         pillar.material = towerMaterial;
 
-        // BABYLON.Tags.AddTagsTo(pillar, "tower");
-        // BABYLON.Tags.AddTagsTo(towerTurret, "tower");
-        towerTurret.isPickable = false;
-        pillar.isPickable = false;
+        BABYLON.Tags.AddTagsTo(pillar, "tower");
+        BABYLON.Tags.AddTagsTo(towerTurret, "tower");
+        // towerTurret.isPickable = false;
+        // pillar.isPickable = false;
         break;
     }
 
@@ -171,19 +169,17 @@ class Tower {
     towerGlobals.allTowers.unshift(tower);
   }
 
-  rayClearsTower(scene, ray) {
-    let result = true;
+  rayClearsTower(scene, ray, tower) {
+    let result = false;
     scene.pickWithRay(ray, mesh => {
-      for (let index = 0; index < towerGlobals.allTowers.length; index++) {
+      for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
         const element = towerGlobals.allTowers[index];
 
-        if (element === mesh) {
-          result = false;
+        if (element === mesh && mesh !== tower) {
+          result = true;
         }
       }
     });
-
-    // result = true;
     return result;
   }
 
@@ -216,7 +212,7 @@ class Tower {
               tower[levelTop].position,
               enemy.position
             ) <= towerGlobals.range &&
-            this.rayClearsTower(scene, ray)
+            this.rayClearsTower(scene, ray, tower)
           ) {
             enemyDistances.push([
               BABYLON.Vector3.Distance(

@@ -22,8 +22,8 @@ const towerGlobals = {
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
   range: 50,
-  shoot: false,
-  raysOn: true
+  shoot: true,
+  raysOn: false
 };
 
 const enemyGlobals = {
