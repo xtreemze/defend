@@ -18,16 +18,16 @@ const mapGlobals = {
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
   speed: 7000,
-  mass: 40,
+  mass: 50,
   restitution: 0,
-  baseHitPoints: 5,
+  baseHitPoints: 10,
   livingColor: new Color3(1, 0.5, 0.2)
 };
 
 const towerGlobals = {
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
-  rateOfFire: 220, // milliseconds between each shot,
+  rateOfFire: 250, // milliseconds between each shot,
   height: 2,
   mass: 0,
   restitution: 0,
