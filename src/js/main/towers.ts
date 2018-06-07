@@ -13,7 +13,7 @@ class Tower {
     const name = `tower${level}`;
     const levelTop = `towerTop${level}`;
 
-    const tower = BABYLON.MeshBuilder.CreateBox(
+    let tower = BABYLON.MeshBuilder.CreateBox(
       name,
       {
         size: 10,
@@ -22,8 +22,6 @@ class Tower {
       },
       scene
     );
-
-    BABYLON.Tags.AddTagsTo(tower, "tower");
 
     towerGlobals.allTowers.unshift(this);
 
@@ -155,9 +153,14 @@ class Tower {
           towerGlobals.height * 2,
           position.z
         );
+
         pillar.material = towerMaterial;
-        BABYLON.Tags.AddTagsTo(pillar, "tower");
-        BABYLON.Tags.AddTagsTo(tower[levelTop], "tower");
+        tower.merge;
+        tower = BABYLON.Mesh.MergeMeshes([pillar, tower]);
+
+        // BABYLON.Tags.AddTagsTo(pillar, "tower");
+        BABYLON.Tags.AddTagsTo(tower, "tower");
+        BABYLON.Tags.AddTagsTo(towerTurret, "tower");
         break;
     }
   }
