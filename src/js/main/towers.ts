@@ -57,16 +57,45 @@ class Tower {
         break;
       case 2:
       case 3:
-        tower[levelTop] = BABYLON.MeshBuilder.CreateBox(
-          levelTop,
+        const outerTurret = BABYLON.MeshBuilder.CreateBox(
+          "outerTurret",
           {
-            size: 3,
+            size: 4,
             height: towerGlobals.height,
             width: 4,
             updatable: false
           },
           scene
         );
+        const innerTurret = BABYLON.MeshBuilder.CreateBox(
+          "innerTurret",
+          {
+            size: 3,
+            height: towerGlobals.height / 2,
+            width: 4 / 1.5,
+            updatable: false
+          },
+          scene
+        );
+        innerTurret.position = new BABYLON.Vector3(0, 0, -0.5);
+
+        const outerCSG = BABYLON.CSG.FromMesh(outerTurret);
+        const innterCSG = BABYLON.CSG.FromMesh(innerTurret);
+
+        innerTurret.dispose();
+        outerTurret.dispose();
+
+        const towerCSG = outerCSG.subtract(innterCSG);
+
+        const towerTurret = towerCSG.toMesh(
+          tower[levelTop],
+          null,
+          scene,
+          false
+        );
+
+        tower[levelTop] = towerTurret;
+
         tower[levelTop].position = new BABYLON.Vector3(
           position.x,
           towerGlobals.height * 4,
@@ -88,7 +117,7 @@ class Tower {
           },
           scene
         );
-        const flashLocal = new BABYLON.Vector3(0, 0, -2.5);
+        const flashLocal = new BABYLON.Vector3(0, 0, -3);
         const flashSpace = tower[levelTop].getDirection(flashLocal);
 
         flash.position = tower[levelTop].position.add(flashSpace);

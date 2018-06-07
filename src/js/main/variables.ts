@@ -71,7 +71,7 @@ const renderGlobals = {
   sharpenning: false,
   antialiasing: false,
   depthOfField: false,
-  bloom: false,
+  bloom: true,
   screenshot: false
 };
 
