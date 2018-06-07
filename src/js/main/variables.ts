@@ -1,8 +1,8 @@
 import { Color3 } from "babylonjs";
 
 const projectileGlobals = {
-  lifeTime: 800, // milliseconds
-  speed: 4000,
+  lifeTime: 2000, // milliseconds
+  speed: 5000,
   mass: 50,
   restitution: 0,
   baseHitPoints: 5,
@@ -21,14 +21,14 @@ const towerGlobals = {
   occupiedSpaces: [],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 25,
-  shoot: true,
-  raysOn: false
+  range: 50,
+  shoot: false,
+  raysOn: true
 };
 
 const enemyGlobals = {
   minNumber: 3, // for one generation
-  maxNumber: 4, // for one generation
+  maxNumber: 6, // for one generation
   limit: 12,
   originHeight: 80,
   generationRate: 8000, // milliseconds

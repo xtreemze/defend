@@ -58,7 +58,7 @@ class Projectile {
     this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
 
     setTimeout(() => {
-      this.destroy(projectile, scene);
+      this.destroyProjectile(projectile, scene);
     }, projectileGlobals.lifeTime);
   }
 
@@ -73,7 +73,7 @@ class Projectile {
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors,
       () => {
-        this.destroy(projectile, scene);
+        this.destroyProjectile(projectile, scene);
       }
     );
 
@@ -112,12 +112,17 @@ class Projectile {
     );
   }
 
-  destroy(projectile: any = BABYLON.Mesh, scene: any = BABYLON.Scene) {
+  destroyProjectile(
+    projectile: any = BABYLON.Mesh,
+    scene: any = BABYLON.Scene
+  ) {
     setTimeout(() => {
       mapGlobals.allImpostors = [];
       projectile.physicsImpostor.dispose();
 
       projectile.hitPoints = 0;
+
+      delete projectile.hitPoints;
       projectile.dispose();
 
       const physicsEngine = scene.getPhysicsEngine();

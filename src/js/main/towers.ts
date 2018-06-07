@@ -2,7 +2,12 @@ import * as BABYLON from "babylonjs";
 import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
-import { towerGlobals, enemyGlobals, mapGlobals } from "./variables";
+import {
+  towerGlobals,
+  enemyGlobals,
+  mapGlobals,
+  projectileGlobals
+} from "./variables";
 
 class Tower {
   constructor(
@@ -23,14 +28,12 @@ class Tower {
       scene
     );
 
-    towerGlobals.allTowers.unshift(this);
-
     this.revive(scene, tower, position, level, levelTop);
   }
 
   revive(scene, tower, position, level, levelTop) {
     const towerMaterial = scene.getMaterialByID("towerMaterial");
-    const transparentMaterial = scene.getMaterialByID("transparentMaterial");
+    const projectileMaterial = scene.getMaterialByID("projectileMaterial");
 
     tower.position = new BABYLON.Vector3(
       position.x,
@@ -100,29 +103,39 @@ class Tower {
           },
           scene
         );
+
         const flashLocal = new BABYLON.Vector3(0, 0, -3);
         const flashSpace = towerTurret.getDirection(flashLocal);
+        flashSpace.normalize();
 
         flash.position = towerTurret.position.add(flashSpace);
         flash.rotation = towerTurret.rotation.clone();
+        towerTurret.material = towerMaterial;
+        towerTurret.addChild(flash);
+        flash.isPickable = false;
+        flash.setEnabled(false);
+        flash.material = projectileMaterial;
+
+        const rayLocal = new BABYLON.Vector3(0, 0, -1);
+        const rayLocalOrigin = new BABYLON.Vector3(0, 0, -4);
+        const raySpace = towerTurret.getDirection(rayLocalOrigin);
+        const turretDirection = towerTurret.getDirection(rayLocal);
+
         const ray = new BABYLON.Ray(
-          towerTurret.position,
-          flashSpace,
+          towerTurret.position.add(raySpace),
+          turretDirection,
           towerGlobals.range
         );
 
         if (towerGlobals.raysOn) {
           var rayHelper = new BABYLON.RayHelper(ray);
           rayHelper.show(scene, new BABYLON.Color3(1, 1, 0.3));
-
-          scene.registerBeforeRender(() => {
-            ray.direction = towerTurret.getDirection(flashLocal);
-          });
         }
-        towerTurret.material = towerMaterial;
-        towerTurret.addChild(flash);
+        scene.registerBeforeRender(() => {
+          ray.direction = turretDirection;
+          // ray.direction = towerTurret.getDirection(rayLocal);
+        });
 
-        flash.material = transparentMaterial;
         // tower.addChild(towerTurret);
         this.enemyWatch(scene, tower, levelTop, flash, ray);
 
@@ -139,8 +152,10 @@ class Tower {
 
         pillar.material = towerMaterial;
 
-        BABYLON.Tags.AddTagsTo(pillar, "tower");
-        BABYLON.Tags.AddTagsTo(towerTurret, "tower");
+        // BABYLON.Tags.AddTagsTo(pillar, "tower");
+        // BABYLON.Tags.AddTagsTo(towerTurret, "tower");
+        towerTurret.isPickable = false;
+        pillar.isPickable = false;
         break;
     }
 
@@ -153,6 +168,7 @@ class Tower {
 
     mapGlobals.allImpostors.unshift(tower.physicsImpostor);
     BABYLON.Tags.AddTagsTo(tower, "tower");
+    towerGlobals.allTowers.unshift(tower);
   }
 
   rayClearsTower(scene, ray) {
@@ -161,11 +177,13 @@ class Tower {
       for (let index = 0; index < towerGlobals.allTowers.length; index++) {
         const element = towerGlobals.allTowers[index];
 
-        if (element == mesh) {
+        if (element === mesh) {
           result = false;
         }
       }
     });
+
+    // result = true;
     return result;
   }
 
@@ -176,22 +194,20 @@ class Tower {
     flash = BABYLON.Mesh.prototype,
     ray
   ) {
-    const transparentMaterial = scene.getMaterialByID("transparentMaterial");
-    const projectileMaterial = scene.getMaterialByID("projectileMaterial");
-
-    const rotateDelay = 200;
+    // const rotateDelay = 200;
     let deltaTime = Date.now();
 
     // this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
 
     scene.registerBeforeRender(() => {
       if (
-        enemyGlobals.allEnemies.length <= 12 &&
+        enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
         mapGlobals.allImpostors.length < mapGlobals.impostorLimit
       ) {
         const enemyDistances = [];
         for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
           const enemy = enemyGlobals.allEnemies[index];
+
           if (
             enemy.position.y <= towerGlobals.range &&
             enemy.position.y > 1 &&
@@ -211,6 +227,7 @@ class Tower {
             ]);
           }
         }
+
         if (enemyDistances.length > 0) {
           this.rotateTurret(enemyDistances.sort()[0][1][0], tower, levelTop);
           if (
@@ -218,11 +235,11 @@ class Tower {
             towerGlobals.shoot
           ) {
             deltaTime = Date.now();
-            setTimeout(() => {
-              flash.material = transparentMaterial;
+            const flashTimer = setTimeout(() => {
+              flash.setEnabled(false);
             }, 3);
-            flash.material = projectileMaterial;
-            setTimeout(() => {
+            flash.setEnabled(true);
+            const fireTimer = setTimeout(() => {
               fire(scene, tower[levelTop]);
             }, 1);
           }
@@ -231,14 +248,8 @@ class Tower {
     });
   }
 
-  rotateTurret(sortedDistances, tower = BABYLON.Mesh.prototype, levelTop = "") {
-    tower[levelTop].lookAt(
-      new BABYLON.Vector3(
-        sortedDistances.position.x,
-        sortedDistances.position.y,
-        sortedDistances.position.z
-      )
-    );
+  rotateTurret(sortedDistances, tower: any = BABYLON.Mesh, levelTop = "") {
+    tower[levelTop].lookAt(sortedDistances.position);
   }
 
   slowRotateTurret(

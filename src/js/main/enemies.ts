@@ -11,9 +11,7 @@ class Enemy {
     scene = BABYLON.Scene.prototype
   ) {
     const name = `enemy${level}`;
-
     const diameter = level * 1.5;
-
     const sphereMesh = BABYLON.MeshBuilder.CreateIcoSphere(
       name,
       {
@@ -33,16 +31,21 @@ class Enemy {
 
   nearTower(ray, scene) {
     let result = true;
-    scene.pickWithRay(ray, mesh => {
-      for (let index = 0; index < towerGlobals.allTowers.length; index++) {
-        const element = towerGlobals.allTowers[index];
+    for (const direction in ray) {
+      if (ray.hasOwnProperty(direction)) {
+        const directionRay = ray[direction];
 
-        if (element == mesh) {
-          result = false;
-          console.log(element);
-        }
+        scene.pickWithRay(directionRay, mesh => {
+          for (let index = 0; index < towerGlobals.allTowers.length; index++) {
+            const element = towerGlobals.allTowers[index];
+
+            if (element === mesh) {
+              result = false;
+            }
+          }
+        });
       }
-    });
+    }
 
     return result;
   }
@@ -50,8 +53,7 @@ class Enemy {
   checkHitPoints(
     scene: any = BABYLON.Scene.prototype,
     sphereMesh: any,
-    loopTimer: any,
-    engine = BABYLON.PhysicsEngine.prototype
+    loopTimer: any
   ) {
     const damagedMaterial = scene.getMaterialByID("damagedMaterial");
 
@@ -59,7 +61,7 @@ class Enemy {
       sphereMesh.hitPoints <= 0 ||
       sphereMesh.position.y < towerGlobals.range * -1
     ) {
-      this.destroy(sphereMesh, loopTimer, scene, engine);
+      this.destroyEnemy(sphereMesh, loopTimer, scene);
     } else if (
       sphereMesh.hitPoints < enemyGlobals.deadHitPoints &&
       sphereMesh.material !== damagedMaterial
@@ -74,41 +76,54 @@ class Enemy {
   }
 
   makeRays(sphereMesh, scene) {
-    if (enemyGlobals.rayHelpers) {
-      let ray = {
-        up: new BABYLON.Ray(
-          sphereMesh.position,
-          new BABYLON.Vector3(0, 0, 1),
-          10
-        ),
-        down: new BABYLON.Ray(
-          sphereMesh.position,
-          new BABYLON.Vector3(0, 0, -1),
-          10
-        ),
-        left: new BABYLON.Ray(
-          sphereMesh.position,
-          new BABYLON.Vector3(-1, 0, 0),
-          10
-        ),
-        right: new BABYLON.Ray(
-          sphereMesh.position,
-          new BABYLON.Vector3(1, 0, 0),
-          10
-        )
-      };
+    const ray = {
+      up: new BABYLON.Ray(
+        sphereMesh.getAbsolutePosition(),
+        new BABYLON.Vector3(0, 0, 1),
+        10
+      ),
+      down: new BABYLON.Ray(
+        sphereMesh.getAbsolutePosition(),
+        new BABYLON.Vector3(0, 0, -1),
+        10
+      ),
+      left: new BABYLON.Ray(
+        sphereMesh.getAbsolutePosition(),
+        new BABYLON.Vector3(-1, 0, 0),
+        10
+      ),
+      right: new BABYLON.Ray(
+        sphereMesh.getAbsolutePosition(),
+        new BABYLON.Vector3(1, 0, 0),
+        10
+      )
+    };
 
-      var rayHelper = new BABYLON.RayHelper(ray.up);
-      rayHelper.show(scene, new BABYLON.Color3(1, 1, 0.1));
+    return ray;
+  }
 
-      var rayHelper2 = new BABYLON.RayHelper(ray.down);
-      rayHelper2.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
+  makeHelpers(ray, scene) {
+    let helpers = [];
+    const rayHelper1 = new BABYLON.RayHelper(ray.up);
+    rayHelper1.show(scene, new BABYLON.Color3(1, 1, 0.1));
 
-      var rayHelper3 = new BABYLON.RayHelper(ray.left);
-      rayHelper3.show(scene, new BABYLON.Color3(1, 1, 0.1));
+    const rayHelper2 = new BABYLON.RayHelper(ray.down);
+    rayHelper2.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
 
-      var rayHelper4 = new BABYLON.RayHelper(ray.right);
-      rayHelper4.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
+    const rayHelper3 = new BABYLON.RayHelper(ray.left);
+    rayHelper3.show(scene, new BABYLON.Color3(1, 1, 0.1));
+
+    const rayHelper4 = new BABYLON.RayHelper(ray.right);
+    rayHelper4.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
+    helpers.push(rayHelper1, rayHelper2, rayHelper3, rayHelper4);
+
+    return helpers;
+  }
+
+  destroyHelpers(helpers) {
+    for (let index = 0; index < helpers.length; index++) {
+      const rayHelper = helpers[index];
+      rayHelper.dispose();
     }
   }
 
@@ -138,10 +153,16 @@ class Enemy {
       },
       scene
     );
-
     mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
 
-    const physicsEngine = scene.getPhysicsEngine();
+    const ray = this.makeRays(sphereMesh, scene);
+
+    if (enemyGlobals.rayHelpers) {
+      const helpers = this.makeHelpers(ray, scene);
+      setTimeout(() => {
+        this.destroyHelpers(helpers);
+      }, 20000);
+    }
 
     const loopTimer = setInterval(() => {
       if (
@@ -149,25 +170,24 @@ class Enemy {
         sphereMesh.position.y < diameter * 1 &&
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
-        enemyAi(sphereMesh, this.decide(sphereMesh, scene));
+        enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
       }
-      this.checkHitPoints(scene, sphereMesh, loopTimer, physicsEngine);
+      this.checkHitPoints(scene, sphereMesh, loopTimer);
     }, enemyGlobals.decisionRate);
   }
 
-  destroy(
-    sphereMesh = BABYLON.Mesh.prototype,
+  destroyEnemy(
+    sphereMesh: any = BABYLON.Mesh,
     loopTimer,
-    scene = BABYLON.Scene.prototype,
-    engine = BABYLON.PhysicsEngine.prototype
+    scene: any = BABYLON.Scene
   ) {
     clearInterval(loopTimer);
-    //@ts-ignore
+
     sphereMesh.hitPoints = 0;
+    delete sphereMesh.hitPoints;
 
     setTimeout(() => {
       enemyGlobals.allEnemies = [];
-
       sphereMesh.physicsImpostor.dispose();
       sphereMesh.dispose();
 
@@ -175,11 +195,8 @@ class Enemy {
     }, 1);
   }
 
-  decide(sphereMesh = BABYLON.Mesh.prototype, scene) {
-    this.makeRays(sphereMesh, scene);
-
+  decide(sphereMesh = BABYLON.Mesh.prototype, scene, ray) {
     const decideToMove = { up: true, left: true, right: true, down: true };
-    let ray = decideToMove;
     if (
       sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
       this.nearTower(ray.up, scene)
@@ -252,7 +269,8 @@ export default function enemies(scene = BABYLON.Scene.prototype) {
 
   setInterval(() => {
     if (
-      enemyGlobals.allEnemies.length < enemyGlobals.limit - 5 &&
+      enemyGlobals.allEnemies.length <
+        enemyGlobals.limit - enemyGlobals.maxNumber &&
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit
     ) {
       enemyGenerator(scene, randomNumberRange(2, 5));
