@@ -22,7 +22,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
     "overhead",
     Math.PI / 3,
     Math.PI / 12,
-    200,
+    mapGlobals.size / 5,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -31,8 +31,8 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const camera2 = new BABYLON.ArcRotateCamera(
     "3/4",
     Math.PI / 6,
-    Math.PI / 3,
-    400,
+    Math.PI / 5,
+    mapGlobals.size / 5,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -41,8 +41,8 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const camera3 = new BABYLON.ArcRotateCamera(
     "closeup",
     Math.PI / 1,
-    Math.PI / 2,
-    110,
+    Math.PI / 2.1,
+    60,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -53,9 +53,9 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   camera3.attachControl(canvas, true);
 
   // Upper Beta Limit
-  camera.upperBetaLimit = Math.PI / 2.2;
-  camera2.upperBetaLimit = Math.PI / 2.2;
-  camera3.upperBetaLimit = Math.PI / 2.2;
+  camera.upperBetaLimit = Math.PI / 2;
+  camera2.upperBetaLimit = Math.PI / 2;
+  camera3.upperBetaLimit = Math.PI / 2;
 
   const rotateCamera = camera => {
     scene.registerBeforeRender(() => {
@@ -108,7 +108,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const atmosphere = BABYLON.MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
-      radius: 3000,
+      radius: mapGlobals.size,
       subdivisions: 5,
       updatable: false
     },
@@ -122,9 +122,9 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const ground = BABYLON.MeshBuilder.CreateGround(
     "ground",
     {
-      height: 200,
-      width: 200,
-      subdivisions: 20,
+      height: mapGlobals.size,
+      width: mapGlobals.size,
+      subdivisions: mapGlobals.size / 10,
       updatable: false
     },
     scene

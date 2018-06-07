@@ -1,8 +1,11 @@
 // @ts-check
 import randomNumberRange from "./randomNumberRange";
+import { mapGlobals } from "./variables";
 
 export default function positionGenerator() {
-  const x = randomNumberRange(-4, 4) * 10 + 5;
-  const z = randomNumberRange(-4, 4) * 10 + 5;
+  const x =
+    randomNumberRange(-mapGlobals.size / 100, mapGlobals.size / 100) * 10 + 5;
+  const z =
+    randomNumberRange(-mapGlobals.size / 100, mapGlobals.size / 100) * 10 + 5;
   return { x, z };
 }

@@ -80,22 +80,22 @@ class Enemy {
       up: new BABYLON.Ray(
         sphereMesh.getAbsolutePosition(),
         new BABYLON.Vector3(0, 0, 1),
-        10
+        20
       ),
       down: new BABYLON.Ray(
         sphereMesh.getAbsolutePosition(),
         new BABYLON.Vector3(0, 0, -1),
-        10
+        20
       ),
       left: new BABYLON.Ray(
         sphereMesh.getAbsolutePosition(),
         new BABYLON.Vector3(-1, 0, 0),
-        10
+        20
       ),
       right: new BABYLON.Ray(
         sphereMesh.getAbsolutePosition(),
         new BABYLON.Vector3(1, 0, 0),
-        10
+        20
       )
     };
 
@@ -161,7 +161,7 @@ class Enemy {
       const helpers = this.makeHelpers(ray, scene);
       setTimeout(() => {
         this.destroyHelpers(helpers);
-      }, 20000);
+      }, 25000);
     }
 
     const loopTimer = setInterval(() => {
@@ -199,28 +199,28 @@ class Enemy {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (
       sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.up, scene)
+      this.nearTower(ray.up, scene) === false
     ) {
       decideToMove.down = false;
       decideToMove.up = true;
     }
     if (
       sphereMesh.position.z >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.down, scene)
+      this.nearTower(ray.down, scene) === false
     ) {
       decideToMove.up = false;
       decideToMove.down = true;
     }
     if (
       sphereMesh.position.x >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.left, scene)
+      this.nearTower(ray.left, scene) === false
     ) {
       decideToMove.right = false;
       decideToMove.left = true;
     }
     if (
       sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.right, scene)
+      this.nearTower(ray.right, scene) === false
     ) {
       decideToMove.left = false;
       decideToMove.right = true;
@@ -265,7 +265,7 @@ function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
 }
 
 export default function enemies(scene = BABYLON.Scene.prototype) {
-  enemyGenerator(scene, 5);
+  enemyGenerator(scene, enemyGlobals.minNumber);
 
   setInterval(() => {
     if (

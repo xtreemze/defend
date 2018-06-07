@@ -89,7 +89,7 @@ class Projectile {
           enemy.material = hitMaterial;
           setTimeout(() => {
             enemy.material = enemyMaterial;
-          }, 35);
+          }, 60);
         }
       );
     }

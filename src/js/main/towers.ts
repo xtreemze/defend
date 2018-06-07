@@ -233,7 +233,7 @@ class Tower {
             deltaTime = Date.now();
             const flashTimer = setTimeout(() => {
               flash.setEnabled(false);
-            }, 3);
+            }, 4);
             flash.setEnabled(true);
             const fireTimer = setTimeout(() => {
               fire(scene, tower[levelTop]);
