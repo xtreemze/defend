@@ -2,6 +2,7 @@ import * as BABYLON from "babylonjs";
 import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
+
 import {
   towerGlobals,
   enemyGlobals,
@@ -235,6 +236,7 @@ class Tower {
               flash.setEnabled(false);
             }, 4);
             flash.setEnabled(true);
+
             const fireTimer = setTimeout(() => {
               fire(scene, tower[levelTop]);
             }, 1);

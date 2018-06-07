@@ -3,6 +3,7 @@ import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 import { enemyGlobals, towerGlobals, mapGlobals } from "./variables";
+import { playNote, shootAudio } from "./sound";
 
 class Enemy {
   constructor(
@@ -21,7 +22,7 @@ class Enemy {
       },
       scene
     );
-
+    playNote();
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
     this.revive(scene, position, sphereMesh, diameter, level);
@@ -181,6 +182,7 @@ class Enemy {
     loopTimer,
     scene: any = BABYLON.Scene
   ) {
+    shootAudio();
     clearInterval(loopTimer);
 
     sphereMesh.hitPoints = 0;

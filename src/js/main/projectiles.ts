@@ -1,5 +1,6 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
+import { signalControl } from "./sound";
 
 class Projectile {
   constructor(
@@ -15,6 +16,11 @@ class Projectile {
       width: 1,
       updatable: false
     });
+    // noiseControl.start();
+
+    // setTimeout(() => {
+    //   noiseControl.stop();
+    // }, 200);
 
     this.startLife(scene, originMesh, level, projectile);
   }
@@ -47,6 +53,8 @@ class Projectile {
       scene
     );
     mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
+
+    signalControl.set(mapGlobals.allImpostors.length * 0.01);
 
     const clonedRotation = originMesh.rotation.clone();
 
@@ -85,6 +93,7 @@ class Projectile {
           enemy.hitPoints -= projectile.hitPoints;
 
           enemy.material = hitMaterial;
+
           setTimeout(() => {
             enemy.material = enemyMaterial;
           }, 60);
