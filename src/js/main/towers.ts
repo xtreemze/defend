@@ -38,15 +38,6 @@ class Tower {
       position.z
     );
 
-    tower.physicsImpostor = new BABYLON.PhysicsImpostor(
-      tower,
-      BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: towerGlobals.mass, restitution: towerGlobals.restitution },
-      scene
-    );
-
-    mapGlobals.allImpostors.unshift(tower.physicsImpostor);
-
     tower.material = towerMaterial;
 
     switch (level) {
@@ -94,16 +85,10 @@ class Tower {
 
         tower[levelTop] = towerTurret;
 
-        tower[levelTop].position = new BABYLON.Vector3(
+        towerTurret.position = new BABYLON.Vector3(
           position.x,
           towerGlobals.height * 4,
           position.z
-        );
-        tower[levelTop].physicsImpostor = new BABYLON.PhysicsImpostor(
-          tower[levelTop],
-          BABYLON.PhysicsImpostor.BoxImpostor,
-          { mass: towerGlobals.mass, restitution: towerGlobals.restitution },
-          scene
         );
 
         const flash = BABYLON.MeshBuilder.CreateIcoSphere(
@@ -116,12 +101,12 @@ class Tower {
           scene
         );
         const flashLocal = new BABYLON.Vector3(0, 0, -3);
-        const flashSpace = tower[levelTop].getDirection(flashLocal);
+        const flashSpace = towerTurret.getDirection(flashLocal);
 
-        flash.position = tower[levelTop].position.add(flashSpace);
-        flash.rotation = tower[levelTop].rotation.clone();
+        flash.position = towerTurret.position.add(flashSpace);
+        flash.rotation = towerTurret.rotation.clone();
         const ray = new BABYLON.Ray(
-          tower[levelTop].position,
+          towerTurret.position,
           flashSpace,
           towerGlobals.range
         );
@@ -131,16 +116,14 @@ class Tower {
           rayHelper.show(scene, new BABYLON.Color3(1, 1, 0.3));
 
           scene.registerBeforeRender(() => {
-            ray.direction = tower[levelTop].getDirection(flashLocal);
+            ray.direction = towerTurret.getDirection(flashLocal);
           });
         }
-        tower[levelTop].material = towerMaterial;
-        tower[levelTop].addChild(flash);
-
-        mapGlobals.allImpostors.unshift(tower[levelTop].physicsImpostor);
+        towerTurret.material = towerMaterial;
+        towerTurret.addChild(flash);
 
         flash.material = transparentMaterial;
-        // tower.addChild(tower[levelTop]);
+        // tower.addChild(towerTurret);
         this.enemyWatch(scene, tower, levelTop, flash, ray);
 
         const pillar = BABYLON.MeshBuilder.CreateBox(name, {
@@ -155,14 +138,21 @@ class Tower {
         );
 
         pillar.material = towerMaterial;
-        tower.merge;
-        tower = BABYLON.Mesh.MergeMeshes([pillar, tower]);
 
-        // BABYLON.Tags.AddTagsTo(pillar, "tower");
-        BABYLON.Tags.AddTagsTo(tower, "tower");
+        BABYLON.Tags.AddTagsTo(pillar, "tower");
         BABYLON.Tags.AddTagsTo(towerTurret, "tower");
         break;
     }
+
+    tower.physicsImpostor = new BABYLON.PhysicsImpostor(
+      tower,
+      BABYLON.PhysicsImpostor.BoxImpostor,
+      { mass: towerGlobals.mass, restitution: towerGlobals.restitution },
+      scene
+    );
+
+    mapGlobals.allImpostors.unshift(tower.physicsImpostor);
+    BABYLON.Tags.AddTagsTo(tower, "tower");
   }
 
   rayClearsTower(scene, ray) {
@@ -221,11 +211,8 @@ class Tower {
             ]);
           }
         }
-
-        const sortedDistances = enemyDistances.sort();
-        if (sortedDistances.length > 0) {
-          this.rotateTurret(sortedDistances[0][1][0], tower, levelTop);
-
+        if (enemyDistances.length > 0) {
+          this.rotateTurret(enemyDistances.sort()[0][1][0], tower, levelTop);
           if (
             Date.now() - deltaTime > towerGlobals.rateOfFire &&
             towerGlobals.shoot
@@ -235,7 +222,9 @@ class Tower {
               flash.material = transparentMaterial;
             }, 3);
             flash.material = projectileMaterial;
-            fire(scene, tower[levelTop]);
+            setTimeout(() => {
+              fire(scene, tower[levelTop]);
+            }, 1);
           }
         }
       }

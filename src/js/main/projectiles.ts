@@ -50,12 +50,10 @@ class Projectile {
     );
     mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
-    const clonedRotation = originMesh.rotationQuaternion.clone();
-    clonedRotation.normalize();
+    const clonedRotation = originMesh.rotation.clone();
 
-    // projectile.rotationQuaternion.copyFrom(originMesh.rotation);
+    projectile.rotation.copyFrom(clonedRotation);
 
-    projectile.rotationQuaternion.copyFrom(clonedRotation);
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
     this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
 
@@ -70,6 +68,7 @@ class Projectile {
   ) {
     const hitMaterial = scene.getMaterialByID("hitMaterial");
     const enemyMaterial = scene.getMaterialByID("enemyMaterial");
+
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors,
