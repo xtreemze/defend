@@ -50,6 +50,9 @@ class Game {
 
       optimizer.start();
     }
+
+    this._scene.workerCollisions = true;
+
     materialGenerator(this._scene);
     map1(this._scene, this._canvas, this._engine);
     towers(this._scene);
