@@ -3,13 +3,13 @@ import { Color3 } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 1000, // map radius
+  size: 800, // map radius
   optimizerOn: false,
   cameraCutDelay: 3000,
   rotateCameras: true,
-  rotationSpeedMultiplier: 16, // higher is sloewr
+  rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [],
-  impostorLimit: 150,
+  impostorLimit: 150, // keep low for mobile device limits
   lightIntensity: 0.79,
   ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
   sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
@@ -17,7 +17,7 @@ const mapGlobals = {
 
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
-  speed: 7000,
+  speed: 8000,
   mass: 50,
   restitution: 0,
   baseHitPoints: 10,
@@ -27,7 +27,7 @@ const projectileGlobals = {
 const towerGlobals = {
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
-  rateOfFire: 250, // milliseconds between each shot,
+  rateOfFire: 280, // milliseconds between each shot,
   height: 2,
   mass: 0,
   restitution: 0,
@@ -48,10 +48,10 @@ const enemyGlobals = {
   originHeight: 80,
   generationRate: 8000, // milliseconds
   decisionRate: 200, // milliseconds
-  speed: 90000,
-  mass: 5000,
+  speed: 8000,
+  mass: 4000,
   restitution: 0.1,
-  jumpForce: 40,
+  jumpForce: 60,
   friction: 1,
   decayRate: 1, // hitpoints per decision
   baseHitPoints: 200,

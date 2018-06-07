@@ -104,11 +104,11 @@ class Tower {
           scene
         );
 
-        const flashLocal = new BABYLON.Vector3(0, 0, -3);
+        const flashLocal = new BABYLON.Vector3(0, 0, 5);
         const flashSpace = towerTurret.getDirection(flashLocal);
         flashSpace.normalize();
 
-        flash.position = towerTurret.position.add(flashSpace);
+        flash.position = towerTurret.position.subtract(flashSpace);
         flash.rotation = towerTurret.rotation.clone();
         towerTurret.material = towerMaterial;
         towerTurret.addChild(flash);
@@ -117,7 +117,7 @@ class Tower {
         flash.material = projectileMaterial;
 
         const rayLocal = new BABYLON.Vector3(0, 0, -1);
-        const rayLocalOrigin = new BABYLON.Vector3(0, 0, -4);
+        const rayLocalOrigin = new BABYLON.Vector3(0, 0, -5);
         const turretDirection = towerTurret.getDirection(rayLocalOrigin);
 
         const ray = new BABYLON.Ray(

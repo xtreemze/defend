@@ -10,10 +10,8 @@ class Projectile {
     const name = `projectile${level}`;
 
     const projectile = BABYLON.MeshBuilder.CreateBox(name, {
-      // diameter: 1.2,
-      size: 1.9,
-      // segments: 1,
-      height: 0.4,
+      size: 2,
+      height: 0.5,
       width: 1,
       updatable: false
     });
@@ -28,7 +26,7 @@ class Projectile {
     projectile: any = BABYLON.Mesh.prototype
   ) {
     const projectileMaterial = scene.getMaterialByID("projectileMaterial");
-    const forwardLocal = new BABYLON.Vector3(0, 0, 3);
+    const forwardLocal = new BABYLON.Vector3(0, 0, 5);
     const space = originMesh.getDirection(forwardLocal);
 
     projectile.position = originMesh.position.subtract(space);
