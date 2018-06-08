@@ -16,7 +16,7 @@ class Enemy {
     const sphereMesh = BABYLON.MeshBuilder.CreateIcoSphere(
       name,
       {
-        subdivisions: 1,
+        subdivisions: level,
         radius: diameter / 2,
         updatable: false
       },
