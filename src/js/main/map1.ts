@@ -203,8 +203,8 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
     setTimeout(() => {
       var imgNm = 0;
       scene.registerAfterRender(function() {
-        if (imgNm++ < 90) {
-          BABYLON.Tools.CreateScreenshot(engine, camera3, 1200);
+        if (imgNm++ < 50) {
+          BABYLON.Tools.CreateScreenshot(engine, camera3, 1024);
         }
       });
     }, 6000);
