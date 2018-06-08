@@ -28,6 +28,21 @@ class Enemy {
     this.revive(scene, position, sphereMesh, diameter, level);
 
     BABYLON.Tags.AddTagsTo(sphereMesh, "enemy");
+
+    const alien = new BABYLON.Sound(
+      "alien",
+      "https://raw.githubusercontent.com/xtreemze/defend/master/src/audio/alien.wav",
+      scene,
+      null,
+      {
+        loop: false,
+        autoplay: true,
+        volume: -20
+      }
+    );
+
+    // Sound will now follow the box mesh position
+    alien.attachToMesh(sphereMesh);
   }
 
   nearTower(ray, scene) {

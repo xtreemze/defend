@@ -17,20 +17,21 @@ class Projectile {
       updatable: false
     });
 
+    this.startLife(scene, originMesh, level, projectile);
+
     const blaster = new BABYLON.Sound(
       "blaster",
-      "./../../audio/blaster.wav",
+      "https://raw.githubusercontent.com/xtreemze/defend/master/src/audio/blaster.wav",
       scene,
       null,
       {
-        loop: true,
-        autoplay: true
+        loop: false,
+        autoplay: true,
+        volume: -20
       }
     );
 
     // Sound will now follow the box mesh position
-
-    this.startLife(scene, originMesh, level, projectile);
     blaster.attachToMesh(projectile);
   }
 
