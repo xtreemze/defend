@@ -2,9 +2,6 @@
 import "./../../vendor/pep";
 
 import * as BABYLON from "babylonjs";
-// import OIMO from "oimo";
-// import CANNON from "cannon";
-//    import * as  BABYLON from  'babylonjs';
 
 import { enemyGlobals, mapGlobals } from "./variables";
 
@@ -21,7 +18,6 @@ class Game {
   private _light: BABYLON.Light;
 
   constructor(canvasElement: string) {
-    // Create canvas and engine.
     this._canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
     this._engine = new BABYLON.Engine(this._canvas, true, {
       preserveDrawingBuffer: true,
@@ -32,12 +28,11 @@ class Game {
   }
 
   createScene(): void {
-    // Create a basic BJS Scene object.
     this._scene = new BABYLON.Scene(this._engine);
 
     this._scene.enablePhysics(
-      new BABYLON.Vector3(0, -9.81, 0)
-      // new BABYLON.CannonJSPlugin()
+      new BABYLON.Vector3(0, -9.81, 0),
+      new BABYLON.CannonJSPlugin()
       // new BABYLON.OimoJSPlugin()
     );
     if (mapGlobals.diagnosticsOn) {
@@ -73,12 +68,9 @@ class Game {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  // Create the game using the 'renderCanvas'.
   let game = new Game("renderCanvas");
 
-  // Create the scene.
   game.createScene();
 
-  // Start render loop.
   game.doRender();
 });

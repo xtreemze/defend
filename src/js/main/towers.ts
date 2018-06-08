@@ -3,12 +3,7 @@ import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 
-import {
-  towerGlobals,
-  enemyGlobals,
-  mapGlobals,
-  projectileGlobals
-} from "./variables";
+import { towerGlobals, enemyGlobals, mapGlobals } from "./variables";
 
 class Tower {
   constructor(
@@ -105,9 +100,8 @@ class Tower {
           scene
         );
 
-        const flashLocal = new BABYLON.Vector3(0, 0, 5);
+        const flashLocal = new BABYLON.Vector3(0, 0, 4);
         const flashSpace = towerTurret.getDirection(flashLocal);
-        flashSpace.normalize();
 
         flash.position = towerTurret.position.subtract(flashSpace);
         flash.rotation = towerTurret.rotation.clone();
@@ -135,7 +129,6 @@ class Tower {
           ray.direction = towerTurret.getDirection(rayLocal);
         });
 
-        // tower.addChild(towerTurret);
         this.enemyWatch(scene, tower, levelTop, flash, ray);
 
         const pillar = BABYLON.MeshBuilder.CreateBox(name, {
@@ -153,8 +146,6 @@ class Tower {
 
         BABYLON.Tags.AddTagsTo(pillar, "tower");
         BABYLON.Tags.AddTagsTo(towerTurret, "tower");
-        // towerTurret.isPickable = false;
-        // pillar.isPickable = false;
         break;
     }
 
@@ -191,11 +182,7 @@ class Tower {
     flash = BABYLON.Mesh.prototype,
     ray
   ) {
-    // const rotateDelay = 200;
     let deltaTime = Date.now();
-
-    // this.slowRotateTurret(scene, rotateDelay, tower, levelTop);
-
     scene.registerBeforeRender(() => {
       if (
         enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
@@ -224,20 +211,20 @@ class Tower {
             ]);
           }
         }
-
         if (enemyDistances.length > 0) {
           this.rotateTurret(enemyDistances.sort()[0][1][0], tower, levelTop);
+
           if (
             Date.now() - deltaTime > towerGlobals.rateOfFire &&
             towerGlobals.shoot
           ) {
             deltaTime = Date.now();
-            const flashTimer = setTimeout(() => {
+            setTimeout(() => {
               flash.setEnabled(false);
             }, 4);
             flash.setEnabled(true);
 
-            const fireTimer = setTimeout(() => {
+            setTimeout(() => {
               fire(scene, tower[levelTop]);
             }, 1);
           }
@@ -248,74 +235,6 @@ class Tower {
 
   rotateTurret(sortedDistances, tower: any = BABYLON.Mesh, levelTop = "") {
     tower[levelTop].lookAt(sortedDistances.position);
-  }
-
-  slowRotateTurret(
-    scene = BABYLON.Scene.prototype,
-    rotateDelay = 0,
-    tower = BABYLON.Mesh.prototype,
-    levelTop = ""
-  ) {
-    tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Identity();
-    let lookTarget = enemyGlobals.allEnemies[0];
-    let lookTargetPos = lookTarget.position.clone();
-
-    let orgQuat = tower[levelTop].rotationQuaternion.clone();
-    tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-    let lookQuat = tower[levelTop].rotationQuaternion.clone();
-    let percent = 0;
-    let percentAdd = 100;
-
-    setInterval(() => {
-      if (
-        enemyGlobals.allEnemies !== undefined &&
-        enemyGlobals.allEnemies.length > 0
-      ) {
-        lookTarget = enemyGlobals.allEnemies[0];
-        lookTargetPos = lookTarget.position.clone();
-      }
-    }, rotateDelay);
-
-    scene.registerBeforeRender(() => {
-      if (enemyGlobals.allEnemies.length > 0) {
-        if (lookTarget === null) {
-          // lookTarget = enemyGlobals.allEnemies[0];
-
-          lookTargetPos = lookTarget.position.clone();
-
-          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-
-          orgQuat = tower[levelTop].rotationQuaternion.clone();
-          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-          lookQuat = tower[levelTop].rotationQuaternion.clone();
-        }
-        if (
-          // Reset the rotation values when the target has moved
-
-          BABYLON.Vector3.Distance(lookTargetPos, lookTarget.position) >
-          BABYLON.Epsilon
-        ) {
-          orgQuat = tower[levelTop].rotationQuaternion.clone();
-          tower[levelTop].lookAt(lookTarget.position, 0, -Math.PI / 2, 0);
-          lookQuat = tower[levelTop].rotationQuaternion.clone();
-          lookTargetPos = lookTarget.position.clone();
-          percent = 0;
-        }
-
-        // Set the tower[levelTop] rotation, increase the percentage
-        if (percent !== 1) {
-          tower[levelTop].rotationQuaternion = BABYLON.Quaternion.Slerp(
-            orgQuat,
-            lookQuat,
-            percent
-          );
-          percent += percentAdd;
-          if (percent > 1) {
-            percent = 1;
-          }
-        }
-      }
-    });
   }
 }
 
