@@ -27,7 +27,9 @@ class Projectile {
       {
         loop: false,
         autoplay: true,
-        volume: -20
+        volume: 0.5,
+        distanceModel: "exponential",
+        rolloffFactor: 0.1
       }
     );
 

@@ -29,7 +29,6 @@ class Game {
 
   createScene(): void {
     this._scene = new BABYLON.Scene(this._engine);
-
     this._scene.enablePhysics(
       new BABYLON.Vector3(0, -9.81, 0),
       new BABYLON.CannonJSPlugin()
