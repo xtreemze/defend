@@ -48,9 +48,9 @@ class Tower {
         const outerTurret = BABYLON.MeshBuilder.CreateBox(
           "outerTurret",
           {
-            size: 4,
-            height: towerGlobals.height,
-            width: 4,
+            size: towerGlobals.height * level,
+            height: (towerGlobals.height * level) / level,
+            width: towerGlobals.height * level,
             updatable: false
           },
           scene
@@ -58,14 +58,14 @@ class Tower {
         const innerTurret = BABYLON.MeshBuilder.CreateBox(
           "innerTurret",
           {
-            size: 3,
-            height: towerGlobals.height / 2,
-            width: 4 / 1.5,
+            size: towerGlobals.height * level * 0.8,
+            height: (towerGlobals.height * level) / level,
+            width: (towerGlobals.height * level) / 1.5,
             updatable: false
           },
           scene
         );
-        innerTurret.position = new BABYLON.Vector3(0, 0, -0.5);
+        innerTurret.position = new BABYLON.Vector3(0, 0, -0.2 * level);
 
         const outerCSG = BABYLON.CSG.FromMesh(outerTurret);
         const innterCSG = BABYLON.CSG.FromMesh(innerTurret);
@@ -86,14 +86,14 @@ class Tower {
 
         towerTurret.position = new BABYLON.Vector3(
           position.x,
-          towerGlobals.height * 4,
+          towerGlobals.height * level * 1.5,
           position.z
         );
 
         const flash = BABYLON.MeshBuilder.CreateIcoSphere(
           name,
           {
-            radius: 3,
+            radius: level,
             subdivisions: 1,
             updatable: false
           },
@@ -129,16 +129,16 @@ class Tower {
           ray.direction = towerTurret.getDirection(rayLocal);
         });
 
-        this.enemyWatch(scene, tower, levelTop, flash, ray);
+        this.enemyWatch(scene, tower, levelTop, flash, ray, level);
 
         const pillar = BABYLON.MeshBuilder.CreateBox(name, {
-          size: 1,
-          height: towerGlobals.height * 3,
+          size: level / 2,
+          height: towerGlobals.height * level,
           updatable: false
         });
         pillar.position = new BABYLON.Vector3(
           position.x,
-          towerGlobals.height * 2,
+          towerGlobals.height * level * 0.5,
           position.z
         );
 
@@ -180,7 +180,8 @@ class Tower {
     tower = BABYLON.Mesh.prototype,
     levelTop = "",
     flash = BABYLON.Mesh.prototype,
-    ray
+    ray,
+    level
   ) {
     let deltaTime = Date.now();
     scene.registerBeforeRender(() => {
@@ -215,7 +216,7 @@ class Tower {
           this.rotateTurret(enemyDistances.sort()[0][1][0], tower, levelTop);
 
           if (
-            Date.now() - deltaTime > towerGlobals.rateOfFire &&
+            Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
             towerGlobals.shoot
           ) {
             deltaTime = Date.now();
@@ -225,7 +226,7 @@ class Tower {
             flash.setEnabled(true);
 
             setTimeout(() => {
-              fire(scene, tower[levelTop]);
+              fire(scene, tower[levelTop], level);
             }, 1);
           }
         }

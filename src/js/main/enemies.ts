@@ -12,7 +12,7 @@ class Enemy {
     scene = BABYLON.Scene.prototype
   ) {
     const name = `enemy${level}`;
-    const diameter = level * 1.5;
+    const diameter = level * level;
     const sphereMesh = BABYLON.MeshBuilder.CreateIcoSphere(
       name,
       {
@@ -252,7 +252,7 @@ function enemyGenerator(scene = BABYLON.Scene.prototype, quantity = 0) {
     enemyGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
     new Enemy(
-      randomNumberRange(2, 3),
+      randomNumberRange(1, 3),
       {
         x: enemyGlobals.occupiedSpaces[0][0],
         z: enemyGlobals.occupiedSpaces[0][1]

@@ -4,16 +4,16 @@ import { signalControl } from "./sound";
 
 class Projectile {
   constructor(
-    level = 1,
     originMesh = BABYLON.Mesh,
-    scene = BABYLON.Scene.prototype
+    scene = BABYLON.Scene.prototype,
+    level = 1
   ) {
     const name = `projectile${level}`;
 
     const projectile = BABYLON.MeshBuilder.CreateBox(name, {
-      size: 2,
-      height: 0.5,
-      width: 1,
+      size: level,
+      height: level / 4,
+      width: level / 2,
       updatable: false
     });
     // noiseControl.start();
@@ -38,7 +38,7 @@ class Projectile {
     projectile.position = originMesh.position.subtract(space);
 
     //@ts-ignore
-    projectile.hitPoints = level * projectileGlobals.baseHitPoints;
+    projectile.hitPoints = (level + level) * projectileGlobals.baseHitPoints;
     projectile.material = projectileMaterial;
 
     // For Physics
@@ -46,7 +46,7 @@ class Projectile {
       projectile,
       BABYLON.PhysicsImpostor.BoxImpostor,
       {
-        mass: projectileGlobals.mass,
+        mass: (projectileGlobals.mass * level) / 2,
         restitution: projectileGlobals.restitution,
         friction: 1
       },
@@ -141,7 +141,8 @@ class Projectile {
 
 export default function fire(
   scene: any = BABYLON.Scene.prototype,
-  originMesh: any = BABYLON.Mesh.prototype
+  originMesh: any = BABYLON.Mesh.prototype,
+  level
 ) {
-  new Projectile(1, originMesh, scene);
+  new Projectile(originMesh, scene, level);
 }
