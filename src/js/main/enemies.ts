@@ -37,7 +37,7 @@ class Enemy {
       {
         loop: false,
         autoplay: true,
-        volume: 0.5,
+        volume: 0.2,
         distanceModel: "exponential",
         rolloffFactor: 0.1
       }
