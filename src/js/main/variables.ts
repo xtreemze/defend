@@ -1,7 +1,7 @@
 import { Color3 } from "babylonjs";
 
 const mapGlobals = {
-  diagnosticsOn: true,
+  diagnosticsOn: false,
   demoSphere: false,
   size: 800, // map radius
   optimizerOn: false,
