@@ -4,11 +4,11 @@ import * as Tone from "tone";
 const synth = new Tone.Synth({ volume: -20 }).toMaster();
 
 function playNote() {
-  synth.triggerAttackRelease("E4", "12n");
+  // synth.triggerAttackRelease("E4", "12n");
 }
 
 function shootAudio() {
-  synth.triggerAttackRelease("A4", "42n");
+  // synth.triggerAttackRelease("A4", "42n");
 }
 
 const noise = new Tone.Noise({
@@ -93,6 +93,6 @@ const signalControl = {
   position: 5
 };
 
-signal();
+// signal();
 
 export { playNote, shootAudio, noiseControl, signalControl };

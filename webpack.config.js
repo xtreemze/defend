@@ -134,7 +134,7 @@ module.exports = function e() {
           use: "ts-loader",
           exclude: /node_modules/
           // include: `${__dirname}/src`
-        }
+        },
         // {
         //   test: /\.(gif|png|jpe?g|svg)$/i,
         //   include: `${__dirname}/src`,
@@ -145,6 +145,16 @@ module.exports = function e() {
         //     // }
         //   ]
         // }
+        {
+          test: /\.(wav|mp3)$/,
+          include: `${__dirname}/src`,
+          loaders: [
+            "file-loader?name=./assets/[name].[ext]"
+            // {
+            //   loader: "image-webpack-loader"
+            // }
+          ]
+        }
       ]
     },
     plugins: [

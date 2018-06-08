@@ -1,6 +1,6 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
-import { signalControl } from "./sound";
+// import { signalControl } from "./sound";
 
 class Projectile {
   constructor(
@@ -16,13 +16,22 @@ class Projectile {
       width: level / 2,
       updatable: false
     });
-    // noiseControl.start();
 
-    // setTimeout(() => {
-    //   noiseControl.stop();
-    // }, 200);
+    const blaster = new BABYLON.Sound(
+      "blaster",
+      "./../../audio/blaster.wav",
+      scene,
+      null,
+      {
+        loop: true,
+        autoplay: true
+      }
+    );
+
+    // Sound will now follow the box mesh position
 
     this.startLife(scene, originMesh, level, projectile);
+    blaster.attachToMesh(projectile);
   }
 
   startLife(
@@ -54,7 +63,7 @@ class Projectile {
     );
     mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
-    signalControl.set(mapGlobals.allImpostors.length * 0.01);
+    // signalControl.set(mapGlobals.allImpostors.length * 0.01);
 
     const clonedRotation = originMesh.rotation.clone();
 
