@@ -11,10 +11,10 @@ const content = `{
 }
 `;
 
-fsExtra.writeFile("./src/manifest.json", content, "utf-8", err => {
+fsExtra.writeFile("./src/site.webmanifest", content, "utf-8", err => {
   Error(err);
 });
 
-fsExtra.writeFile("./dist/manifest.json", content, "utf-8", err => {
+fsExtra.writeFile("./dist/site.webmanifest", content, "utf-8", err => {
   Error(err);
 });
