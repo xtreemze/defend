@@ -97,7 +97,7 @@ class Projectile {
 
           setTimeout(() => {
             enemy.material = enemyMaterial as BABYLON.Material;
-          }, 60);
+          }, 40);
         }
       );
     }

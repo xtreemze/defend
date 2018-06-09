@@ -90,13 +90,11 @@ class Tower {
         const towerCSG = outerCSG.subtract(innterCSG);
 
         const towerTurret = towerCSG.toMesh(
-          tower[levelTop],
+          "towerTurret" as any,
           null,
           scene,
           false
         ) as BABYLON.Mesh;
-
-        tower[levelTop] = towerTurret;
 
         towerTurret.position = new BABYLON.Vector3(
           position.x,
@@ -145,7 +143,7 @@ class Tower {
           ray.direction = towerTurret.getDirection(rayLocal) as BABYLON.Vector3;
         });
 
-        this.enemyWatch(scene, tower, levelTop, flash, ray, level);
+        this.enemyWatch(scene, tower, towerTurret, flash, ray, level);
 
         const pillar = BABYLON.MeshBuilder.CreateBox(name, {
           size: level / 2,
@@ -197,7 +195,7 @@ class Tower {
   enemyWatch(
     scene: BABYLON.Scene,
     tower: BABYLON.Mesh,
-    levelTop: string = "",
+    towerTurret: BABYLON.Mesh,
     flash: BABYLON.Mesh,
     ray: any,
     level: number = 1 | 2 | 3
@@ -216,24 +214,18 @@ class Tower {
             enemy.position.y <= towerGlobals.range * level &&
             enemy.position.y > 0 &&
             enemy.hitPoints >= enemyGlobals.deadHitPoints &&
-            BABYLON.Vector3.Distance(
-              tower[levelTop].position,
-              enemy.position
-            ) <=
+            BABYLON.Vector3.Distance(towerTurret.position, enemy.position) <=
               towerGlobals.range * level &&
             this.rayClearsTower(scene, ray, tower)
           ) {
             enemyDistances.push([
-              BABYLON.Vector3.Distance(
-                tower[levelTop].position,
-                enemy.position
-              ),
+              BABYLON.Vector3.Distance(towerTurret.position, enemy.position),
               [enemy]
             ]);
           }
         }
         if (enemyDistances.length > 0) {
-          this.rotateTurret(enemyDistances.sort()[0][1][0], tower, levelTop);
+          this.rotateTurret(enemyDistances.sort()[0][1][0], towerTurret);
 
           if (
             Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
@@ -263,7 +255,7 @@ class Tower {
             flash.setEnabled(true);
 
             setTimeout(() => {
-              fire(scene, tower[levelTop], level);
+              fire(scene, towerTurret, level);
             }, 1);
           }
         }
@@ -271,12 +263,8 @@ class Tower {
     });
   }
 
-  rotateTurret(
-    sortedDistances: any,
-    tower: BABYLON.Mesh,
-    levelTop: string = ""
-  ) {
-    tower[levelTop].lookAt(sortedDistances.position);
+  rotateTurret(sortedDistances: any, towerTurret: BABYLON.Mesh) {
+    towerTurret.lookAt(sortedDistances.position);
   }
 }
 

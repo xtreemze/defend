@@ -2,12 +2,12 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "sourceMap": true,
-    // "noImplicitAny": true,
+    "noImplicitAny": true,
     "module": "commonjs",
     // "module": "es6",
     "target": "es6",
     // "allowJs": true,
-    // "removeComments": true,
+    "removeComments": true,
     "declaration": false,
     "pretty": true
     // "strict": true

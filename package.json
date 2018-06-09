@@ -37,7 +37,6 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/babylonjs": "^2.4.1",
     "airbnb-browser-shims": "^2.1.0",
     "archiver": "^2.1.1",
     "autoprefixer": "^8.6.1",

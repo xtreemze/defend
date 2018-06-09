@@ -36,7 +36,7 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 45,
+  range: 25,
   shoot: true,
   raysOn: false
 };
@@ -55,7 +55,7 @@ const enemyGlobals = {
   friction: 1,
   decayRate: 1, // hitpoints per decision
   baseHitPoints: 300,
-  deadHitPoints: 30,
+  deadHitPoints: 100,
   allEnemies: [] as BABYLON.Mesh[],
   occupiedSpaces: [] as any[],
   boundaryLimit: mapGlobals.size / 100, // meters
