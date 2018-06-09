@@ -2,16 +2,7 @@ import * as BABYLON from "babylonjs";
 import randomNumberRange from "./randomNumberRange";
 import { enemyGlobals } from "./variables";
 
-/**
- * Enemy Find Vector with Physics for Movement
- *
- * @param {any} [enemy=BABYLON.MeshBuilder.CreateBox.prototype]
- * @param {string} [direction=""]
- */
-function vector(
-  enemy: any = BABYLON.MeshBuilder.CreateBox.prototype,
-  direction: string = ""
-) {
+function vector(enemy: BABYLON.Mesh, direction: string = "") {
   switch (direction) {
     case "down":
       enemy.physicsImpostor.applyImpulse(
@@ -44,12 +35,7 @@ function vector(
 }
 
 function orient(
-  enemy: any = {
-    physicsImpostor: {},
-    length: 0,
-    material: BABYLON.Material,
-    hitPoints: 0
-  },
+  enemy: BABYLON.Mesh,
   decision = { up: true, left: true, right: true, down: true },
   result: number = 1
 ) {
@@ -104,13 +90,8 @@ function orient(
   }
 }
 
-/**
- * Enemys ai
- * @param enemy
- * @param [decision]
- */
 export default function enemyAi(
-  enemy = BABYLON.Mesh.prototype,
+  enemy: BABYLON.Mesh,
   decision = { up: true, left: true, right: true, down: true }
 ) {
   const result = randomNumberRange(1, 4);

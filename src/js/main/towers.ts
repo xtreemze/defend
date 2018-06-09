@@ -213,6 +213,7 @@ class Tower {
           if (
             enemy.position.y <= towerGlobals.range * level &&
             enemy.position.y > 0 &&
+            //@ts-ignore
             enemy.hitPoints >= enemyGlobals.deadHitPoints &&
             BABYLON.Vector3.Distance(towerTurret.position, enemy.position) <=
               towerGlobals.range * level &&
@@ -243,9 +244,9 @@ class Tower {
                 {
                   loop: false,
                   autoplay: true,
-                  volume: 0.4,
+                  volume: 0.7,
                   distanceModel: "exponential",
-                  rolloffFactor: 0.5
+                  rolloffFactor: 0.8
                 }
               ) as BABYLON.Sound;
 

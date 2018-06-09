@@ -35,7 +35,7 @@ class Projectile {
     projectile.position = originMesh.position.subtract(
       space
     ) as BABYLON.Vector3;
-
+    //@ts-ignore
     projectile.hitPoints = (level +
       level * projectileGlobals.baseHitPoints) as number;
     projectile.material = projectileMaterial as BABYLON.Material;
@@ -91,6 +91,7 @@ class Projectile {
       projectile.physicsImpostor.registerOnPhysicsCollide(
         enemy.physicsImpostor as BABYLON.PhysicsImpostor,
         () => {
+          //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
 
           enemy.material = hitMaterial as BABYLON.Material;
@@ -125,9 +126,9 @@ class Projectile {
     setTimeout(() => {
       mapGlobals.allImpostors = [];
       projectile.physicsImpostor.dispose();
-
+      //@ts-ignore
       projectile.hitPoints = 0;
-
+      //@ts-ignore
       delete projectile.hitPoints;
       projectile.dispose();
 

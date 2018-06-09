@@ -41,7 +41,7 @@ class Enemy {
         autoplay: true,
         volume: 0.4,
         distanceModel: "exponential",
-        rolloffFactor: 0.5
+        rolloffFactor: 0.7
       }
     );
 
@@ -81,11 +81,13 @@ class Enemy {
     ) as BABYLON.Material;
 
     if (
+      //@ts-ignore
       sphereMesh.hitPoints <= 0 ||
       sphereMesh.position.y < towerGlobals.range * level * -1
     ) {
       this.destroyEnemy(sphereMesh, loopTimer, scene);
     } else if (
+      //@ts-ignore
       sphereMesh.hitPoints <= enemyGlobals.deadHitPoints &&
       sphereMesh.material !== damagedMaterial
     ) {
@@ -94,6 +96,7 @@ class Enemy {
         new BABYLON.Vector3(0, enemyGlobals.jumpForce * level, 0)
       );
     } else {
+      //@ts-ignore
       sphereMesh.hitPoints -= enemyGlobals.decayRate;
     }
   }
@@ -194,6 +197,7 @@ class Enemy {
       if (
         sphereMesh.position.y > diameter / 2.5 &&
         sphereMesh.position.y < diameter * 1 &&
+        //@ts-ignore
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
         enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
@@ -226,28 +230,28 @@ class Enemy {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (
       sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.up, scene) === false
+      this.nearTower(ray.up, scene)
     ) {
       decideToMove.down = false;
       decideToMove.up = true;
     }
     if (
       sphereMesh.position.z >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.down, scene) === false
+      this.nearTower(ray.down, scene)
     ) {
       decideToMove.up = false;
       decideToMove.down = true;
     }
     if (
       sphereMesh.position.x >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.left, scene) === false
+      this.nearTower(ray.left, scene)
     ) {
       decideToMove.right = false;
       decideToMove.left = true;
     }
     if (
       sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.right, scene) === false
+      this.nearTower(ray.right, scene)
     ) {
       decideToMove.left = false;
       decideToMove.right = true;
