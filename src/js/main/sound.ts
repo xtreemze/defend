@@ -74,7 +74,7 @@ const signal = () => {
 
 // GUI //
 const signalControl = {
-  set: function(value) {
+  set: function(value: number) {
     frequency.rampTo(value, 0.8);
     Tone.Master.volume.rampTo(-value * 20, 0.8);
   },

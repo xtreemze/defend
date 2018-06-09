@@ -17,7 +17,7 @@ const mapGlobals = {
 
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
-  speed: 12000,
+  speed: 8000,
   mass: 50,
   restitution: 0,
   baseHitPoints: 10,
@@ -33,7 +33,7 @@ const towerGlobals = {
   restitution: 0,
   baseHitPoints: 0,
   allTowers: [] as BABYLON.Mesh[],
-  occupiedSpaces: [],
+  occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
   range: 45,
@@ -57,7 +57,7 @@ const enemyGlobals = {
   baseHitPoints: 300,
   deadHitPoints: 30,
   allEnemies: [] as BABYLON.Mesh[],
-  occupiedSpaces: [],
+  occupiedSpaces: [] as any[],
   boundaryLimit: mapGlobals.size / 100, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),

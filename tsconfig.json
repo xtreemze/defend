@@ -10,13 +10,14 @@
     // "removeComments": true,
     "declaration": false,
     "pretty": true
+    // "strict": true
   },
   "include": ["src"],
   "exclude": ["node_modules"],
   "types": [
     "babylonjs",
-    "babylonjs-gui",
-    "babylonjs-materials",
+    // "babylonjs-gui",
+    // "babylonjs-materials",
     "OIMO",
     "CANNON"
   ]

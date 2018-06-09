@@ -78,7 +78,7 @@ class Projectile {
     projectile.rotation.copyFrom(clonedRotation);
 
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
-    this.impulsePhys(scene, originMesh, projectile); // Moves the projectile with physics
+    this.impulsePhys(originMesh, projectile); // Moves the projectile with physics
 
     setTimeout(() => {
       this.destroyProjectile(projectile, scene);
@@ -121,16 +121,16 @@ class Projectile {
   }
 
   impulsePhys(
-    scene: any = BABYLON.Scene,
-    originMesh: any = BABYLON.Mesh,
-    projectile: any = BABYLON.Mesh
+    originMesh: BABYLON.Mesh,
+    projectile: BABYLON.Mesh,
+    level: number = 1 | 2 | 3
   ) {
     const forwardLocal = new BABYLON.Vector3(
       0,
       0,
-      projectileGlobals.speed * -1
-    );
-    const speed = originMesh.getDirection(forwardLocal);
+      projectileGlobals.speed * level * -1
+    ) as BABYLON.Vector3;
+    const speed = originMesh.getDirection(forwardLocal) as BABYLON.Vector3;
     projectile.physicsImpostor.applyImpulse(
       speed,
       projectile.getAbsolutePosition()
@@ -148,7 +148,7 @@ class Projectile {
       delete projectile.hitPoints;
       projectile.dispose();
 
-      const physicsEngine = scene.getPhysicsEngine();
+      const physicsEngine = scene.getPhysicsEngine() as BABYLON.PhysicsEngine;
 
       mapGlobals.allImpostors = physicsEngine.getImpostors();
     }, 1);
