@@ -242,6 +242,23 @@ class Tower {
             deltaTime = Date.now();
             setTimeout(() => {
               flash.setEnabled(false);
+
+              const blaster = new BABYLON.Sound(
+                "blaster",
+                "https://raw.githubusercontent.com/xtreemze/defend/master/src/audio/blaster.wav",
+                scene,
+                null,
+                {
+                  loop: false,
+                  autoplay: true,
+                  volume: 0.4,
+                  distanceModel: "exponential",
+                  rolloffFactor: 0.5
+                }
+              ) as BABYLON.Sound;
+
+              // Sound will now follow the box mesh position
+              blaster.attachToMesh(tower);
             }, 4);
             flash.setEnabled(true);
 
@@ -268,7 +285,7 @@ function towerGenerator(scene: BABYLON.Scene, quantity: number = 0) {
 
   while (
     towerGlobals.occupiedSpaces.find(
-      (existingLocation) =>
+      existingLocation =>
         existingLocation[0] === newLocation.x &&
         existingLocation[1] === newLocation.z
     ) !== undefined

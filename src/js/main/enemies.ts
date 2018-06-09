@@ -165,6 +165,7 @@ class Enemy {
       position.z
     );
 
+    //@ts-ignore
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
 

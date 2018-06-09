@@ -18,23 +18,6 @@ class Projectile {
     }) as BABYLON.Mesh;
 
     this.startLife(scene, originMesh, level, projectile);
-
-    const blaster = new BABYLON.Sound(
-      "blaster",
-      "https://raw.githubusercontent.com/xtreemze/defend/master/src/audio/blaster.wav",
-      scene,
-      null,
-      {
-        loop: false,
-        autoplay: true,
-        volume: 0.3,
-        distanceModel: "exponential",
-        rolloffFactor: 0.3
-      }
-    ) as BABYLON.Sound;
-
-    // Sound will now follow the box mesh position
-    blaster.attachToMesh(projectile);
   }
 
   startLife(
@@ -62,7 +45,7 @@ class Projectile {
       projectile,
       BABYLON.PhysicsImpostor.BoxImpostor,
       {
-        mass: (projectileGlobals.mass * level),
+        mass: projectileGlobals.mass * level,
         restitution: projectileGlobals.restitution,
         friction: 1
       },
