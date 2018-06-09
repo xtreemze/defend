@@ -62,7 +62,7 @@ class Projectile {
       projectile,
       BABYLON.PhysicsImpostor.BoxImpostor,
       {
-        mass: (projectileGlobals.mass * level) / 2,
+        mass: (projectileGlobals.mass * level),
         restitution: projectileGlobals.restitution,
         friction: 1
       },
@@ -103,17 +103,17 @@ class Projectile {
 
     // Enemies ONLY
     for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
-      const enemy = enemyGlobals.allEnemies[index];
+      const enemy = enemyGlobals.allEnemies[index] as BABYLON.Mesh;
 
       projectile.physicsImpostor.registerOnPhysicsCollide(
         enemy.physicsImpostor as BABYLON.PhysicsImpostor,
         () => {
           enemy.hitPoints -= projectile.hitPoints;
 
-          enemy.material = hitMaterial;
+          enemy.material = hitMaterial as BABYLON.Material;
 
           setTimeout(() => {
-            enemy.material = enemyMaterial;
+            enemy.material = enemyMaterial as BABYLON.Material;
           }, 60);
         }
       );
@@ -150,7 +150,7 @@ class Projectile {
 
       const physicsEngine = scene.getPhysicsEngine() as BABYLON.PhysicsEngine;
 
-      mapGlobals.allImpostors = physicsEngine.getImpostors();
+      mapGlobals.allImpostors = physicsEngine.getImpostors() as BABYLON.PhysicsImpostor[];
     }, 1);
   }
 }

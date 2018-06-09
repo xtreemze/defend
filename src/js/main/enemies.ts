@@ -71,24 +71,27 @@ class Enemy {
   }
 
   checkHitPoints(
-    scene: any = BABYLON.Scene.prototype,
-    sphereMesh: any,
-    loopTimer: any
+    scene: BABYLON.Scene,
+    sphereMesh: BABYLON.Mesh,
+    loopTimer: any,
+    level: number = 1 | 2 | 3
   ) {
-    const damagedMaterial = scene.getMaterialByID("damagedMaterial");
+    const damagedMaterial = scene.getMaterialByID(
+      "damagedMaterial"
+    ) as BABYLON.Material;
 
     if (
       sphereMesh.hitPoints <= 0 ||
-      sphereMesh.position.y < towerGlobals.range * -1
+      sphereMesh.position.y < towerGlobals.range * level * -1
     ) {
       this.destroyEnemy(sphereMesh, loopTimer, scene);
     } else if (
-      sphereMesh.hitPoints < enemyGlobals.deadHitPoints &&
+      sphereMesh.hitPoints <= enemyGlobals.deadHitPoints &&
       sphereMesh.material !== damagedMaterial
     ) {
       sphereMesh.material = damagedMaterial;
       sphereMesh.physicsImpostor.setLinearVelocity(
-        new BABYLON.Vector3(0, enemyGlobals.jumpForce, 0)
+        new BABYLON.Vector3(0, enemyGlobals.jumpForce * level, 0)
       );
     } else {
       sphereMesh.hitPoints -= enemyGlobals.decayRate;
@@ -218,7 +221,7 @@ class Enemy {
     }, 1);
   }
 
-  decide(sphereMesh = BABYLON.Mesh.prototype, scene: BABYLON.Scene, ray: any) {
+  decide(sphereMesh: BABYLON.Mesh, scene: BABYLON.Scene, ray: any) {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (
       sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
@@ -287,7 +290,7 @@ function enemyGenerator(scene: BABYLON.Scene, quantity: number = 0) {
   }
 }
 
-export default function enemies(scene = BABYLON.Scene.prototype) {
+export default function enemies(scene: BABYLON.Scene) {
   enemyGenerator(scene, enemyGlobals.minNumber);
 
   setInterval(() => {
