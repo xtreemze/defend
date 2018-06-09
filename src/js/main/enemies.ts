@@ -7,12 +7,12 @@ import { playNote, shootAudio } from "./sound";
 
 class Enemy {
   constructor(
-    level = 1,
-    position = { x: 0, z: 0 },
-    scene = BABYLON.Scene.prototype
+    level: number = 1,
+    position: any = { x: 0, z: 0 },
+    scene: BABYLON.Scene
   ) {
-    const name = `enemy${level}`;
-    const diameter = level * level;
+    const name = `enemy${level}` as string;
+    const diameter = (level * level) as number;
     const sphereMesh = BABYLON.MeshBuilder.CreateIcoSphere(
       name,
       {
@@ -21,8 +21,10 @@ class Enemy {
         updatable: false
       },
       scene
-    );
+    ) as BABYLON.Mesh;
+
     playNote();
+
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
     this.revive(scene, position, sphereMesh, diameter, level);
@@ -37,9 +39,9 @@ class Enemy {
       {
         loop: false,
         autoplay: true,
-        volume: 0.2,
+        volume: 0.4,
         distanceModel: "exponential",
-        rolloffFactor: 0.1
+        rolloffFactor: 0.5
       }
     );
 

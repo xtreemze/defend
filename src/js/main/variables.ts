@@ -8,7 +8,7 @@ const mapGlobals = {
   cameraCutDelay: 3000,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
-  allImpostors: [],
+  allImpostors: [] as BABYLON.PhysicsImpostor[],
   impostorLimit: 150, // keep low for mobile device limits
   lightIntensity: 0.79,
   ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
@@ -32,7 +32,7 @@ const towerGlobals = {
   mass: 0,
   restitution: 0,
   baseHitPoints: 0,
-  allTowers: [],
+  allTowers: [] as BABYLON.Mesh[],
   occupiedSpaces: [],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
@@ -56,7 +56,7 @@ const enemyGlobals = {
   decayRate: 1, // hitpoints per decision
   baseHitPoints: 300,
   deadHitPoints: 30,
-  allEnemies: [],
+  allEnemies: [] as BABYLON.Mesh[],
   occupiedSpaces: [],
   boundaryLimit: mapGlobals.size / 100, // meters
   livingColor: new Color3(0.1, 0.8, 1),

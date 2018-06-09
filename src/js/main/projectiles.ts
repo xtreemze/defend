@@ -4,18 +4,18 @@ import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
 
 class Projectile {
   constructor(
-    originMesh = BABYLON.Mesh,
-    scene = BABYLON.Scene.prototype,
-    level = 1
+    originMesh: BABYLON.Mesh,
+    scene: BABYLON.Scene,
+    level: number = 1 | 2 | 3
   ) {
-    const name = `projectile${level}`;
+    const name = `projectile${level}` as string;
 
     const projectile = BABYLON.MeshBuilder.CreateBox(name, {
       size: level,
       height: level / 4,
       width: level / 2,
       updatable: false
-    });
+    }) as BABYLON.Mesh;
 
     this.startLife(scene, originMesh, level, projectile);
 
@@ -27,31 +27,35 @@ class Projectile {
       {
         loop: false,
         autoplay: true,
-        volume: 0.4,
+        volume: 0.3,
         distanceModel: "exponential",
-        rolloffFactor: 0.1
+        rolloffFactor: 0.3
       }
-    );
+    ) as BABYLON.Sound;
 
     // Sound will now follow the box mesh position
     blaster.attachToMesh(projectile);
   }
 
   startLife(
-    scene: any = BABYLON.Scene.prototype,
-    originMesh: any = BABYLON.Mesh.prototype,
-    level: number = 1,
-    projectile: any = BABYLON.Mesh.prototype
+    scene: BABYLON.Scene,
+    originMesh: BABYLON.Mesh,
+    level: number = 1 | 2 | 3,
+    projectile: BABYLON.Mesh
   ) {
-    const projectileMaterial = scene.getMaterialByID("projectileMaterial");
+    const projectileMaterial = scene.getMaterialByID(
+      "projectileMaterial"
+    ) as BABYLON.Material;
     const forwardLocal = new BABYLON.Vector3(0, 0, 5);
-    const space = originMesh.getDirection(forwardLocal);
+    const space = originMesh.getDirection(forwardLocal) as BABYLON.Vector3;
 
-    projectile.position = originMesh.position.subtract(space);
+    projectile.position = originMesh.position.subtract(
+      space
+    ) as BABYLON.Vector3;
 
-    //@ts-ignore
-    projectile.hitPoints = (level + level) * projectileGlobals.baseHitPoints;
-    projectile.material = projectileMaterial;
+    projectile.hitPoints = (level +
+      level * projectileGlobals.baseHitPoints) as number;
+    projectile.material = projectileMaterial as BABYLON.Material;
 
     // For Physics
     projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -63,8 +67,9 @@ class Projectile {
         friction: 1
       },
       scene
-    );
-    mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
+    ) as BABYLON.PhysicsImpostor;
+
+    mapGlobals.allImpostors.unshift(projectile.physicsImpostor) as number;
 
     // signalControl.set(mapGlobals.allImpostors.length * 0.01);
 
@@ -80,16 +85,17 @@ class Projectile {
     }, projectileGlobals.lifeTime);
   }
 
-  intersectPhys(
-    scene: any = BABYLON.Scene.prototype,
-    projectile: any = BABYLON.Mesh.prototype
-  ) {
-    const hitMaterial = scene.getMaterialByID("hitMaterial");
-    const enemyMaterial = scene.getMaterialByID("enemyMaterial");
+  intersectPhys(scene: BABYLON.Scene, projectile: BABYLON.Mesh) {
+    const hitMaterial = scene.getMaterialByID(
+      "hitMaterial"
+    ) as BABYLON.Material;
+    const enemyMaterial = scene.getMaterialByID(
+      "enemyMaterial"
+    ) as BABYLON.Material;
 
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
-      mapGlobals.allImpostors,
+      mapGlobals.allImpostors as BABYLON.PhysicsImpostor[],
       () => {
         this.destroyProjectile(projectile, scene);
       }
@@ -100,7 +106,7 @@ class Projectile {
       const enemy = enemyGlobals.allEnemies[index];
 
       projectile.physicsImpostor.registerOnPhysicsCollide(
-        enemy.physicsImpostor,
+        enemy.physicsImpostor as BABYLON.PhysicsImpostor,
         () => {
           enemy.hitPoints -= projectile.hitPoints;
 
@@ -131,10 +137,8 @@ class Projectile {
     );
   }
 
-  destroyProjectile(
-    projectile: any = BABYLON.Mesh,
-    scene: any = BABYLON.Scene
-  ) {
+  destroyProjectile(projectile: BABYLON.Mesh, scene: BABYLON.Scene) {
+    projectile.setEnabled(false);
     setTimeout(() => {
       mapGlobals.allImpostors = [];
       projectile.physicsImpostor.dispose();
@@ -152,9 +156,9 @@ class Projectile {
 }
 
 export default function fire(
-  scene: any = BABYLON.Scene.prototype,
-  originMesh: any = BABYLON.Mesh.prototype,
-  level
+  scene: BABYLON.Scene,
+  originMesh: BABYLON.Mesh,
+  level: number = 1 | 2 | 3
 ) {
   new Projectile(originMesh, scene, level);
 }
