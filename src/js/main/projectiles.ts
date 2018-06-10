@@ -66,7 +66,7 @@ class Projectile {
       volume: -4,
       sustain: 0.0611 * level,
       release: 0.1288,
-      frequency: 7598 / level,
+      frequency: 7000 / (level / 5),
       sweep: -0.401,
       source: "square",
       vibrato: 0.4852 * level,
