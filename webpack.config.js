@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const OfflinePlugin = require("offline-plugin");
 
 module.exports = function e() {
   return {
@@ -134,32 +135,25 @@ module.exports = function e() {
           use: "ts-loader",
           exclude: /node_modules/
           // include: `${__dirname}/src`
-        },
-        // {
-        //   test: /\.(gif|png|jpe?g|svg)$/i,
-        //   include: `${__dirname}/src`,
-        //   loaders: [
-        //     "file-loader?name=./assets/[name].[ext]"
-        //     // {
-        //     //   loader: "image-webpack-loader"
-        //     // }
-        //   ]
-        // }
-        {
-          test: /\.(wav|mp3)$/,
-          include: `${__dirname}/src`,
-          loaders: [
-            "file-loader?name=./assets/[name].[ext]"
-            // {
-            //   loader: "image-webpack-loader"
-            // }
-          ]
         }
       ]
     },
     plugins: [
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
+      }),
+      new OfflinePlugin({
+        externals: [],
+        caches: "all",
+        responseStrategy: "network-first",
+        updateStrategy: "all",
+        minify: "true",
+        ServiceWorker: {
+          events: "true"
+        },
+        AppCache: {
+          events: "true"
+        }
       })
     ]
   };
