@@ -1,7 +1,7 @@
 import * as Tone from "tone";
 
 //create a synth and connect it to the master output (your speakers)
-const synth = new Tone.Synth({ volume: -25 }).toMaster();
+const synth = new Tone.Synth({ volume: -35 }).toMaster();
 
 function playNote() {
   synth.triggerAttackRelease("E4", "12n");

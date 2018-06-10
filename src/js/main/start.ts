@@ -2,8 +2,8 @@
 import "./../../vendor/pep";
 
 import * as BABYLON from "babylonjs";
-
-import { enemyGlobals, mapGlobals } from "./variables";
+import * as fx from "wafxr";
+import { mapGlobals } from "./variables";
 
 import enemies from "./enemies";
 import towers from "./towers";
@@ -56,6 +56,12 @@ class Game {
   doRender(): void {
     // Run the render loop.
     this._engine.runRenderLoop(() => {
+      fx.setListenerPosition(
+        this._scene.activeCamera.position.x,
+        this._scene.activeCamera.position.y,
+        this._scene.activeCamera.position.z
+      );
+
       this._scene.render();
     });
 

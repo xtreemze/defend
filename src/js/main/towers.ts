@@ -235,24 +235,8 @@ class Tower {
             deltaTime = Date.now();
             setTimeout(() => {
               flash.setEnabled(false);
-
-              const blaster = new BABYLON.Sound(
-                "blaster",
-                "https://raw.githubusercontent.com/xtreemze/defend/master/src/audio/blaster.wav",
-                scene,
-                null,
-                {
-                  loop: false,
-                  autoplay: true,
-                  volume: 0.7,
-                  distanceModel: "exponential",
-                  rolloffFactor: 0.8
-                }
-              ) as BABYLON.Sound;
-
-              // Sound will now follow the box mesh position
-              blaster.attachToMesh(tower);
             }, 4);
+
             flash.setEnabled(true);
 
             setTimeout(() => {

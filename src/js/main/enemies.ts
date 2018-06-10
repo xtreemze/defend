@@ -3,7 +3,7 @@ import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 import { enemyGlobals, towerGlobals, mapGlobals } from "./variables";
-import { playNote, shootAudio } from "./sound";
+import * as fx from "wafxr";
 
 class Enemy {
   constructor(
@@ -23,30 +23,13 @@ class Enemy {
       scene
     ) as BABYLON.Mesh;
 
-    playNote();
+    // playNote();
 
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
     this.revive(scene, position, sphereMesh, diameter, level);
 
     BABYLON.Tags.AddTagsTo(sphereMesh, "enemy");
-
-    const alien = new BABYLON.Sound(
-      "alien",
-      "https://raw.githubusercontent.com/xtreemze/defend/master/src/audio/alien.wav",
-      scene,
-      null,
-      {
-        loop: false,
-        autoplay: true,
-        volume: 0.4,
-        distanceModel: "exponential",
-        rolloffFactor: 0.7
-      }
-    );
-
-    // Sound will now follow the box mesh position
-    alien.attachToMesh(sphereMesh);
   }
 
   nearTower(ray: any, scene: any) {
@@ -91,6 +74,20 @@ class Enemy {
       sphereMesh.hitPoints <= enemyGlobals.deadHitPoints &&
       sphereMesh.material !== damagedMaterial
     ) {
+      const onDestroy = fx.play({
+        volume: -5,
+        sustain: 0.0822,
+        release: 0.2077,
+        frequency: 3014 / (level * 2),
+        jumpAt1: 0.1634,
+        jumpBy1: 0.1999,
+        source: "square",
+        soundX: sphereMesh.position.x,
+        soundY: sphereMesh.position.y,
+        soundZ: sphereMesh.position.z,
+        rolloff: 0.4
+      });
+
       sphereMesh.material = damagedMaterial;
       sphereMesh.physicsImpostor.setLinearVelocity(
         new BABYLON.Vector3(0, enemyGlobals.jumpForce * level, 0)
@@ -168,6 +165,20 @@ class Enemy {
       position.z
     );
 
+    const birth = fx.play({
+      volume: -4,
+      sustain: 0.0634,
+      release: 0.3003,
+      frequency: (399.9 * 3) / level,
+      sweep: 0.2899,
+      jumpAt1: 0.1213,
+      jumpBy1: 0.3547,
+      soundX: sphereMesh.position.x,
+      soundY: sphereMesh.position.y,
+      soundZ: sphereMesh.position.z,
+      rolloff: 0.5
+    });
+
     //@ts-ignore
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
@@ -202,7 +213,7 @@ class Enemy {
       ) {
         enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
       }
-      this.checkHitPoints(scene, sphereMesh, loopTimer);
+      this.checkHitPoints(scene, sphereMesh, loopTimer, level);
     }, enemyGlobals.decisionRate);
   }
 
@@ -211,7 +222,8 @@ class Enemy {
     loopTimer: any,
     scene: any = BABYLON.Scene
   ) {
-    shootAudio();
+    // shootAudio();
+
     clearInterval(loopTimer);
 
     sphereMesh.hitPoints = 0;

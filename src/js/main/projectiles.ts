@@ -1,6 +1,7 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
-// import { signalControl } from "./sound";
+
+import * as fx from "wafxr";
 
 class Projectile {
   constructor(
@@ -54,21 +55,38 @@ class Projectile {
 
     mapGlobals.allImpostors.unshift(projectile.physicsImpostor) as number;
 
-    // signalControl.set(mapGlobals.allImpostors.length * 0.01);
-
     const clonedRotation = originMesh.rotation.clone();
 
     projectile.rotation.copyFrom(clonedRotation);
 
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
-    this.impulsePhys(originMesh, projectile); // Moves the projectile with physics
+    this.impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
+
+    const shoot = fx.play({
+      volume: -4,
+      sustain: 0.0611,
+      release: 0.1288,
+      frequency: 4598 / level,
+      sweep: -0.401,
+      source: "sine",
+      vibrato: 0.4852,
+      vibratoFreq: 7.952,
+      soundX: projectile.position.x,
+      soundY: projectile.position.y,
+      soundZ: projectile.position.z,
+      rolloff: 0.6
+    });
 
     setTimeout(() => {
       this.destroyProjectile(projectile, scene);
     }, projectileGlobals.lifeTime);
   }
 
-  intersectPhys(scene: BABYLON.Scene, projectile: BABYLON.Mesh) {
+  intersectPhys(
+    scene: BABYLON.Scene,
+    projectile: BABYLON.Mesh,
+    level: number = 1 | 2 | 3
+  ) {
     const hitMaterial = scene.getMaterialByID(
       "hitMaterial"
     ) as BABYLON.Material;
@@ -93,6 +111,23 @@ class Projectile {
         () => {
           //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
+
+          const damage = fx.play({
+            volume: -12,
+            sustain: 0.091,
+            release: 0.0615,
+            //@ts-ignore
+            frequency: (12 / level) * (enemy.hitPoints / level),
+            sweep: -0.3981,
+            source: "sawtooth",
+            lowpass: 4252,
+            lowpassSweep: 771.2,
+            compressorThreshold: -39.11,
+            soundX: enemy.position.x,
+            soundY: enemy.position.y,
+            soundZ: enemy.position.z,
+            rolloff: 0.5
+          });
 
           enemy.material = hitMaterial as BABYLON.Material;
 
