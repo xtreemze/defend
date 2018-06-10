@@ -64,13 +64,13 @@ class Projectile {
 
     const shoot = fx.play({
       volume: -4,
-      sustain: 0.0611,
+      sustain: 0.0611 * level,
       release: 0.1288,
-      frequency: 8598 / level,
+      frequency: 7598 / level,
       sweep: -0.401,
-      source: "sine",
-      vibrato: 0.4852,
-      vibratoFreq: 7.952,
+      source: "square",
+      vibrato: 0.4852 * level,
+      vibratoFreq: 7.952 * level,
       soundX: projectile.position.x,
       soundY: projectile.position.y,
       soundZ: projectile.position.z,
