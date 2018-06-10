@@ -2,7 +2,12 @@ import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
-import { enemyGlobals, towerGlobals, mapGlobals } from "./variables";
+import {
+  enemyGlobals,
+  towerGlobals,
+  mapGlobals,
+  projectileGlobals
+} from "./variables";
 import * as fx from "wafxr";
 
 class Enemy {
@@ -59,8 +64,8 @@ class Enemy {
     loopTimer: any,
     level: number = 1 | 2 | 3
   ) {
-    const damagedMaterial = scene.getMaterialByID(
-      "damagedMaterial"
+    const enemyMaterial = scene.getMaterialByID(
+      "enemyMaterial"
     ) as BABYLON.Material;
 
     if (
@@ -68,33 +73,78 @@ class Enemy {
       sphereMesh.hitPoints <= 0 ||
       sphereMesh.position.y < towerGlobals.range * level * -1
     ) {
+      const enemyPosition = sphereMesh.position.clone() as BABYLON.Vector3;
+      const enemyRotation = sphereMesh.rotation.clone() as BABYLON.Vector3;
       this.destroyEnemy(sphereMesh, loopTimer, scene);
-    } else if (
-      //@ts-ignore
-      sphereMesh.hitPoints <= enemyGlobals.deadHitPoints &&
-      sphereMesh.material !== damagedMaterial
-    ) {
-      const onDestroy = fx.play({
-        volume: -5,
-        sustain: 0.0822,
-        release: 0.2077,
-        frequency: 3014 / (level * 2),
-        jumpAt1: 0.1634,
-        jumpBy1: 0.1999,
-        source: "square",
-        soundX: sphereMesh.position.x,
-        soundY: sphereMesh.position.y,
-        soundZ: sphereMesh.position.z,
-        rolloff: 0.4
-      });
-
-      sphereMesh.material = damagedMaterial;
-      sphereMesh.physicsImpostor.setLinearVelocity(
-        new BABYLON.Vector3(0, enemyGlobals.jumpForce * level, 0)
-      );
+      setTimeout(() => {
+        this.fragment(level, enemyPosition, enemyMaterial, enemyRotation);
+      }, 5);
     } else {
       //@ts-ignore
-      sphereMesh.hitPoints -= enemyGlobals.decayRate;
+      sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
+    }
+  }
+
+  fragment(
+    level: number = 1 | 2 | 3,
+    enemyPosition: BABYLON.Vector3,
+    enemyMaterial: BABYLON.Material,
+    enemyRotation: BABYLON.Vector3
+  ) {
+    const onDestroy = fx.play({
+      volume: -5,
+      sustain: 0.0822,
+      release: 0.2077,
+      frequency: 3014 / (level * 2),
+      jumpAt1: 0.1634,
+      jumpBy1: 0.1999,
+      source: "square",
+      soundX: enemyPosition.x,
+      soundY: enemyPosition.y,
+      soundZ: enemyPosition.z,
+      rolloff: 0.4
+    });
+
+    for (let index = 0; index < enemyGlobals.fragments * level; index++) {
+      const fragment = BABYLON.MeshBuilder.CreateBox("enemyFragment" + index, {
+        size: level ** level / 1.5 / (enemyGlobals.fragments * level)
+      }) as BABYLON.Mesh;
+      fragment.position = new BABYLON.Vector3(
+        enemyPosition.x + level / 3,
+        enemyPosition.y + index,
+        enemyPosition.z + index / 2
+      );
+      fragment.rotation = new BABYLON.Vector3(
+        enemyRotation.x,
+        enemyRotation.y * level,
+        enemyRotation.z * index
+      );
+      fragment.material = enemyMaterial;
+
+      const fragImpostor = new BABYLON.PhysicsImpostor(
+        fragment,
+        BABYLON.PhysicsImpostor.BoxImpostor,
+        {
+          mass: (enemyGlobals.mass / 3) * level,
+          restitution: 0.5,
+          friction: 0.8
+        }
+      ) as BABYLON.PhysicsImpostor;
+
+      fragImpostor.applyImpulse(
+        new BABYLON.Vector3(
+          0,
+          index + enemyGlobals.mass * 5,
+          0
+        ),
+        fragment.getAbsolutePosition()
+      );
+
+      setTimeout(() => {
+        fragment.dispose();
+        fragImpostor.dispose();
+        setTimeout(() => {}, 1);
+      }, projectileGlobals.lifeTime * 5);
     }
   }
 

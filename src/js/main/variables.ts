@@ -54,8 +54,9 @@ const enemyGlobals = {
   jumpForce: 60,
   friction: 1,
   decayRate: 1, // hitpoints per decision
-  baseHitPoints: 400,
-  deadHitPoints: 150,
+  baseHitPoints: 200,
+  deadHitPoints: 0,
+  fragments: 1,
   allEnemies: [] as BABYLON.Mesh[],
   occupiedSpaces: [] as any[],
   boundaryLimit: mapGlobals.size / 100, // meters
