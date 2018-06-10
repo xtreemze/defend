@@ -12,7 +12,10 @@ const mapGlobals = {
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0,
-  soundDelay: 200,
+  soundDelay: 170,
+  soundLimit: 3,
+  projectileSounds: 0,
+  projectileSoundLimit: 2,
   ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
   sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
 };

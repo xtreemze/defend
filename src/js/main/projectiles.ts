@@ -62,22 +62,22 @@ class Projectile {
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
     this.impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
-    if (mapGlobals.simultaneousSounds < 3) {
+    if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
       setTimeout(() => {
-        mapGlobals.simultaneousSounds -= 1;
+        mapGlobals.projectileSounds -= 1;
       }, mapGlobals.soundDelay);
 
-      mapGlobals.simultaneousSounds += 1;
+      mapGlobals.projectileSounds += 1;
 
       const shoot = fx.play({
-        volume: -3,
-        sustain: 0.0611 * level,
+        volume: -5,
+        sustain: 0.0311 * level,
         release: 0.1288,
-        frequency: 7000 / (level / 5),
+        frequency: 24000 / level ** 3,
         sweep: -0.401,
         source: "square",
-        vibrato: 0.4852 * level,
-        vibratoFreq: 7.952 * level,
+        vibrato: 0.2852,
+        vibratoFreq: 7.952 / level,
         soundX: projectile.position.x,
         soundY: projectile.position.y,
         soundZ: projectile.position.z,
@@ -119,7 +119,7 @@ class Projectile {
           //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
 
-          if (mapGlobals.simultaneousSounds < 3) {
+          if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
             setTimeout(() => {
               mapGlobals.simultaneousSounds -= 1;
             }, mapGlobals.soundDelay);
@@ -127,12 +127,12 @@ class Projectile {
             mapGlobals.simultaneousSounds += 1;
 
             const damage = fx.play({
-              volume: -1,
+              volume: -8,
               sustain: 0.091,
               release: 0.0615,
               //@ts-ignore
-              frequency: (12800 / level ** 10) * (enemy.hitPoints * 0.05),
-              sweep: -0.3981,
+              frequency: 1000 / enemy.hitPoints + 100,
+              sweep: 0.2,
               source: "sawtooth",
               lowpass: 4252,
               lowpassSweep: 771.2,
@@ -140,7 +140,7 @@ class Projectile {
               soundX: enemy.position.x,
               soundY: enemy.position.y,
               soundZ: enemy.position.z,
-              rolloff: 0.2
+              rolloff: 0.3
             });
           }
           enemy.material = hitMaterial as BABYLON.Material;
