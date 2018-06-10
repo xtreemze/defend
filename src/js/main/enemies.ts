@@ -92,7 +92,7 @@ class Enemy {
     enemyRotation: BABYLON.Vector3
   ) {
     const onDestroy = fx.play({
-      volume: -5,
+      volume: -1,
       sustain: 0.0822,
       release: 0.2077,
       frequency: 3014 / (level * 2),
@@ -102,7 +102,7 @@ class Enemy {
       soundX: enemyPosition.x,
       soundY: enemyPosition.y,
       soundZ: enemyPosition.z,
-      rolloff: 0.4
+      rolloff: 0.5
     });
 
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
@@ -212,7 +212,7 @@ class Enemy {
     );
 
     const birth = fx.play({
-      volume: -4,
+      volume: -1,
       sustain: 0.0634,
       release: 0.3003,
       frequency: (399.9 * 3) / level,
@@ -250,17 +250,22 @@ class Enemy {
       }, 25000);
     }
 
-    const loopTimer = setInterval(() => {
-      if (
-        sphereMesh.position.y > diameter / 2.5 &&
-        sphereMesh.position.y < diameter * 1 &&
-        //@ts-ignore
-        sphereMesh.hitPoints > enemyGlobals.deadHitPoints
-      ) {
-        enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
+    let deltaTime = Date.now();
+
+    const loopTimer = scene.registerAfterRender(() => {
+      if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
+        deltaTime = Date.now();
+        if (
+          sphereMesh.position.y > diameter / 2.5 &&
+          sphereMesh.position.y < diameter * 1 &&
+          //@ts-ignore
+          sphereMesh.hitPoints > enemyGlobals.deadHitPoints
+        ) {
+          enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
+        }
+        this.checkHitPoints(scene, sphereMesh, loopTimer, level);
       }
-      this.checkHitPoints(scene, sphereMesh, loopTimer, level);
-    }, enemyGlobals.decisionRate);
+    });
   }
 
   destroyEnemy(
@@ -268,9 +273,8 @@ class Enemy {
     loopTimer: any,
     scene: any = BABYLON.Scene
   ) {
-    // shootAudio();
-
-    clearInterval(loopTimer);
+    // clearInterval(loopTimer);
+    loopTimer = null;
 
     sphereMesh.hitPoints = 0;
     delete sphereMesh.hitPoints;

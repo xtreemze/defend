@@ -63,7 +63,7 @@ class Projectile {
     this.impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
     const shoot = fx.play({
-      volume: -4,
+      volume: -1,
       sustain: 0.0611 * level,
       release: 0.1288,
       frequency: 7000 / (level / 5),
@@ -74,7 +74,7 @@ class Projectile {
       soundX: projectile.position.x,
       soundY: projectile.position.y,
       soundZ: projectile.position.z,
-      rolloff: 0.6
+      rolloff: 0.5
     });
 
     setTimeout(() => {
@@ -113,7 +113,7 @@ class Projectile {
           enemy.hitPoints -= projectile.hitPoints;
 
           const damage = fx.play({
-            volume: -12,
+            volume: -8,
             sustain: 0.091,
             release: 0.0615,
             //@ts-ignore

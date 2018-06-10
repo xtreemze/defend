@@ -73,15 +73,20 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
 
   const allCameras = scene.cameras;
 
-  setInterval(() => {
-    scene.setActiveCameraByID(allCameras[0].id);
-    const previousCamera = allCameras.shift();
-    allCameras.push(previousCamera);
-    scene.activeCamera.inertia = 0;
-    setTimeout(() => {
-      scene.activeCamera.inertia = 0.9;
-    }, 100);
-  }, mapGlobals.cameraCutDelay);
+  let deltaTime = Date.now();
+
+  scene.registerAfterRender(() => {
+    if (Date.now() - deltaTime > mapGlobals.cameraCutDelay) {
+      deltaTime = Date.now();
+      scene.setActiveCameraByID(allCameras[0].id);
+      const previousCamera = allCameras.shift();
+      allCameras.push(previousCamera);
+      scene.activeCamera.inertia = 0;
+      setTimeout(() => {
+        scene.activeCamera.inertia = 0.9;
+      }, 100);
+    }
+  });
 
   const skyLight = new BABYLON.HemisphericLight(
     "skyLight",

@@ -58,6 +58,8 @@ class Game {
 
       optimizer.start();
     }
+
+    fx.setVolume(0.8);
   }
 
   doRender(): void {
