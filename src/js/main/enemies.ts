@@ -132,11 +132,7 @@ class Enemy {
       ) as BABYLON.PhysicsImpostor;
 
       fragImpostor.applyImpulse(
-        new BABYLON.Vector3(
-          0,
-          index + enemyGlobals.mass * 5,
-          0
-        ),
+        new BABYLON.Vector3(0, index + enemyGlobals.mass * 5, 0),
         fragment.getAbsolutePosition()
       );
 
@@ -360,13 +356,17 @@ function enemyGenerator(scene: BABYLON.Scene, quantity: number = 0) {
 export default function enemies(scene: BABYLON.Scene) {
   enemyGenerator(scene, enemyGlobals.minNumber);
 
-  setInterval(() => {
+  let deltaTime = Date.now();
+
+  scene.registerAfterRender(() => {
     if (
+      Date.now() - deltaTime > enemyGlobals.generationRate &&
       enemyGlobals.allEnemies.length <
         enemyGlobals.limit - enemyGlobals.maxNumber &&
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit
     ) {
+      deltaTime = Date.now();
       enemyGenerator(scene, randomNumberRange(2, 5));
     }
-  }, enemyGlobals.generationRate);
+  });
 }
