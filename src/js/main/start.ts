@@ -58,11 +58,8 @@ class Game {
     map1(this._scene, this._canvas, this._engine);
     setTimeout(() => {
       towers(this._scene);
-    }, 3000);
-
-    setTimeout(() => {
       enemies(this._scene);
-    }, 6000);
+    }, 3000);
 
     if (mapGlobals.optimizerOn) {
       const options = BABYLON.SceneOptimizerOptions.HighDegradationAllowed();
@@ -70,9 +67,6 @@ class Game {
 
       optimizer.start();
     }
-
-    fx._tone.Master.mute = true;
-    fx.setVolume(0.9);
   }
 
   doRender(): void {
@@ -95,23 +89,26 @@ class Game {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  fx._tone.Master.mute = true;
+
   let game = new Game("renderCanvas");
 
   game.createScene();
 
   game.doRender();
-});
 
-const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
-
-function muting(canvas) {
   fx._tone.Master.mute = false;
-
-  window.removeEventListener("dragstart", canvas => {
-    muting(canvas);
-  });
-}
-
-window.addEventListener("dragstart", canvas => {
-  muting(canvas);
+  fx.setVolume(1);
 });
+
+// function muting() {
+//   fx._tone.Master.mute = false;
+
+//   window.removeEventListener("click", window => {
+//     muting();
+//   });
+// }
+
+// window.addEventListener("click", window => {
+//   muting();
+// });

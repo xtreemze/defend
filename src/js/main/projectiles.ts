@@ -127,7 +127,7 @@ class Projectile {
             mapGlobals.simultaneousSounds += 1;
 
             const damage = fx.play({
-              volume: -8,
+              volume: -1,
               sustain: 0.091,
               release: 0.0615,
               //@ts-ignore
@@ -140,7 +140,7 @@ class Projectile {
               soundX: enemy.position.x,
               soundY: enemy.position.y,
               soundZ: enemy.position.z,
-              rolloff: 0.5
+              rolloff: 0.4
             });
           }
           enemy.material = hitMaterial as BABYLON.Material;

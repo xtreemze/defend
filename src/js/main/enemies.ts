@@ -71,14 +71,19 @@ class Enemy {
     if (
       //@ts-ignore
       sphereMesh.hitPoints <= 0 ||
-      sphereMesh.position.y < towerGlobals.range * level * -1
+      sphereMesh.position.y < 0
     ) {
       const enemyPosition = sphereMesh.position.clone() as BABYLON.Vector3;
       const enemyRotation = sphereMesh.rotation.clone() as BABYLON.Vector3;
       this.destroyEnemy(sphereMesh, loopTimer, scene);
-      setTimeout(() => {
-        this.fragment(level, enemyPosition, enemyMaterial, enemyRotation);
-      }, 5);
+      if (
+        mapGlobals.allImpostors.length < mapGlobals.impostorLimit &&
+        sphereMesh.position.y > 0
+      ) {
+        setTimeout(() => {
+          this.fragment(level, enemyPosition, enemyMaterial, enemyRotation);
+        }, 5);
+      }
     } else {
       //@ts-ignore
       sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
