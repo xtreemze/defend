@@ -10,6 +10,18 @@ import towers from "./towers";
 import map1 from "./map1";
 import materialGenerator from "./materialGenerator";
 
+import runtime = require("offline-plugin/runtime");
+runtime.install({
+  onUpdating: () => {},
+  onUpdateReady: () => {
+    runtime.applyUpdate();
+  },
+  onUpdated: () => {
+    window.location.reload();
+  },
+  onUpdateFailed: () => {}
+});
+
 class Game {
   private _canvas: HTMLCanvasElement;
   private _engine: BABYLON.Engine;
