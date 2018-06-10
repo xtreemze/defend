@@ -71,6 +71,7 @@ class Game {
       optimizer.start();
     }
 
+    fx._tone.Master.mute = true;
     fx.setVolume(0.8);
   }
 
@@ -99,4 +100,18 @@ window.addEventListener("DOMContentLoaded", () => {
   game.createScene();
 
   game.doRender();
+});
+
+const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
+
+function muting(canvas) {
+  fx._tone.Master.mute = false;
+
+  window.removeEventListener("dragstart", canvas => {
+    muting(canvas);
+  });
+}
+
+window.addEventListener("dragstart", canvas => {
+  muting(canvas);
 });
