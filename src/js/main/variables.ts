@@ -11,7 +11,8 @@ const mapGlobals = {
   allImpostors: [] as BABYLON.PhysicsImpostor[],
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
-  simultaneousSounds: 0 as number,
+  simultaneousSounds: 0,
+  soundDelay: 200,
   ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
   sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
 };

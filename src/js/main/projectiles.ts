@@ -65,12 +65,12 @@ class Projectile {
     if (mapGlobals.simultaneousSounds < 3) {
       setTimeout(() => {
         mapGlobals.simultaneousSounds -= 1;
-      }, 500);
+      }, mapGlobals.soundDelay);
 
       mapGlobals.simultaneousSounds += 1;
 
       const shoot = fx.play({
-        volume: -1,
+        volume: -3,
         sustain: 0.0611 * level,
         release: 0.1288,
         frequency: 7000 / (level / 5),
@@ -122,7 +122,7 @@ class Projectile {
           if (mapGlobals.simultaneousSounds < 3) {
             setTimeout(() => {
               mapGlobals.simultaneousSounds -= 1;
-            }, 500);
+            }, mapGlobals.soundDelay);
 
             mapGlobals.simultaneousSounds += 1;
 
@@ -131,7 +131,7 @@ class Projectile {
               sustain: 0.091,
               release: 0.0615,
               //@ts-ignore
-              frequency: (12 / level) * (enemy.hitPoints / level),
+              frequency: 2000 / level / (enemy.hitPoints * 0.01),
               sweep: -0.3981,
               source: "sawtooth",
               lowpass: 4252,
@@ -140,7 +140,7 @@ class Projectile {
               soundX: enemy.position.x,
               soundY: enemy.position.y,
               soundZ: enemy.position.z,
-              rolloff: 0.4
+              rolloff: 0.2
             });
           }
           enemy.material = hitMaterial as BABYLON.Material;

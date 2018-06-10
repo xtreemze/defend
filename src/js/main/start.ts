@@ -101,14 +101,14 @@ window.addEventListener("DOMContentLoaded", () => {
   fx.setVolume(1);
 });
 
-// function muting() {
-//   fx._tone.Master.mute = false;
+function muting() {
+  fx._tone.Master.mute = false;
 
-//   window.removeEventListener("click", window => {
-//     muting();
-//   });
-// }
+  window.removeEventListener("click", window => {
+    muting();
+  });
+}
 
-// window.addEventListener("click", window => {
-//   muting();
-// });
+window.addEventListener("click", window => {
+  muting();
+});

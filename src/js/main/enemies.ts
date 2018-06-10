@@ -99,7 +99,7 @@ class Enemy {
     if (mapGlobals.simultaneousSounds < 3) {
       setTimeout(() => {
         mapGlobals.simultaneousSounds -= 1;
-      }, 500);
+      }, mapGlobals.soundDelay);
 
       mapGlobals.simultaneousSounds += 1;
 
@@ -107,14 +107,14 @@ class Enemy {
         volume: -1,
         sustain: 0.0822,
         release: 0.2077,
-        frequency: 3014 / (level * 2),
+        frequency: 3014 / level ** 3,
         jumpAt1: 0.1634,
         jumpBy1: 0.1999,
         source: "square",
         soundX: enemyPosition.x,
         soundY: enemyPosition.y,
         soundZ: enemyPosition.z,
-        rolloff: 0.5
+        rolloff: 0.2
       });
     }
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
@@ -223,20 +223,27 @@ class Enemy {
       position.z
     );
 
-    const birth = fx.play({
-      volume: -1,
-      sustain: 0.0634,
-      release: 0.3003,
-      frequency: (399.9 * 3) / level,
-      sweep: 0.2899,
-      jumpAt1: 0.1213,
-      jumpBy1: 0.3547,
-      soundX: sphereMesh.position.x,
-      soundY: sphereMesh.position.y,
-      soundZ: sphereMesh.position.z,
-      rolloff: 0.5
-    });
+    if (mapGlobals.simultaneousSounds < 3) {
+      setTimeout(() => {
+        mapGlobals.simultaneousSounds -= 1;
+      }, mapGlobals.soundDelay);
 
+      mapGlobals.simultaneousSounds += 1;
+
+      const birth = fx.play({
+        volume: -1,
+        sustain: 0.0634,
+        release: 0.3003,
+        frequency: (399.9 * 3) / level,
+        sweep: (0.2899 * 3) / level,
+        jumpAt1: 0.1213,
+        jumpBy1: 0.3547,
+        soundX: sphereMesh.position.x,
+        soundY: sphereMesh.position.y,
+        soundZ: sphereMesh.position.z,
+        rolloff: 0.3
+      });
+    }
     //@ts-ignore
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
