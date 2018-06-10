@@ -107,7 +107,7 @@ class Enemy {
 
     for (let index = 0; index < enemyGlobals.fragments * level; index++) {
       const fragment = BABYLON.MeshBuilder.CreateBox("enemyFragment" + index, {
-        size: level ** level / 1.5 / (enemyGlobals.fragments * level)
+        size: level ** level / 2 / (enemyGlobals.fragments * level)
       }) as BABYLON.Mesh;
       fragment.position = new BABYLON.Vector3(
         enemyPosition.x + level / 3,
