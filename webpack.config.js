@@ -143,17 +143,17 @@ module.exports = function e() {
         template: "./src/index.ejs"
       }),
       new OfflinePlugin({
-        externals: [],
+        // externals: [],
         caches: "all",
         responseStrategy: "network-first",
         updateStrategy: "all",
         minify: "true",
         ServiceWorker: {
           events: "true"
-        },
-        AppCache: {
-          events: "true"
         }
+        // AppCache: {
+        //   events: "true"
+        // }
       })
     ]
   };

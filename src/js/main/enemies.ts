@@ -104,13 +104,13 @@ class Enemy {
       mapGlobals.simultaneousSounds += 1;
 
       const onDestroy = fx.play({
-        volume: -3,
-        sustain: 0.0822,
-        release: 0.2077,
-        frequency: 200,
-        jumpAt1: 0.1634,
-        jumpBy1: -0.1999,
-        source: "square",
+        volume: -1,
+        sustain: 0.64,
+        release: 2,
+        frequency: 1400 / level,
+        sweep: -4,
+        source: "pulse",
+        compressorThreshold: -50,
         soundX: enemyPosition.x,
         soundY: enemyPosition.y,
         soundZ: enemyPosition.z,

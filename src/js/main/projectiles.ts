@@ -70,18 +70,20 @@ class Projectile {
       mapGlobals.projectileSounds += 1;
 
       const shoot = fx.play({
-        volume: -5,
-        sustain: 0.0311 * level,
-        release: 0.1288,
-        frequency: 24000 / level ** 3,
-        sweep: -0.401,
+        volume: -12,
+        sustain: 0.02 * level ** 2,
+        release: 0.44,
+        frequency: (750 / level) * 1.5,
+        sweep: -0.8,
         source: "square",
-        vibrato: 0.2852,
-        vibratoFreq: 7.952 / level,
+        highpass: 1920,
+        lowpass: 2040,
+        // bitcrush: 3,
+        compressorThreshold: -55,
         soundX: projectile.position.x,
         soundY: projectile.position.y,
         soundZ: projectile.position.z,
-        rolloff: 0.5
+        rolloff: 0.04
       });
     }
     setTimeout(() => {
@@ -101,14 +103,6 @@ class Projectile {
       "enemyMaterial"
     ) as BABYLON.Material;
 
-    // Destroy when projectile hits any physics object
-    projectile.physicsImpostor.registerOnPhysicsCollide(
-      mapGlobals.allImpostors as BABYLON.PhysicsImpostor[],
-      () => {
-        this.destroyProjectile(projectile, scene);
-      }
-    );
-
     // Enemies ONLY
     for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
       const enemy = enemyGlobals.allEnemies[index] as BABYLON.Mesh;
@@ -119,7 +113,11 @@ class Projectile {
           //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
 
-          if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+          if (
+            mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
+            //@ts-ignore
+            enemy.hitPoints > 0
+          ) {
             setTimeout(() => {
               mapGlobals.simultaneousSounds -= 1;
             }, mapGlobals.soundDelay);
@@ -127,20 +125,20 @@ class Projectile {
             mapGlobals.simultaneousSounds += 1;
 
             const damage = fx.play({
-              volume: -8,
-              sustain: 0.091,
-              release: 0.0615,
+              volume: -1,
+              sustain: 0.3,
+              release: 0.15,
               //@ts-ignore
-              frequency: 1000 / enemy.hitPoints + 100,
-              sweep: 0.2,
-              source: "sawtooth",
-              lowpass: 4252,
-              lowpassSweep: 771.2,
-              compressorThreshold: -39.11,
+              frequency: 20000 / enemy.hitPoints + 200,
+              sweep: -0.8,
+              source: "square",
+              // lowpass: 4252,
+              // lowpassSweep: 771,
+              compressorThreshold: -3,
               soundX: enemy.position.x,
               soundY: enemy.position.y,
               soundZ: enemy.position.z,
-              rolloff: 0.3
+              rolloff: 0.2
             });
           }
           enemy.material = hitMaterial as BABYLON.Material;
@@ -151,6 +149,16 @@ class Projectile {
         }
       );
     }
+
+    // Destroy when projectile hits any physics object
+    projectile.physicsImpostor.registerOnPhysicsCollide(
+      mapGlobals.allImpostors as BABYLON.PhysicsImpostor[],
+      () => {
+        setTimeout(() => {
+          this.destroyProjectile(projectile, scene);
+        }, 1);
+      }
+    );
   }
 
   impulsePhys(
