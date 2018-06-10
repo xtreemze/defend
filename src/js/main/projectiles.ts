@@ -131,7 +131,7 @@ class Projectile {
               sustain: 0.091,
               release: 0.0615,
               //@ts-ignore
-              frequency: 2000 / level / (enemy.hitPoints * 0.01),
+              frequency: (12800 / level ** 10) * (enemy.hitPoints * 0.05),
               sweep: -0.3981,
               source: "sawtooth",
               lowpass: 4252,
