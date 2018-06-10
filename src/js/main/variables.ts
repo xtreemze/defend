@@ -3,13 +3,13 @@ import { Color3 } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 800, // map radius
-  optimizerOn: false,
+  size: 1200, // map radius
+  optimizerOn: true,
   cameraCutDelay: 3000,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as BABYLON.PhysicsImpostor[],
-  impostorLimit: 150, // keep low for mobile device limits
+  impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
   sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
@@ -59,7 +59,7 @@ const enemyGlobals = {
   fragments: 1,
   allEnemies: [] as BABYLON.Mesh[],
   occupiedSpaces: [] as any[],
-  boundaryLimit: mapGlobals.size / 100, // meters
+  boundaryLimit: mapGlobals.size / 10, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),

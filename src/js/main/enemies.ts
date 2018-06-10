@@ -105,19 +105,19 @@ class Enemy {
       rolloff: 0.4
     });
 
-    for (let index = 0; index < enemyGlobals.fragments * level; index++) {
+    for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
       const fragment = BABYLON.MeshBuilder.CreateBox("enemyFragment" + index, {
-        size: level ** level / 2 / (enemyGlobals.fragments * level)
+        size: (level * level) / 1.5 / (enemyGlobals.fragments * level)
       }) as BABYLON.Mesh;
       fragment.position = new BABYLON.Vector3(
-        enemyPosition.x + level / 3,
-        enemyPosition.y + index,
-        enemyPosition.z + index / 2
+        enemyPosition.x,
+        enemyPosition.y / level + ((level * level) / level) * index,
+        enemyPosition.z
       );
       fragment.rotation = new BABYLON.Vector3(
-        enemyRotation.x,
-        enemyRotation.y * level,
-        enemyRotation.z * index
+        enemyRotation.x * index * 0.1,
+        enemyRotation.y * index * 0.1,
+        enemyRotation.z * index * 0.1
       );
       fragment.material = enemyMaterial;
 
@@ -125,14 +125,14 @@ class Enemy {
         fragment,
         BABYLON.PhysicsImpostor.BoxImpostor,
         {
-          mass: (enemyGlobals.mass / 3) * level,
+          mass: (enemyGlobals.mass * level) / (enemyGlobals.fragments * level),
           restitution: 0.5,
           friction: 0.8
         }
       ) as BABYLON.PhysicsImpostor;
 
       fragImpostor.applyImpulse(
-        new BABYLON.Vector3(0, index + enemyGlobals.mass * 5, 0),
+        new BABYLON.Vector3(0, 2000 + enemyGlobals.mass * level * index, 0),
         fragment.getAbsolutePosition()
       );
 

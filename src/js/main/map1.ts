@@ -53,9 +53,9 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   camera3.attachControl(canvas, true);
 
   // Upper Beta Limit
-  camera.upperBetaLimit = Math.PI / 2;
-  camera2.upperBetaLimit = Math.PI / 2;
-  camera3.upperBetaLimit = Math.PI / 2;
+  camera.upperBetaLimit = Math.PI / 2.01;
+  camera2.upperBetaLimit = Math.PI / 2.01;
+  camera3.upperBetaLimit = Math.PI / 2.01;
 
   const rotateCamera = camera => {
     scene.registerBeforeRender(() => {

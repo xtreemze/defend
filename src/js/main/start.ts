@@ -40,19 +40,24 @@ class Game {
       this._scene.debugLayer.show({ popup: true, initialTab: 2 });
     }
 
-    if (mapGlobals.optimizerOn) {
-      const options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed();
-      const optimizer = new BABYLON.SceneOptimizer(this._scene, options);
-
-      optimizer.start();
-    }
-
     this._scene.workerCollisions = true;
 
     materialGenerator(this._scene);
     map1(this._scene, this._canvas, this._engine);
-    towers(this._scene);
-    enemies(this._scene);
+    setTimeout(() => {
+      towers(this._scene);
+    }, 3000);
+
+    setTimeout(() => {
+      enemies(this._scene);
+    }, 6000);
+
+    if (mapGlobals.optimizerOn) {
+      const options = BABYLON.SceneOptimizerOptions.HighDegradationAllowed();
+      const optimizer = new BABYLON.SceneOptimizer(this._scene, options);
+
+      optimizer.start();
+    }
   }
 
   doRender(): void {
