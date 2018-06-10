@@ -91,20 +91,27 @@ class Enemy {
     enemyMaterial: BABYLON.Material,
     enemyRotation: BABYLON.Vector3
   ) {
-    const onDestroy = fx.play({
-      volume: -1,
-      sustain: 0.0822,
-      release: 0.2077,
-      frequency: 3014 / (level * 2),
-      jumpAt1: 0.1634,
-      jumpBy1: 0.1999,
-      source: "square",
-      soundX: enemyPosition.x,
-      soundY: enemyPosition.y,
-      soundZ: enemyPosition.z,
-      rolloff: 0.5
-    });
+    if (mapGlobals.simultaneousSounds < 3) {
+      setTimeout(() => {
+        mapGlobals.simultaneousSounds -= 1;
+      }, 500);
 
+      mapGlobals.simultaneousSounds += 1;
+
+      const onDestroy = fx.play({
+        volume: -1,
+        sustain: 0.0822,
+        release: 0.2077,
+        frequency: 3014 / (level * 2),
+        jumpAt1: 0.1634,
+        jumpBy1: 0.1999,
+        source: "square",
+        soundX: enemyPosition.x,
+        soundY: enemyPosition.y,
+        soundZ: enemyPosition.z,
+        rolloff: 0.5
+      });
+    }
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
       const fragment = BABYLON.MeshBuilder.CreateBox("enemyFragment" + index, {
         size: (level * level) / 1.5 / (enemyGlobals.fragments * level)

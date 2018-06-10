@@ -62,21 +62,28 @@ class Projectile {
     this.intersectPhys(scene, projectile); // Detects collissions with enemies
     this.impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
-    const shoot = fx.play({
-      volume: -1,
-      sustain: 0.0611 * level,
-      release: 0.1288,
-      frequency: 7000 / (level / 5),
-      sweep: -0.401,
-      source: "square",
-      vibrato: 0.4852 * level,
-      vibratoFreq: 7.952 * level,
-      soundX: projectile.position.x,
-      soundY: projectile.position.y,
-      soundZ: projectile.position.z,
-      rolloff: 0.5
-    });
+    if (mapGlobals.simultaneousSounds < 3) {
+      setTimeout(() => {
+        mapGlobals.simultaneousSounds -= 1;
+      }, 500);
 
+      mapGlobals.simultaneousSounds += 1;
+
+      const shoot = fx.play({
+        volume: -1,
+        sustain: 0.0611 * level,
+        release: 0.1288,
+        frequency: 7000 / (level / 5),
+        sweep: -0.401,
+        source: "square",
+        vibrato: 0.4852 * level,
+        vibratoFreq: 7.952 * level,
+        soundX: projectile.position.x,
+        soundY: projectile.position.y,
+        soundZ: projectile.position.z,
+        rolloff: 0.5
+      });
+    }
     setTimeout(() => {
       this.destroyProjectile(projectile, scene);
     }, projectileGlobals.lifeTime);
@@ -112,23 +119,30 @@ class Projectile {
           //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
 
-          const damage = fx.play({
-            volume: -8,
-            sustain: 0.091,
-            release: 0.0615,
-            //@ts-ignore
-            frequency: (12 / level) * (enemy.hitPoints / level),
-            sweep: -0.3981,
-            source: "sawtooth",
-            lowpass: 4252,
-            lowpassSweep: 771.2,
-            compressorThreshold: -39.11,
-            soundX: enemy.position.x,
-            soundY: enemy.position.y,
-            soundZ: enemy.position.z,
-            rolloff: 0.5
-          });
+          if (mapGlobals.simultaneousSounds < 3) {
+            setTimeout(() => {
+              mapGlobals.simultaneousSounds -= 1;
+            }, 500);
 
+            mapGlobals.simultaneousSounds += 1;
+
+            const damage = fx.play({
+              volume: -8,
+              sustain: 0.091,
+              release: 0.0615,
+              //@ts-ignore
+              frequency: (12 / level) * (enemy.hitPoints / level),
+              sweep: -0.3981,
+              source: "sawtooth",
+              lowpass: 4252,
+              lowpassSweep: 771.2,
+              compressorThreshold: -39.11,
+              soundX: enemy.position.x,
+              soundY: enemy.position.y,
+              soundZ: enemy.position.z,
+              rolloff: 0.5
+            });
+          }
           enemy.material = hitMaterial as BABYLON.Material;
 
           setTimeout(() => {

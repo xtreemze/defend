@@ -72,7 +72,7 @@ class Game {
     }
 
     fx._tone.Master.mute = true;
-    fx.setVolume(0.8);
+    fx.setVolume(0.9);
   }
 
   doRender(): void {
