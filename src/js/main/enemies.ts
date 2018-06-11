@@ -9,7 +9,7 @@ import {
   projectileGlobals
 } from "./variables";
 
-import FX from "./../../vendor/wafxr/wafxr.js";
+import * as FX from "./../../vendor/wafxr/wafxr";
 
 class Enemy {
   constructor(

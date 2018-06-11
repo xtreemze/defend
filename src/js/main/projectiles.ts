@@ -1,7 +1,7 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
 
-import FX from "./../../vendor/wafxr/wafxr";
+import * as FX from "./../../vendor/wafxr/wafxr";
 
 class Projectile {
   constructor(
