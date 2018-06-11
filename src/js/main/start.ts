@@ -2,7 +2,7 @@
 import "./../../vendor/pep";
 
 import * as BABYLON from "babylonjs";
-import * as fx from "wafxr";
+import * as fx from "../../vendor/wafxr/wafxr";
 import { mapGlobals } from "./variables";
 
 import enemies from "./enemies";
@@ -72,11 +72,16 @@ class Game {
   doRender(): void {
     // Run the render loop.
     this._engine.runRenderLoop(() => {
+      const cameraDirection = this._scene.activeCamera.getDirection(
+        BABYLON.Vector3.Zero()
+      ) as BABYLON.Vector3;
       fx.setListenerPosition(
         this._scene.activeCamera.position.x,
         this._scene.activeCamera.position.y,
         this._scene.activeCamera.position.z
       );
+
+      fx.setListenerAngle(cameraDirection.y);
 
       this._scene.render();
     });

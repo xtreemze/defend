@@ -2,7 +2,7 @@
 
 ## A Procedurally Generated Tower Defense WebGame
 
-When loaded, three cameras rotate in an interactive orbit around a plane with 100 subdivisions where towers can randomly be placed. Enemies will fall from the sky in the unoccupied areas and will make their way to the center.
+When loaded, three cameras rotate in an interactive orbit around a plane where towers are randomly placed. Enemies will fall from the sky in the unoccupied areas and will make their way to the center.
 
 ![alt](https://raw.githubusercontent.com/xtreemze/defend/master/release/screenshot1.png)
 

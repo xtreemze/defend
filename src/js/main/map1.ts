@@ -57,6 +57,20 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   camera2.upperBetaLimit = Math.PI / 2.01;
   camera3.upperBetaLimit = Math.PI / 2.01;
 
+  // Upper Radius Limit
+  camera.upperRadiusLimit = mapGlobals.size / 2;
+  camera2.upperRadiusLimit = mapGlobals.size / 2;
+  camera3.upperRadiusLimit = mapGlobals.size / 2;
+
+  // Lower Radius Limit
+  camera.lowerRadiusLimit = mapGlobals.size / 12;
+  camera2.lowerRadiusLimit = mapGlobals.size / 12;
+  camera3.lowerRadiusLimit = mapGlobals.size / 12;
+
+  camera.panningDistanceLimit = mapGlobals.size / 5;
+  camera2.panningDistanceLimit = mapGlobals.size / 5;
+  camera3.panningDistanceLimit = mapGlobals.size / 5;
+
   const rotateCamera = camera => {
     scene.registerBeforeRender(() => {
       camera.alpha += Math.PI / (360 * mapGlobals.rotationSpeedMultiplier);
