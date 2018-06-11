@@ -104,7 +104,7 @@ class Enemy {
 
       mapGlobals.simultaneousSounds += 1;
 
-      const audioOptions: audioParams = {
+      const audioOptions: FX.audioParams = {
         volume: -1,
         sustain: 0.64,
         release: 2,
