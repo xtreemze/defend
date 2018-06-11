@@ -1,7 +1,7 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
 
-import * as fx from "./../../vendor/wafxr/wafxr.js";
+import FX from "./../../vendor/wafxr/wafxr.js";
 
 class Projectile {
   constructor(
@@ -69,7 +69,7 @@ class Projectile {
 
       mapGlobals.projectileSounds += 1;
 
-      const shoot = fx.play({
+      const shoot = FX.play({
         volume: -12,
         sustain: 0.02 * level ** 2,
         release: 0.44,
@@ -124,7 +124,7 @@ class Projectile {
 
             mapGlobals.simultaneousSounds += 1;
 
-            const damage = fx.play({
+            const damage = FX.play({
               volume: -1,
               sustain: 0.3,
               release: 0.15,

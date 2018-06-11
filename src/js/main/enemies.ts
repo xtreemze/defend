@@ -8,7 +8,9 @@ import {
   mapGlobals,
   projectileGlobals
 } from "./variables";
-import * as fx from "./../../vendor/wafxr/wafxr.js";
+
+import FX from "./../../vendor/wafxr/wafxr.js";
+import { audioParams } from "../../vendor/wafxr/wafxr";
 
 class Enemy {
   constructor(
@@ -103,7 +105,7 @@ class Enemy {
 
       mapGlobals.simultaneousSounds += 1;
 
-      const audioOptions: fx.audioParams = {
+      const audioOptions: audioParams = {
         volume: -1,
         sustain: 0.64,
         release: 2,
@@ -117,7 +119,7 @@ class Enemy {
         rolloff: 0.3
       };
 
-      const onDestroy = fx.play(audioOptions);
+      const onDestroy = FX.play(audioOptions);
     }
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
       const fragment = BABYLON.MeshBuilder.CreateBox("enemyFragment" + index, {
@@ -232,7 +234,7 @@ class Enemy {
 
     //   mapGlobals.simultaneousSounds += 1;
 
-    //   const birth = fx.play({
+    //   const birth = FX.play({
     //     volume: -1,
     //     sustain: 0.0634,
     //     release: 0.3003,

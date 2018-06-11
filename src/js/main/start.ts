@@ -2,7 +2,8 @@
 import "./../../vendor/pep";
 
 import * as BABYLON from "babylonjs";
-import * as fx from "./../../vendor/wafxr/wafxr.js";
+
+import FX from "./../../vendor/wafxr/wafxr.js";
 import { mapGlobals } from "./variables";
 
 import enemies from "./enemies";
@@ -77,13 +78,13 @@ class Game {
       ) as BABYLON.Vector3;
       cameraDirection.normalize();
 
-      fx.setListenerPosition(
+      FX.setListenerPosition(
         this._scene.activeCamera.position.x,
         this._scene.activeCamera.position.y,
         this._scene.activeCamera.position.z
       );
 
-      fx.setListenerAngle(-cameraDirection.y);
+      FX.setListenerAngle(-cameraDirection.y);
 
       this._scene.render();
     });
@@ -96,7 +97,7 @@ class Game {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  fx._tone.Master.mute = true;
+  FX._tone.Master.mute = true;
 
   let game = new Game("renderCanvas");
 
@@ -104,12 +105,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   game.doRender();
 
-  fx._tone.Master.mute = false;
-  fx.setVolume(1);
+  FX._tone.Master.mute = false;
+  FX.setVolume(1);
 });
 
 function muting() {
-  fx._tone.Master.mute = false;
+  FX._tone.Master.mute = false;
 
   window.removeEventListener("click", window => {
     muting();
