@@ -2,7 +2,7 @@
 import "./../../vendor/pep";
 
 import * as BABYLON from "babylonjs";
-import * as fx from "./../../vendor/wafxr/wafxr";
+import * as fx from "./../../vendor/wafxr/wafxr.js";
 import { mapGlobals } from "./variables";
 
 import enemies from "./enemies";

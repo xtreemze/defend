@@ -8,7 +8,7 @@ import {
   mapGlobals,
   projectileGlobals
 } from "./variables";
-import * as fx from "./../../vendor/wafxr/wafxr";
+import * as fx from "./../../vendor/wafxr/wafxr.js";
 
 class Enemy {
   constructor(
