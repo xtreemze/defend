@@ -46,7 +46,6 @@ class Game {
     this._scene.enablePhysics(
       new BABYLON.Vector3(0, -9.81, 0),
       new BABYLON.CannonJSPlugin()
-      // new BABYLON.OimoJSPlugin()
     );
     if (mapGlobals.diagnosticsOn) {
       this._scene.debugLayer.show({ popup: true, initialTab: 2 });
