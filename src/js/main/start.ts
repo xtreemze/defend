@@ -75,13 +75,15 @@ class Game {
       const cameraDirection = this._scene.activeCamera.getDirection(
         BABYLON.Vector3.Zero()
       ) as BABYLON.Vector3;
+      cameraDirection.normalize();
+
       fx.setListenerPosition(
         this._scene.activeCamera.position.x,
         this._scene.activeCamera.position.y,
         this._scene.activeCamera.position.z
       );
 
-      fx.setListenerAngle(cameraDirection.y);
+      fx.setListenerAngle(-cameraDirection.y);
 
       this._scene.render();
     });
