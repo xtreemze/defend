@@ -3,7 +3,7 @@ import "./../../vendor/pep";
 
 import * as BABYLON from "babylonjs";
 
-import FX from "./../../vendor/wafxr/wafxr.js";
+import FX from "./../../vendor/wafxr/wafxr";
 import { mapGlobals } from "./variables";
 
 import enemies from "./enemies";
@@ -22,7 +22,6 @@ runtime.install({
   },
   onUpdateFailed: () => {}
 });
-
 class Game {
   private _canvas: HTMLCanvasElement;
   private _engine: BABYLON.Engine;

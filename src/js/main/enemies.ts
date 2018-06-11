@@ -10,7 +10,6 @@ import {
 } from "./variables";
 
 import FX from "./../../vendor/wafxr/wafxr.js";
-import { audioParams } from "../../vendor/wafxr/wafxr";
 
 class Enemy {
   constructor(
