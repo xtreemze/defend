@@ -23,7 +23,7 @@ runtime.install({
   onUpdateFailed: () => {}
 });
 class Game {
-  private _canvas: HTMLCanvasElement;
+  public _canvas: HTMLCanvasElement;
   private _engine: BABYLON.Engine;
   public _scene: BABYLON.Scene;
   // private _camera: BABYLON.FreeCamera;
@@ -100,12 +100,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
   game.doRender();
 
-  const button = document.getElementById("startButton");
+  window.addEventListener("load", () => {
+    const body = document.getElementById("body");
 
-  button.addEventListener("click", () => {
-    towers(game._scene);
-    enemies(game._scene);
-    FX._tone.Master.mute = false;
-    button.parentNode.removeChild(button);
+    const startButton = document.createElement("button");
+    body.insertBefore(startButton, game._canvas);
+    startButton.innerText = `Start!`;
+    startButton.id = "startButton";
+
+    startButton.addEventListener("click", () => {
+      FX._tone.Master.mute = false;
+      startButton.parentNode.removeChild(startButton);
+      towers(game._scene);
+      enemies(game._scene);
+    });
   });
 });
