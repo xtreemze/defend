@@ -25,9 +25,9 @@ runtime.install({
 class Game {
   private _canvas: HTMLCanvasElement;
   private _engine: BABYLON.Engine;
-  private _scene: BABYLON.Scene;
-  private _camera: BABYLON.FreeCamera;
-  private _light: BABYLON.Light;
+  public _scene: BABYLON.Scene;
+  // private _camera: BABYLON.FreeCamera;
+  // private _light: BABYLON.Light;
 
   constructor(canvasElement: string) {
     this._canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
@@ -55,10 +55,6 @@ class Game {
 
     materialGenerator(this._scene);
     map1(this._scene, this._canvas, this._engine);
-    setTimeout(() => {
-      towers(this._scene);
-      enemies(this._scene);
-    }, 3000);
 
     if (mapGlobals.optimizerOn) {
       const options = BABYLON.SceneOptimizerOptions.HighDegradationAllowed();
@@ -96,6 +92,7 @@ class Game {
 
 window.addEventListener("DOMContentLoaded", () => {
   FX._tone.Master.mute = true;
+  FX.setVolume(1);
 
   let game = new Game("renderCanvas");
 
@@ -103,18 +100,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   game.doRender();
 
-  FX._tone.Master.mute = false;
-  FX.setVolume(1);
-});
+  const button = document.getElementById("startButton");
 
-function muting() {
-  FX._tone.Master.mute = false;
-
-  window.removeEventListener("click", window => {
-    muting();
+  button.addEventListener("click", () => {
+    towers(game._scene);
+    enemies(game._scene);
+    FX._tone.Master.mute = false;
+    button.parentNode.removeChild(button);
   });
-}
-
-window.addEventListener("click", window => {
-  muting();
 });
