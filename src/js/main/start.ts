@@ -105,37 +105,56 @@ window.addEventListener("DOMContentLoaded", () => {
   game.createScene();
 
   game.doRender();
+  const body = document.getElementById("body");
 
   window.addEventListener("load", () => {
-    const body = document.getElementById("body");
+    const title = document.createElement("h1");
+    title.innerText = `Defend`;
+    title.setAttribute(
+      "style",
+      `
+      position: absolute;
+      color: ${projectileGlobals.livingColor.toHexString()};
+      top: 30vh;
+      width: 100vw;
+      text-align: center;
+      margin-top: -1.5rem;
+      font-weight: 500;
+      font-family: fantasy;
+      font-size: 4rem;
+      `
+    );
 
     const startButton = document.createElement("button");
-    body.insertBefore(startButton, game._canvas);
     startButton.innerText = `Start!`;
     startButton.id = "startButton";
     startButton.setAttribute(
       "style",
       `
-  position: absolute;
-  background-color: ${mapGlobals.sceneAmbient.toHexString()};
-  color: ${projectileGlobals.livingColor.toHexString()};
-  border-color: ${projectileGlobals.livingColor.toHexString()};
-  top: 50vh;
-  left: 50vw;
-  width: 6rem;
-  height: 3rem;
-  margin-top: -1.5rem;
-  margin-left: -3rem;
-  border-radius: 8rem;
-  font-weight: 600;
-`
+      position: absolute;
+      background-color: ${mapGlobals.sceneAmbient.toHexString()};
+      color: ${projectileGlobals.livingColor.toHexString()};
+      border-color: ${projectileGlobals.livingColor.toHexString()};
+      top: 50vh;
+      left: 50vw;
+      width: 6rem;
+      height: 3rem;
+      margin-top: -1.5rem;
+      margin-left: -3rem;
+      border-radius: 8rem;
+      font-weight: 600;
+      `
     );
+    body.insertBefore(title, game._canvas);
+    body.insertBefore(startButton, game._canvas);
 
     startButton.addEventListener("click", () => {
       towers(game._scene);
       enemies(game._scene);
       FX._tone.context.resume();
       FX._tone.Master.mute = false;
+
+      title.parentNode.removeChild(title);
       startButton.parentNode.removeChild(startButton);
     });
   });
