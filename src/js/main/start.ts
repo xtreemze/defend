@@ -134,6 +134,7 @@ window.addEventListener("DOMContentLoaded", () => {
     startButton.addEventListener("click", () => {
       towers(game._scene);
       enemies(game._scene);
+      FX._tone.context.resume();
       FX._tone.Master.mute = false;
       startButton.parentNode.removeChild(startButton);
     });
