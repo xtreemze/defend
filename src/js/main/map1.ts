@@ -22,7 +22,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
     "overhead",
     Math.PI / 3,
     Math.PI / 14,
-    mapGlobals.size / 4,
+    mapGlobals.size / 6,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -32,7 +32,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
     "3/4",
     Math.PI / 6,
     Math.PI / 3.5,
-    mapGlobals.size / 4,
+    mapGlobals.size / 6,
     BABYLON.Vector3.Zero(),
     scene
   );
@@ -42,7 +42,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
     "closeup",
     Math.PI / 1,
     Math.PI / 2.1,
-    60,
+    mapGlobals.size / 12,
     BABYLON.Vector3.Zero(),
     scene
   );

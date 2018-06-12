@@ -4,7 +4,12 @@ import "./../../vendor/pep";
 import * as BABYLON from "babylonjs";
 
 import * as FX from "./../../vendor/wafxr/wafxr";
-import { mapGlobals } from "./variables";
+import {
+  mapGlobals,
+  towerGlobals,
+  projectileGlobals,
+  enemyGlobals
+} from "./variables";
 
 import enemies from "./enemies";
 import towers from "./towers";
@@ -43,24 +48,25 @@ class Game {
   createScene(): void {
     this._scene = new BABYLON.Scene(this._engine);
 
+    if (mapGlobals.optimizerOn) {
+      const options = BABYLON.SceneOptimizerOptions.HighDegradationAllowed();
+      const optimizer = new BABYLON.SceneOptimizer(this._scene, options);
+
+      optimizer.start();
+    }
+
     this._scene.enablePhysics(
       new BABYLON.Vector3(0, -9.81, 0),
       new BABYLON.CannonJSPlugin()
     );
-    if (mapGlobals.diagnosticsOn) {
-      this._scene.debugLayer.show({ popup: true, initialTab: 2 });
-    }
 
     this._scene.workerCollisions = true;
 
     materialGenerator(this._scene);
     map1(this._scene, this._canvas, this._engine);
 
-    if (mapGlobals.optimizerOn) {
-      const options = BABYLON.SceneOptimizerOptions.HighDegradationAllowed();
-      const optimizer = new BABYLON.SceneOptimizer(this._scene, options);
-
-      optimizer.start();
+    if (mapGlobals.diagnosticsOn) {
+      this._scene.debugLayer.show({ popup: true, initialTab: 2 });
     }
   }
 
@@ -107,6 +113,23 @@ window.addEventListener("DOMContentLoaded", () => {
     body.insertBefore(startButton, game._canvas);
     startButton.innerText = `Start!`;
     startButton.id = "startButton";
+    startButton.setAttribute(
+      "style",
+      `
+  position: absolute;
+  background-color: ${mapGlobals.sceneAmbient.toHexString()};
+  color: ${projectileGlobals.livingColor.toHexString()};
+  border-color: ${projectileGlobals.livingColor.toHexString()};
+  top: 50vh;
+  left: 50vw;
+  width: 6rem;
+  height: 3rem;
+  margin-top: -1.5rem;
+  margin-left: -3rem;
+  border-radius: 8rem;
+  font-weight: 600;
+`
+    );
 
     startButton.addEventListener("click", () => {
       FX._tone.Master.mute = false;
