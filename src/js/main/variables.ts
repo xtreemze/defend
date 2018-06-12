@@ -4,7 +4,7 @@ const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
   size: 1200, // map radius
-  optimizerOn: true,
+  optimizerOn: false,
   cameraCutDelay: 3000,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation

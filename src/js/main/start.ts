@@ -132,10 +132,10 @@ window.addEventListener("DOMContentLoaded", () => {
     );
 
     startButton.addEventListener("click", () => {
-      FX._tone.Master.mute = false;
-      startButton.parentNode.removeChild(startButton);
       towers(game._scene);
       enemies(game._scene);
+      FX._tone.Master.mute = false;
+      startButton.parentNode.removeChild(startButton);
     });
   });
 });
