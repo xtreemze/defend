@@ -48,6 +48,9 @@ class Game {
   createScene(): void {
     this._scene = new BABYLON.Scene(this._engine);
 
+    FX.setVolume(1);
+    FX._tone.Master.mute = true;
+
     if (mapGlobals.optimizerOn) {
       const options = BABYLON.SceneOptimizerOptions.HighDegradationAllowed();
       const optimizer = new BABYLON.SceneOptimizer(this._scene, options);
@@ -97,9 +100,6 @@ class Game {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  FX._tone.Master.mute = true;
-  FX.setVolume(1);
-
   let game = new Game("renderCanvas");
 
   game.createScene();
