@@ -1,7 +1,6 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
-
-import * as FX from "./../../vendor/wafxr/wafxr";
+import * as sounds from "./sounds";
 
 class Projectile {
   constructor(
@@ -69,22 +68,7 @@ class Projectile {
 
       mapGlobals.projectileSounds += 1;
 
-      const shoot = FX.play({
-        volume: -12,
-        sustain: 0.02 * level ** 2,
-        release: 0.44,
-        frequency: (750 / level) * 1.5,
-        sweep: -0.8,
-        source: "square",
-        highpass: 1920,
-        lowpass: 2040,
-        // bitcrush: 3,
-        compressorThreshold: -55,
-        soundX: projectile.position.x,
-        soundY: projectile.position.y,
-        soundZ: projectile.position.z,
-        rolloff: 0.04
-      });
+      sounds.shoot(projectile, level);
     }
     setTimeout(() => {
       this.destroyProjectile(projectile, scene);
@@ -124,22 +108,7 @@ class Projectile {
 
             mapGlobals.simultaneousSounds += 1;
 
-            const damage = FX.play({
-              volume: -1,
-              sustain: 0.3,
-              release: 0.15,
-              //@ts-ignore
-              frequency: 20000 / enemy.hitPoints + 200,
-              sweep: -0.8,
-              source: "square",
-              // lowpass: 4252,
-              // lowpassSweep: 771,
-              compressorThreshold: -3,
-              soundX: enemy.position.x,
-              soundY: enemy.position.y,
-              soundZ: enemy.position.z,
-              rolloff: 0.2
-            });
+            sounds.damage(enemy);
           }
           enemy.material = hitMaterial as BABYLON.Material;
 

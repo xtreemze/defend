@@ -76,10 +76,9 @@ class Game {
   doRender(): void {
     // Run the render loop.
     this._engine.runRenderLoop(() => {
-      const cameraDirection = this._scene.activeCamera.getDirection(
-        BABYLON.Vector3.Zero()
-      ) as BABYLON.Vector3;
-      cameraDirection.normalize();
+      const cameraDirection = this._scene.activeCamera.getForwardRay()
+        .direction as BABYLON.Vector3;
+      const cameraUp = this._scene.activeCamera.upVector as BABYLON.Vector3;
 
       FX.setListenerPosition(
         this._scene.activeCamera.position.x,
@@ -87,7 +86,14 @@ class Game {
         this._scene.activeCamera.position.z
       );
 
-      FX.setListenerAngle(-cameraDirection.y);
+      FX._tone.Listener.setOrientation(
+        -cameraDirection.x,
+        -cameraDirection.y,
+        -cameraDirection.z,
+        cameraUp.x,
+        cameraUp.y,
+        cameraUp.z
+      );
 
       this._scene.render();
     });

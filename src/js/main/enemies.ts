@@ -2,6 +2,7 @@ import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
+import * as sounds from "./sounds";
 import {
   enemyGlobals,
   towerGlobals,
@@ -9,7 +10,6 @@ import {
   projectileGlobals
 } from "./variables";
 
-import * as FX from "./../../vendor/wafxr/wafxr";
 
 class Enemy {
   constructor(
@@ -104,21 +104,7 @@ class Enemy {
 
       mapGlobals.simultaneousSounds += 1;
 
-      const audioOptions: FX.audioParams = {
-        volume: -1,
-        sustain: 0.64,
-        release: 2,
-        frequency: 1400 / level,
-        sweep: -4,
-        source: "pulse",
-        compressorThreshold: -50,
-        soundX: enemyPosition.x,
-        soundY: enemyPosition.y,
-        soundZ: enemyPosition.z,
-        rolloff: 0.3
-      };
-
-      const onDestroy = FX.play(audioOptions);
+      sounds.onDestroy(enemyPosition, level);
     }
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
       const fragment = BABYLON.MeshBuilder.CreateBox("enemyFragment" + index, {
@@ -226,27 +212,6 @@ class Enemy {
       position.z
     );
 
-    // if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-    //   setTimeout(() => {
-    //     mapGlobals.simultaneousSounds -= 1;
-    //   }, mapGlobals.soundDelay);
-
-    //   mapGlobals.simultaneousSounds += 1;
-
-    //   const birth = FX.play({
-    //     volume: -1,
-    //     sustain: 0.0634,
-    //     release: 0.3003,
-    //     frequency: (399.9 * 3) / level,
-    //     sweep: (0.2899 * 3) / level,
-    //     jumpAt1: 0.1213,
-    //     jumpBy1: 0.3547,
-    //     soundX: sphereMesh.position.x,
-    //     soundY: sphereMesh.position.y,
-    //     soundZ: sphereMesh.position.z,
-    //     rolloff: 0.3
-    //   });
-    // }
     //@ts-ignore
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
