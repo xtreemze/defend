@@ -14,8 +14,8 @@ const mapGlobals = {
   simultaneousSounds: 0,
   soundDelay: 170,
   soundLimit: 3,
-  projectileSounds: 0,
-  projectileSoundLimit: 2,
+  projectileSounds: 0, // Sounds currently playing
+  projectileSoundLimit: 1, // Simultaneous sound limit
   ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
   sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
 };

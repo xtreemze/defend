@@ -10,7 +10,6 @@ import {
   projectileGlobals
 } from "./variables";
 
-
 class Enemy {
   constructor(
     level: number = 1,
@@ -272,7 +271,7 @@ class Enemy {
       sphereMesh.dispose();
 
       enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-    }, 1);
+    }, 22);
   }
 
   decide(sphereMesh: BABYLON.Mesh, scene: BABYLON.Scene, ray: any) {
