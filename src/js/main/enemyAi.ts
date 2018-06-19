@@ -1,30 +1,30 @@
-import * as BABYLON from "babylonjs";
+import { Vector3, Mesh } from "babylonjs";
 import randomNumberRange from "./randomNumberRange";
 import { enemyGlobals } from "./globalVariables";
 
-function vector(enemy: BABYLON.Mesh, direction: string = "") {
+function vector(enemy: Mesh, direction: string = "") {
   switch (direction) {
     case "down":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(0, 0, enemyGlobals.speed * -1),
+        new Vector3(0, 0, enemyGlobals.speed * -1),
         enemy.getAbsolutePosition()
       );
       break;
     case "right":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(enemyGlobals.speed, 0, 0),
+        new Vector3(enemyGlobals.speed, 0, 0),
         enemy.getAbsolutePosition()
       );
       break;
     case "up":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(0, 0, enemyGlobals.speed),
+        new Vector3(0, 0, enemyGlobals.speed),
         enemy.getAbsolutePosition()
       );
       break;
     case "left":
       enemy.physicsImpostor.applyImpulse(
-        new BABYLON.Vector3(enemyGlobals.speed * -1, 0, 0),
+        new Vector3(enemyGlobals.speed * -1, 0, 0),
         enemy.getAbsolutePosition()
       );
       break;
@@ -35,7 +35,7 @@ function vector(enemy: BABYLON.Mesh, direction: string = "") {
 }
 
 function orient(
-  enemy: BABYLON.Mesh,
+  enemy: Mesh,
   decision = { up: true, left: true, right: true, down: true },
   result: number = 1
 ) {
@@ -91,7 +91,7 @@ function orient(
 }
 
 export default function enemyAi(
-  enemy: BABYLON.Mesh,
+  enemy: Mesh,
   decision = { up: true, left: true, right: true, down: true }
 ) {
   const result = randomNumberRange(1, 4);

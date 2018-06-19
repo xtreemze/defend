@@ -1,4 +1,4 @@
-import { Color3 } from "babylonjs";
+import { Color3, PhysicsImpostor, Mesh } from "babylonjs";
 
 const mapGlobals = {
   diagnosticsOn: false,
@@ -8,7 +8,7 @@ const mapGlobals = {
   cameraCutDelay: 3000,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
-  allImpostors: [] as BABYLON.PhysicsImpostor[],
+  allImpostors: [] as PhysicsImpostor[],
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0,
@@ -16,8 +16,8 @@ const mapGlobals = {
   soundLimit: 3,
   projectileSounds: 0, // Sounds currently playing
   projectileSoundLimit: 1, // Simultaneous sound limit
-  ambientColor: new BABYLON.Color3(0.2, 0.2, 0.2),
-  sceneAmbient: new BABYLON.Color3(0.01, 0.0, 0.2)
+  ambientColor: new Color3(0.2, 0.2, 0.2),
+  sceneAmbient: new Color3(0.01, 0.0, 0.2)
 };
 
 const projectileGlobals = {
@@ -37,7 +37,7 @@ const towerGlobals = {
   mass: 0,
   restitution: 0,
   baseHitPoints: 0,
-  allTowers: [] as BABYLON.Mesh[],
+  allTowers: [] as Mesh[],
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
@@ -62,7 +62,7 @@ const enemyGlobals = {
   baseHitPoints: 200,
   deadHitPoints: 0,
   fragments: 1,
-  allEnemies: [] as BABYLON.Mesh[],
+  allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
   boundaryLimit: mapGlobals.size / 10, // meters
   livingColor: new Color3(0.1, 0.8, 1),

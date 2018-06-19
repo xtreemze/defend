@@ -1,6 +1,6 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
-import * as sounds from "./sound";
+import { shoot, damage } from "./sound";
 
 class Projectile {
   constructor(
@@ -68,7 +68,7 @@ class Projectile {
 
       mapGlobals.projectileSounds += 1;
 
-      sounds.shoot(projectile, level);
+      shoot(projectile, level);
     }
     setTimeout(() => {
       this.destroyProjectile(projectile, scene);
@@ -104,7 +104,7 @@ class Projectile {
 
             mapGlobals.simultaneousSounds += 1;
 
-            sounds.damage(enemy);
+            damage(enemy);
           }
           enemy.material = hitMaterial as BABYLON.Material;
 

@@ -1,13 +1,20 @@
-import * as BABYLON from "babylonjs";
 import {
-  enemyGlobals,
-  towerGlobals,
-  projectileGlobals,
-  mapGlobals,
-  renderGlobals
-} from "./globalVariables";
+  Scene,
+  Vector3,
+  MeshBuilder,
+  PhysicsImpostor,
+  Color3,
+  ArcRotateCamera,
+  HemisphericLight,
+  DirectionalLight,
+  DefaultRenderingPipeline,
+  DepthOfFieldEffectBlurLevel,
+  GlowLayer,
+  Tools
+} from "babylonjs";
+import { mapGlobals, renderGlobals } from "./globalVariables";
 
-export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
+export default function map1(scene: any = Scene, canvas, engine) {
   const groundMaterial = scene.getMaterialByID("groundMaterial");
   const projectileMaterial = scene.getMaterialByID("projectileMaterial");
   const transparentMaterial = scene.getMaterialByID("transparentMaterial");
@@ -18,32 +25,32 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const skyMaterial = scene.getMaterialByID("skyMaterial");
 
   // Camera1
-  const camera = new BABYLON.ArcRotateCamera(
+  const camera = new ArcRotateCamera(
     "overhead",
     Math.PI / 3,
     Math.PI / 14,
     mapGlobals.size / 6,
-    BABYLON.Vector3.Zero(),
+    Vector3.Zero(),
     scene
   );
 
   // Camera 2
-  const camera2 = new BABYLON.ArcRotateCamera(
+  const camera2 = new ArcRotateCamera(
     "3/4",
     Math.PI / 6,
     Math.PI / 3.5,
     mapGlobals.size / 6,
-    BABYLON.Vector3.Zero(),
+    Vector3.Zero(),
     scene
   );
 
   // Camera 3
-  const camera3 = new BABYLON.ArcRotateCamera(
+  const camera3 = new ArcRotateCamera(
     "closeup",
     Math.PI / 1,
     Math.PI / 2.1,
     mapGlobals.size / 12,
-    BABYLON.Vector3.Zero(),
+    Vector3.Zero(),
     scene
   );
 
@@ -102,29 +109,29 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
     }
   });
 
-  const skyLight = new BABYLON.HemisphericLight(
+  const skyLight = new HemisphericLight(
     "skyLight",
-    new BABYLON.Vector3(1, -1.05, 0),
+    new Vector3(1, -1.05, 0),
     scene
   );
 
-  const upLight = new BABYLON.DirectionalLight(
+  const upLight = new DirectionalLight(
     "upLight",
-    new BABYLON.Vector3(0.5, -1.2, -0.5),
+    new Vector3(0.5, -1.2, -0.5),
     scene
   );
 
   upLight.intensity = mapGlobals.lightIntensity * 2;
-  upLight.diffuse = new BABYLON.Color3(0.82, 0.89, 0.94);
-  // upLight.groundColor = new BABYLON.Color3(0.05, 0, 0.18);
+  upLight.diffuse = new Color3(0.82, 0.89, 0.94);
+  // upLight.groundColor = new Color3(0.05, 0, 0.18);
 
   skyLight.intensity = mapGlobals.lightIntensity;
-  skyLight.diffuse = new BABYLON.Color3(0.82, 0.89, 0.94);
-  skyLight.groundColor = new BABYLON.Color3(0.05, 0, 0.18);
+  skyLight.diffuse = new Color3(0.82, 0.89, 0.94);
+  skyLight.groundColor = new Color3(0.05, 0, 0.18);
 
   scene.ambientColor = mapGlobals.sceneAmbient;
 
-  const atmosphere = BABYLON.MeshBuilder.CreateIcoSphere(
+  const atmosphere = MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
       radius: mapGlobals.size / 2,
@@ -138,7 +145,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
 
   atmosphere.material = skyMaterial;
 
-  const ground = BABYLON.MeshBuilder.CreateGround(
+  const ground = MeshBuilder.CreateGround(
     "ground",
     {
       height: mapGlobals.size,
@@ -152,15 +159,15 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   ground.material = groundMaterial;
   ground.freezeWorldMatrix(); // freeze ground
 
-  ground.physicsImpostor = new BABYLON.PhysicsImpostor(
+  ground.physicsImpostor = new PhysicsImpostor(
     ground,
-    BABYLON.PhysicsImpostor.BoxImpostor,
+    PhysicsImpostor.BoxImpostor,
     { mass: 0, restitution: 0.9, friction: 1 },
     scene
   );
 
   if (renderGlobals.pipelineOn) {
-    const pipeline = new BABYLON.DefaultRenderingPipeline(
+    const pipeline = new DefaultRenderingPipeline(
       "default", // The name of the pipeline
       false,
       scene, // The scene instance,
@@ -169,7 +176,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
 
     // Depth of Field
     pipeline.depthOfFieldEnabled = renderGlobals.depthOfField;
-    pipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Low;
+    pipeline.depthOfFieldBlurLevel = DepthOfFieldEffectBlurLevel.Low;
     pipeline.depthOfField.focusDistance = 20 * 1000; // distance of the current focus point from the camera in millimeters considering 1 scene unit is 1 meter
     pipeline.depthOfField.focalLength = 400; // focal length of the camera in millimeters
     pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
@@ -193,7 +200,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
 
   // Glow
   if (renderGlobals.glow) {
-    const glowLayer = new BABYLON.GlowLayer("glow", scene, {
+    const glowLayer = new GlowLayer("glow", scene, {
       // mainTextureFixedSize: 32,
       // blurKernelSize: 8,
       // mainTextureSamples: 2
@@ -206,7 +213,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
     glowLayer.addExcludedMesh(atmosphere);
   }
   if (mapGlobals.demoSphere) {
-    const demoSphere = BABYLON.MeshBuilder.CreateSphere(
+    const demoSphere = MeshBuilder.CreateSphere(
       "demoSphere",
       {
         segments: 6,
@@ -215,7 +222,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
       },
       scene
     );
-    demoSphere.position = new BABYLON.Vector3(0, 40, 0);
+    demoSphere.position = new Vector3(0, 40, 0);
     demoSphere.material = groundMaterial;
   }
   if (renderGlobals.screenshot) {
@@ -223,7 +230,7 @@ export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
       var imgNm = 0;
       scene.registerAfterRender(function() {
         if (imgNm++ < 50) {
-          BABYLON.Tools.CreateScreenshot(engine, camera3, 1024);
+          Tools.CreateScreenshot(engine, camera3, 1024);
         }
       });
     }, 6000);

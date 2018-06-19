@@ -1,8 +1,19 @@
-import * as BABYLON from "babylonjs";
+import {
+  Scene,
+  Vector3,
+  MeshBuilder,
+  Mesh,
+  Tags,
+  Material,
+  PhysicsImpostor,
+  Ray,
+  RayHelper,
+  Color3
+} from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
-import * as sounds from "./sound";
+import { onDestroy } from "./sound";
 import {
   enemyGlobals,
   towerGlobals,
@@ -11,14 +22,10 @@ import {
 } from "./globalVariables";
 
 class Enemy {
-  constructor(
-    level: number = 1,
-    position: any = { x: 0, z: 0 },
-    scene: BABYLON.Scene
-  ) {
+  constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
     const name = `enemy${level}` as string;
     const diameter = (level * level) as number;
-    const sphereMesh = BABYLON.MeshBuilder.CreateIcoSphere(
+    const sphereMesh = MeshBuilder.CreateIcoSphere(
       name,
       {
         subdivisions: level,
@@ -26,7 +33,7 @@ class Enemy {
         updatable: false
       },
       scene
-    ) as BABYLON.Mesh;
+    ) as Mesh;
 
     // playNote();
 
@@ -34,7 +41,7 @@ class Enemy {
 
     this.revive(scene, position, sphereMesh, diameter, level);
 
-    BABYLON.Tags.AddTagsTo(sphereMesh, "enemy");
+    Tags.AddTagsTo(sphereMesh, "enemy");
   }
 
   nearTower(ray: any, scene: any) {
@@ -43,7 +50,7 @@ class Enemy {
       if (ray.hasOwnProperty(direction)) {
         const directionRay = ray[direction];
 
-        scene.pickWithRay(directionRay, (mesh: BABYLON.Mesh) => {
+        scene.pickWithRay(directionRay, (mesh: Mesh) => {
           for (let index = 0; index < towerGlobals.allTowers.length; index++) {
             const element = towerGlobals.allTowers[index];
 
@@ -59,22 +66,20 @@ class Enemy {
   }
 
   checkHitPoints(
-    scene: BABYLON.Scene,
-    sphereMesh: BABYLON.Mesh,
+    scene: Scene,
+    sphereMesh: Mesh,
     loopTimer: any,
     level: number = 1 | 2 | 3
   ) {
-    const enemyMaterial = scene.getMaterialByID(
-      "enemyMaterial"
-    ) as BABYLON.Material;
+    const enemyMaterial = scene.getMaterialByID("enemyMaterial") as Material;
 
     if (
       //@ts-ignore
       sphereMesh.hitPoints <= 0 ||
       sphereMesh.position.y < 0
     ) {
-      const enemyPosition = sphereMesh.position.clone() as BABYLON.Vector3;
-      const enemyRotation = sphereMesh.rotation.clone() as BABYLON.Vector3;
+      const enemyPosition = sphereMesh.position.clone() as Vector3;
+      const enemyRotation = sphereMesh.rotation.clone() as Vector3;
       this.destroyEnemy(sphereMesh, loopTimer, scene);
       if (
         mapGlobals.allImpostors.length < mapGlobals.impostorLimit &&
@@ -92,9 +97,9 @@ class Enemy {
 
   fragment(
     level: number = 1 | 2 | 3,
-    enemyPosition: BABYLON.Vector3,
-    enemyMaterial: BABYLON.Material,
-    enemyRotation: BABYLON.Vector3
+    enemyPosition: Vector3,
+    enemyMaterial: Material,
+    enemyRotation: Vector3
   ) {
     if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
       setTimeout(() => {
@@ -103,36 +108,36 @@ class Enemy {
 
       mapGlobals.simultaneousSounds += 1;
 
-      sounds.onDestroy(enemyPosition, level);
+      onDestroy(enemyPosition, level);
     }
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
-      const fragment = BABYLON.MeshBuilder.CreateBox("enemyFragment" + index, {
+      const fragment = MeshBuilder.CreateBox("enemyFragment" + index, {
         size: (level * level) / 1.5 / (enemyGlobals.fragments * level)
-      }) as BABYLON.Mesh;
-      fragment.position = new BABYLON.Vector3(
+      }) as Mesh;
+      fragment.position = new Vector3(
         enemyPosition.x,
         enemyPosition.y / level + ((level * level) / level) * index,
         enemyPosition.z
       );
-      fragment.rotation = new BABYLON.Vector3(
+      fragment.rotation = new Vector3(
         enemyRotation.x * index * 0.1,
         enemyRotation.y * index * 0.1,
         enemyRotation.z * index * 0.1
       );
       fragment.material = enemyMaterial;
 
-      const fragImpostor = new BABYLON.PhysicsImpostor(
+      const fragImpostor = new PhysicsImpostor(
         fragment,
-        BABYLON.PhysicsImpostor.BoxImpostor,
+        PhysicsImpostor.BoxImpostor,
         {
           mass: (enemyGlobals.mass * level) / (enemyGlobals.fragments * level),
           restitution: 0.5,
           friction: 0.8
         }
-      ) as BABYLON.PhysicsImpostor;
+      ) as PhysicsImpostor;
 
       fragImpostor.applyImpulse(
-        new BABYLON.Vector3(0, 2000 + enemyGlobals.mass * level * index, 0),
+        new Vector3(0, 2000 + enemyGlobals.mass * level * index, 0),
         fragment.getAbsolutePosition()
       );
 
@@ -144,54 +149,54 @@ class Enemy {
     }
   }
 
-  makeRays(sphereMesh: BABYLON.Mesh) {
+  makeRays(sphereMesh: Mesh) {
     const ray = {
-      up: new BABYLON.Ray(
+      up: new Ray(
         sphereMesh.getAbsolutePosition(),
-        new BABYLON.Vector3(0, 0, 1),
+        new Vector3(0, 0, 1),
         20
-      ) as BABYLON.Ray,
-      down: new BABYLON.Ray(
+      ) as Ray,
+      down: new Ray(
         sphereMesh.getAbsolutePosition(),
-        new BABYLON.Vector3(0, 0, -1),
+        new Vector3(0, 0, -1),
         20
-      ) as BABYLON.Ray,
-      left: new BABYLON.Ray(
+      ) as Ray,
+      left: new Ray(
         sphereMesh.getAbsolutePosition(),
-        new BABYLON.Vector3(-1, 0, 0),
+        new Vector3(-1, 0, 0),
         20
-      ) as BABYLON.Ray,
-      right: new BABYLON.Ray(
+      ) as Ray,
+      right: new Ray(
         sphereMesh.getAbsolutePosition(),
-        new BABYLON.Vector3(1, 0, 0),
+        new Vector3(1, 0, 0),
         20
-      ) as BABYLON.Ray
+      ) as Ray
     };
 
     return ray;
   }
 
-  makeHelpers(ray: any, scene: BABYLON.Scene) {
-    let helpers = [] as BABYLON.RayHelper[];
+  makeHelpers(ray: any, scene: Scene) {
+    let helpers = [] as RayHelper[];
 
-    const rayHelper1 = new BABYLON.RayHelper(ray.up) as BABYLON.RayHelper;
-    rayHelper1.show(scene, new BABYLON.Color3(1, 1, 0.1));
+    const rayHelper1 = new RayHelper(ray.up) as RayHelper;
+    rayHelper1.show(scene, new Color3(1, 1, 0.1));
 
-    const rayHelper2 = new BABYLON.RayHelper(ray.down) as BABYLON.RayHelper;
-    rayHelper2.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
+    const rayHelper2 = new RayHelper(ray.down) as RayHelper;
+    rayHelper2.show(scene, new Color3(0.5, 1, 0.5));
 
-    const rayHelper3 = new BABYLON.RayHelper(ray.left) as BABYLON.RayHelper;
-    rayHelper3.show(scene, new BABYLON.Color3(1, 1, 0.1));
+    const rayHelper3 = new RayHelper(ray.left) as RayHelper;
+    rayHelper3.show(scene, new Color3(1, 1, 0.1));
 
-    const rayHelper4 = new BABYLON.RayHelper(ray.right) as BABYLON.RayHelper;
-    rayHelper4.show(scene, new BABYLON.Color3(0.5, 1, 0.5));
+    const rayHelper4 = new RayHelper(ray.right) as RayHelper;
+    rayHelper4.show(scene, new Color3(0.5, 1, 0.5));
 
     helpers.push(rayHelper1, rayHelper2, rayHelper3, rayHelper4);
 
     return helpers;
   }
 
-  destroyHelpers(helpers: BABYLON.RayHelper[]) {
+  destroyHelpers(helpers: RayHelper[]) {
     for (let index = 0; index < helpers.length; index++) {
       const rayHelper = helpers[index];
       rayHelper.dispose();
@@ -199,13 +204,13 @@ class Enemy {
   }
 
   revive(
-    scene: BABYLON.Scene,
+    scene: Scene,
     position: any = { x: 0, z: 0 },
-    sphereMesh: BABYLON.Mesh,
+    sphereMesh: Mesh,
     diameter: number = 0,
     level: number = 1 | 2 | 3
   ) {
-    sphereMesh.position = new BABYLON.Vector3(
+    sphereMesh.position = new Vector3(
       position.x,
       (diameter / 2) * enemyGlobals.originHeight,
       position.z
@@ -215,9 +220,9 @@ class Enemy {
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     sphereMesh.material = scene.getMaterialByID("enemyMaterial");
 
-    sphereMesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+    sphereMesh.physicsImpostor = new PhysicsImpostor(
       sphereMesh,
-      BABYLON.PhysicsImpostor.SphereImpostor,
+      PhysicsImpostor.SphereImpostor,
       {
         mass: enemyGlobals.mass * level,
         restitution: enemyGlobals.restitution,
@@ -254,11 +259,7 @@ class Enemy {
     });
   }
 
-  destroyEnemy(
-    sphereMesh: any = BABYLON.Mesh,
-    loopTimer: any,
-    scene: any = BABYLON.Scene
-  ) {
+  destroyEnemy(sphereMesh: any = Mesh, loopTimer: any, scene: any = Scene) {
     // clearInterval(loopTimer);
     loopTimer = null;
 
@@ -274,7 +275,7 @@ class Enemy {
     }, 22);
   }
 
-  decide(sphereMesh: BABYLON.Mesh, scene: BABYLON.Scene, ray: any) {
+  decide(sphereMesh: Mesh, scene: Scene, ray: any) {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (
       sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
@@ -308,7 +309,7 @@ class Enemy {
   }
 }
 
-function enemyGenerator(scene: BABYLON.Scene, quantity: number = 0) {
+function enemyGenerator(scene: Scene, quantity: number = 0) {
   for (let index = 0; index < quantity; index += 1) {
     let newLocation = positionGenerator();
     while (
@@ -343,7 +344,7 @@ function enemyGenerator(scene: BABYLON.Scene, quantity: number = 0) {
   }
 }
 
-export default function enemies(scene: BABYLON.Scene) {
+export default function enemies(scene: Scene) {
   enemyGenerator(scene, enemyGlobals.minNumber);
 
   let deltaTime = Date.now();
