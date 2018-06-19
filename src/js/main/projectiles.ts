@@ -1,6 +1,6 @@
 import * as BABYLON from "babylonjs";
-import { projectileGlobals, enemyGlobals, mapGlobals } from "./variables";
-import * as sounds from "./sounds";
+import { projectileGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
+import * as sounds from "./sound";
 
 class Projectile {
   constructor(
@@ -75,11 +75,7 @@ class Projectile {
     }, projectileGlobals.lifeTime);
   }
 
-  intersectPhys(
-    scene: BABYLON.Scene,
-    projectile: BABYLON.Mesh,
-    level: number = 1 | 2 | 3
-  ) {
+  intersectPhys(scene: BABYLON.Scene, projectile: BABYLON.Mesh) {
     const hitMaterial = scene.getMaterialByID(
       "hitMaterial"
     ) as BABYLON.Material;

@@ -5,7 +5,7 @@ import {
   projectileGlobals,
   mapGlobals,
   renderGlobals
-} from "./variables";
+} from "./globalVariables";
 
 export default function map1(scene: any = BABYLON.Scene, canvas, engine) {
   const groundMaterial = scene.getMaterialByID("groundMaterial");

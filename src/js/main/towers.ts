@@ -3,7 +3,7 @@ import fire from "./projectiles";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
 
-import { towerGlobals, enemyGlobals, mapGlobals } from "./variables";
+import { towerGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
 
 class Tower {
   constructor(
@@ -12,7 +12,6 @@ class Tower {
     scene: BABYLON.Scene
   ) {
     const name = `tower${level}` as string;
-    const levelTop = `towerTop${level}` as string;
 
     let tower = BABYLON.MeshBuilder.CreateBox(
       name,
@@ -24,15 +23,14 @@ class Tower {
       scene
     ) as BABYLON.Mesh;
 
-    this.revive(scene, tower, position, level, levelTop);
+    this.revive(scene, tower, position, level);
   }
 
   revive(
     scene: BABYLON.Scene,
     tower: BABYLON.Mesh,
     position: any,
-    level: number,
-    levelTop: string
+    level: number
   ) {
     const towerMaterial = scene.getMaterialByID(
       "towerMaterial"

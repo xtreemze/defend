@@ -4,16 +4,11 @@ import "./../../vendor/pep";
 import * as BABYLON from "babylonjs";
 
 import * as FX from "./../../vendor/wafxr/wafxr";
-import {
-  mapGlobals,
-  towerGlobals,
-  projectileGlobals,
-  enemyGlobals
-} from "./variables";
+import { mapGlobals, projectileGlobals } from "./globalVariables";
 
 import enemies from "./enemies";
 import towers from "./towers";
-import map1 from "./map1";
+import map1 from "./map";
 import materialGenerator from "./materialGenerator";
 
 import runtime = require("offline-plugin/runtime");
@@ -31,8 +26,6 @@ class Game {
   public _canvas: HTMLCanvasElement;
   private _engine: BABYLON.Engine;
   public _scene: BABYLON.Scene;
-  // private _camera: BABYLON.FreeCamera;
-  // private _light: BABYLON.Light;
 
   constructor(canvasElement: string) {
     this._canvas = document.getElementById(canvasElement) as HTMLCanvasElement;

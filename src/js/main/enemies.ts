@@ -2,13 +2,13 @@ import * as BABYLON from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
 import randomNumberRange from "./randomNumberRange";
-import * as sounds from "./sounds";
+import * as sounds from "./sound";
 import {
   enemyGlobals,
   towerGlobals,
   mapGlobals,
   projectileGlobals
-} from "./variables";
+} from "./globalVariables";
 
 class Enemy {
   constructor(

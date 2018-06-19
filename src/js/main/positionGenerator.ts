@@ -1,6 +1,6 @@
 // @ts-check
 import randomNumberRange from "./randomNumberRange";
-import { mapGlobals } from "./variables";
+import { mapGlobals } from "./globalVariables";
 
 export default function positionGenerator() {
   const x =

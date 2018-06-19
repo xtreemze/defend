@@ -4,7 +4,7 @@ import {
   mapGlobals,
   projectileGlobals,
   towerGlobals
-} from "./variables";
+} from "./globalVariables";
 
 export default function generateMaterials(scene) {
   const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
