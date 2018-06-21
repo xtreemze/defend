@@ -6,7 +6,7 @@ import {
   towerGlobals
 } from "./globalVariables";
 
-export default function generateMaterials(scene) {
+function generateMaterials(scene) {
   const groundMaterial = new StandardMaterial("groundMaterial", scene);
 
   groundMaterial.wireframe = true;
@@ -57,3 +57,5 @@ export default function generateMaterials(scene) {
   hitMaterial.specularColor = mapGlobals.sceneAmbient;
   hitMaterial.ambientColor = mapGlobals.ambientColor;
 }
+
+export { generateMaterials };
