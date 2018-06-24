@@ -114,10 +114,10 @@ class Tower {
         const flashLocal = new Vector3(0, 0, 4) as Vector3;
         const flashSpace = towerTurret.getDirection(flashLocal) as Vector3;
 
-        flash.position = towerTurret.position.subtract(flashSpace);
-        flash.rotation = towerTurret.rotation.clone();
+        flash.position = towerTurret.position.subtract(flashSpace) as Vector3;
+        flash.rotation = towerTurret.rotation.clone() as Vector3;
         towerTurret.material = towerMaterial as Material;
-        towerTurret.addChild(flash);
+        towerTurret.addChild(flash) as Mesh;
         flash.isPickable = false as boolean;
         flash.setEnabled(false);
         flash.material = projectileMaterial as Material;

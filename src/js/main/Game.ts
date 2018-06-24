@@ -10,14 +10,16 @@ import {
 } from "babylonjs";
 
 import * as FX from "./../../vendor/wafxr/wafxr";
-import { mapGlobals, projectileGlobals } from "./globalVariables";
+import { mapGlobals } from "./globalVariables";
 
-import enemies from "./Enemy";
-import towers from "./Tower";
-import map1 from "./map";
-import materialGenerator from "./materialGenerator";
+import { map } from "./map";
 
 import runtime = require("offline-plugin/runtime");
+
+import { titleScreen } from "./titleScreen";
+import { cameras } from "./cameras";
+import { generateMaterials } from "./materialGenerator";
+import { renderPipeline } from "./renderPipeline";
 runtime.install({
   onUpdating: () => {},
   onUpdateReady: () => {
@@ -29,57 +31,58 @@ runtime.install({
   onUpdateFailed: () => {}
 });
 class Game {
-  public _canvas: HTMLCanvasElement;
-  private _engine: Engine;
-  public _scene: Scene;
+  public canvas: HTMLCanvasElement;
+  public engine: Engine;
+  public scene: Scene;
 
   constructor(canvasElement: string) {
-    this._canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
-    this._engine = new Engine(this._canvas, true, {
-      preserveDrawingBuffer: true,
-      stencil: true,
-      doNotHandleContextLost: true
+    this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
+    this.engine = new Engine(this.canvas, true, {
+      // preserveDrawingBuffer: true,
+      // stencil: true,
+      // doNotHandleContextLost: true
     });
-    this._engine.enableOfflineSupport = false;
-    this._engine.disableManifestCheck = true;
+    // this.engine.enableOfflineSupport = false;
+    // this.engine.disableManifestCheck = true;
   }
 
   createScene(): void {
-    this._scene = new Scene(this._engine);
+    this.scene = new Scene(this.engine);
 
     FX.setVolume(1);
     FX._tone.Master.mute = true;
 
     if (mapGlobals.optimizerOn) {
       const options = SceneOptimizerOptions.HighDegradationAllowed();
-      const optimizer = new SceneOptimizer(this._scene, options);
+      const optimizer = new SceneOptimizer(this.scene, options);
 
       optimizer.start();
     }
 
-    this._scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());
+    this.scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());
 
-    this._scene.workerCollisions = true;
+    this.scene.workerCollisions = true;
 
-    materialGenerator(this._scene);
-    map1(this._scene, this._canvas, this._engine);
+    generateMaterials(this.scene);
+    map(this.scene);
+    cameras(this.scene, this.canvas, this.engine);
 
     if (mapGlobals.diagnosticsOn) {
-      this._scene.debugLayer.show({ popup: true, initialTab: 2 });
+      this.scene.debugLayer.show({ popup: true, initialTab: 2 });
     }
   }
 
   doRender(): void {
     // Run the render loop.
-    this._engine.runRenderLoop(() => {
-      const cameraDirection = this._scene.activeCamera.getForwardRay()
+    this.engine.runRenderLoop(() => {
+      const cameraDirection = this.scene.activeCamera.getForwardRay()
         .direction as Vector3;
-      const cameraUp = this._scene.activeCamera.upVector as Vector3;
+      const cameraUp = this.scene.activeCamera.upVector as Vector3;
 
       FX.setListenerPosition(
-        this._scene.activeCamera.position.x,
-        this._scene.activeCamera.position.y,
-        this._scene.activeCamera.position.z
+        this.scene.activeCamera.position.x,
+        this.scene.activeCamera.position.y,
+        this.scene.activeCamera.position.z
       );
 
       FX._tone.Listener.setOrientation(
@@ -91,12 +94,12 @@ class Game {
         cameraUp.z
       );
 
-      this._scene.render();
+      this.scene.render();
     });
 
     // The canvas/window resize event handler.
     window.addEventListener("resize", () => {
-      this._engine.resize();
+      this.engine.resize();
     });
   }
 }
@@ -107,57 +110,10 @@ window.addEventListener("DOMContentLoaded", () => {
   game.createScene();
 
   game.doRender();
-  const body = document.getElementById("body");
+
+  renderPipeline(game.scene);
 
   window.addEventListener("load", () => {
-    const title = document.createElement("h1");
-    title.innerText = `Defend`;
-    title.setAttribute(
-      "style",
-      `
-      position: absolute;
-      color: ${projectileGlobals.livingColor.toHexString()};
-      top: 30vh;
-      width: 100vw;
-      text-align: center;
-      margin-top: -1.5rem;
-      font-weight: 500;
-      font-family: fantasy;
-      font-size: 4rem;
-      `
-    );
-
-    const startButton = document.createElement("button");
-    startButton.innerText = `Start!`;
-    startButton.id = "startButton";
-    startButton.setAttribute(
-      "style",
-      `
-      position: absolute;
-      background-color: ${mapGlobals.sceneAmbient.toHexString()};
-      color: ${projectileGlobals.livingColor.toHexString()};
-      border-color: ${projectileGlobals.livingColor.toHexString()};
-      top: 50vh;
-      left: 50vw;
-      width: 6rem;
-      height: 3rem;
-      margin-top: -1.5rem;
-      margin-left: -3rem;
-      border-radius: 8rem;
-      font-weight: 600;
-      `
-    );
-    body.insertBefore(title, game._canvas);
-    body.insertBefore(startButton, game._canvas);
-
-    startButton.addEventListener("click", () => {
-      towers(game._scene);
-      enemies(game._scene);
-      FX._tone.context.resume();
-      FX._tone.Master.mute = false;
-
-      title.parentNode.removeChild(title);
-      startButton.parentNode.removeChild(startButton);
-    });
+    titleScreen(game.scene, game.canvas);
   });
 });
