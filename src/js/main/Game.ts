@@ -75,25 +75,6 @@ class Game {
   doRender(): void {
     // Run the render loop.
     this.engine.runRenderLoop(() => {
-      const cameraDirection = this.scene.activeCamera.getForwardRay()
-        .direction as Vector3;
-      const cameraUp = this.scene.activeCamera.upVector as Vector3;
-
-      FX.setListenerPosition(
-        this.scene.activeCamera.position.x,
-        this.scene.activeCamera.position.y,
-        this.scene.activeCamera.position.z
-      );
-
-      FX._tone.Listener.setOrientation(
-        -cameraDirection.x,
-        -cameraDirection.y,
-        -cameraDirection.z,
-        cameraUp.x,
-        cameraUp.y,
-        cameraUp.z
-      );
-
       this.scene.render();
     });
 

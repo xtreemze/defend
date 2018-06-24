@@ -1,5 +1,6 @@
 import { Scene, ArcRotateCamera, Vector3, Tools, Engine } from "babylonjs";
 import { mapGlobals, renderGlobals } from "./globalVariables";
+import * as FX from "./../../vendor/wafxr/wafxr";
 
 function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   // Camera1
@@ -85,6 +86,24 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
         scene.activeCamera.inertia = 0.9;
       }, 100);
     }
+
+    const cameraDirection = allCameras[0].getForwardRay().direction as Vector3;
+    const cameraUp = allCameras[0].upVector as Vector3;
+
+    FX.setListenerPosition(
+      allCameras[0].position.x,
+      allCameras[0].position.y,
+      allCameras[0].position.z
+    );
+
+    FX._tone.Listener.setOrientation(
+      -cameraDirection.x,
+      -cameraDirection.y,
+      -cameraDirection.z,
+      cameraUp.x,
+      cameraUp.y,
+      cameraUp.z
+    );
   });
 
   if (renderGlobals.screenshot) {
