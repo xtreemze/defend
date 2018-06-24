@@ -1,6 +1,7 @@
 import * as BABYLON from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
 import { shoot, damage } from "./sound";
+import { explosion } from "./explodeParticle";
 
 class Projectile {
   constructor(
@@ -145,6 +146,8 @@ class Projectile {
 
   destroyProjectile(projectile: BABYLON.Mesh, scene: BABYLON.Scene) {
     projectile.setEnabled(false);
+    explosion(scene, projectile.position);
+
     setTimeout(() => {
       mapGlobals.allImpostors = [];
       projectile.physicsImpostor.dispose();
