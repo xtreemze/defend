@@ -91,6 +91,12 @@ class Projectile {
         (collider: PhysicsImpostor) => {
           //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
+          enemy.material = hitMaterial as Material;
+
+          explosion(scene, collider.getObjectCenter());
+          setTimeout(() => {
+            enemy.material = enemyMaterial as Material;
+          }, 40);
 
           if (
             mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
@@ -105,12 +111,6 @@ class Projectile {
 
             damage(enemy);
           }
-          enemy.material = hitMaterial as Material;
-
-          setTimeout(() => {
-            enemy.material = enemyMaterial as Material;
-          }, 40);
-          explosion(scene, collider.getObjectCenter());
         }
       );
     }
