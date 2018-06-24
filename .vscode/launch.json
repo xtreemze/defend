@@ -9,7 +9,15 @@
       "request": "launch",
       "name": "Launch Chrome against localhost",
       "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}"
+      "webRoot": "${workspaceFolder}",
+      "runtimeArgs": [
+        "--incognito",
+        "--allow-running-insecure-content",
+        "--allow-file-access-from-files",
+        "--allow-file-access",
+        "--allow-cross-origin-auth-prompt",
+        "--remote-debugging-port=9222"
+      ]
     }
   ]
 }

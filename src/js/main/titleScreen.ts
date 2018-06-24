@@ -41,6 +41,7 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
       margin-left: -3rem;
       border-radius: 8rem;
       font-weight: 600;
+      outline: none;
       `
   );
   canvas.parentNode.insertBefore(title, canvas);
