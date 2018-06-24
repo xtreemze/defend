@@ -1,57 +1,59 @@
-import * as BABYLON from "babylonjs";
+import {
+  Mesh,
+  Scene,
+  Vector3,
+  Material,
+  PhysicsImpostor,
+  MeshBuilder,
+  PhysicsEngine
+} from "babylonjs";
 import { projectileGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
 import { shoot, damage } from "./sound";
 import { explosion } from "./explodeParticle";
 
 class Projectile {
-  constructor(
-    originMesh: BABYLON.Mesh,
-    scene: BABYLON.Scene,
-    level: number = 1 | 2 | 3
-  ) {
+  constructor(originMesh: Mesh, scene: Scene, level: number = 1 | 2 | 3) {
     const name = `projectile${level}` as string;
 
-    const projectile = BABYLON.MeshBuilder.CreateBox(name, {
+    const projectile = MeshBuilder.CreateBox(name, {
       size: level,
       height: level / 4,
       width: level / 2,
       updatable: false
-    }) as BABYLON.Mesh;
+    }) as Mesh;
 
     this.startLife(scene, originMesh, level, projectile);
   }
 
   startLife(
-    scene: BABYLON.Scene,
-    originMesh: BABYLON.Mesh,
+    scene: Scene,
+    originMesh: Mesh,
     level: number = 1 | 2 | 3,
-    projectile: BABYLON.Mesh
+    projectile: Mesh
   ) {
     const projectileMaterial = scene.getMaterialByID(
       "projectileMaterial"
-    ) as BABYLON.Material;
-    const forwardLocal = new BABYLON.Vector3(0, 0, 5);
-    const space = originMesh.getDirection(forwardLocal) as BABYLON.Vector3;
+    ) as Material;
+    const forwardLocal = new Vector3(0, 0, 5);
+    const space = originMesh.getDirection(forwardLocal) as Vector3;
 
-    projectile.position = originMesh.position.subtract(
-      space
-    ) as BABYLON.Vector3;
+    projectile.position = originMesh.position.subtract(space) as Vector3;
     //@ts-ignore
     projectile.hitPoints = (level +
       level * projectileGlobals.baseHitPoints) as number;
-    projectile.material = projectileMaterial as BABYLON.Material;
+    projectile.material = projectileMaterial as Material;
 
     // For Physics
-    projectile.physicsImpostor = new BABYLON.PhysicsImpostor(
+    projectile.physicsImpostor = new PhysicsImpostor(
       projectile,
-      BABYLON.PhysicsImpostor.BoxImpostor,
+      PhysicsImpostor.BoxImpostor,
       {
         mass: projectileGlobals.mass * level,
         restitution: projectileGlobals.restitution,
         friction: 1
       },
       scene
-    ) as BABYLON.PhysicsImpostor;
+    ) as PhysicsImpostor;
 
     mapGlobals.allImpostors.unshift(projectile.physicsImpostor) as number;
 
@@ -76,21 +78,17 @@ class Projectile {
     }, projectileGlobals.lifeTime);
   }
 
-  intersectPhys(scene: BABYLON.Scene, projectile: BABYLON.Mesh) {
-    const hitMaterial = scene.getMaterialByID(
-      "hitMaterial"
-    ) as BABYLON.Material;
-    const enemyMaterial = scene.getMaterialByID(
-      "enemyMaterial"
-    ) as BABYLON.Material;
+  intersectPhys(scene: Scene, projectile: Mesh) {
+    const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
+    const enemyMaterial = scene.getMaterialByID("enemyMaterial") as Material;
 
     // Enemies ONLY
     for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
-      const enemy = enemyGlobals.allEnemies[index] as BABYLON.Mesh;
+      const enemy = enemyGlobals.allEnemies[index] as Mesh;
 
       projectile.physicsImpostor.registerOnPhysicsCollide(
-        enemy.physicsImpostor as BABYLON.PhysicsImpostor,
-        () => {
+        enemy.physicsImpostor as PhysicsImpostor,
+        (collider: PhysicsImpostor) => {
           //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
 
@@ -107,66 +105,62 @@ class Projectile {
 
             damage(enemy);
           }
-          enemy.material = hitMaterial as BABYLON.Material;
+          enemy.material = hitMaterial as Material;
 
           setTimeout(() => {
-            enemy.material = enemyMaterial as BABYLON.Material;
+            enemy.material = enemyMaterial as Material;
           }, 40);
+          explosion(scene, collider.getObjectCenter());
         }
       );
     }
 
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
-      mapGlobals.allImpostors as BABYLON.PhysicsImpostor[],
+      mapGlobals.allImpostors as PhysicsImpostor[],
       () => {
-        setTimeout(() => {
-          this.destroyProjectile(projectile, scene);
-        }, 1);
+        this.destroyProjectile(projectile, scene);
       }
     );
   }
 
-  impulsePhys(
-    originMesh: BABYLON.Mesh,
-    projectile: BABYLON.Mesh,
-    level: number = 1 | 2 | 3
-  ) {
-    const forwardLocal = new BABYLON.Vector3(
+  impulsePhys(originMesh: Mesh, projectile: Mesh, level: number = 1 | 2 | 3) {
+    const forwardLocal = new Vector3(
       0,
       0,
       projectileGlobals.speed * level * -1
-    ) as BABYLON.Vector3;
-    const speed = originMesh.getDirection(forwardLocal) as BABYLON.Vector3;
+    ) as Vector3;
+    const speed = originMesh.getDirection(forwardLocal) as Vector3;
     projectile.physicsImpostor.applyImpulse(
       speed,
       projectile.getAbsolutePosition()
     );
   }
 
-  destroyProjectile(projectile: BABYLON.Mesh, scene: BABYLON.Scene) {
+  destroyProjectile(projectile: Mesh, scene: Scene) {
+    const physicsEngine = scene.getPhysicsEngine() as PhysicsEngine;
+
     projectile.setEnabled(false);
-    explosion(scene, projectile.position);
+
+    //@ts-ignore
+    projectile.hitPoints = 0;
 
     setTimeout(() => {
       mapGlobals.allImpostors = [];
-      projectile.physicsImpostor.dispose();
-      //@ts-ignore
-      projectile.hitPoints = 0;
       //@ts-ignore
       delete projectile.hitPoints;
+      projectile.physicsImpostor.dispose();
+
       projectile.dispose();
 
-      const physicsEngine = scene.getPhysicsEngine() as BABYLON.PhysicsEngine;
-
-      mapGlobals.allImpostors = physicsEngine.getImpostors() as BABYLON.PhysicsImpostor[];
+      mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
     }, 1);
   }
 }
 
 export default function fire(
-  scene: BABYLON.Scene,
-  originMesh: BABYLON.Mesh,
+  scene: Scene,
+  originMesh: Mesh,
   level: number = 1 | 2 | 3
 ) {
   new Projectile(originMesh, scene, level);

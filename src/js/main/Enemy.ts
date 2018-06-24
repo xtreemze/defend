@@ -8,7 +8,8 @@ import {
   PhysicsImpostor,
   Ray,
   RayHelper,
-  Color3
+  Color3,
+  AbstractMesh
 } from "babylonjs";
 import enemyAi from "./enemyAi";
 import positionGenerator from "./positionGenerator";
@@ -35,8 +36,6 @@ class Enemy {
       scene
     ) as Mesh;
 
-    // playNote();
-
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
     this.revive(scene, position, sphereMesh, diameter, level);
@@ -44,13 +43,13 @@ class Enemy {
     Tags.AddTagsTo(sphereMesh, "enemy");
   }
 
-  nearTower(ray: any, scene: any) {
+  nearTower(ray: any, scene: Scene) {
     let result = true;
     for (const direction in ray) {
       if (ray.hasOwnProperty(direction)) {
         const directionRay = ray[direction];
-
-        scene.pickWithRay(directionRay, (mesh: Mesh) => {
+        //@ts-ignore
+        scene.pickWithRay(directionRay, (mesh: AbstractMesh) => {
           for (let index = 0; index < towerGlobals.allTowers.length; index++) {
             const element = towerGlobals.allTowers[index];
 
@@ -101,15 +100,6 @@ class Enemy {
     enemyMaterial: Material,
     enemyRotation: Vector3
   ) {
-    if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-      setTimeout(() => {
-        mapGlobals.simultaneousSounds -= 1;
-      }, mapGlobals.soundDelay);
-
-      mapGlobals.simultaneousSounds += 1;
-
-      onDestroy(enemyPosition, level);
-    }
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
       const fragment = MeshBuilder.CreateBox("enemyFragment" + index, {
         size: (level * level) / 1.5 / (enemyGlobals.fragments * level)
@@ -146,6 +136,16 @@ class Enemy {
         fragImpostor.dispose();
         setTimeout(() => {}, 1);
       }, projectileGlobals.lifeTime * 5);
+    }
+
+    if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+      setTimeout(() => {
+        mapGlobals.simultaneousSounds -= 1;
+      }, mapGlobals.soundDelay);
+
+      mapGlobals.simultaneousSounds += 1;
+
+      onDestroy(enemyPosition, level);
     }
   }
 
@@ -259,20 +259,21 @@ class Enemy {
     });
   }
 
-  destroyEnemy(sphereMesh: any = Mesh, loopTimer: any, scene: any = Scene) {
-    // clearInterval(loopTimer);
+  destroyEnemy(sphereMesh: Mesh, loopTimer: any, scene: Scene) {
+    clearInterval(loopTimer);
     loopTimer = null;
-
+    //@ts-ignore
     sphereMesh.hitPoints = 0;
+    //@ts-ignore
     delete sphereMesh.hitPoints;
 
     setTimeout(() => {
-      enemyGlobals.allEnemies = [];
       sphereMesh.physicsImpostor.dispose();
+      enemyGlobals.allEnemies = [];
       sphereMesh.dispose();
 
       enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-    }, 22);
+    }, 1);
   }
 
   decide(sphereMesh: Mesh, scene: Scene, ray: any) {
