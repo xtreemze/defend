@@ -148,6 +148,11 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
             break;
 
           default:
+            const rotateCamera = allCameras[0] as ArcRotateCamera;
+            rotateCamera.lockedTarget =
+              towerGlobals.allTowers[
+                randomNumberRange(0, towerGlobals.allTowers.length)
+              ];
             break;
         }
       } else {
