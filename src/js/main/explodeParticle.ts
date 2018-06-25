@@ -16,14 +16,14 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
   ) as GPUParticleSystem;
 
   particleSystem.renderingGroupId = 0;
-  particleSystem.emitRate = 150;
+  particleSystem.emitRate = 200;
   particleSystem.updateSpeed = 0.005;
   particleSystem.minEmitPower = 0.5;
   particleSystem.maxEmitPower = 12;
-  particleSystem.minLifeTime = 1;
-  particleSystem.maxLifeTime = 3;
-  particleSystem.minSize = 0.3;
-  particleSystem.maxSize = 2;
+  particleSystem.minLifeTime = 2;
+  particleSystem.maxLifeTime = 4;
+  particleSystem.minSize = 0.5;
+  particleSystem.maxSize = 1.5;
   particleSystem.blendMode = 0;
   particleSystem.gravity = new Vector3(0, -200, 0);
   particleSystem.color1 = new Color4(1, 0.48060958772435736, 0, 1);
@@ -56,10 +56,10 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
   setTimeout(() => {
     particleSystem.stop();
-  }, 20);
+  }, 120);
 
   setTimeout(() => {
     particleSystem.dispose();
-  }, 400);
+  }, 500);
 }
 export { explosion };

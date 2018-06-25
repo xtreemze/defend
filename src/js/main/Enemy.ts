@@ -25,7 +25,7 @@ import {
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
     const name = `enemy${level}` as string;
-    const diameter = (level * level) as number;
+    const diameter = (level * level + 5) as number;
     const sphereMesh = MeshBuilder.CreateIcoSphere(
       name,
       {
@@ -102,11 +102,11 @@ class Enemy {
   ) {
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
       const fragment = MeshBuilder.CreateBox("enemyFragment" + index, {
-        size: (level * level) / 1.5 / (enemyGlobals.fragments * level)
+        size: (level * level + 5) / 1.5 / (enemyGlobals.fragments * level)
       }) as Mesh;
       fragment.position = new Vector3(
         enemyPosition.x,
-        enemyPosition.y / level + ((level * level) / level) * index,
+        enemyPosition.y / level + ((level * level + 5) / level) * index,
         enemyPosition.z
       );
       fragment.rotation = new Vector3(

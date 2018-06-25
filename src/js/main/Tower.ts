@@ -157,6 +157,7 @@ class Tower {
 
         Tags.AddTagsTo(pillar, "tower");
         Tags.AddTagsTo(towerTurret, "tower");
+
         break;
     }
 
