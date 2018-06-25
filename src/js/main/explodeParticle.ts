@@ -4,41 +4,32 @@ import {
   GPUParticleSystem,
   Vector3,
   Color4,
-  Texture
+  Texture,
+  ParticleSystem
 } from "babylonjs";
 function explosion(scene: Scene, projectilePosition: Vector3) {
   const node = projectilePosition;
 
   const particleSystem = new GPUParticleSystem(
     "particles",
-    { capacity: 600 },
+    { capacity: 400 },
     scene
   ) as GPUParticleSystem;
 
   particleSystem.renderingGroupId = 0;
-  particleSystem.emitRate = 200;
+  particleSystem.emitRate = 100;
   particleSystem.updateSpeed = 0.01;
-  particleSystem.minEmitPower = 5;
-  particleSystem.maxEmitPower = 18;
-  particleSystem.minLifeTime = 0.1;
-  particleSystem.maxLifeTime = 1;
+  particleSystem.minEmitPower = 6;
+  particleSystem.maxEmitPower = 20;
+  particleSystem.minLifeTime = 0.06;
+  particleSystem.maxLifeTime = 0.5;
   particleSystem.minSize = 1;
-  particleSystem.maxSize = 2;
-  particleSystem.blendMode = 0;
-  particleSystem.gravity = new Vector3(0, -500, 0);
-  particleSystem.color1 = new Color4(1, 0.48060958772435736, 0, 1);
-  particleSystem.color2 = new Color4(
-    0.751498628078086,
-    0.3844876701794859,
-    0.09612191754487147,
-    1
-  );
-  particleSystem.colorDead = new Color4(
-    0.02621506842132858,
-    0,
-    0.22719725965151438,
-    0.8
-  );
+  particleSystem.maxSize = 4;
+  particleSystem.blendMode = ParticleSystem.BLENDMODE_ONEONE;
+  particleSystem.gravity = new Vector3(0, -600, 0);
+  particleSystem.color1 = new Color4(1, 0.49, 0, 1);
+  particleSystem.color2 = new Color4(0.75, 0.39, 0.1, 1);
+  particleSystem.colorDead = new Color4(0.03, 0, 0.22, 0.5);
   particleSystem.id = "92cd5665-5295-41ae-8a48-37f5926b3926";
   particleSystem.name = "particles";
   particleSystem.particleTexture = Texture.CreateFromBase64String(
@@ -60,6 +51,6 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
   setTimeout(() => {
     particleSystem.dispose();
-  }, 3000);
+  }, 2000);
 }
 export { explosion };

@@ -88,12 +88,11 @@ class Projectile {
 
       projectile.physicsImpostor.registerOnPhysicsCollide(
         enemy.physicsImpostor as PhysicsImpostor,
-        (collider: PhysicsImpostor) => {
+        () => {
           //@ts-ignore
           enemy.hitPoints -= projectile.hitPoints;
           enemy.material = hitMaterial as Material;
 
-          explosion(scene, collider.getObjectCenter());
           setTimeout(() => {
             enemy.material = enemyMaterial as Material;
           }, 40);
@@ -118,7 +117,8 @@ class Projectile {
     // Destroy when projectile hits any physics object
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors as PhysicsImpostor[],
-      () => {
+      (collider: PhysicsImpostor) => {
+        explosion(scene, collider.getObjectCenter());
         this.destroyProjectile(projectile, scene);
       }
     );
