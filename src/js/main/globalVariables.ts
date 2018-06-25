@@ -5,7 +5,7 @@ const mapGlobals = {
   demoSphere: false,
   size: 1200, // map radius
   optimizerOn: false,
-  cameraCutDelay: 3000,
+  cameraCutDelay: 4000,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],

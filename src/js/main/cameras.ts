@@ -24,7 +24,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   ) as FollowCamera;
 
   //The goal distance of camera from target
-  camera.radius = 60;
+  camera.radius = 120;
 
   // The goal height of camera above local origin (centre) of target
   camera.heightOffset = 10;
@@ -56,7 +56,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   ) as FollowCamera;
 
   //The goal distance of camera from target
-  camera4.radius = 60;
+  camera4.radius = 120;
 
   // The goal height of camera above local origin (centre) of target
   camera4.heightOffset = 10;
@@ -142,8 +142,8 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
               "follow2"
             ) as FollowCamera;
             followCamera2.lockedTarget =
-              towerGlobals.allTowers[
-                randomNumberRange(0, towerGlobals.allTowers.length)
+              enemyGlobals.allEnemies[
+                randomNumberRange(0, enemyGlobals.allEnemies.length)
               ];
             break;
 
