@@ -17,15 +17,15 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
   particleSystem.renderingGroupId = 0;
   particleSystem.emitRate = 200;
-  particleSystem.updateSpeed = 0.005;
-  particleSystem.minEmitPower = 0.5;
-  particleSystem.maxEmitPower = 12;
-  particleSystem.minLifeTime = 2;
-  particleSystem.maxLifeTime = 4;
-  particleSystem.minSize = 0.5;
-  particleSystem.maxSize = 1.5;
+  particleSystem.updateSpeed = 0.01;
+  particleSystem.minEmitPower = 5;
+  particleSystem.maxEmitPower = 18;
+  particleSystem.minLifeTime = 0.1;
+  particleSystem.maxLifeTime = 1;
+  particleSystem.minSize = 1;
+  particleSystem.maxSize = 2;
   particleSystem.blendMode = 0;
-  particleSystem.gravity = new Vector3(0, -200, 0);
+  particleSystem.gravity = new Vector3(0, -500, 0);
   particleSystem.color1 = new Color4(1, 0.48060958772435736, 0, 1);
   particleSystem.color2 = new Color4(
     0.751498628078086,
@@ -37,7 +37,7 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
     0.02621506842132858,
     0,
     0.22719725965151438,
-    0.5
+    0.8
   );
   particleSystem.id = "92cd5665-5295-41ae-8a48-37f5926b3926";
   particleSystem.name = "particles";
@@ -46,20 +46,20 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
     "data:data:data:data:data:data:data:data:data:data:flare.png",
     scene
   );
-  particleSystem.direction1 = new Vector3(-5, 9, 5);
-  particleSystem.direction2 = new Vector3(5, 14, -5);
+  particleSystem.direction1 = new Vector3(-5, 12, 5);
+  particleSystem.direction2 = new Vector3(5, 18, -5);
   particleSystem.minEmitBox = new Vector3(0, 0.01, 0);
-  particleSystem.maxEmitBox = new Vector3(0, 0.5, 0);
+  particleSystem.maxEmitBox = new Vector3(0, 1, 0);
 
   particleSystem.emitter = node;
   particleSystem.start();
 
   setTimeout(() => {
     particleSystem.stop();
-  }, 120);
+  }, 80);
 
   setTimeout(() => {
     particleSystem.dispose();
-  }, 500);
+  }, 3000);
 }
 export { explosion };
