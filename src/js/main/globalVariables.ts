@@ -5,17 +5,17 @@ const mapGlobals = {
   demoSphere: false,
   size: 1200, // map radius
   optimizerOn: false,
-  cameraCutDelay: 4000,
+  cameraCutDelay: 4200,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
-  simultaneousSounds: 0,
+  simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 170,
-  soundLimit: 3,
-  projectileSounds: 0, // Sounds currently playing
-  projectileSoundLimit: 1, // Simultaneous sound limit
+  soundLimit: 2, // simultaneous sound limit
+  projectileSounds: 0, // sounds currently playing for projectiles
+  projectileSoundLimit: 1, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.2, 0.2, 0.2),
   sceneAmbient: new Color3(0.01, 0.0, 0.2),
   soundOn: false
@@ -24,9 +24,9 @@ const mapGlobals = {
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
   speed: 5000,
-  mass: 20,
+  mass: 30,
   restitution: 0,
-  baseHitPoints: 10,
+  baseHitPoints: 20,
   livingColor: new Color3(1, 0.5, 0.2)
 };
 
@@ -42,7 +42,7 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 25,
+  range: 35,
   shoot: true,
   raysOn: false
 };
@@ -60,7 +60,7 @@ const enemyGlobals = {
   jumpForce: 60,
   friction: 1,
   decayRate: 1, // hitpoints per decision
-  baseHitPoints: 300,
+  baseHitPoints: 400,
   deadHitPoints: 0,
   fragments: 1,
   allEnemies: [] as Mesh[],
