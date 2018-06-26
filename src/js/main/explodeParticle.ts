@@ -52,7 +52,7 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
   setTimeout(() => {
     particleSystem.stop();
-  }, 80);
+  }, 60);
 
   setTimeout(() => {
     particleSystem.dispose();

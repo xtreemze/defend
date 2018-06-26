@@ -14,7 +14,7 @@ function generateMaterials(scene) {
   groundMaterial.emissiveColor = enemyGlobals.hitColor;
   groundMaterial.specularColor = new Color3(0.68, 0.38, 0.1);
   groundMaterial.ambientColor = mapGlobals.ambientColor;
-  groundMaterial.alpha = 0.5;
+  groundMaterial.alpha = 0.4;
 
   const skyMaterial = new StandardMaterial("skyMaterial", scene);
 

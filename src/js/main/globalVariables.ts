@@ -60,7 +60,7 @@ const enemyGlobals = {
   jumpForce: 60,
   friction: 1,
   decayRate: 1, // hitpoints per decision
-  baseHitPoints: 400,
+  baseHitPoints: 500,
   deadHitPoints: 0,
   fragments: 1,
   allEnemies: [] as Mesh[],
