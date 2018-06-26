@@ -83,7 +83,6 @@ const renderGlobals = {
   screenshot: false
 };
 
-const allMaterials = {};
 
 //@ts-ignore
 window.globals = {

@@ -4,7 +4,6 @@ import {
   Vector3,
   Tools,
   Engine,
-  FollowCamera
 } from "babylonjs";
 import {
   mapGlobals,
@@ -17,26 +16,14 @@ import randomNumberRange from "./randomNumberRange";
 
 function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   // Camera1
-  const camera = new FollowCamera(
+  const camera = new ArcRotateCamera(
     "follow1",
-    new BABYLON.Vector3(0, 10, -10),
+    Math.PI / 4,
+    Math.PI / 2.15,
+    mapGlobals.size / 5,
+    Vector3.Zero(),
     scene
-  ) as FollowCamera;
-
-  //The goal distance of camera from target
-  camera.radius = 120;
-
-  // The goal height of camera above local origin (centre) of target
-  camera.heightOffset = 10;
-
-  // The goal rotation of camera around local origin (centre) of target in x y plane
-  camera.rotationOffset = 0;
-
-  //Acceleration of camera in moving from current to goal position
-  camera.cameraAcceleration = 0.003;
-
-  //The speed at which acceleration is halted
-  camera.maxCameraSpeed = 8;
+  ) as ArcRotateCamera;
 
   // Camera 2
   const camera2 = new ArcRotateCamera(
@@ -49,33 +36,21 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   ) as ArcRotateCamera;
 
   // Camera4
-  const camera4 = new FollowCamera(
-    "follow2",
-    new BABYLON.Vector3(0, 10, -50),
+  const camera4 = new ArcRotateCamera(
+    "arcFollow1",
+    Math.PI / 6,
+    Math.PI / 3.5,
+    mapGlobals.size / 6,
+    Vector3.Zero(),
     scene
-  ) as FollowCamera;
-
-  //The goal distance of camera from target
-  camera4.radius = 120;
-
-  // The goal height of camera above local origin (centre) of target
-  camera4.heightOffset = 10;
-
-  // The goal rotation of camera around local origin (centre) of target in x y plane
-  camera4.rotationOffset = 0;
-
-  //Acceleration of camera in moving from current to goal position
-  camera4.cameraAcceleration = 0.003;
-
-  //The speed at which acceleration is halted
-  camera4.maxCameraSpeed = 8;
+  ) as ArcRotateCamera;
 
   // Camera 3
   const camera3 = new ArcRotateCamera(
     "closeup",
     Math.PI / 1,
-    Math.PI / 2.1,
-    mapGlobals.size / 12,
+    Math.PI / 2.15,
+    mapGlobals.size / 8,
     Vector3.Zero(),
     scene
   ) as ArcRotateCamera;
@@ -86,21 +61,6 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   camera3.attachControl(canvas, true);
   camera4.attachControl(canvas, true);
 
-  // Upper Beta Limit
-  camera2.upperBetaLimit = Math.PI / 2.01;
-  camera3.upperBetaLimit = Math.PI / 2.01;
-
-  // Upper Radius Limit
-  camera2.upperRadiusLimit = mapGlobals.size / 2;
-  camera3.upperRadiusLimit = mapGlobals.size / 2;
-
-  // Lower Radius Limit
-  camera2.lowerRadiusLimit = mapGlobals.size / 12;
-  camera3.lowerRadiusLimit = mapGlobals.size / 12;
-
-  camera2.panningDistanceLimit = mapGlobals.size / 5;
-  camera3.panningDistanceLimit = mapGlobals.size / 5;
-
   const rotateCamera = camera => {
     scene.registerBeforeRender(() => {
       camera.alpha += Math.PI / (360 * mapGlobals.rotationSpeedMultiplier);
@@ -110,8 +70,10 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   };
 
   if (mapGlobals.rotateCameras) {
+    rotateCamera(camera);
     rotateCamera(camera2);
     rotateCamera(camera3);
+    rotateCamera(camera4);
   }
 
   const allCameras = scene.cameras;
@@ -127,34 +89,11 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
         enemyGlobals.allEnemies.length > 1 &&
         towerGlobals.allTowers.length > 1
       ) {
-        switch (allCameras[0].name) {
-          case "follow1":
-            const followCamera1 = scene.getCameraByName(
-              "follow1"
-            ) as FollowCamera;
-            followCamera1.lockedTarget =
-              enemyGlobals.allEnemies[
-                randomNumberRange(0, enemyGlobals.allEnemies.length)
-              ];
-            break;
-          case "follow2":
-            const followCamera2 = scene.getCameraByName(
-              "follow2"
-            ) as FollowCamera;
-            followCamera2.lockedTarget =
-              enemyGlobals.allEnemies[
-                randomNumberRange(0, enemyGlobals.allEnemies.length)
-              ];
-            break;
-
-          default:
-            const rotateCamera = allCameras[0] as ArcRotateCamera;
-            rotateCamera.lockedTarget =
-              towerGlobals.allTowers[
-                randomNumberRange(0, towerGlobals.allTowers.length)
-              ];
-            break;
-        }
+        const rotateCamera = allCameras[0] as ArcRotateCamera;
+        rotateCamera.lockedTarget =
+          enemyGlobals.allEnemies[
+            randomNumberRange(0, enemyGlobals.allEnemies.length)
+          ];
       } else {
         const previousCamera = allCameras.shift();
         allCameras.push(previousCamera);

@@ -4,7 +4,7 @@
 
 When loaded, three cameras rotate in an interactive orbit around a plane where towers are randomly placed. Enemies will fall from the sky in the unoccupied areas and will make their way to the center.
 
-![alt](https://raw.githubusercontent.com/xtreemze/defend/master/release/screenshot1.png)
+![Defend](https://raw.githubusercontent.com/xtreemze/defend/master/release/screenshot.png)
 
 ## Towers
 
@@ -12,7 +12,7 @@ When loaded, three cameras rotate in an interactive orbit around a plane where t
 2.  A turret that has the same capabilities as #1 but with the added turret which shoots projectiles able to reduce the hitpoints of the enemy.
 3.  A more powerful variant of #2
 
-![alt](https://raw.githubusercontent.com/xtreemze/defend/master/release/screenshot3.png)
+![Defend](https://raw.githubusercontent.com/xtreemze/defend/master/release/screenshot3.png)
 
 ## Enemies
 
