@@ -70,6 +70,27 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     rotateCamera(camera4);
   }
 
+  scene.registerBeforeRender(() => {
+    const activeCamera = scene.activeCamera;
+    const cameraDirection = activeCamera.getForwardRay().direction as Vector3;
+    const cameraUp = activeCamera.upVector as Vector3;
+
+    FX.setListenerPosition(
+      activeCamera.position.x,
+      activeCamera.position.y,
+      activeCamera.position.z
+    );
+
+    FX._tone.Listener.setOrientation(
+      -cameraDirection.x,
+      -cameraDirection.y,
+      -cameraDirection.z,
+      cameraUp.x,
+      cameraUp.y,
+      cameraUp.z
+    );
+  });
+
   const allCameras = scene.cameras;
 
   let deltaTime = Date.now();
@@ -102,24 +123,6 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
         scene.activeCamera.inertia = 0.9;
       }, 100);
     }
-
-    const cameraDirection = allCameras[0].getForwardRay().direction as Vector3;
-    const cameraUp = allCameras[0].upVector as Vector3;
-
-    FX.setListenerPosition(
-      allCameras[0].position.x,
-      allCameras[0].position.y,
-      allCameras[0].position.z
-    );
-
-    FX._tone.Listener.setOrientation(
-      cameraDirection.x,
-      cameraDirection.y,
-      cameraDirection.z,
-      cameraUp.x,
-      cameraUp.y,
-      cameraUp.z
-    );
   });
 
   if (renderGlobals.screenshot) {
