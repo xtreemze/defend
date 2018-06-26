@@ -4,7 +4,7 @@
 
 When loaded, three cameras rotate in an interactive orbit around a plane where towers are randomly placed. Enemies will fall from the sky in the unoccupied areas and will make their way to the center.
 
-![Defend](https://raw.githubusercontent.com/xtreemze/defend/master/release/screenshot.png)
+![Defend](https://raw.githubusercontent.com/xtreemze/defend/master/release/screenshot2.png)
 
 ## Towers
 

@@ -3,7 +3,7 @@ import { Color3, PhysicsImpostor, Mesh } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 1200, // map radius
+  size: 1600, // map radius
   optimizerOn: false,
   cameraCutDelay: 4200,
   rotateCameras: true,
@@ -51,12 +51,12 @@ const enemyGlobals = {
   minNumber: mapGlobals.size / 300, // for one generation
   maxNumber: mapGlobals.size / 30, // for one generation
   limit: mapGlobals.size / 10,
-  originHeight: 80,
+  originHeight: 30,
   generationRate: 8000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 8000,
   mass: 2000,
-  restitution: 0.1,
+  restitution: 0.2,
   jumpForce: 60,
   friction: 1,
   decayRate: 1, // hitpoints per decision
@@ -82,7 +82,6 @@ const renderGlobals = {
   bloom: true,
   screenshot: false
 };
-
 
 //@ts-ignore
 window.globals = {

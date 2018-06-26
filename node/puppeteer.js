@@ -38,7 +38,7 @@ const puppeteer = require("puppeteer");
           })
           .catch(err => Error(err));
         await browser.close();
-      }, 4100);
-    }, 2100);
-  }, 8200);
+      }, 2800);
+    }, 4600);
+  }, 6400);
 })();

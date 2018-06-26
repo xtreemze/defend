@@ -1,10 +1,4 @@
-import {
-  Scene,
-  ArcRotateCamera,
-  Vector3,
-  Tools,
-  Engine,
-} from "babylonjs";
+import { Scene, ArcRotateCamera, Vector3, Tools, Engine } from "babylonjs";
 import {
   mapGlobals,
   renderGlobals,
@@ -38,8 +32,8 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   // Camera4
   const camera4 = new ArcRotateCamera(
     "arcFollow1",
-    Math.PI / 6,
-    Math.PI / 3.5,
+    Math.PI / 2,
+    Math.PI / 12,
     mapGlobals.size / 6,
     Vector3.Zero(),
     scene
