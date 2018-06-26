@@ -17,7 +17,8 @@ const mapGlobals = {
   projectileSounds: 0, // Sounds currently playing
   projectileSoundLimit: 1, // Simultaneous sound limit
   ambientColor: new Color3(0.2, 0.2, 0.2),
-  sceneAmbient: new Color3(0.01, 0.0, 0.2)
+  sceneAmbient: new Color3(0.01, 0.0, 0.2),
+  soundOn: false
 };
 
 const projectileGlobals = {

@@ -46,10 +46,18 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
   );
   canvas.parentNode.insertBefore(title, canvas);
   canvas.parentNode.insertBefore(startButton, canvas);
+  towers(scene);
+    const noSoundTimer = setTimeout(() => {
+      enemies(scene);
+      title.parentNode.removeChild(title);
+      startButton.parentNode.removeChild(startButton);
+    }, 4000);
 
   startButton.addEventListener("click", () => {
-    towers(scene);
+    clearTimeout(noSoundTimer);
     enemies(scene);
+
+    mapGlobals.soundOn = true;
     FX._tone.context.resume();
     FX._tone.Master.mute = false;
 

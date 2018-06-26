@@ -12,17 +12,14 @@ function generateMaterials(scene) {
   groundMaterial.wireframe = true;
   groundMaterial.diffuseColor = enemyGlobals.hitColor;
   groundMaterial.emissiveColor = enemyGlobals.hitColor;
-  // groundMaterial.specularColor = enemyGlobals.livingColor;
   groundMaterial.specularColor = new Color3(0.68, 0.38, 0.1);
   groundMaterial.ambientColor = mapGlobals.ambientColor;
   groundMaterial.alpha = 0.5;
 
   const skyMaterial = new StandardMaterial("skyMaterial", scene);
 
-  // skyMaterial.diffuseColor = new Color3(0.04, 0, 0.08);
   skyMaterial.diffuseColor = new Color3(0.12, 0.02, 0.19);
   skyMaterial.specularColor = new Color3(0.12, 0.04, 0.08);
-  // skyMaterial.emissiveColor = new Color3(0.06, 0.02, 0.05);
   skyMaterial.ambientColor = mapGlobals.ambientColor;
 
   const towerMaterial = new StandardMaterial("towerMaterial", scene);

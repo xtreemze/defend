@@ -145,7 +145,7 @@ class Enemy {
 
       mapGlobals.simultaneousSounds += 1;
 
-      onDestroy(enemyPosition, level);
+      if (mapGlobals.soundOn) onDestroy(enemyPosition, level);
     }
   }
 

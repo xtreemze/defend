@@ -71,7 +71,7 @@ class Projectile {
 
       mapGlobals.projectileSounds += 1;
 
-      shoot(projectile, level);
+      if (mapGlobals.soundOn) shoot(projectile, level);
     }
     setTimeout(() => {
       this.destroyProjectile(projectile, scene);
@@ -108,7 +108,7 @@ class Projectile {
 
             mapGlobals.simultaneousSounds += 1;
 
-            damage(enemy);
+            if (mapGlobals.soundOn) damage(enemy);
           }
         }
       );
