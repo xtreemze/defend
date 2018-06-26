@@ -129,7 +129,7 @@ class Tower {
         const ray = new Ray(
           flash.getAbsolutePosition(),
           turretDirection,
-          towerGlobals.range * level
+          towerGlobals.range * 3
         ) as Ray;
 
         if (towerGlobals.raysOn) {
@@ -209,12 +209,12 @@ class Tower {
           const enemy = enemyGlobals.allEnemies[index];
 
           if (
-            enemy.position.y <= towerGlobals.range * level &&
+            enemy.position.y <= towerGlobals.range * 3 &&
             enemy.position.y > 0 &&
             //@ts-ignore
             enemy.hitPoints >= enemyGlobals.deadHitPoints &&
             Vector3.Distance(towerTurret.position, enemy.position) <=
-              towerGlobals.range * level &&
+              towerGlobals.range * 3 &&
             this.rayClearsTower(scene, ray, tower)
           ) {
             enemyDistances.push([
