@@ -10,26 +10,31 @@ import {
 function explosion(scene: Scene, projectilePosition: Vector3) {
   const node = projectilePosition;
 
-  const particleSystem = new GPUParticleSystem(
+  // const particleSystem = new GPUParticleSystem(
+  //   "particles",
+  //   { capacity: 200 },
+  //   scene
+  // ) as GPUParticleSystem;
+  const particleSystem = new ParticleSystem(
     "particles",
-    { capacity: 400 },
+    120,
     scene
-  ) as GPUParticleSystem;
+  ) as ParticleSystem;
 
   particleSystem.renderingGroupId = 0;
-  particleSystem.emitRate = 100;
+  particleSystem.emitRate = 20;
   particleSystem.updateSpeed = 0.01;
   particleSystem.minEmitPower = 6;
-  particleSystem.maxEmitPower = 20;
-  particleSystem.minLifeTime = 0.06;
-  particleSystem.maxLifeTime = 0.5;
-  particleSystem.minSize = 1;
-  particleSystem.maxSize = 4;
-  particleSystem.blendMode = ParticleSystem.BLENDMODE_ONEONE;
+  particleSystem.maxEmitPower = 18;
+  particleSystem.minLifeTime = 0.09;
+  particleSystem.maxLifeTime = 0.4;
+  particleSystem.minSize = 3;
+  particleSystem.maxSize = 5;
+  particleSystem.blendMode = ParticleSystem.BLENDMODE_ADD;
   particleSystem.gravity = new Vector3(0, -600, 0);
   particleSystem.color1 = new Color4(1, 0.49, 0, 1);
   particleSystem.color2 = new Color4(0.75, 0.39, 0.1, 1);
-  particleSystem.colorDead = new Color4(0.03, 0, 0.22, 0.5);
+  particleSystem.colorDead = new Color4(0.03, 0, 0.22, 1);
   particleSystem.id = "92cd5665-5295-41ae-8a48-37f5926b3926";
   particleSystem.name = "particles";
   particleSystem.particleTexture = Texture.CreateFromBase64String(
@@ -47,10 +52,10 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
   setTimeout(() => {
     particleSystem.stop();
-  }, 80);
+  }, 160);
 
   setTimeout(() => {
     particleSystem.dispose();
-  }, 2000);
+  }, 1000);
 }
 export { explosion };

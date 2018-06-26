@@ -24,7 +24,7 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
   );
 
   const startButton = document.createElement("button");
-  startButton.innerText = `Start!`;
+  startButton.innerHTML = `&#x1f50a;`;
   startButton.id = "startButton";
   startButton.setAttribute(
     "style",
@@ -36,22 +36,23 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
       top: 50vh;
       left: 50vw;
       width: 6rem;
-      height: 3rem;
+      height: 6rem;
       margin-top: -1.5rem;
       margin-left: -3rem;
-      border-radius: 8rem;
+      border-radius: 6rem;
       font-weight: 600;
       outline: none;
+      font-size: 3rem;
       `
   );
   canvas.parentNode.insertBefore(title, canvas);
   canvas.parentNode.insertBefore(startButton, canvas);
   towers(scene);
-    const noSoundTimer = setTimeout(() => {
-      enemies(scene);
-      title.parentNode.removeChild(title);
-      startButton.parentNode.removeChild(startButton);
-    }, 4000);
+  const noSoundTimer = setTimeout(() => {
+    enemies(scene);
+    title.parentNode.removeChild(title);
+    startButton.parentNode.removeChild(startButton);
+  }, 4000);
 
   startButton.addEventListener("click", () => {
     clearTimeout(noSoundTimer);
