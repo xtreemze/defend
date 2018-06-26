@@ -113,9 +113,9 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     );
 
     FX._tone.Listener.setOrientation(
-      -cameraDirection.x,
-      -cameraDirection.y,
-      -cameraDirection.z,
+      cameraDirection.x,
+      cameraDirection.y,
+      cameraDirection.z,
       cameraUp.x,
       cameraUp.y,
       cameraUp.z
