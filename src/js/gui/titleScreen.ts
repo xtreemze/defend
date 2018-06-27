@@ -1,7 +1,7 @@
-import { projectileGlobals, mapGlobals } from "./globalVariables";
-import * as FX from "./../../vendor/wafxr/wafxr";
-import enemies from "./Enemy";
-import towers from "./Tower";
+import { projectileGlobals, mapGlobals } from "../main/globalVariables";
+import * as FX from "../../vendor/wafxr/wafxr";
+import enemies from "../enemy/Enemy";
+import towers from "../tower/Tower";
 import { Scene } from "babylonjs";
 
 function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {

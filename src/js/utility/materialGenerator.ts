@@ -4,7 +4,7 @@ import {
   mapGlobals,
   projectileGlobals,
   towerGlobals
-} from "./globalVariables";
+} from "../main/globalVariables";
 
 function generateMaterials(scene) {
   const groundMaterial = new StandardMaterial("groundMaterial", scene);
@@ -14,7 +14,7 @@ function generateMaterials(scene) {
   groundMaterial.emissiveColor = enemyGlobals.hitColor;
   groundMaterial.specularColor = new Color3(0.68, 0.38, 0.1);
   groundMaterial.ambientColor = mapGlobals.ambientColor;
-  groundMaterial.alpha = 0.4;
+  groundMaterial.alpha = 0.1;
 
   const skyMaterial = new StandardMaterial("skyMaterial", scene);
 

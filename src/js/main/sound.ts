@@ -1,21 +1,21 @@
-import * as FX from "./../../vendor/wafxr/wafxr";
+import * as FX from "../../vendor/wafxr/wafxr";
 
 function onDestroy(enemyPosition, level) {
   setTimeout(() => {
     FX.play({
-      volume: -2,
+      volume: -5,
       sustain: 0.64,
       release: 2,
       frequency: 1400 / level,
       sweep: -4,
       source: "pulse",
-      compressorThreshold: -50,
+      compressorThreshold: -40,
       soundX: enemyPosition.x,
       soundY: enemyPosition.y,
       soundZ: enemyPosition.z,
       rolloff: 0.3
     } as FX.audioParams);
-  }, 1);
+  }, 3);
 }
 
 function shoot(projectile, level) {
@@ -30,19 +30,19 @@ function shoot(projectile, level) {
       highpass: 1920,
       lowpass: 2040,
       // bitcrush: 3,
-      compressorThreshold: -55,
+      compressorThreshold: -40,
       soundX: projectile.position.x,
       soundY: projectile.position.y,
       soundZ: projectile.position.z,
-      rolloff: 0.04
+      rolloff: 0.03
     } as FX.audioParams);
-  }, 1);
+  }, 3);
 }
 
 function damage(enemy) {
   setTimeout(() => {
     FX.play({
-      volume: -1,
+      volume: -5,
       sustain: 0.3,
       release: 0.15,
       //@ts-ignore
@@ -51,13 +51,13 @@ function damage(enemy) {
       source: "square",
       // lowpass: 4252,
       // lowpassSweep: 771,
-      compressorThreshold: -3,
+      compressorThreshold: -20,
       soundX: enemy.position.x,
       soundY: enemy.position.y,
       soundZ: enemy.position.z,
-      rolloff: 0.2
+      rolloff: 0.3
     } as FX.audioParams);
-  }, 1);
+  }, 3);
 }
 
 export { onDestroy, shoot, damage };

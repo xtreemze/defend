@@ -1,5 +1,5 @@
 import randomNumberRange from "./randomNumberRange";
-import { mapGlobals } from "./globalVariables";
+import { mapGlobals } from "../main/globalVariables";
 
 interface coordinates {
   x: number;

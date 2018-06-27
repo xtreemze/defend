@@ -12,15 +12,15 @@ import {
   AbstractMesh
 } from "babylonjs";
 import enemyAi from "./enemyAi";
-import positionGenerator from "./positionGenerator";
-import randomNumberRange from "./randomNumberRange";
-import { onDestroy } from "./sound";
+import positionGenerator from "../utility/positionGenerator";
+import randomNumberRange from "../utility/randomNumberRange";
+import { onDestroy } from "../main/sound";
 import {
   enemyGlobals,
   towerGlobals,
   mapGlobals,
   projectileGlobals
-} from "./globalVariables";
+} from "../main/globalVariables";
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {

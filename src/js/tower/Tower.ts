@@ -11,11 +11,11 @@ import {
   Color3,
   CSG
 } from "babylonjs";
-import fire from "./Projectile";
-import positionGenerator from "./positionGenerator";
-import randomNumberRange from "./randomNumberRange";
+import fire from "../projectile/Projectile";
+import positionGenerator from "../utility/positionGenerator";
+import randomNumberRange from "../utility/randomNumberRange";
 
-import { towerGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
+import { towerGlobals, enemyGlobals, mapGlobals } from "../main/globalVariables";
 
 class Tower {
   constructor(

@@ -9,16 +9,16 @@ import {
   CannonJSPlugin
 } from "babylonjs";
 
-import * as FX from "./../../vendor/wafxr/wafxr";
+import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals } from "./globalVariables";
 
 import { map } from "./map";
 
 import runtime = require("offline-plugin/runtime");
 
-import { titleScreen } from "./titleScreen";
+import { titleScreen } from "../gui/titleScreen";
 import { cameras } from "./cameras";
-import { generateMaterials } from "./materialGenerator";
+import { generateMaterials } from "../utility/materialGenerator";
 import { renderPipeline } from "./renderPipeline";
 runtime.install({
   onUpdating: () => {},

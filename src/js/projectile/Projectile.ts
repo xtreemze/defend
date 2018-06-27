@@ -7,9 +7,9 @@ import {
   MeshBuilder,
   PhysicsEngine
 } from "babylonjs";
-import { projectileGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
-import { shoot, damage } from "./sound";
-import { explosion } from "./explodeParticle";
+import { projectileGlobals, enemyGlobals, mapGlobals } from "../main/globalVariables";
+import { shoot, damage } from "../main/sound";
+import { explosion } from "../enemy/explodeParticle";
 
 class Projectile {
   constructor(originMesh: Mesh, scene: Scene, level: number = 1 | 2 | 3) {

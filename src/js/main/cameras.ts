@@ -5,8 +5,8 @@ import {
   towerGlobals,
   enemyGlobals
 } from "./globalVariables";
-import * as FX from "./../../vendor/wafxr/wafxr";
-import randomNumberRange from "./randomNumberRange";
+import * as FX from "../../vendor/wafxr/wafxr";
+import randomNumberRange from "../utility/randomNumberRange";
 
 function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   // Camera1

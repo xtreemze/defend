@@ -1,6 +1,6 @@
 import { Vector3, Mesh } from "babylonjs";
-import randomNumberRange from "./randomNumberRange";
-import { enemyGlobals } from "./globalVariables";
+import randomNumberRange from "../utility/randomNumberRange";
+import { enemyGlobals } from "../main/globalVariables";
 
 function vector(enemy: Mesh, direction: string = "") {
   switch (direction) {

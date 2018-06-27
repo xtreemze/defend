@@ -6,7 +6,6 @@ import {
   Color3,
   HemisphericLight,
   DirectionalLight,
-  Engine,
   GroundMesh
 } from "babylonjs";
 import { mapGlobals } from "./globalVariables";

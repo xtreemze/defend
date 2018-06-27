@@ -42,8 +42,8 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
     "data:data:data:data:data:data:data:data:data:data:flare.png",
     scene
   );
-  particleSystem.direction1 = new Vector3(-5, 10, 5);
-  particleSystem.direction2 = new Vector3(5, 10, -5);
+  particleSystem.direction1 = new Vector3(-5, 8, 5);
+  particleSystem.direction2 = new Vector3(5, 8, -5);
   particleSystem.minEmitBox = new Vector3(-1, -6, -1);
   particleSystem.maxEmitBox = new Vector3(1, 6, 1);
 
@@ -52,10 +52,10 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
   setTimeout(() => {
     particleSystem.stop();
-  }, 60);
+  }, 82);
 
   setTimeout(() => {
     particleSystem.dispose();
-  }, 800);
+  }, 300);
 }
 export { explosion };
