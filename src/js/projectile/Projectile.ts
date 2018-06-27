@@ -95,7 +95,7 @@ class Projectile {
 
           setTimeout(() => {
             enemy.material = enemyMaterial as Material;
-          }, 40);
+          }, 30);
 
           if (
             mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
