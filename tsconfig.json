@@ -2,15 +2,15 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "sourceMap": true,
-    // "noImplicitAny": true,
+    "noImplicitAny": true,
     "module": "commonjs",
     // "module": "es6",
     "target": "es6",
     // "allowJs": true,
     // "removeComments": true,
     // "declaration": true,
-    "pretty": true
-    // "strict": true
+    "pretty": true,
+    "strict": true
   },
   "include": ["src"],
   "exclude": ["node_modules"],

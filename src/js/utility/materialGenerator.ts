@@ -1,4 +1,4 @@
-import { Color3, StandardMaterial } from "babylonjs";
+import { Color3, StandardMaterial, Scene } from "babylonjs";
 import {
   enemyGlobals,
   mapGlobals,
@@ -6,7 +6,7 @@ import {
   towerGlobals
 } from "../main/globalVariables";
 
-function generateMaterials(scene) {
+function generateMaterials(scene: Scene) {
   const groundMaterial = new StandardMaterial("groundMaterial", scene);
 
   groundMaterial.wireframe = true;

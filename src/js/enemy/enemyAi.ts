@@ -1,29 +1,32 @@
-import { Vector3, Mesh } from "babylonjs";
+import { Vector3, Mesh, PhysicsImpostor } from "babylonjs";
 import randomNumberRange from "../utility/randomNumberRange";
 import { enemyGlobals } from "../main/globalVariables";
 
 function vector(enemy: Mesh, direction: string = "") {
+  const sphereMeshImpostor = enemy.getPhysicsImpostor() as PhysicsImpostor;
+
   switch (direction) {
     case "down":
-      enemy.physicsImpostor.applyImpulse(
+
+        sphereMeshImpostor.applyImpulse(
         new Vector3(0, 0, enemyGlobals.speed * -1),
         enemy.getAbsolutePosition()
       );
       break;
     case "right":
-      enemy.physicsImpostor.applyImpulse(
+        sphereMeshImpostor.applyImpulse(
         new Vector3(enemyGlobals.speed, 0, 0),
         enemy.getAbsolutePosition()
       );
       break;
     case "up":
-      enemy.physicsImpostor.applyImpulse(
+        sphereMeshImpostor.applyImpulse(
         new Vector3(0, 0, enemyGlobals.speed),
         enemy.getAbsolutePosition()
       );
       break;
     case "left":
-      enemy.physicsImpostor.applyImpulse(
+        sphereMeshImpostor.applyImpulse(
         new Vector3(enemyGlobals.speed * -1, 0, 0),
         enemy.getAbsolutePosition()
       );

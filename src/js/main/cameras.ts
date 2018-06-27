@@ -1,4 +1,11 @@
-import { Scene, ArcRotateCamera, Vector3, Tools, Engine } from "babylonjs";
+import {
+  Scene,
+  ArcRotateCamera,
+  Vector3,
+  Tools,
+  Engine,
+  Camera
+} from "babylonjs";
 import {
   mapGlobals,
   renderGlobals,
@@ -55,7 +62,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   camera3.attachControl(canvas, true);
   camera4.attachControl(canvas, true);
 
-  const rotateCamera = camera => {
+  const rotateCamera = (camera: ArcRotateCamera) => {
     scene.registerBeforeRender(() => {
       camera.alpha += Math.PI / (360 * mapGlobals.rotationSpeedMultiplier);
       if (camera.alpha <= Math.PI) {
@@ -71,7 +78,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   }
 
   scene.registerBeforeRender(() => {
-    const activeCamera = scene.activeCamera;
+    const activeCamera = scene.activeCamera as Camera;
     const cameraDirection = activeCamera.getForwardRay().direction as Vector3;
     const cameraUp = activeCamera.upVector as Vector3;
 
@@ -110,17 +117,18 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
             randomNumberRange(0, enemyGlobals.allEnemies.length)
           ];
       } else {
-        const previousCamera = allCameras.shift();
+        const previousCamera = allCameras.shift() as Camera;
         allCameras.push(previousCamera);
       }
 
       scene.setActiveCameraByID(allCameras[0].id);
 
-      const previousCamera = allCameras.shift();
+      const previousCamera = allCameras.shift() as Camera;
       allCameras.push(previousCamera);
-      scene.activeCamera.inertia = 0;
+      const activeCamera = scene.activeCamera as Camera;
+      activeCamera.inertia = 0;
       setTimeout(() => {
-        scene.activeCamera.inertia = 0.9;
+        activeCamera.inertia = 0.9;
       }, 100);
     }
   });

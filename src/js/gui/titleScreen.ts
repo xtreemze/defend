@@ -5,8 +5,7 @@ import towers from "../tower/Tower";
 import { Scene } from "babylonjs";
 
 function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
-  const title = document.createElement("h1");
-  const body = document.createElement("body");
+  const title = document.createElement("h1") as HTMLElement;
   title.innerText = `Defend`;
   title.setAttribute(
     "style",
@@ -23,7 +22,7 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
       `
   );
 
-  const startButton = document.createElement("button");
+  const startButton = document.createElement("button") as HTMLButtonElement;
   startButton.innerHTML = `&#x1f50a;`;
   startButton.id = "startButton";
   startButton.setAttribute(
@@ -45,25 +44,32 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
       font-size: 3rem;
       `
   );
-  canvas.parentNode.insertBefore(title, canvas);
-  canvas.parentNode.insertBefore(startButton, canvas);
-  towers(scene);
+  const canvasParent = canvas.parentNode as Node;
+
+  canvasParent.insertBefore(title, canvas);
+  canvasParent.insertBefore(startButton, canvas);
   const noSoundTimer = setTimeout(() => {
+    towers(scene);
     enemies(scene);
-    title.parentNode.removeChild(title);
-    startButton.parentNode.removeChild(startButton);
+    const titleParent = title.parentNode as Node;
+    titleParent.removeChild(title);
+    const startButtonParent = startButton.parentNode as Node;
+    startButtonParent.removeChild(startButton);
   }, 4000);
 
   startButton.addEventListener("click", () => {
     clearTimeout(noSoundTimer);
+    towers(scene);
     enemies(scene);
 
     mapGlobals.soundOn = true;
     FX._tone.context.resume();
     FX._tone.Master.mute = false;
 
-    title.parentNode.removeChild(title);
-    startButton.parentNode.removeChild(startButton);
+    const titleParent = title.parentNode as Node;
+    titleParent.removeChild(title);
+    const startButtonParent = startButton.parentNode as Node;
+    startButtonParent.removeChild(startButton);
   });
 }
 

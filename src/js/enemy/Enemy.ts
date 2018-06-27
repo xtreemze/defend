@@ -35,7 +35,7 @@ class Enemy {
       },
       scene
     ) as Mesh;
-
+    sphereMesh.convertToUnIndexedMesh();
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
     this.revive(scene, position, sphereMesh, diameter, level);
@@ -268,7 +268,8 @@ class Enemy {
     delete sphereMesh.hitPoints;
 
     setTimeout(() => {
-      sphereMesh.physicsImpostor.dispose();
+      const sphereMeshImpostor = sphereMesh.getPhysicsImpostor() as PhysicsImpostor;
+      sphereMeshImpostor.dispose();
       enemyGlobals.allEnemies = [];
       sphereMesh.dispose();
 

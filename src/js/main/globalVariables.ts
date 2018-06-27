@@ -4,7 +4,7 @@ const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
   size: 1600, // map radius
-  optimizerOn: false,
+  optimizerOn: true,
   cameraCutDelay: 4200,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
@@ -77,9 +77,9 @@ const renderGlobals = {
   glow: true,
   glowIntensity: 2.8,
   sharpenning: false,
-  antialiasing: true,
+  antialiasing: false,
   depthOfField: false,
-  bloom: true,
+  bloom: false,
   screenshot: false
 };
 

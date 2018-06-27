@@ -6,7 +6,8 @@ import {
   Color3,
   HemisphericLight,
   DirectionalLight,
-  GroundMesh
+  GroundMesh,
+  Mesh
 } from "babylonjs";
 import { mapGlobals } from "./globalVariables";
 
@@ -44,7 +45,8 @@ function map(scene: Scene) {
       updatable: false
     },
     scene
-  );
+  ) as Mesh;
+
   atmosphere.flipFaces(true);
   atmosphere.freezeWorldMatrix(); // freeze ground
 

@@ -34,7 +34,7 @@ class Tower {
       },
       scene
     ) as Mesh;
-
+    tower.convertToUnIndexedMesh();
     this.revive(scene, tower, position, level);
   }
 
@@ -94,7 +94,7 @@ class Tower {
           scene,
           false
         ) as Mesh;
-
+        towerTurret.convertToUnIndexedMesh();
         towerTurret.position = new Vector3(
           position.x,
           towerGlobals.height * level * 1.5,

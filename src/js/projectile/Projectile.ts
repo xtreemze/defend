@@ -7,7 +7,11 @@ import {
   MeshBuilder,
   PhysicsEngine
 } from "babylonjs";
-import { projectileGlobals, enemyGlobals, mapGlobals } from "../main/globalVariables";
+import {
+  projectileGlobals,
+  enemyGlobals,
+  mapGlobals
+} from "../main/globalVariables";
 import { shoot, damage } from "../main/sound";
 import { explosion } from "../enemy/explodeParticle";
 
@@ -21,7 +25,7 @@ class Projectile {
       width: level / 2,
       updatable: false
     }) as Mesh;
-
+    projectile.convertToUnIndexedMesh();
     this.startLife(scene, originMesh, level, projectile);
   }
 
@@ -85,8 +89,8 @@ class Projectile {
     // Enemies ONLY
     for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
       const enemy = enemyGlobals.allEnemies[index] as Mesh;
-
-      projectile.physicsImpostor.registerOnPhysicsCollide(
+      const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
+      projectileImpostor.registerOnPhysicsCollide(
         enemy.physicsImpostor as PhysicsImpostor,
         () => {
           //@ts-ignore
@@ -115,7 +119,8 @@ class Projectile {
     }
 
     // Destroy when projectile hits any physics object
-    projectile.physicsImpostor.registerOnPhysicsCollide(
+    const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
+    projectileImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors as PhysicsImpostor[],
       (collider: PhysicsImpostor) => {
         explosion(scene, collider.getObjectCenter());
@@ -131,10 +136,8 @@ class Projectile {
       projectileGlobals.speed * level * -1
     ) as Vector3;
     const speed = originMesh.getDirection(forwardLocal) as Vector3;
-    projectile.physicsImpostor.applyImpulse(
-      speed,
-      projectile.getAbsolutePosition()
-    );
+    const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
+    projectileImpostor.applyImpulse(speed, projectile.getAbsolutePosition());
   }
 
   destroyProjectile(projectile: Mesh, scene: Scene) {
@@ -149,7 +152,8 @@ class Projectile {
       mapGlobals.allImpostors = [];
       //@ts-ignore
       delete projectile.hitPoints;
-      projectile.physicsImpostor.dispose();
+      const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
+      projectileImpostor.dispose();
 
       projectile.dispose();
 

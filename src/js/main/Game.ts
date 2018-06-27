@@ -33,31 +33,32 @@ runtime.install({
 class Game {
   public canvas: HTMLCanvasElement;
   public engine: Engine;
-  public scene: Scene;
+  public scene!: Scene;
 
   constructor(canvasElement: string) {
     this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
     this.engine = new Engine(this.canvas, true, {
-      // preserveDrawingBuffer: true,
-      // stencil: true,
-      // doNotHandleContextLost: true
+      preserveDrawingBuffer: true,
+      stencil: true,
+      doNotHandleContextLost: true
     });
-    // this.engine.enableOfflineSupport = false;
-    // this.engine.disableManifestCheck = true;
+    this.engine.enableOfflineSupport = false;
+    this.engine.disableManifestCheck = true;
   }
 
   createScene(): void {
     this.scene = new Scene(this.engine);
-
-    FX.setVolume(1);
-    FX._tone.Master.mute = true;
-
+    this.scene.autoClear = false; // Color buffer
+    // this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
     if (mapGlobals.optimizerOn) {
-      const options = SceneOptimizerOptions.HighDegradationAllowed();
+      const options = SceneOptimizerOptions.LowDegradationAllowed(50);
       const optimizer = new SceneOptimizer(this.scene, options);
 
       optimizer.start();
     }
+
+    FX.setVolume(1);
+    FX._tone.Master.mute = true;
 
     this.scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());
 

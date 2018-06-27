@@ -1,6 +1,7 @@
 import * as FX from "../../vendor/wafxr/wafxr";
+import { Vector3, Mesh } from "babylonjs";
 
-function onDestroy(enemyPosition, level) {
+function onDestroy(enemyPosition: Vector3, level: number) {
   setTimeout(() => {
     FX.play({
       volume: -5,
@@ -18,7 +19,7 @@ function onDestroy(enemyPosition, level) {
   }, 3);
 }
 
-function shoot(projectile, level) {
+function shoot(projectile: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
       volume: -12,
@@ -39,7 +40,7 @@ function shoot(projectile, level) {
   }, 3);
 }
 
-function damage(enemy) {
+function damage(enemy: Mesh) {
   setTimeout(() => {
     FX.play({
       volume: -5,
