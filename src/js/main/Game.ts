@@ -10,7 +10,7 @@ import {
 } from "babylonjs";
 
 import * as FX from "../../vendor/wafxr/wafxr";
-import { mapGlobals } from "./globalVariables";
+import { mapGlobals, towerGlobals, enemyGlobals } from "./globalVariables";
 
 import { map } from "./map";
 
@@ -51,10 +51,23 @@ class Game {
     this.scene.autoClear = false; // Color buffer
     // this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
     if (mapGlobals.optimizerOn) {
-      const options = SceneOptimizerOptions.LowDegradationAllowed(50);
-      const optimizer = new SceneOptimizer(this.scene, options);
-
-      optimizer.start();
+      const originalGenerationRate = enemyGlobals.generationRate;
+      SceneOptimizer.OptimizeAsync(
+        this.scene,
+        SceneOptimizerOptions.ModerateDegradationAllowed(55),
+        function() {
+          // On success
+          mapGlobals.soundOn = true;
+          towerGlobals.shoot = true;
+          enemyGlobals.generationRate = originalGenerationRate;
+        },
+        function() {
+          // FPS target not reached
+          mapGlobals.soundOn = false;
+          towerGlobals.shoot = false;
+          enemyGlobals.generationRate = originalGenerationRate * 10;
+        }
+      );
     }
 
     FX.setVolume(1);
