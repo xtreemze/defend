@@ -1,21 +1,8 @@
-import {
-  Scene,
-  Mesh,
-  GPUParticleSystem,
-  Vector3,
-  Color4,
-  Texture,
-  ParticleSystem
-} from "babylonjs";
+import { Scene, Vector3, Color4, ParticleSystem } from "babylonjs";
 import { createTexture } from "./flare";
 function explosion(scene: Scene, projectilePosition: Vector3) {
   const node = projectilePosition;
 
-  // const particleSystem = new GPUParticleSystem(
-  //   "particles",
-  //   { capacity: 200 },
-  //   scene
-  // ) as GPUParticleSystem;
   const particleSystem = new ParticleSystem(
     "particles",
     120,
