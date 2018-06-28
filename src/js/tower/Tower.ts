@@ -15,16 +15,20 @@ import fire from "../projectile/Projectile";
 import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
 
-import { towerGlobals, enemyGlobals, mapGlobals } from "../main/globalVariables";
+import {
+  towerGlobals,
+  enemyGlobals,
+  mapGlobals
+} from "../main/globalVariables";
 
 class Tower {
   constructor(
     level: number = 1 | 2 | 3,
     position = { x: -25, z: -25 },
-    scene: Scene
+    scene: Scene,
   ) {
-    const name = `tower${level}` as string;
-
+    const name = `tower${towerGlobals.towerIndex}` as string;
+    towerGlobals.towerIndex += 1;
     let tower = MeshBuilder.CreateBox(
       name,
       {
@@ -176,6 +180,7 @@ class Tower {
     towerGlobals.allTowers.unshift(tower);
   }
 
+
   rayClearsTower(scene: any, ray: any, tower: Mesh) {
     let result = false as boolean;
     scene.pickWithRay(ray, (mesh: Mesh) => {
@@ -306,4 +311,4 @@ function towers(scene: Scene) {
   );
 }
 
-export {towers, Tower}
+export { towers, Tower };

@@ -44,7 +44,9 @@ const towerGlobals = {
   livingColor: new Color3(0.09, 0.57, 0.42),
   range: 35,
   shoot: true,
-  raysOn: false
+  raysOn: false,
+  lifeTime: 10000,
+  towerIndex: 0
 };
 
 const enemyGlobals = {
