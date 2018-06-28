@@ -53,18 +53,21 @@ class Game {
     // this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
     if (mapGlobals.optimizerOn) {
       const originalGenerationRate = enemyGlobals.generationRate;
+      const originalTowerLifetime = towerGlobals.lifeTime;
       SceneOptimizer.OptimizeAsync(
         this.scene,
-        SceneOptimizerOptions.ModerateDegradationAllowed(55),
+        SceneOptimizerOptions.ModerateDegradationAllowed(60),
         function() {
           // On success
           towerGlobals.shoot = true;
           enemyGlobals.generationRate = originalGenerationRate;
+          towerGlobals.lifeTime = originalTowerLifetime;
         },
         function() {
           // FPS target not reached
           towerGlobals.shoot = false;
           enemyGlobals.generationRate = originalGenerationRate * 10;
+          towerGlobals.lifeTime = originalTowerLifetime / 5;
         }
       );
     }

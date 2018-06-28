@@ -66,7 +66,7 @@ function newTower(scene: Scene) {
     ) {
       towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
-      const thisTower = scene.getMeshByName(
+      scene.getMeshByName(
         `tower${towerGlobals.towerIndex}`
       ) as Mesh;
       new Tower(
@@ -77,9 +77,6 @@ function newTower(scene: Scene) {
         },
         scene
       ) as Tower;
-      setTimeout(() => {
-        thisTower.dispose();
-      }, towerGlobals.lifeTime);
     }
   }, BABYLON.PointerEventTypes._POINTERTAP);
 }
