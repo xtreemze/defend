@@ -92,20 +92,21 @@ class Tower {
 
         const towerCSG = outerCSG.subtract(innterCSG);
 
-        const towerTurret = towerCSG.toMesh(
+        const turretMesh = towerCSG.toMesh(
           "towerTurret" as any,
           null,
           scene,
           false
         ) as Mesh;
-        towerTurret.convertToUnIndexedMesh();
-        towerTurret.position = new Vector3(
+
+        turretMesh.convertToUnIndexedMesh();
+        turretMesh.position = new Vector3(
           position.x,
           towerGlobals.height * level * 1.5,
           position.z
         ) as Vector3;
 
-        const flash = MeshBuilder.CreateIcoSphere(
+        const flashMesh = MeshBuilder.CreateIcoSphere(
           name,
           {
             radius: level,
@@ -116,22 +117,22 @@ class Tower {
         ) as Mesh;
 
         const flashLocal = new Vector3(0, 0, 4) as Vector3;
-        const flashSpace = towerTurret.getDirection(flashLocal) as Vector3;
+        const flashSpace = turretMesh.getDirection(flashLocal) as Vector3;
 
-        flash.position = towerTurret.position.subtract(flashSpace) as Vector3;
-        flash.rotation = towerTurret.rotation.clone() as Vector3;
-        towerTurret.material = towerMaterial as Material;
-        towerTurret.addChild(flash) as Mesh;
-        flash.isPickable = false as boolean;
-        flash.setEnabled(false);
-        flash.material = projectileMaterial as Material;
+        flashMesh.position = turretMesh.position.subtract(flashSpace) as Vector3;
+        flashMesh.rotation = turretMesh.rotation.clone() as Vector3;
+        turretMesh.material = towerMaterial as Material;
+        turretMesh.addChild(flashMesh) as Mesh;
+        flashMesh.isPickable = false as boolean;
+        flashMesh.setEnabled(false);
+        flashMesh.material = projectileMaterial as Material;
 
         const rayLocal = new Vector3(0, 0, -1);
         const rayLocalOrigin = new Vector3(0, 0, -5);
-        const turretDirection = towerTurret.getDirection(rayLocalOrigin);
+        const turretDirection = turretMesh.getDirection(rayLocalOrigin);
 
         const ray = new Ray(
-          flash.getAbsolutePosition(),
+          flashMesh.getAbsolutePosition(),
           turretDirection,
           towerGlobals.range * 3
         ) as Ray;
@@ -141,10 +142,10 @@ class Tower {
           rayHelper.show(scene, new Color3(1, 1, 0.3));
         }
         scene.registerBeforeRender(() => {
-          ray.direction = towerTurret.getDirection(rayLocal) as Vector3;
+          ray.direction = turretMesh.getDirection(rayLocal) as Vector3;
         });
 
-        this.enemyWatch(scene, tower, towerTurret, flash, ray, level);
+        this.enemyWatch(scene, tower, turretMesh, flashMesh, ray, level);
 
         const pillarMesh = MeshBuilder.CreateBox(name, {
           size: level / 2,
@@ -161,11 +162,11 @@ class Tower {
         pillarMesh.material = towerMaterial;
 
         Tags.AddTagsTo(pillarMesh, "tower");
-        Tags.AddTagsTo(towerTurret, "tower");
+        Tags.AddTagsTo(turretMesh, "tower");
 
         break;
 
-        this.destroyTower(baseMesh, pillarMesh, turretMesh, scene)
+        this.destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh)
       }
 
     tower.physicsImpostor = new PhysicsImpostor(
@@ -186,17 +187,18 @@ class Tower {
   }
 
 
-  destroyTower(scene: Scene, baseMesh: Mesh, pillarMesh?: Mesh, turretMesh?: Mesh) {
+  destroyTower(scene: Scene, baseMesh: Mesh, pillarMesh?: Mesh, turretMesh?: Mesh, flashMesh?: Mesh) {
 
     setTimeout(() => {
        const baseMeshImpostor = baseMesh.getPhysicsImpostor() as PhysicsImpostor;
       baseMeshImpostor.dispose();
       towerGlobals.allTowers = [];
       baseMesh.dispose();
-      if (pillarMesh) {
-      pillareMesh.dispose();
+      if (pillarMesh && turretMesh&& flashMesh) {
+      pillarMesh.dispose();
       turretMesh.dispose();
-      }|
+      flashMesh.dispose();
+      }
 
       towerGlobals.allTowers = scene.getMeshesByTags("tower");
     }, 1);
