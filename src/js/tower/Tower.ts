@@ -146,24 +146,27 @@ class Tower {
 
         this.enemyWatch(scene, tower, towerTurret, flash, ray, level);
 
-        const pillar = MeshBuilder.CreateBox(name, {
+        const pillarMesh = MeshBuilder.CreateBox(name, {
           size: level / 2,
           height: towerGlobals.height * level,
           updatable: false
         }) as Mesh;
-        pillar.position = new Vector3(
+
+        pillarMesh.position = new Vector3(
           position.x,
           towerGlobals.height * level * 0.5,
           position.z
         ) as Vector3;
 
-        pillar.material = towerMaterial;
+        pillarMesh.material = towerMaterial;
 
-        Tags.AddTagsTo(pillar, "tower");
+        Tags.AddTagsTo(pillarMesh, "tower");
         Tags.AddTagsTo(towerTurret, "tower");
 
         break;
-    }
+
+        this.destroyTower(baseMesh, pillarMesh, turretMesh, scene)
+      }
 
     tower.physicsImpostor = new PhysicsImpostor(
       tower,
@@ -178,8 +181,26 @@ class Tower {
     mapGlobals.allImpostors.unshift(tower.physicsImpostor);
     Tags.AddTagsTo(tower, "tower");
     towerGlobals.allTowers.unshift(tower);
+
+
   }
 
+
+  destroyTower(scene: Scene, baseMesh: Mesh, pillarMesh?: Mesh, turretMesh?: Mesh) {
+
+    setTimeout(() => {
+       const baseMeshImpostor = baseMesh.getPhysicsImpostor() as PhysicsImpostor;
+      baseMeshImpostor.dispose();
+      towerGlobals.allTowers = [];
+      baseMesh.dispose();
+      if (pillarMesh) {
+      pillareMesh.dispose();
+      turretMesh.dispose();
+      }|
+
+      towerGlobals.allTowers = scene.getMeshesByTags("tower");
+    }, 1);
+  }
 
   rayClearsTower(scene: any, ray: any, tower: Mesh) {
     let result = false as boolean;
