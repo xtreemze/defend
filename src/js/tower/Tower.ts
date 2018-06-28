@@ -299,9 +299,11 @@ function towerGenerator(scene: Scene, quantity: number = 0) {
   }
 }
 
-export default function towers(scene: Scene) {
+function towers(scene: Scene) {
   towerGenerator(
     scene,
     randomNumberRange(towerGlobals.minNumber, towerGlobals.maxNumber)
   );
 }
+
+export {towers, Tower}

@@ -9,7 +9,7 @@ const mapGlobals = {
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
-  impostorLimit: 100, // keep low for mobile device limits
+  impostorLimit: 1600, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 170,
@@ -49,11 +49,11 @@ const towerGlobals = {
 
 const enemyGlobals = {
   minNumber: mapGlobals.size / 300, // for one generation
-  maxNumber: mapGlobals.size / 30, // for one generation
-  limit: mapGlobals.size / 10,
+  maxNumber: mapGlobals.size / 10, // for one generation
+  limit: mapGlobals.size,
   originHeight: 30,
   generationRate: 8000, // milliseconds
-  decisionRate: 200, // milliseconds
+  decisionRate: 100, // milliseconds
   speed: 8000,
   mass: 2000,
   restitution: 0.2,

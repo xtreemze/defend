@@ -1,7 +1,8 @@
 import { projectileGlobals, mapGlobals } from "../main/globalVariables";
 import * as FX from "../../vendor/wafxr/wafxr";
-import enemies from "../enemy/Enemy";
-import towers from "../tower/Tower";
+import { enemies } from "../enemy/Enemy";
+import { towers } from "../tower/Tower";
+import { pick, newTower } from "./../interaction/pick";
 import { Scene } from "babylonjs";
 
 function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
@@ -49,17 +50,18 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
   canvasParent.insertBefore(title, canvas);
   canvasParent.insertBefore(startButton, canvas);
   const noSoundTimer = setTimeout(() => {
-    towers(scene);
+    // towers(scene);
     enemies(scene);
     const titleParent = title.parentNode as Node;
     titleParent.removeChild(title);
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
+    newTower(scene);
   }, 4000);
 
   startButton.addEventListener("click", () => {
     clearTimeout(noSoundTimer);
-    towers(scene);
+    // towers(scene);
     enemies(scene);
 
     mapGlobals.soundOn = true;
@@ -70,6 +72,7 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
     titleParent.removeChild(title);
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
+    newTower(scene);
   });
 }
 

@@ -20,6 +20,7 @@ import { titleScreen } from "../gui/titleScreen";
 import { cameras } from "./cameras";
 import { generateMaterials } from "../utility/materialGenerator";
 import { renderPipeline } from "./renderPipeline";
+
 runtime.install({
   onUpdating: () => {},
   onUpdateReady: () => {
@@ -77,6 +78,7 @@ class Game {
 
     generateMaterials(this.scene);
     map(this.scene);
+
     cameras(this.scene, this.canvas, this.engine);
 
     if (mapGlobals.diagnosticsOn) {

@@ -44,7 +44,7 @@ class Enemy {
   }
 
   nearTower(ray: any, scene: Scene) {
-    let result = true;
+    let result = false;
     for (const direction in ray) {
       if (ray.hasOwnProperty(direction)) {
         const directionRay = ray[direction];
@@ -54,7 +54,7 @@ class Enemy {
             const element = towerGlobals.allTowers[index];
 
             if (element === mesh) {
-              result = false;
+              result = true;
             }
           }
         });
@@ -279,30 +279,27 @@ class Enemy {
 
   decide(sphereMesh: Mesh, scene: Scene, ray: any) {
     const decideToMove = { up: true, left: true, right: true, down: true };
-    if (
-      sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.up, scene)
-    ) {
+    if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 && this.nearTower(ray.up, scene) === false) {
       decideToMove.down = false;
       decideToMove.up = true;
     }
     if (
       sphereMesh.position.z >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.down, scene)
+      this.nearTower(ray.down, scene) === false
     ) {
       decideToMove.up = false;
       decideToMove.down = true;
     }
     if (
       sphereMesh.position.x >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.left, scene)
+      this.nearTower(ray.left, scene) === false
     ) {
       decideToMove.right = false;
       decideToMove.left = true;
     }
     if (
       sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.right, scene)
+      this.nearTower(ray.right, scene) === false
     ) {
       decideToMove.left = false;
       decideToMove.right = true;
@@ -346,7 +343,7 @@ function enemyGenerator(scene: Scene, quantity: number = 0) {
   }
 }
 
-export default function enemies(scene: Scene) {
+function enemies(scene: Scene) {
   enemyGenerator(scene, enemyGlobals.minNumber);
 
   let deltaTime = Date.now();
@@ -363,3 +360,5 @@ export default function enemies(scene: Scene) {
     }
   });
 }
+
+export {enemies, Enemy}
