@@ -47,6 +47,8 @@ function map(scene: Scene) {
     scene
   ) as Mesh;
 
+  atmosphere.isPickable = false;
+
   atmosphere.flipFaces(true);
   atmosphere.freezeWorldMatrix(); // freeze ground
 

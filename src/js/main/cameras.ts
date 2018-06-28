@@ -62,10 +62,10 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   camera3.attachControl(canvas, true);
   camera4.attachControl(canvas, true);
   // Attach Control
-  camera.upperRadiusLimit = mapGlobals.size / 2;
-  camera2.upperRadiusLimit = mapGlobals.size / 2;
-  camera3.upperRadiusLimit = mapGlobals.size / 2;
-  camera4.upperRadiusLimit = mapGlobals.size / 2;
+  camera.upperRadiusLimit = mapGlobals.size / 3;
+  camera2.upperRadiusLimit = mapGlobals.size / 3;
+  camera3.upperRadiusLimit = mapGlobals.size / 3;
+  camera4.upperRadiusLimit = mapGlobals.size / 3;
 
   const rotateCamera = (camera: ArcRotateCamera) => {
     scene.registerBeforeRender(() => {
