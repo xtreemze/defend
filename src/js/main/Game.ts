@@ -59,13 +59,13 @@ class Game {
         SceneOptimizerOptions.ModerateDegradationAllowed(60),
         function() {
           // On success
-          towerGlobals.shoot = true;
+          // towerGlobals.shoot = true;
           enemyGlobals.generationRate = originalGenerationRate;
           towerGlobals.lifeTime = originalTowerLifetime;
         },
         function() {
           // FPS target not reached
-          towerGlobals.shoot = false;
+          // towerGlobals.shoot = false;
           enemyGlobals.generationRate = originalGenerationRate * 10;
           towerGlobals.lifeTime = originalTowerLifetime / 5;
         }
