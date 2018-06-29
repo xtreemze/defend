@@ -12,7 +12,7 @@ import {
   CSG
 } from "babylonjs";
 import { towerGlobals, mapGlobals } from "../main/globalVariables";
-import { enemyWatch, destroyTower } from "./Tower";
+import { trackSpheres, destroyTower } from "./Tower";
 export function revive(
   scene: Scene,
   tower: Mesh,
@@ -33,7 +33,7 @@ export function revive(
     case 1:
     default:
       setTimeout(() => {
-        destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
+        destroyTower(scene, tower);
       }, towerGlobals.lifeTime);
       break;
     case 2:
@@ -109,7 +109,7 @@ export function revive(
       scene.registerBeforeRender(() => {
         ray.direction = turretMesh.getDirection(rayLocal) as Vector3;
       });
-      enemyWatch(scene, tower, turretMesh, flashMesh, ray, level);
+      trackSpheres(scene, tower, turretMesh, flashMesh, ray, level);
       const pillarMesh = MeshBuilder.CreateBox(name, {
         size: level / 2,
         height: towerGlobals.height * level,

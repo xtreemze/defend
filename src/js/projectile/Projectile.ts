@@ -30,139 +30,143 @@ class Projectile {
   }
 }
 
-  function startLife(
-    scene: Scene,
-    originMesh: Mesh,
-    level: number = 1 | 2 | 3,
-    projectile: Mesh
-  ) {
-    const projectileMaterial = scene.getMaterialByID(
-      "projectileMaterial"
-    ) as Material;
-    const forwardLocal = new Vector3(0, 0, 5);
-    const space = originMesh.getDirection(forwardLocal) as Vector3;
+function startLife(
+  scene: Scene,
+  originMesh: Mesh,
+  level: number = 1 | 2 | 3,
+  projectile: Mesh
+) {
+  const projectileMaterial = scene.getMaterialByID(
+    "projectileMaterial"
+  ) as Material;
+  const forwardLocal = new Vector3(0, 0, 5);
+  const space = originMesh.getDirection(forwardLocal) as Vector3;
 
-    projectile.position = originMesh.position.subtract(space) as Vector3;
-    //@ts-ignore
-    projectile.hitPoints = (level +
-      level * projectileGlobals.baseHitPoints) as number;
-    projectile.material = projectileMaterial as Material;
+  projectile.position = originMesh.position.subtract(space) as Vector3;
+  //@ts-ignore
+  projectile.hitPoints = (level +
+    level * projectileGlobals.baseHitPoints) as number;
+  projectile.material = projectileMaterial as Material;
 
-    // For Physics
-    projectile.physicsImpostor = new PhysicsImpostor(
-      projectile,
-      PhysicsImpostor.BoxImpostor,
-      {
-        mass: projectileGlobals.mass * level,
-        restitution: projectileGlobals.restitution,
-        friction: 1
-      },
-      scene
-    ) as PhysicsImpostor;
+  // For Physics
+  projectile.physicsImpostor = new PhysicsImpostor(
+    projectile,
+    PhysicsImpostor.BoxImpostor,
+    {
+      mass: projectileGlobals.mass * level,
+      restitution: projectileGlobals.restitution,
+      friction: 1
+    },
+    scene
+  ) as PhysicsImpostor;
 
-    mapGlobals.allImpostors.unshift(projectile.physicsImpostor) as number;
+  mapGlobals.allImpostors.unshift(projectile.physicsImpostor) as number;
 
-    const clonedRotation = originMesh.rotation.clone();
+  const clonedRotation = originMesh.rotation.clone();
 
-    projectile.rotation.copyFrom(clonedRotation);
+  projectile.rotation.copyFrom(clonedRotation);
 
-    intersectPhys(scene, projectile); // Detects collissions with enemies
-    impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
+  intersectPhys(scene, projectile); // Detects collissions with enemies
+  impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
-    if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
-      setTimeout(() => {
-        mapGlobals.projectileSounds -= 1;
-      }, mapGlobals.soundDelay);
-
-      mapGlobals.projectileSounds += 1;
-
-      if (mapGlobals.soundOn) shoot(projectile, level);
-    }
+  if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
     setTimeout(() => {
-      destroyProjectile(projectile, scene);
-    }, projectileGlobals.lifeTime);
+      mapGlobals.projectileSounds -= 1;
+    }, mapGlobals.soundDelay);
+
+    mapGlobals.projectileSounds += 1;
+
+    if (mapGlobals.soundOn) shoot(projectile, level);
   }
+  setTimeout(() => {
+    destroyProjectile(projectile, scene);
+  }, projectileGlobals.lifeTime);
+}
 
-  function intersectPhys(scene: Scene, projectile: Mesh) {
-    const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
-    const enemyMaterial = scene.getMaterialByID("enemyMaterial") as Material;
+function intersectPhys(scene: Scene, projectile: Mesh) {
+  const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
+  const enemyMaterial = scene.getMaterialByID("enemyMaterial") as Material;
 
-    // Enemies ONLY
-    for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
-      const enemy = enemyGlobals.allEnemies[index] as Mesh;
-      const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
-      projectileImpostor.registerOnPhysicsCollide(
-        enemy.physicsImpostor as PhysicsImpostor,
-        () => {
-          //@ts-ignore
-          enemy.hitPoints -= projectile.hitPoints;
-          enemy.material = hitMaterial as Material;
-
-          setTimeout(() => {
-            enemy.material = enemyMaterial as Material;
-          }, 30);
-
-          if (
-            mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
-            //@ts-ignore
-            enemy.hitPoints > 0
-          ) {
-            setTimeout(() => {
-              mapGlobals.simultaneousSounds -= 1;
-            }, mapGlobals.soundDelay);
-
-            mapGlobals.simultaneousSounds += 1;
-
-            if (mapGlobals.soundOn) damage(enemy);
-          }
-        }
-      );
-    }
-
-    // Destroy when projectile hits any physics object
+  // Enemies ONLY
+  for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
+    const enemy = enemyGlobals.allEnemies[index] as Mesh;
     const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
     projectileImpostor.registerOnPhysicsCollide(
-      mapGlobals.allImpostors as PhysicsImpostor[],
-      (collider: PhysicsImpostor) => {
-        explosion(scene, collider.getObjectCenter());
-        destroyProjectile(projectile, scene);
+      enemy.physicsImpostor as PhysicsImpostor,
+      () => {
+        //@ts-ignore
+        enemy.hitPoints -= projectile.hitPoints;
+        enemy.material = hitMaterial as Material;
+
+        setTimeout(() => {
+          enemy.material = enemyMaterial as Material;
+        }, 30);
+
+        if (
+          mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
+          //@ts-ignore
+          enemy.hitPoints > 0
+        ) {
+          setTimeout(() => {
+            mapGlobals.simultaneousSounds -= 1;
+          }, mapGlobals.soundDelay);
+
+          mapGlobals.simultaneousSounds += 1;
+
+          if (mapGlobals.soundOn) damage(enemy);
+        }
       }
     );
   }
 
-  function impulsePhys(originMesh: Mesh, projectile: Mesh, level: number = 1 | 2 | 3) {
-    const forwardLocal = new Vector3(
-      0,
-      0,
-      projectileGlobals.speed * level * -1
-    ) as Vector3;
-    const speed = originMesh.getDirection(forwardLocal) as Vector3;
-    const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
-    projectileImpostor.applyImpulse(speed, projectile.getAbsolutePosition());
-  }
+  // Destroy when projectile hits any physics object
+  const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
+  projectileImpostor.registerOnPhysicsCollide(
+    mapGlobals.allImpostors as PhysicsImpostor[],
+    (collider: PhysicsImpostor) => {
+      explosion(scene, collider.getObjectCenter());
+      destroyProjectile(projectile, scene);
+    }
+  );
+}
 
-  function destroyProjectile(projectile: Mesh, scene: Scene) {
-    const physicsEngine = scene.getPhysicsEngine() as PhysicsEngine;
+function impulsePhys(
+  originMesh: Mesh,
+  projectile: Mesh,
+  level: number = 1 | 2 | 3
+) {
+  const forwardLocal = new Vector3(
+    0,
+    0,
+    projectileGlobals.speed * level * -1
+  ) as Vector3;
+  const speed = originMesh.getDirection(forwardLocal) as Vector3;
+  const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
+  projectileImpostor.applyImpulse(speed, projectile.getAbsolutePosition());
+}
 
-    projectile.setEnabled(false);
+function destroyProjectile(projectile: Mesh, scene: Scene) {
+  const physicsEngine = scene.getPhysicsEngine() as PhysicsEngine;
 
+  projectile.setEnabled(false);
+
+  //@ts-ignore
+  projectile.hitPoints = 0;
+
+  setTimeout(() => {
+    mapGlobals.allImpostors = [];
     //@ts-ignore
-    projectile.hitPoints = 0;
+    delete projectile.hitPoints;
+    const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
+    projectileImpostor.dispose();
 
-    setTimeout(() => {
-      mapGlobals.allImpostors = [];
-      //@ts-ignore
-      delete projectile.hitPoints;
-      const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
-      projectileImpostor.dispose();
+    projectile.dispose();
 
-      projectile.dispose();
+    mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
+  }, 1);
+}
 
-      mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
-    }, 1);
-  }
-
-export default function fire(
+export default function fireProjectile(
   scene: Scene,
   originMesh: Mesh,
   level: number = 1 | 2 | 3

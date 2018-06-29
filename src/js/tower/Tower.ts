@@ -1,7 +1,7 @@
 import { revive } from "./revive";
 
 import { Scene, Vector3, MeshBuilder, Mesh, PhysicsImpostor } from "babylonjs";
-import fire from "../projectile/Projectile";
+import fireProjectile from "../projectile/Projectile";
 import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
 
@@ -33,7 +33,7 @@ class Tower {
   }
 }
 
-function rayClearsTower(scene: any, ray: any, tower: Mesh) {
+function shotClearsTower(scene: any, ray: any, tower: Mesh) {
   let result = false as boolean;
   scene.pickWithRay(ray, (mesh: Mesh) => {
     for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
@@ -51,7 +51,7 @@ function rotateTurret(sortedDistances: any, towerTurret: Mesh) {
   towerTurret.lookAt(sortedDistances.position);
 }
 
-export function enemyWatch(
+function trackSpheres(
   scene: Scene,
   tower: Mesh,
   towerTurret: Mesh,
@@ -77,7 +77,7 @@ export function enemyWatch(
           enemy.hitPoints >= enemyGlobals.deadHitPoints &&
           Vector3.Distance(towerTurret.position, enemy.position) <=
             towerGlobals.range * 3 &&
-          rayClearsTower(scene, ray, tower)
+          shotClearsTower(scene, ray, tower)
         ) {
           enemyDistances.push([
             Vector3.Distance(towerTurret.position, enemy.position),
@@ -95,12 +95,12 @@ export function enemyWatch(
           deltaTime = Date.now();
           setTimeout(() => {
             flash.setEnabled(false);
-          }, 4);
+          }, 10);
 
           flash.setEnabled(true);
 
           setTimeout(() => {
-            fire(scene, towerTurret, level);
+            fireProjectile(scene, towerTurret, level);
           }, 1);
         }
       }
@@ -156,26 +156,24 @@ function towerGenerator(scene: Scene, quantity: number = 0) {
   }
 }
 
-export function destroyTower(
+function destroyTower(
   scene: Scene,
   baseMesh: Mesh,
   pillarMesh?: Mesh,
   turretMesh?: Mesh,
   flashMesh?: Mesh
 ) {
-  setTimeout(() => {
-    const baseMeshImpostor = baseMesh.getPhysicsImpostor() as PhysicsImpostor;
-    baseMeshImpostor.dispose();
-    towerGlobals.allTowers = [];
-    baseMesh.dispose();
-    if (pillarMesh && turretMesh && flashMesh) {
-      pillarMesh.dispose();
-      turretMesh.dispose();
-      flashMesh.dispose();
-    }
+  const baseMeshImpostor = baseMesh.getPhysicsImpostor() as PhysicsImpostor;
+  baseMeshImpostor.dispose();
+  towerGlobals.allTowers = [];
+  baseMesh.dispose();
+  if (pillarMesh && turretMesh && flashMesh) {
+    pillarMesh.dispose();
+    turretMesh.dispose();
+    flashMesh.dispose();
+  }
 
-    towerGlobals.allTowers = scene.getMeshesByTags("tower");
-  }, 1);
+  towerGlobals.allTowers = scene.getMeshesByTags("tower");
 }
 
 function towers(scene: Scene) {
@@ -185,4 +183,4 @@ function towers(scene: Scene) {
   );
 }
 
-export { towers, Tower };
+export { towers, Tower, trackSpheres, destroyTower };
