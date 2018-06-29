@@ -66,9 +66,6 @@ function newTower(scene: Scene) {
     ) {
       towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
-      scene.getMeshByName(
-        `tower${towerGlobals.towerIndex}`
-      ) as Mesh;
       new Tower(
         randomNumberRange(1, 3),
         {

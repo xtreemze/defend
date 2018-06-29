@@ -3,13 +3,13 @@ import { Color3, PhysicsImpostor, Mesh } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 1600, // map radius
+  size: 1000, // map radius
   optimizerOn: true,
   cameraCutDelay: 4200,
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
-  impostorLimit: 1600, // keep low for mobile device limits
+  impostorLimit: 1000, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 170,

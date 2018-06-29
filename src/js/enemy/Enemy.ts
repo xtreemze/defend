@@ -243,7 +243,7 @@ class Enemy {
 
     let deltaTime = Date.now();
 
-    const loopTimer = scene.registerAfterRender(() => {
+    const loopTimer = sphereMesh.registerAfterRender(() => {
       if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
         deltaTime = Date.now();
         if (

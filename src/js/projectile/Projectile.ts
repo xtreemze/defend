@@ -26,10 +26,11 @@ class Projectile {
       updatable: false
     }) as Mesh;
     projectile.convertToUnIndexedMesh();
-    this.startLife(scene, originMesh, level, projectile);
+    startLife(scene, originMesh, level, projectile);
   }
+}
 
-  startLife(
+  function startLife(
     scene: Scene,
     originMesh: Mesh,
     level: number = 1 | 2 | 3,
@@ -65,8 +66,8 @@ class Projectile {
 
     projectile.rotation.copyFrom(clonedRotation);
 
-    this.intersectPhys(scene, projectile); // Detects collissions with enemies
-    this.impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
+    intersectPhys(scene, projectile); // Detects collissions with enemies
+    impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
     if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
       setTimeout(() => {
@@ -78,11 +79,11 @@ class Projectile {
       if (mapGlobals.soundOn) shoot(projectile, level);
     }
     setTimeout(() => {
-      this.destroyProjectile(projectile, scene);
+      destroyProjectile(projectile, scene);
     }, projectileGlobals.lifeTime);
   }
 
-  intersectPhys(scene: Scene, projectile: Mesh) {
+  function intersectPhys(scene: Scene, projectile: Mesh) {
     const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
     const enemyMaterial = scene.getMaterialByID("enemyMaterial") as Material;
 
@@ -124,12 +125,12 @@ class Projectile {
       mapGlobals.allImpostors as PhysicsImpostor[],
       (collider: PhysicsImpostor) => {
         explosion(scene, collider.getObjectCenter());
-        this.destroyProjectile(projectile, scene);
+        destroyProjectile(projectile, scene);
       }
     );
   }
 
-  impulsePhys(originMesh: Mesh, projectile: Mesh, level: number = 1 | 2 | 3) {
+  function impulsePhys(originMesh: Mesh, projectile: Mesh, level: number = 1 | 2 | 3) {
     const forwardLocal = new Vector3(
       0,
       0,
@@ -140,7 +141,7 @@ class Projectile {
     projectileImpostor.applyImpulse(speed, projectile.getAbsolutePosition());
   }
 
-  destroyProjectile(projectile: Mesh, scene: Scene) {
+  function destroyProjectile(projectile: Mesh, scene: Scene) {
     const physicsEngine = scene.getPhysicsEngine() as PhysicsEngine;
 
     projectile.setEnabled(false);
@@ -160,7 +161,6 @@ class Projectile {
       mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
     }, 1);
   }
-}
 
 export default function fire(
   scene: Scene,
