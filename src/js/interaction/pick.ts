@@ -1,12 +1,9 @@
 import {
-  MeshBuilder,
-  Mesh,
   Scene,
   PointerInfo,
-  PointerEventTypes
 } from "babylonjs";
-import { Tower } from "./../tower/Tower";
-import { towerGlobals } from "./../main/globalVariables";
+import { Tower } from "../tower/Tower";
+import { towerGlobals } from "../main/globalVariables";
 import randomNumberRange from "../utility/randomNumberRange";
 
 function newTower(scene: Scene) {

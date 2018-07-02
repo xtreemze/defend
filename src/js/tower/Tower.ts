@@ -4,7 +4,7 @@ import { Scene, Vector3, MeshBuilder, Mesh, PhysicsImpostor } from "babylonjs";
 import fireProjectile from "../projectile/Projectile";
 import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
-
+import { addTower } from "../main/sound";
 import {
   towerGlobals,
   enemyGlobals,
@@ -30,6 +30,7 @@ class Tower {
     ) as Mesh;
     tower.convertToUnIndexedMesh();
     revive(scene, tower, position, level);
+    addTower(tower, level);
   }
 }
 
