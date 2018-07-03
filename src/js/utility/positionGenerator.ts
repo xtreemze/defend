@@ -11,6 +11,7 @@ function randomNumber(): number {
     randomNumberRange(-mapGlobals.size / 20, mapGlobals.size / 20) * 10 + 5
   );
 }
+
 export default function positionGenerator(): coordinates {
   const x = randomNumber();
 

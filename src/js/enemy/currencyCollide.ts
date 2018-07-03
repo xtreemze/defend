@@ -39,7 +39,11 @@ function currencyCollide(
 
       mapGlobals.simultaneousSounds += 1;
 
-      if (mapGlobals.soundOn) damage(currencyMesh);
+      if (mapGlobals.soundOn){
+        // @ts-ignore
+        currencyMesh.hitPoints = economyGlobals.currentBalance / 5000;
+
+        damage(currencyMesh);}
     }
   });
 }
