@@ -17,7 +17,7 @@ function renderPipeline(scene: Scene) {
       "default", // The name of the pipeline
       false,
       scene, // The scene instance,
-      [scene.cameras[0], scene.cameras[1], scene.cameras[2]] // The list of cameras to be attached to
+      [scene.cameras[0]] // The list of cameras to be attached to
     );
 
     // Depth of Field

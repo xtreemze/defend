@@ -50,6 +50,9 @@ function startLife(
     level * projectileGlobals.baseHitPoints) as number;
   projectile.material = projectileMaterial as Material;
 
+  //@ts-ignore
+  economyGlobals.currentBalance -= projectile.hitPoints / 2;
+  updateEconomy(scene);
   // For Physics
   projectile.physicsImpostor = new PhysicsImpostor(
     projectile,
@@ -98,6 +101,7 @@ function intersectPhys(scene: Scene, projectile: Mesh) {
       () => {
         //@ts-ignore
         enemy.hitPoints -= projectile.hitPoints;
+        //@ts-ignore
 
         enemy.material = hitMaterial as Material;
 

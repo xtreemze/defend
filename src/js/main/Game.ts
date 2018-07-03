@@ -18,6 +18,7 @@ import runtime = require("offline-plugin/runtime");
 
 import { titleScreen } from "../gui/titleScreen";
 import { cameras } from "./cameras";
+import { arcCamera } from "./onlyArc";
 import { generateMaterials } from "../utility/materialGenerator";
 import { renderPipeline } from "./renderPipeline";
 
@@ -82,7 +83,8 @@ class Game {
     generateMaterials(this.scene);
     map(this.scene);
 
-    cameras(this.scene, this.canvas, this.engine);
+    // cameras(this.scene, this.canvas, this.engine);
+    arcCamera(this.scene, this.canvas, this.engine);
 
     if (mapGlobals.diagnosticsOn) {
       this.scene.debugLayer.show({ popup: true, initialTab: 2 });

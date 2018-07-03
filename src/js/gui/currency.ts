@@ -66,6 +66,14 @@ function displayEconomy(scene: Scene) {
   currencyTower.position.y = -5;
 
   hitPointsMeter.material = scene.getMaterialByName("enemyMaterial");
+  economyGlobals.currentBalance = 0;
+  const interval1 = setInterval(() => {
+    economyGlobals.currentBalance += 1;
+    updateEconomy(scene);
+    if (economyGlobals.currentBalance >= 1000) {
+      clearInterval(interval1);
+    }
+  }, 50);
 }
 
 function updateEconomy(scene: Scene) {
@@ -76,7 +84,7 @@ function updateEconomy(scene: Scene) {
 
   const currencyMeter = scene.getMeshByName("currencyMeter");
   //@ts-ignore
-  const scaleRate = 1 / (1000 / economyGlobals.currentBalance);
+  const scaleRate = 1 / (2000 / economyGlobals.currentBalance);
 
   //@ts-ignore
   currencyMeter.scaling = new BABYLON.Vector3(scaleRate, 1, scaleRate);
