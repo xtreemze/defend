@@ -55,7 +55,7 @@ const enemyGlobals = {
   limit: mapGlobals.size,
   originHeight: 30,
   generationRate: 8000, // milliseconds
-  decisionRate: 500, // milliseconds
+  decisionRate: 400, // milliseconds
   speed: 14000,
   mass: 2000,
   restitution: 0.3,

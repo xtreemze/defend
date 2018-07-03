@@ -103,7 +103,7 @@ function updateEconomy(scene: Scene) {
     message(scene, "Defeat", "&#8635;");
     economyGlobals.restartMessage = true;
   }
-  if (economyGlobals.currentBalance > economyGlobals.maxBalance) {
+  if (economyGlobals.currentBalance > economyGlobals.maxBalance && economyGlobals.restartMessage === false) {
     economyGlobals.currentBalance = economyGlobals.maxBalance;
     message(scene, "Victory", "&#8635;");
     economyGlobals.restartMessage = true;
