@@ -30,7 +30,7 @@ const projectileGlobals = {
   livingColor: new Color3(1, 0.5, 0.2),
   activeParticles: 0,
   particleLimit: 2,
-  particleIndex: 0;
+  particleIndex: 0
 };
 
 const towerGlobals = {
