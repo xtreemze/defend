@@ -55,10 +55,10 @@ const enemyGlobals = {
   limit: mapGlobals.size,
   originHeight: 30,
   generationRate: 8000, // milliseconds
-  decisionRate: 100, // milliseconds
-  speed: 8000,
+  decisionRate: 500, // milliseconds
+  speed: 14000,
   mass: 2000,
-  restitution: 0.2,
+  restitution: 0.3,
   jumpForce: 60,
   friction: 1,
   decayRate: 1, // hitpoints per decision
@@ -76,7 +76,10 @@ const enemyGlobals = {
 };
 
 const economyGlobals = {
-  currentBalance: 1000
+  initialBalance: 10000,
+  currentBalance: 1,
+  maxBalance: 50000,
+  restartMessage: false
 };
 
 const renderGlobals = {

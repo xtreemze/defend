@@ -1,6 +1,13 @@
 import { revive } from "./revive";
 
-import { Scene, Vector3, MeshBuilder, Mesh, PhysicsImpostor } from "babylonjs";
+import {
+  Scene,
+  Vector3,
+  MeshBuilder,
+  Mesh,
+  PhysicsImpostor,
+  PhysicsEngine
+} from "babylonjs";
 import fireProjectile from "../projectile/Projectile";
 import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
@@ -17,10 +24,13 @@ class Tower {
   constructor(
     level: number = 1 | 2 | 3,
     position = { x: -25, z: -25 },
-    scene: Scene
+    scene: Scene,
+    physicsEngine: PhysicsEngine
   ) {
     economyGlobals.currentBalance -= level * 10;
     updateEconomy(scene);
+
+
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
     towerGlobals.index += 1;
     let tower = MeshBuilder.CreateBox(
@@ -33,7 +43,7 @@ class Tower {
       scene
     ) as Mesh;
     tower.convertToUnIndexedMesh();
-    revive(scene, tower, position, level);
+    revive(scene, tower, position, level, physicsEngine);
     addTower(tower, level);
   }
 }
@@ -62,7 +72,8 @@ function trackSpheres(
   towerTurret: Mesh,
   flash: Mesh,
   ray: any,
-  level: number = 1 | 2 | 3
+  level: number = 1 | 2 | 3,
+  physicsEngine: PhysicsEngine
 ) {
   let deltaTime = Date.now();
 
@@ -86,12 +97,16 @@ function trackSpheres(
         ) {
           enemyDistances.push([
             Vector3.Distance(towerTurret.position, enemy.position),
-            [enemy]
+            enemy
           ]);
         }
       }
       if (enemyDistances.length > 0) {
-        rotateTurret(enemyDistances.sort()[0][1][0], towerTurret);
+        const nearestEnemy = enemyDistances.sort()[0][1] as Mesh;
+        const nearestEnemyImpostor = nearestEnemy.getPhysicsImpostor() as PhysicsImpostor;
+
+
+        rotateTurret(nearestEnemy, towerTurret);
 
         if (
           Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
@@ -105,15 +120,26 @@ function trackSpheres(
           flash.setEnabled(true);
 
           setTimeout(() => {
-            fireProjectile(scene, towerTurret, level);
-          }, 1);
+            fireProjectile(
+              scene,
+              towerTurret,
+              level,
+              nearestEnemy,
+              physicsEngine,
+              nearestEnemyImpostor
+            );
+          }, 5);
         }
       }
     }
   });
 }
 
-function towerGenerator(scene: Scene, quantity: number = 0) {
+function towerGenerator(
+  scene: Scene,
+  quantity: number = 0,
+  physicsEngine: PhysicsEngine
+) {
   let newLocation = positionGenerator();
 
   while (
@@ -133,7 +159,8 @@ function towerGenerator(scene: Scene, quantity: number = 0) {
       x: towerGlobals.occupiedSpaces[0][0],
       z: towerGlobals.occupiedSpaces[0][1]
     },
-    scene
+    scene,
+    physicsEngine
   ) as Tower;
 
   for (let index = 2; index < quantity; index += 1) {
@@ -156,7 +183,8 @@ function towerGenerator(scene: Scene, quantity: number = 0) {
         x: towerGlobals.occupiedSpaces[0][0],
         z: towerGlobals.occupiedSpaces[0][1]
       },
-      scene
+      scene,
+      physicsEngine
     ) as Tower;
   }
 }
@@ -168,10 +196,11 @@ function destroyTower(
   turretMesh?: Mesh,
   flashMesh?: Mesh
 ) {
-  const baseMeshImpostor = baseMesh.getPhysicsImpostor() as PhysicsImpostor;
-  baseMeshImpostor.dispose();
-  towerGlobals.allTowers = [];
+  if (baseMesh.physicsImpostor !== null){
+  baseMesh.physicsImpostor.dispose();
+  }
   baseMesh.dispose();
+  towerGlobals.allTowers = [];
   if (pillarMesh && turretMesh && flashMesh) {
     pillarMesh.dispose();
     turretMesh.dispose();
@@ -179,12 +208,14 @@ function destroyTower(
   }
 
   towerGlobals.allTowers = scene.getMeshesByTags("tower");
+  towerGlobals.occupiedSpaces.pop();
 }
 
-function towers(scene: Scene) {
+function towers(scene: Scene, physicsEngine: PhysicsEngine) {
   towerGenerator(
     scene,
-    randomNumberRange(towerGlobals.minNumber, towerGlobals.maxNumber)
+    randomNumberRange(towerGlobals.minNumber, towerGlobals.maxNumber),
+    physicsEngine
   );
 }
 

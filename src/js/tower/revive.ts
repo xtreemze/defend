@@ -9,7 +9,8 @@ import {
   Ray,
   RayHelper,
   Color3,
-  CSG
+  CSG,
+  PhysicsEngine
 } from "babylonjs";
 import { towerGlobals, mapGlobals } from "../main/globalVariables";
 import { trackSpheres, destroyTower } from "./Tower";
@@ -17,7 +18,8 @@ export function revive(
   scene: Scene,
   tower: Mesh,
   position: any,
-  level: number
+  level: number,
+  physicsEngine: PhysicsEngine
 ) {
   const towerMaterial = scene.getMaterialByID("towerMaterial") as Material;
   const projectileMaterial = scene.getMaterialByID(
@@ -109,7 +111,15 @@ export function revive(
       scene.registerBeforeRender(() => {
         ray.direction = turretMesh.getDirection(rayLocal) as Vector3;
       });
-      trackSpheres(scene, tower, turretMesh, flashMesh, ray, level);
+      trackSpheres(
+        scene,
+        tower,
+        turretMesh,
+        flashMesh,
+        ray,
+        level,
+        physicsEngine
+      );
       const pillarMesh = MeshBuilder.CreateBox("pillar" + name, {
         size: level / 2,
         height: towerGlobals.height * level,

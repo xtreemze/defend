@@ -21,6 +21,7 @@ import {
   mapGlobals,
   projectileGlobals
 } from "../main/globalVariables";
+import { currencyCollide } from "./currencyCollide";
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
@@ -71,7 +72,7 @@ class Enemy {
     sphereMesh: Mesh,
     loopTimer: any,
     level: number = 1 | 2 | 3,
-    hitPointsMeter: Mesh
+    hitPointsMeter: Mesh,
   ) {
     const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
 
@@ -95,8 +96,9 @@ class Enemy {
       //@ts-ignore
       sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
 
-      //@ts-ignore
-      const scaleRate = 1 / (level * enemyGlobals.baseHitPoints / sphereMesh.hitPoints);
+      const scaleRate =
+        //@ts-ignore
+        1 / ((level * enemyGlobals.baseHitPoints) / sphereMesh.hitPoints);
 
       //@ts-ignore
       hitPointsMeter.scaling = new BABYLON.Vector3(
@@ -129,7 +131,7 @@ class Enemy {
       );
       fragment.material = hitMaterial;
 
-      const fragImpostor = new PhysicsImpostor(
+      fragment.physicsImpostor = new PhysicsImpostor(
         fragment,
         PhysicsImpostor.BoxImpostor,
         {
@@ -139,14 +141,16 @@ class Enemy {
         }
       ) as PhysicsImpostor;
 
-      fragImpostor.applyImpulse(
+      fragment.physicsImpostor.applyImpulse(
         new Vector3(0, 2000 + enemyGlobals.mass * level * index, 0),
         fragment.getAbsolutePosition()
       );
 
       setTimeout(() => {
         fragment.dispose();
-        fragImpostor.dispose();
+        if (fragment.physicsImpostor !== null){
+        fragment.physicsImpostor.dispose();
+        }
         setTimeout(() => {}, 1);
       }, projectileGlobals.lifeTime * 5);
     }
@@ -223,6 +227,9 @@ class Enemy {
     diameter: number = 0,
     level: number = 1 | 2 | 3
   ) {
+    const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
+    const currencyMeshImpostor = currencyMesh.getPhysicsImpostor() as PhysicsImpostor
+
     //@ts-ignore
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
     const hitPointsMeter = MeshBuilder.CreateIcoSphere(
@@ -239,9 +246,11 @@ class Enemy {
       position.z
     );
 
-    sphereMesh.material = scene.getMaterialByID("hitMaterial");
+    sphereMesh.material = scene.getMaterialByID("hitMaterial") as Material;
 
-    hitPointsMeter.material = scene.getMaterialByID("enemyMaterial");
+    hitPointsMeter.material = scene.getMaterialByID(
+      "enemyMaterial"
+    ) as Material;
 
     sphereMesh.physicsImpostor = new PhysicsImpostor(
       sphereMesh,
@@ -252,7 +261,8 @@ class Enemy {
         friction: enemyGlobals.friction
       },
       scene
-    );
+    ) as PhysicsImpostor;
+
     mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
 
     const ray = this.makeRays(sphereMesh);
@@ -275,7 +285,10 @@ class Enemy {
           //@ts-ignore
           sphereMesh.hitPoints > enemyGlobals.deadHitPoints
         ) {
-          enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
+          enemyAi(
+            sphereMesh,
+            this.decide(sphereMesh, scene, ray),
+          );
         }
         this.checkHitPoints(
           scene,
@@ -286,19 +299,28 @@ class Enemy {
         );
       }
     });
+
+    currencyCollide(sphereMesh, scene, sphereMesh.physicsImpostor, currencyMesh, currencyMeshImpostor);
   }
 
-  destroyEnemy(sphereMesh: Mesh, loopTimer: any, scene: Scene) {
-    clearInterval(loopTimer);
-    loopTimer = null;
+  destroyEnemy(
+    sphereMesh: Mesh,
+    loopTimer: any,
+    scene: Scene
+  ) {
+    enemyGlobals.occupiedSpaces.pop();
     //@ts-ignore
     sphereMesh.hitPoints = 0;
+
+    clearInterval(loopTimer);
+    loopTimer = null;
     //@ts-ignore
     delete sphereMesh.hitPoints;
 
     setTimeout(() => {
-      const sphereMeshImpostor = sphereMesh.getPhysicsImpostor() as PhysicsImpostor;
-      sphereMeshImpostor.dispose();
+      if (sphereMesh.physicsImpostor !== null) {
+      sphereMesh.physicsImpostor.dispose();
+      }
       enemyGlobals.allEnemies = [];
       sphereMesh.dispose();
 
@@ -309,29 +331,33 @@ class Enemy {
   decide(sphereMesh: Mesh, scene: Scene, ray: any) {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (
-      sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.up, scene) === false
+      sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1
+      // &&
+      // this.nearTower(ray.up, scene) === false
     ) {
       decideToMove.down = false;
       decideToMove.up = true;
     }
     if (
-      sphereMesh.position.z >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.down, scene) === false
+      sphereMesh.position.z >= enemyGlobals.boundaryLimit
+      // &&
+      // this.nearTower(ray.down, scene) === false
     ) {
       decideToMove.up = false;
       decideToMove.down = true;
     }
     if (
-      sphereMesh.position.x >= enemyGlobals.boundaryLimit &&
-      this.nearTower(ray.left, scene) === false
+      sphereMesh.position.x >= enemyGlobals.boundaryLimit
+      // &&
+      // this.nearTower(ray.left, scene) === false
     ) {
       decideToMove.right = false;
       decideToMove.left = true;
     }
     if (
-      sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1 &&
-      this.nearTower(ray.right, scene) === false
+      sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1
+      //  &&
+      // this.nearTower(ray.right, scene) === false
     ) {
       decideToMove.left = false;
       decideToMove.right = true;
@@ -369,9 +395,6 @@ function enemyGenerator(scene: Scene, quantity: number = 0) {
       scene
     ) as Enemy;
 
-    if (enemyGlobals.occupiedSpaces.length > enemyGlobals.limit) {
-      enemyGlobals.occupiedSpaces.pop();
-    }
   }
 }
 

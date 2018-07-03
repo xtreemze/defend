@@ -50,7 +50,7 @@ class Game {
 
   createScene(): void {
     this.scene = new Scene(this.engine);
-    this.scene.autoClear = false; // Color buffer
+    // this.scene.autoClear = false; // Color buffer
     // this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
     if (mapGlobals.optimizerOn) {
       const originalGenerationRate = enemyGlobals.generationRate;
@@ -114,6 +114,6 @@ window.addEventListener("DOMContentLoaded", () => {
   renderPipeline(game.scene);
 
   window.addEventListener("load", () => {
-    titleScreen(game.scene, game.canvas);
+    titleScreen(game.scene, game.canvas, game.scene.getPhysicsEngine());
   });
 });

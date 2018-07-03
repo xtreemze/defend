@@ -6,10 +6,14 @@ interface coordinates {
   z: number;
 }
 
+function randomNumber(): number {
+  return Math.round(
+    randomNumberRange(-mapGlobals.size / 20, mapGlobals.size / 20) * 10 + 5
+  );
+}
 export default function positionGenerator(): coordinates {
-  const x =
-    randomNumberRange(-mapGlobals.size / 100, mapGlobals.size / 100) * 10 + 5;
-  const z =
-    randomNumberRange(-mapGlobals.size / 100, mapGlobals.size / 100) * 10 + 5;
+  const x = randomNumber();
+
+  const z = randomNumber();
   return { x, z };
 }

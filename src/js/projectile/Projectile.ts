@@ -9,7 +9,6 @@ import {
 } from "babylonjs";
 import {
   projectileGlobals,
-  enemyGlobals,
   mapGlobals,
   economyGlobals
 } from "../main/globalVariables";
@@ -18,7 +17,14 @@ import { explosion } from "../enemy/explodeParticle";
 import { updateEconomy } from "../gui/currency";
 
 class Projectile {
-  constructor(originMesh: Mesh, scene: Scene, level: number = 1 | 2 | 3) {
+  constructor(
+    originMesh: Mesh,
+    scene: Scene,
+    level: number = 1 | 2 | 3,
+    nearestEnemy: Mesh,
+    physicsEngine: PhysicsEngine,
+    nearestEnemyImpostor: PhysicsImpostor
+  ) {
     const name = `projectile${level}` as string;
 
     const projectile = MeshBuilder.CreateBox(name, {
@@ -27,8 +33,18 @@ class Projectile {
       width: level / 2,
       updatable: false
     }) as Mesh;
+
     projectile.convertToUnIndexedMesh();
-    startLife(scene, originMesh, level, projectile);
+
+    startLife(
+      scene,
+      originMesh,
+      level,
+      projectile,
+      nearestEnemy,
+      physicsEngine,
+      nearestEnemyImpostor
+    );
   }
 }
 
@@ -36,7 +52,10 @@ function startLife(
   scene: Scene,
   originMesh: Mesh,
   level: number = 1 | 2 | 3,
-  projectile: Mesh
+  projectile: Mesh,
+  nearestEnemy: Mesh,
+  physicsEngine: PhysicsEngine,
+  enemyImpostor: PhysicsImpostor
 ) {
   const projectileMaterial = scene.getMaterialByID(
     "projectileMaterial"
@@ -50,9 +69,6 @@ function startLife(
     level * projectileGlobals.baseHitPoints) as number;
   projectile.material = projectileMaterial as Material;
 
-  //@ts-ignore
-  economyGlobals.currentBalance -= projectile.hitPoints / 2;
-  updateEconomy(scene);
   // For Physics
   projectile.physicsImpostor = new PhysicsImpostor(
     projectile,
@@ -71,7 +87,8 @@ function startLife(
 
   projectile.rotation.copyFrom(clonedRotation);
 
-  intersectPhys(scene, projectile); // Detects collissions with enemies
+  hitEffect(scene, projectile, nearestEnemy, enemyImpostor); // Detects collissions with enemies
+  destroyOnCollide(scene, projectile, physicsEngine); // Detects collissions with enemies
   impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
   if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
@@ -84,60 +101,65 @@ function startLife(
     if (mapGlobals.soundOn) shoot(projectile, level);
   }
   setTimeout(() => {
-    destroyProjectile(projectile, scene);
+    destroyProjectile(projectile, physicsEngine);
   }, projectileGlobals.lifeTime);
 }
 
-function intersectPhys(scene: Scene, projectile: Mesh) {
-  const hitMaterial = scene.getMaterialByID("damagedMaterial") as Material;
-  const enemyMaterial = scene.getMaterialByID("hitMaterial") as Material;
-
-  // Enemies ONLY
-  for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
-    const enemy = enemyGlobals.allEnemies[index] as Mesh;
-    const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
-    projectileImpostor.registerOnPhysicsCollide(
-      enemy.physicsImpostor as PhysicsImpostor,
-      () => {
-        //@ts-ignore
-        enemy.hitPoints -= projectile.hitPoints;
-        //@ts-ignore
-
-        enemy.material = hitMaterial as Material;
-
-        //@ts-ignore
-        economyGlobals.currentBalance += projectile.hitPoints;
-        updateEconomy(scene);
-        setTimeout(() => {
-          enemy.material = enemyMaterial as Material;
-        }, 30);
-
-        if (
-          mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
-          //@ts-ignore
-          enemy.hitPoints > 0
-        ) {
-          setTimeout(() => {
-            mapGlobals.simultaneousSounds -= 1;
-          }, mapGlobals.soundDelay);
-
-          mapGlobals.simultaneousSounds += 1;
-
-          if (mapGlobals.soundOn) damage(enemy);
-        }
+function destroyOnCollide(
+  scene: Scene,
+  projectile: Mesh,
+  physicsEngine: PhysicsEngine
+) {
+  if (projectile.physicsImpostor !== null) {
+    projectile.physicsImpostor.registerOnPhysicsCollide(
+      mapGlobals.allImpostors as PhysicsImpostor[],
+      (collider: PhysicsImpostor) => {
+        destroyProjectile(projectile, physicsEngine);
+        explosion(scene, collider.getObjectCenter());
       }
     );
   }
+}
 
-  // Destroy when projectile hits any physics object
-  const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
-  projectileImpostor.registerOnPhysicsCollide(
-    mapGlobals.allImpostors as PhysicsImpostor[],
-    (collider: PhysicsImpostor) => {
-      explosion(scene, collider.getObjectCenter());
-      destroyProjectile(projectile, scene);
-    }
-  );
+function hitEffect(
+  scene: Scene,
+  projectile: Mesh,
+  enemy: Mesh,
+  enemyImpostor: PhysicsImpostor
+) {
+  const hitMaterial = scene.getMaterialByID("damagedMaterial") as Material;
+  const enemyMaterial = scene.getMaterialByID("hitMaterial") as Material;
+  if (projectile.physicsImpostor !== null) {
+    projectile.physicsImpostor.registerOnPhysicsCollide(enemyImpostor, () => {
+      //@ts-ignore
+      enemy.hitPoints -= projectile.hitPoints;
+
+      enemy.material = hitMaterial as Material;
+      //@ts-ignore
+      if (enemy.hitPoints > 0) {
+      //@ts-ignore
+      economyGlobals.currentBalance += projectile.hitPoints;
+      updateEconomy(scene);
+      }
+      setTimeout(() => {
+        enemy.material = enemyMaterial as Material;
+      }, 30);
+
+      if (
+        mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
+        //@ts-ignore
+        enemy.hitPoints > 0
+      ) {
+        setTimeout(() => {
+          mapGlobals.simultaneousSounds -= 1;
+        }, mapGlobals.soundDelay);
+
+        mapGlobals.simultaneousSounds += 1;
+
+        if (mapGlobals.soundOn) damage(enemy);
+      }
+    });
+  }
 }
 
 function impulsePhys(
@@ -151,13 +173,17 @@ function impulsePhys(
     projectileGlobals.speed * level * -1
   ) as Vector3;
   const speed = originMesh.getDirection(forwardLocal) as Vector3;
-  const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
-  projectileImpostor.applyImpulse(speed, projectile.getAbsolutePosition());
+  setTimeout(() => {
+    if (projectile.physicsImpostor !== null) {
+      projectile.physicsImpostor.applyImpulse(
+        speed,
+        projectile.getAbsolutePosition()
+      );
+    }
+    }, 1);
 }
 
-function destroyProjectile(projectile: Mesh, scene: Scene) {
-  const physicsEngine = scene.getPhysicsEngine() as PhysicsEngine;
-
+function destroyProjectile(projectile: Mesh, physicsEngine: PhysicsEngine) {
   projectile.setEnabled(false);
 
   //@ts-ignore
@@ -167,11 +193,10 @@ function destroyProjectile(projectile: Mesh, scene: Scene) {
     mapGlobals.allImpostors = [];
     //@ts-ignore
     delete projectile.hitPoints;
-    const projectileImpostor = projectile.getPhysicsImpostor() as PhysicsImpostor;
-    projectileImpostor.dispose();
-
+    if (projectile.physicsImpostor !== null) {
+      projectile.physicsImpostor.dispose();
+    }
     projectile.dispose();
-
     mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
   }, 1);
 }
@@ -179,7 +204,17 @@ function destroyProjectile(projectile: Mesh, scene: Scene) {
 export default function fireProjectile(
   scene: Scene,
   originMesh: Mesh,
-  level: number = 1 | 2 | 3
+  level: number = 1 | 2 | 3,
+  nearestEnemy: Mesh,
+  physicsEngine: PhysicsEngine,
+  nearestEnemyImpostor: PhysicsImpostor
 ) {
-  new Projectile(originMesh, scene, level);
+  new Projectile(
+    originMesh,
+    scene,
+    level,
+    nearestEnemy,
+    physicsEngine,
+    nearestEnemyImpostor
+  );
 }

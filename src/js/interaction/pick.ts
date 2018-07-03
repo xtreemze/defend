@@ -1,9 +1,9 @@
-import { Scene, PointerInfo } from "babylonjs";
+import { Scene, PointerInfo, PhysicsEngine } from "babylonjs";
 import { Tower } from "../tower/Tower";
 import { towerGlobals, economyGlobals } from "../main/globalVariables";
 import randomNumberRange from "../utility/randomNumberRange";
 
-function newTower(scene: Scene) {
+function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer down event is raised
 
   scene.onPointerObservable.add(function(evt: PointerInfo) {
@@ -50,7 +50,8 @@ function newTower(scene: Scene) {
             x: towerGlobals.occupiedSpaces[0][0],
             z: towerGlobals.occupiedSpaces[0][1]
           },
-          scene
+          scene,
+          physicsEngine
         ) as Tower;
       }
     }

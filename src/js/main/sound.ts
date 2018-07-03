@@ -1,6 +1,6 @@
 import * as FX from "../../vendor/wafxr/wafxr";
 import { Vector3, Mesh } from "babylonjs";
-import { enemyGlobals, towerGlobals } from "./globalVariables";
+import { towerGlobals } from "./globalVariables";
 
 function onDestroy(enemyPosition: Vector3, level: number) {
   setTimeout(() => {
