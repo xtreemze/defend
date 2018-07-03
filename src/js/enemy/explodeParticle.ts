@@ -8,7 +8,7 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
     const node = projectilePosition;
 
     const particleSystem = new ParticleSystem(
-      "particles",
+      "particles" + projectileGlobals.particleIndex,
       30,
       scene
     ) as ParticleSystem;
@@ -27,8 +27,8 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
     particleSystem.color1 = new Color4(1, 0.5, 0, 1);
     particleSystem.color2 = new Color4(0.75, 0.4, 0.1, 1);
     particleSystem.colorDead = new Color4(0.1, 0.08, 0.3, 1);
-    particleSystem.id = "92cd5665-5295-41ae-8a48-37f5926b3926";
-    particleSystem.name = "particles";
+    particleSystem.id = "projectileGlobals.particleIndex";
+    particleSystem.name = "particles" + projectileGlobals.particleIndex;
     particleSystem.particleTexture = createTexture(scene);
     particleSystem.direction1 = new Vector3(-5, 8, 5);
     particleSystem.direction2 = new Vector3(5, 8, -5);
@@ -37,8 +37,9 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
     particleSystem.emitter = node;
 
-    particleSystem.start();
+    projectileGlobals.particleIndex += 1;
 
+    particleSystem.start();
     setTimeout(() => {
       particleSystem.stop();
     }, 80);
