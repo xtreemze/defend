@@ -24,7 +24,8 @@ import {
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
-    const name = `enemy${level}` as string;
+    const name = `enemyLevel${level}Index${enemyGlobals.index}` as string;
+    enemyGlobals.index += 1;
     const diameter = (level * level + 5) as number;
     const sphereMesh = MeshBuilder.CreateIcoSphere(
       name,
@@ -35,6 +36,7 @@ class Enemy {
       },
       scene
     ) as Mesh;
+
     sphereMesh.convertToUnIndexedMesh();
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
@@ -68,9 +70,10 @@ class Enemy {
     scene: Scene,
     sphereMesh: Mesh,
     loopTimer: any,
-    level: number = 1 | 2 | 3
+    level: number = 1 | 2 | 3,
+    hitPointsMeter: Mesh
   ) {
-    const enemyMaterial = scene.getMaterialByID("enemyMaterial") as Material;
+    const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
 
     if (
       //@ts-ignore
@@ -85,19 +88,29 @@ class Enemy {
         sphereMesh.position.y > 0
       ) {
         setTimeout(() => {
-          this.fragment(level, enemyPosition, enemyMaterial, enemyRotation);
+          this.fragment(level, enemyPosition, hitMaterial, enemyRotation);
         }, 5);
       }
     } else {
       //@ts-ignore
       sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
+
+      //@ts-ignore
+      const scaleRate = 1 / (level * enemyGlobals.baseHitPoints / sphereMesh.hitPoints);
+
+      //@ts-ignore
+      hitPointsMeter.scaling = new BABYLON.Vector3(
+        scaleRate,
+        scaleRate,
+        scaleRate
+      );
     }
   }
 
   fragment(
     level: number = 1 | 2 | 3,
     enemyPosition: Vector3,
-    enemyMaterial: Material,
+    hitMaterial: Material,
     enemyRotation: Vector3
   ) {
     for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
@@ -114,7 +127,7 @@ class Enemy {
         enemyRotation.y * index * 0.1,
         enemyRotation.z * index * 0.1
       );
-      fragment.material = enemyMaterial;
+      fragment.material = hitMaterial;
 
       const fragImpostor = new PhysicsImpostor(
         fragment,
@@ -210,15 +223,25 @@ class Enemy {
     diameter: number = 0,
     level: number = 1 | 2 | 3
   ) {
+    //@ts-ignore
+    sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
+    const hitPointsMeter = MeshBuilder.CreateIcoSphere(
+      name + "hitPointMeter",
+      //@ts-ignore
+      { subdivisions: level, radius: diameter / 2 },
+      scene
+    ) as Mesh;
+
+    hitPointsMeter.parent = sphereMesh;
     sphereMesh.position = new Vector3(
       position.x,
       (diameter / 2) * enemyGlobals.originHeight,
       position.z
     );
 
-    //@ts-ignore
-    sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
-    sphereMesh.material = scene.getMaterialByID("enemyMaterial");
+    sphereMesh.material = scene.getMaterialByID("hitMaterial");
+
+    hitPointsMeter.material = scene.getMaterialByID("enemyMaterial");
 
     sphereMesh.physicsImpostor = new PhysicsImpostor(
       sphereMesh,
@@ -254,7 +277,13 @@ class Enemy {
         ) {
           enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
         }
-        this.checkHitPoints(scene, sphereMesh, loopTimer, level);
+        this.checkHitPoints(
+          scene,
+          sphereMesh,
+          loopTimer,
+          level,
+          hitPointsMeter
+        );
       }
     });
   }
@@ -279,7 +308,10 @@ class Enemy {
 
   decide(sphereMesh: Mesh, scene: Scene, ray: any) {
     const decideToMove = { up: true, left: true, right: true, down: true };
-    if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 && this.nearTower(ray.up, scene) === false) {
+    if (
+      sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1 &&
+      this.nearTower(ray.up, scene) === false
+    ) {
       decideToMove.down = false;
       decideToMove.up = true;
     }
@@ -361,4 +393,4 @@ function enemies(scene: Scene) {
   });
 }
 
-export {enemies, Enemy}
+export { enemies, Enemy };

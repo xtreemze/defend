@@ -40,7 +40,7 @@ function map(scene: Scene) {
   const atmosphere = MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
-      radius: mapGlobals.size,
+      radius: mapGlobals.size * 2,
       subdivisions: 5,
       updatable: false
     },
@@ -48,7 +48,7 @@ function map(scene: Scene) {
   ) as Mesh;
 
   atmosphere.isPickable = false;
-  atmosphere.infiniteDistance = true;
+  // atmosphere.infiniteDistance = true;
 
   atmosphere.flipFaces(true);
   // atmosphere.freezeWorldMatrix(); // freeze ground

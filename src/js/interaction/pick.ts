@@ -1,9 +1,6 @@
-import {
-  Scene,
-  PointerInfo,
-} from "babylonjs";
+import { Scene, PointerInfo } from "babylonjs";
 import { Tower } from "../tower/Tower";
-import { towerGlobals } from "../main/globalVariables";
+import { towerGlobals, economyGlobals } from "../main/globalVariables";
 import randomNumberRange from "../utility/randomNumberRange";
 
 function newTower(scene: Scene) {
@@ -36,18 +33,19 @@ function newTower(scene: Scene) {
         newLocation.z =
           pickResult.pickedPoint.z - 5 - (pickResult.pickedPoint.z % 10);
       }
-
+      const level = randomNumberRange(1, 3);
       if (
         towerGlobals.occupiedSpaces.find(
           existingLocation =>
             existingLocation[0] === newLocation.x &&
             existingLocation[1] === newLocation.z
-        ) === undefined
+        ) === undefined &&
+        economyGlobals.currentBalance >= level * 10
       ) {
         towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
         new Tower(
-          randomNumberRange(1, 3),
+          level,
           {
             x: towerGlobals.occupiedSpaces[0][0],
             z: towerGlobals.occupiedSpaces[0][1]

@@ -6,12 +6,7 @@ import {
   Engine,
   Camera
 } from "babylonjs";
-import {
-  mapGlobals,
-  renderGlobals,
-  towerGlobals,
-  enemyGlobals
-} from "./globalVariables";
+import { mapGlobals, renderGlobals, enemyGlobals } from "./globalVariables";
 import * as FX from "../../vendor/wafxr/wafxr";
 import randomNumberRange from "../utility/randomNumberRange";
 
@@ -21,7 +16,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     "follow1",
     Math.PI / 4,
     Math.PI / 2.15,
-    mapGlobals.size / 5,
+    mapGlobals.size / 3,
     Vector3.Zero(),
     scene
   ) as ArcRotateCamera;
@@ -31,7 +26,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     "3/4",
     Math.PI / 6,
     Math.PI / 3.5,
-    mapGlobals.size / 6,
+    mapGlobals.size / 4,
     Vector3.Zero(),
     scene
   ) as ArcRotateCamera;
@@ -41,7 +36,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     "arcFollow1",
     Math.PI / 2,
     Math.PI / 12,
-    mapGlobals.size / 6,
+    mapGlobals.size / 4,
     Vector3.Zero(),
     scene
   ) as ArcRotateCamera;
@@ -51,7 +46,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     "closeup",
     Math.PI / 1,
     Math.PI / 2.15,
-    mapGlobals.size / 8,
+    mapGlobals.size / 5,
     Vector3.Zero(),
     scene
   ) as ArcRotateCamera;
@@ -62,10 +57,15 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   camera3.attachControl(canvas, true);
   camera4.attachControl(canvas, true);
   // Attach Control
-  camera.upperRadiusLimit = mapGlobals.size / 3;
-  camera2.upperRadiusLimit = mapGlobals.size / 3;
-  camera3.upperRadiusLimit = mapGlobals.size / 3;
-  camera4.upperRadiusLimit = mapGlobals.size / 3;
+  camera.upperRadiusLimit = mapGlobals.size * 2;
+  camera2.upperRadiusLimit = mapGlobals.size * 2;
+  camera3.upperRadiusLimit = mapGlobals.size * 2;
+  camera4.upperRadiusLimit = mapGlobals.size * 2;
+
+  camera.upperBetaLimit = Math.PI / 2;
+  camera2.upperBetaLimit = Math.PI / 2;
+  camera3.upperBetaLimit = Math.PI / 2;
+  camera4.upperBetaLimit = Math.PI / 2;
 
   const rotateCamera = (camera: ArcRotateCamera) => {
     scene.registerBeforeRender(() => {
@@ -111,11 +111,7 @@ function cameras(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     if (Date.now() - deltaTime > mapGlobals.cameraCutDelay) {
       deltaTime = Date.now();
 
-      if (
-        allCameras.length > 1 &&
-        enemyGlobals.allEnemies.length > 1 &&
-        towerGlobals.allTowers.length > 1
-      ) {
+      if (allCameras.length > 1 && enemyGlobals.allEnemies.length) {
         const rotateCamera = allCameras[0] as ArcRotateCamera;
         rotateCamera.lockedTarget =
           enemyGlobals.allEnemies[

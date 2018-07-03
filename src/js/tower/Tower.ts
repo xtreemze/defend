@@ -8,8 +8,10 @@ import { addTower } from "../main/sound";
 import {
   towerGlobals,
   enemyGlobals,
-  mapGlobals
+  mapGlobals,
+  economyGlobals
 } from "../main/globalVariables";
+import { updateEconomy } from "../gui/currency";
 
 class Tower {
   constructor(
@@ -17,8 +19,10 @@ class Tower {
     position = { x: -25, z: -25 },
     scene: Scene
   ) {
-    const name = `tower${towerGlobals.towerIndex}` as string;
-    towerGlobals.towerIndex += 1;
+    economyGlobals.currentBalance -= level * 10;
+    updateEconomy(scene);
+    const name = `towerLevel${level}Index${towerGlobals.index}` as string;
+    towerGlobals.index += 1;
     let tower = MeshBuilder.CreateBox(
       name,
       {
@@ -96,7 +100,7 @@ function trackSpheres(
           deltaTime = Date.now();
           setTimeout(() => {
             flash.setEnabled(false);
-          }, 10);
+          }, 30);
 
           flash.setEnabled(true);
 

@@ -65,7 +65,7 @@ export function revive(
       outerTurret.dispose();
       const towerCSG = outerCSG.subtract(innterCSG);
       const turretMesh = towerCSG.toMesh(
-        "towerTurret" as any,
+        ("turret" + name) as any,
         null,
         scene,
         false
@@ -77,7 +77,7 @@ export function revive(
         position.z
       ) as Vector3;
       const flashMesh = MeshBuilder.CreateIcoSphere(
-        name,
+        "flash" + name,
         {
           radius: level,
           subdivisions: 1,
@@ -110,7 +110,7 @@ export function revive(
         ray.direction = turretMesh.getDirection(rayLocal) as Vector3;
       });
       trackSpheres(scene, tower, turretMesh, flashMesh, ray, level);
-      const pillarMesh = MeshBuilder.CreateBox(name, {
+      const pillarMesh = MeshBuilder.CreateBox("pillar" + name, {
         size: level / 2,
         height: towerGlobals.height * level,
         updatable: false

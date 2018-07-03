@@ -3,6 +3,7 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { enemies } from "../enemy/Enemy";
 import { newTower } from "../interaction/pick";
 import { Scene } from "babylonjs";
+import { updateEconomy, displayEconomy } from "../gui/currency";
 
 function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
   const title = document.createElement("h1") as HTMLElement;
@@ -56,6 +57,7 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
     newTower(scene);
+    displayEconomy(scene);
   }, 4000);
 
   startButton.addEventListener("click", () => {
@@ -72,6 +74,7 @@ function titleScreen(scene: Scene, canvas: HTMLCanvasElement) {
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
     newTower(scene);
+    displayEconomy(scene);
   });
 }
 

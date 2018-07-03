@@ -38,21 +38,24 @@ function generateMaterials(scene: Scene) {
   transparentMaterial.alpha = 0;
 
   const enemyMaterial = new StandardMaterial("enemyMaterial", scene);
-  enemyMaterial.wireframe = true;
+  // enemyMaterial.wireframe = true;
   enemyMaterial.diffuseColor = enemyGlobals.livingColor;
   enemyMaterial.ambientColor = mapGlobals.ambientColor;
 
   const damagedMaterial = new StandardMaterial("damagedMaterial", scene);
   damagedMaterial.diffuseColor = enemyGlobals.deadColor;
-  damagedMaterial.wireframe = true;
-  damagedMaterial.alpha = 0.5;
   damagedMaterial.specularColor = mapGlobals.ambientColor;
   damagedMaterial.ambientColor = mapGlobals.ambientColor;
+  // damagedMaterial.alpha = 0.9;
 
   const hitMaterial = new StandardMaterial("hitMaterial", scene);
   hitMaterial.diffuseColor = enemyGlobals.hitColor;
   hitMaterial.specularColor = mapGlobals.sceneAmbient;
   hitMaterial.ambientColor = mapGlobals.ambientColor;
+  hitMaterial.specularColor = new Color3(0.68, 0.38, 0.1);
+  hitMaterial.emissiveColor = enemyGlobals.hitColor;
+  hitMaterial.wireframe = true;
+  hitMaterial.alpha = 0.98;
 }
 
 export { generateMaterials };

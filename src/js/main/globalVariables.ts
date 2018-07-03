@@ -3,7 +3,7 @@ import { Color3, PhysicsImpostor, Mesh } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 1000, // map radius
+  size: 200, // map radius
   optimizerOn: true,
   cameraCutDelay: 4200,
   rotateCameras: true,
@@ -45,8 +45,8 @@ const towerGlobals = {
   range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 10000,
-  towerIndex: 0
+  lifeTime: 20000,
+  index: 0
 };
 
 const enemyGlobals = {
@@ -67,11 +67,16 @@ const enemyGlobals = {
   fragments: 1,
   allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
-  boundaryLimit: mapGlobals.size / 10, // meters
+  boundaryLimit: 10, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
-  rayHelpers: false
+  rayHelpers: false,
+  index: 0 as number
+};
+
+const economyGlobals = {
+  currentBalance: 1000
 };
 
 const renderGlobals = {
@@ -99,5 +104,9 @@ export {
   towerGlobals,
   enemyGlobals,
   mapGlobals,
-  renderGlobals
+  renderGlobals,
+  economyGlobals
 };
+
+//@ts-ignore
+window.occupied = towerGlobals.occupiedSpaces;

@@ -10,10 +10,12 @@ import {
 import {
   projectileGlobals,
   enemyGlobals,
-  mapGlobals
+  mapGlobals,
+  economyGlobals
 } from "../main/globalVariables";
 import { shoot, damage } from "../main/sound";
 import { explosion } from "../enemy/explodeParticle";
+import { updateEconomy } from "../gui/currency";
 
 class Projectile {
   constructor(originMesh: Mesh, scene: Scene, level: number = 1 | 2 | 3) {
@@ -84,8 +86,8 @@ function startLife(
 }
 
 function intersectPhys(scene: Scene, projectile: Mesh) {
-  const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
-  const enemyMaterial = scene.getMaterialByID("enemyMaterial") as Material;
+  const hitMaterial = scene.getMaterialByID("damagedMaterial") as Material;
+  const enemyMaterial = scene.getMaterialByID("hitMaterial") as Material;
 
   // Enemies ONLY
   for (let index = 0; index < enemyGlobals.allEnemies.length; index += 1) {
@@ -96,8 +98,12 @@ function intersectPhys(scene: Scene, projectile: Mesh) {
       () => {
         //@ts-ignore
         enemy.hitPoints -= projectile.hitPoints;
+
         enemy.material = hitMaterial as Material;
 
+        //@ts-ignore
+        economyGlobals.currentBalance += projectile.hitPoints;
+        updateEconomy(scene);
         setTimeout(() => {
           enemy.material = enemyMaterial as Material;
         }, 30);
