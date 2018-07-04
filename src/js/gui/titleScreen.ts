@@ -8,9 +8,8 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { enemies } from "../enemy/Enemy";
 import { newTower } from "../interaction/pick";
 import { Scene } from "babylonjs";
-import { displayEconomy, rampUp } from "../gui/currency";
-
-
+import { displayEconomy, rampUp } from "./currency";
+import { upgradeTower } from "../interaction/upgradeTower";
 
 function titleScreen(
   scene: Scene,
@@ -87,14 +86,11 @@ function titleScreen(
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
     newTower(scene, physicsEngine);
+    upgradeTower(scene, physicsEngine);
   });
 }
 
-function message(
-  scene: Scene,
-  message: string,
-  icon: string
-) {
+function message(scene: Scene, message: string, icon: string) {
   enemyGlobals.limit = 0;
   const canvas = document.getElementById("renderCanvas");
   const title = document.createElement("h1") as HTMLElement;
@@ -112,10 +108,10 @@ function message(
       font-family: fantasy;
       font-size: 4rem;
       `
-    );
+  );
 
-    const startButton = document.createElement("button") as HTMLButtonElement;
-    startButton.innerHTML = icon;
+  const startButton = document.createElement("button") as HTMLButtonElement;
+  startButton.innerHTML = icon;
   startButton.id = "startButton";
   startButton.setAttribute(
     "style",
@@ -136,22 +132,22 @@ function message(
       font-size: 3rem;
       `
   );
-if (canvas !== null){
-  const canvasParent = canvas.parentNode as Node;
+  if (canvas !== null) {
+    const canvasParent = canvas.parentNode as Node;
 
-  canvasParent.insertBefore(title, canvas);
-  canvasParent.insertBefore(startButton, canvas);
+    canvasParent.insertBefore(title, canvas);
+    canvasParent.insertBefore(startButton, canvas);
 
-  startButton.addEventListener("click", () => {
-    const titleParent = title.parentNode as Node;
-    titleParent.removeChild(title);
-    const startButtonParent = startButton.parentNode as Node;
-    startButtonParent.removeChild(startButton);
-    rampUp(scene);
-    enemyGlobals.limit = mapGlobals.size;
-    economyGlobals.restartMessage = false;
-  });
-}
+    startButton.addEventListener("click", () => {
+      const titleParent = title.parentNode as Node;
+      titleParent.removeChild(title);
+      const startButtonParent = startButton.parentNode as Node;
+      startButtonParent.removeChild(startButton);
+      rampUp(scene);
+      enemyGlobals.limit = mapGlobals.size;
+      economyGlobals.restartMessage = false;
+    });
+  }
 }
 
 export { titleScreen, message };

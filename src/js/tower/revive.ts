@@ -34,8 +34,12 @@ export function revive(
   switch (level) {
     case 1:
     default:
+      if (tower.onDisposeObservable) {
+        tower.onDisposeObservable.add(destroyTower(scene, tower));
+      }
+
       setTimeout(() => {
-        destroyTower(scene, tower);
+        tower.dispose();
       }, towerGlobals.lifeTime);
       break;
     case 2:
@@ -134,8 +138,14 @@ export function revive(
       Tags.AddTagsTo(pillarMesh, "tower");
       Tags.AddTagsTo(turretMesh, "tower");
 
+      if (tower.onDisposeObservable) {
+        // babylon 2.4+
+        tower.onDisposeObservable.add(
+          destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh)
+        );
+      }
       setTimeout(() => {
-        destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
+        tower.dispose();
       }, towerGlobals.lifeTime);
       break;
   }

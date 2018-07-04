@@ -32,7 +32,6 @@ class Tower {
 
     updateEconomy(scene);
 
-
     const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
     const towerMaterial = scene.getMaterialByName("towerMaterial") as Material;
     const hitMaterial = scene.getMaterialByName("hitMaterial") as Material;
@@ -42,7 +41,6 @@ class Tower {
     setTimeout(() => {
       currencyMesh.material = hitMaterial as Material;
     }, 30);
-
 
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
     towerGlobals.index += 1;
@@ -55,6 +53,7 @@ class Tower {
       },
       scene
     ) as Mesh;
+
     tower.convertToUnIndexedMesh();
     revive(scene, tower, position, level, physicsEngine);
     addTower(tower, level);
@@ -207,7 +206,7 @@ function destroyTower(
   pillarMesh?: Mesh,
   turretMesh?: Mesh,
   flashMesh?: Mesh
-) {
+): any {
   if (baseMesh.physicsImpostor !== null) {
     baseMesh.physicsImpostor.dispose();
   }

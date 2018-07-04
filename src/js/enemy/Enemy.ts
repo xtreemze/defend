@@ -141,10 +141,10 @@ class Enemy {
         }
       ) as PhysicsImpostor;
 
-      fragment.physicsImpostor.applyImpulse(
-        new Vector3(0, 2000 + enemyGlobals.mass * level * index, 0),
-        fragment.getAbsolutePosition()
-      );
+      // fragment.physicsImpostor.applyImpulse(
+      //   new Vector3(0, (2000 + enemyGlobals.mass * level * index)*-1, 0),
+      //   fragment.getAbsolutePosition()
+      // );
 
       setTimeout(() => {
         fragment.dispose();
