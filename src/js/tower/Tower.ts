@@ -33,15 +33,15 @@ class Tower {
 
     updateEconomy(scene);
 
-    const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
-    const towerMaterial = scene.getMaterialByName("towerMaterial") as Material;
-    const hitMaterial = scene.getMaterialByName("hitMaterial") as Material;
+    // const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
+    // const towerMaterial = scene.getMaterialByName("towerMaterial") as Material;
+    // const hitMaterial = scene.getMaterialByName("hitMaterial") as Material;
 
-    currencyMesh.material = towerMaterial as Material;
+    // currencyMesh.material = towerMaterial as Material;
 
-    setTimeout(() => {
-      currencyMesh.material = hitMaterial as Material;
-    }, 20);
+    // setTimeout(() => {
+    //   currencyMesh.material = hitMaterial as Material;
+    // }, 20);
 
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
     towerGlobals.index += 1;
