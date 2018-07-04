@@ -19,7 +19,7 @@ function onDestroy(enemyPosition: Vector3, level: number) {
       soundZ: enemyPosition.z,
       rolloff: 0.3
     } as FX.audioParams);
-  }, 3);
+  }, 1);
 }
 
 function shoot(projectile: Mesh, level: number) {
@@ -40,7 +40,7 @@ function shoot(projectile: Mesh, level: number) {
       soundZ: projectile.position.z,
       rolloff: 0.03
     } as FX.audioParams);
-  }, 3);
+  }, 1);
 }
 
 function damage(enemy: Mesh) {
@@ -60,7 +60,7 @@ function damage(enemy: Mesh) {
       soundZ: enemy.position.z,
       rolloff: 0.3
     } as FX.audioParams);
-  }, 3);
+  }, );
 }
 
 function addTower(tower: Mesh, level: number) {
@@ -78,7 +78,7 @@ function addTower(tower: Mesh, level: number) {
       soundZ: tower.position.z,
       rolloff: 0.3
     } as FX.audioParams);
-  }, 3);
+  }, 1);
 }
 
 export { onDestroy, shoot, damage, addTower };

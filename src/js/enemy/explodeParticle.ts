@@ -1,4 +1,10 @@
-import { Scene, Vector3, Color4, ParticleSystem } from "babylonjs";
+import {
+  Scene,
+  Vector3,
+  Color4,
+  ParticleSystem,
+  GPUParticleSystem
+} from "babylonjs";
 import { createTexture } from "./flare";
 import { projectileGlobals } from "../main/globalVariables";
 function explosion(scene: Scene, projectilePosition: Vector3) {
@@ -7,11 +13,17 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
     const node = projectilePosition;
 
-    const particleSystem = new ParticleSystem(
+    const particleSystem = new GPUParticleSystem(
       "particles" + projectileGlobals.particleIndex,
-      30,
+      { capacity: 30 },
       scene
-    ) as ParticleSystem;
+    ) as GPUParticleSystem;
+
+    // const particleSystem = new ParticleSystem(
+    //   "particles" + projectileGlobals.particleIndex,
+    //   30,
+    //   scene
+    // ) as ParticleSystem;
 
     particleSystem.renderingGroupId = 0;
     particleSystem.emitRate = 20;
