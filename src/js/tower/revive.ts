@@ -12,6 +12,7 @@ import {
   CSG,
   PhysicsEngine
 } from "babylonjs";
+
 import { towerGlobals, mapGlobals } from "../main/globalVariables";
 import { trackSpheres, destroyTower } from "./Tower";
 export function revive(
@@ -34,9 +35,14 @@ export function revive(
   switch (level) {
     case 1:
     default:
+      const disposeTimer = setTimeout(() => {
+        tower.dispose();
+      }, towerGlobals.lifeTime);
+
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
           (d, s) => {
+            window.clearTimeout(disposeTimer);
             destroyTower(scene, tower);
           },
           undefined,
@@ -44,9 +50,6 @@ export function revive(
         );
       }
 
-      setTimeout(() => {
-        tower.dispose();
-      }, towerGlobals.lifeTime);
       break;
     case 2:
     case 3:
@@ -97,23 +100,28 @@ export function revive(
         },
         scene
       ) as Mesh;
+
       const flashLocal = new Vector3(0, 0, 4) as Vector3;
       const flashSpace = turretMesh.getDirection(flashLocal) as Vector3;
       flashMesh.position = turretMesh.position.subtract(flashSpace) as Vector3;
       flashMesh.rotation = turretMesh.rotation.clone() as Vector3;
       turretMesh.material = towerMaterial as Material;
       turretMesh.addChild(flashMesh) as Mesh;
+
       flashMesh.isPickable = false as boolean;
       flashMesh.setEnabled(false);
       flashMesh.material = projectileMaterial as Material;
+
       const rayLocal = new Vector3(0, 0, -1);
       const rayLocalOrigin = new Vector3(0, 0, -5);
-      const turretDirection = turretMesh.getDirection(rayLocalOrigin);
+      const turretDirection = turretMesh.getDirection(rayLocalOrigin) as Vector3;
+
       const ray = new Ray(
         flashMesh.getAbsolutePosition(),
         turretDirection,
         towerGlobals.range * 3
       ) as Ray;
+
       if (towerGlobals.raysOn) {
         var rayHelper = new RayHelper(ray) as RayHelper;
         rayHelper.show(scene, new Color3(1, 1, 0.3));
@@ -135,19 +143,26 @@ export function revive(
         height: towerGlobals.height * level,
         updatable: false
       }) as Mesh;
+
       pillarMesh.position = new Vector3(
         position.x,
         towerGlobals.height * level * 0.5,
         position.z
       ) as Vector3;
+
       pillarMesh.material = towerMaterial;
       Tags.AddTagsTo(pillarMesh, "tower");
       Tags.AddTagsTo(turretMesh, "tower");
+
+      const disposeTimer2 = setTimeout(() => {
+        tower.dispose();
+      }, towerGlobals.lifeTime);
 
       if (tower.onDisposeObservable) {
         // babylon 2.4+
         tower.onDisposeObservable.add(
           (d, s) => {
+            window.clearTimeout(disposeTimer2);
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
           },
           undefined,
@@ -155,9 +170,6 @@ export function revive(
         );
       }
 
-      setTimeout(() => {
-        tower.dispose();
-      }, towerGlobals.lifeTime);
       break;
   }
   tower.physicsImpostor = new PhysicsImpostor(
@@ -169,6 +181,7 @@ export function revive(
     },
     scene
   ) as PhysicsImpostor;
+
   mapGlobals.allImpostors.unshift(tower.physicsImpostor);
   Tags.AddTagsTo(tower, "tower");
   towerGlobals.allTowers.unshift(tower);

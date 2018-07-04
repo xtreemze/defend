@@ -21,14 +21,12 @@ function currencyCollide(
     }
     //@ts-ignore
     enemy.hitPoints = 0;
-    setTimeout(() => {
       updateEconomy(scene);
 
       currencyMesh.material = hitMaterial as Material;
       setTimeout(() => {
         currencyMesh.material = enemyMaterial as Material;
       }, 30);
-    }, 10);
 
     if (
       mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&

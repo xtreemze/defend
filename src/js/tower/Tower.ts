@@ -29,7 +29,7 @@ class Tower {
     physicsEngine: PhysicsEngine
   ) {
 
-    economyGlobals.currentBalance -= (level * 10);
+    economyGlobals.currentBalance -= (level * 300);
 
     updateEconomy(scene);
 
@@ -212,7 +212,7 @@ function destroyTower(
   if (baseMesh.physicsImpostor !== null) {
     baseMesh.physicsImpostor.dispose();
   }
-  baseMesh.dispose();
+  // baseMesh.dispose();
   towerGlobals.allTowers = [];
   if (pillarMesh && turretMesh && flashMesh) {
     pillarMesh.dispose();

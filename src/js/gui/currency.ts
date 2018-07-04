@@ -66,7 +66,7 @@ function displayEconomy(scene: Scene) {
     {
       width: economyGlobals.bankSize,
       depth: economyGlobals.bankSize,
-      height: 20,
+      height: 19,
       updatable: false
     },
     scene
