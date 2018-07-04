@@ -44,7 +44,7 @@ function titleScreen(
       background-color: ${mapGlobals.sceneAmbient.toHexString()};
       color: ${projectileGlobals.livingColor.toHexString()};
       border-color: ${projectileGlobals.livingColor.toHexString()};
-      top: 50vh;
+      top: 70vh;
       left: 50vw;
       width: 6rem;
       height: 6rem;

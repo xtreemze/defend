@@ -6,7 +6,8 @@ import {
   MeshBuilder,
   Mesh,
   PhysicsImpostor,
-  PhysicsEngine
+  PhysicsEngine,
+  Material
 } from "babylonjs";
 import fireProjectile from "../projectile/Projectile";
 import positionGenerator from "../utility/positionGenerator";
@@ -28,7 +29,19 @@ class Tower {
     physicsEngine: PhysicsEngine
   ) {
     economyGlobals.currentBalance -= level * 10;
+
     updateEconomy(scene);
+
+
+    const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
+    const towerMaterial = scene.getMaterialByName("towerMaterial") as Material;
+    const hitMaterial = scene.getMaterialByName("hitMaterial") as Material;
+
+    currencyMesh.material = towerMaterial as Material;
+
+    setTimeout(() => {
+      currencyMesh.material = hitMaterial as Material;
+    }, 30);
 
 
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
@@ -104,7 +117,6 @@ function trackSpheres(
       if (enemyDistances.length > 0) {
         const nearestEnemy = enemyDistances.sort()[0][1] as Mesh;
         const nearestEnemyImpostor = nearestEnemy.getPhysicsImpostor() as PhysicsImpostor;
-
 
         rotateTurret(nearestEnemy, towerTurret);
 
@@ -196,8 +208,8 @@ function destroyTower(
   turretMesh?: Mesh,
   flashMesh?: Mesh
 ) {
-  if (baseMesh.physicsImpostor !== null){
-  baseMesh.physicsImpostor.dispose();
+  if (baseMesh.physicsImpostor !== null) {
+    baseMesh.physicsImpostor.dispose();
   }
   baseMesh.dispose();
   towerGlobals.allTowers = [];

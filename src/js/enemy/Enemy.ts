@@ -152,7 +152,7 @@ class Enemy {
         fragment.physicsImpostor.dispose();
         }
         setTimeout(() => {}, 1);
-      }, projectileGlobals.lifeTime * 5);
+      }, projectileGlobals.lifeTime * 3);
     }
 
     if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {

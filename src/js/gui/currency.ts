@@ -38,8 +38,8 @@ function displayEconomy(scene: Scene) {
   const currencyTower = MeshBuilder.CreateBox(
     "currencyTower",
     {
-      width: 20,
-      depth: 20,
+      width: economyGlobals.bankSize,
+      depth: economyGlobals.bankSize,
       height: 20,
       updatable: false
     },
@@ -64,8 +64,8 @@ function displayEconomy(scene: Scene) {
     "currencyMeter",
     //@ts-ignore
     {
-      width: 20,
-      depth: 20,
+      width: economyGlobals.bankSize,
+      depth: economyGlobals.bankSize,
       height: 20,
       updatable: false
     },

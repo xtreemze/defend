@@ -15,18 +15,20 @@ function currencyCollide(
 
   enemyImpostor.registerOnPhysicsCollide(currencyMeshImpostor, () => {
     //@ts-ignore
-    if (enemy.hitPoints > 0) {
+    if (enemy.hitPoints > 0 && economyGlobals.currentBalance > 0) {
       //@ts-ignore
       economyGlobals.currentBalance -= enemy.hitPoints;
     }
-    currencyMesh.material = hitMaterial as Material;
     //@ts-ignore
     enemy.hitPoints = 0;
-    updateEconomy(scene);
-
     setTimeout(() => {
-      currencyMesh.material = enemyMaterial as Material;
-    }, 30);
+      updateEconomy(scene);
+
+      currencyMesh.material = hitMaterial as Material;
+      setTimeout(() => {
+        currencyMesh.material = enemyMaterial as Material;
+      }, 30);
+    }, 10);
 
     if (
       mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
@@ -39,11 +41,12 @@ function currencyCollide(
 
       mapGlobals.simultaneousSounds += 1;
 
-      if (mapGlobals.soundOn){
+      if (mapGlobals.soundOn) {
         // @ts-ignore
         currencyMesh.hitPoints = economyGlobals.currentBalance / 5000;
 
-        damage(currencyMesh);}
+        damage(currencyMesh);
+      }
     }
   });
 }

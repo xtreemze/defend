@@ -9,7 +9,7 @@ const mapGlobals = {
   rotateCameras: true,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
-  impostorLimit: 1000, // keep low for mobile device limits
+  impostorLimit: 300, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 170,
@@ -48,24 +48,24 @@ const towerGlobals = {
   range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 20000,
+  lifeTime: 50000,
   index: 0
 };
 
 const enemyGlobals = {
-  minNumber: mapGlobals.size / 300, // for one generation
-  maxNumber: mapGlobals.size / 10, // for one generation
-  limit: mapGlobals.size,
+  minNumber: 4, // for one generation
+  maxNumber: 20, // for one generation
+  limit: 80,
   originHeight: 30,
   generationRate: 8000, // milliseconds
-  decisionRate: 400, // milliseconds
-  speed: 14000,
-  mass: 2000,
+  decisionRate: 200, // milliseconds
+  speed: 20000,
+  mass: 5000,
   restitution: 0.3,
   jumpForce: 60,
   friction: 1,
   decayRate: 1, // hitpoints per decision
-  baseHitPoints: 800,
+  baseHitPoints: 5000,
   deadHitPoints: 0,
   fragments: 1,
   allEnemies: [] as Mesh[],
@@ -81,8 +81,9 @@ const enemyGlobals = {
 const economyGlobals = {
   initialBalance: 10000,
   currentBalance: 1,
-  maxBalance: 50000,
-  restartMessage: false
+  maxBalance: 100000,
+  restartMessage: false,
+  bankSize: 40
 };
 
 const renderGlobals = {
