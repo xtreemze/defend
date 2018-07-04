@@ -35,7 +35,13 @@ export function revive(
     case 1:
     default:
       if (tower.onDisposeObservable) {
-        tower.onDisposeObservable.add(destroyTower(scene, tower));
+        tower.onDisposeObservable.add(
+          (d, s) => {
+            destroyTower(scene, tower);
+          },
+          undefined,
+          true
+        );
       }
 
       setTimeout(() => {
@@ -141,9 +147,14 @@ export function revive(
       if (tower.onDisposeObservable) {
         // babylon 2.4+
         tower.onDisposeObservable.add(
-          destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh)
+          (d, s) => {
+            destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
+          },
+          undefined,
+          true
         );
       }
+
       setTimeout(() => {
         tower.dispose();
       }, towerGlobals.lifeTime);

@@ -28,7 +28,8 @@ class Tower {
     scene: Scene,
     physicsEngine: PhysicsEngine
   ) {
-    economyGlobals.currentBalance -= level * 10;
+
+    economyGlobals.currentBalance -= (level * 10);
 
     updateEconomy(scene);
 
@@ -40,7 +41,7 @@ class Tower {
 
     setTimeout(() => {
       currencyMesh.material = hitMaterial as Material;
-    }, 30);
+    }, 20);
 
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
     towerGlobals.index += 1;
@@ -207,6 +208,7 @@ function destroyTower(
   turretMesh?: Mesh,
   flashMesh?: Mesh
 ): any {
+  baseMesh.onDisposeObservable.clear();
   if (baseMesh.physicsImpostor !== null) {
     baseMesh.physicsImpostor.dispose();
   }

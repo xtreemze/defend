@@ -13,12 +13,11 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
   scene.onPointerObservable.add(function(evt: PointerInfo) {
     const pickResult = evt.pickInfo as PickingInfo;
 
-    if (pickResult.pickedMesh !== null) {
-      console.log(
-        pickResult.pickedMesh.name,
-        pickResult.pickedMesh.position.x,
-        pickResult.pickedMesh.position.z
-      );
+    if (
+      pickResult.pickedMesh !== null &&
+      pickResult.pickedMesh.material !== null &&
+      pickResult.pickedMesh.material.name === "towerMaterial"
+    ) {
       if (pickResult.hit && pickResult.pickedMesh.name[10] === "1") {
         const samePosition = {
           x: pickResult.pickedMesh.position.x,
@@ -31,12 +30,12 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
 
         setTimeout(() => {
           new Tower(level, samePosition, scene, physicsEngine) as Tower;
-        }, 100);
+        }, 20);
       }
       if (
         pickResult.hit &&
-        pickResult.pickedMesh.name[10] === "2" &&
-        pickResult.pickedMesh.name[10] === "3"
+        (pickResult.pickedMesh.name[10] === "2" ||
+          pickResult.pickedMesh.name[10] === "3")
       ) {
         const samePosition = {
           x: pickResult.pickedMesh.position.x,
@@ -48,7 +47,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         const level = 3;
         setTimeout(() => {
           new Tower(level, samePosition, scene, physicsEngine) as Tower;
-        }, 100);
+        }, 20);
       }
     }
   }, PointerEventTypes._POINTERTAP);

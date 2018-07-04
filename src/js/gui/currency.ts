@@ -112,6 +112,7 @@ function updateEconomy(scene: Scene) {
   const currentBalance = document.getElementById(
     "currentBalance"
   ) as HTMLDivElement;
+
   currentBalance.innerText = Math.round(economyGlobals.currentBalance).toString();
 
   const currencyMeter = scene.getMeshByName("currencyMeter");
