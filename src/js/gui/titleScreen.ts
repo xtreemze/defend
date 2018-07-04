@@ -68,6 +68,7 @@ function titleScreen(
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
     newTower(scene, physicsEngine);
+    upgradeTower(scene, physicsEngine);
     mapGlobals.soundOn = false;
   }, 4000);
 
