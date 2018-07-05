@@ -3,7 +3,7 @@ import { Color3, PhysicsImpostor, Mesh } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 200, // map radius
+  size: 400, // map radius
   optimizerOn: false,
   cameraCutDelay: 4200,
   rotateCameras: false,
@@ -87,7 +87,7 @@ const economyGlobals = {
   restartMessage: false,
   bankSize: 40,
   defeats: 0,
-  victories: 0,
+  victories: 0
 };
 
 const renderGlobals = {
