@@ -26,7 +26,7 @@ const projectileGlobals = {
   speed: 5000,
   mass: 30,
   restitution: 0,
-  baseHitPoints: 40,
+  baseHitPoints: 50,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
   particleLimit: 2,
@@ -49,7 +49,7 @@ const towerGlobals = {
   range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 50000,
+  lifeTime: 60000,
   index: 0
 };
 
@@ -65,7 +65,7 @@ const enemyGlobals = {
   restitution: 0.3,
   jumpForce: 60,
   friction: 1,
-  decayRate: 1, // hitpoints per decision
+  decayRate: 10, // hitpoints per decision
   baseHitPoints: 5000,
   deadHitPoints: 0,
   fragments: 1,
