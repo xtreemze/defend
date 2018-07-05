@@ -382,11 +382,6 @@ function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
         existingLocation =>
           existingLocation[0] === newLocation.x &&
           existingLocation[1] === newLocation.z
-      ) ||
-      economyGlobals.occupiedSpaces.find(
-        existingLocation =>
-          existingLocation[0] === newLocation.x &&
-          existingLocation[1] === newLocation.z
       )
     ) {
       newLocation = positionGenerator();

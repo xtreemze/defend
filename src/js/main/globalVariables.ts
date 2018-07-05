@@ -88,7 +88,6 @@ const economyGlobals = {
   bankSize: 40,
   defeats: 0,
   victories: 0,
-  occupiedSpaces: [[-15, 15], [15, -15], [5, -5], [-5, 5]] as any[]
 };
 
 const renderGlobals = {

@@ -130,7 +130,7 @@ function updateEconomy(scene: Scene) {
   currentBalance.innerText = `Wave: ${level}/${waves.length}
   Energy: ${currency}
   Defeats: ${economyGlobals.defeats}
-  Victores: ${economyGlobals.victories}`;
+  Victories: ${economyGlobals.victories}`;
 
   const currencyMeter = scene.getMeshByName("currencyMeter");
   //@ts-ignore
