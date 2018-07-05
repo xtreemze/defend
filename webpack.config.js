@@ -1,5 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-// const OfflinePlugin = require("offline-plugin");
+const OfflinePlugin = require("offline-plugin");
 
 module.exports = function e() {
   return {
@@ -143,19 +143,19 @@ module.exports = function e() {
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
       })
-      // new OfflinePlugin({
-      //   // externals: [],
-      //   caches: "all",
-      //   responseStrategy: "network-first",
-      //   updateStrategy: "all",
-      //   minify: "true",
-      //   ServiceWorker: {
-      //     events: "true"
-      //   }
-      //   // AppCache: {
-      //   //   events: "true"
-      //   // }
-      // })
+      new OfflinePlugin({
+        // externals: [],
+        caches: "all",
+        responseStrategy: "network-first",
+        updateStrategy: "all",
+        minify: "true",
+        ServiceWorker: {
+          events: "true"
+        }
+        // AppCache: {
+        //   events: "true"
+        // }
+      })
     ]
   };
 };
