@@ -8,7 +8,7 @@ function arcCamera(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     "arc",
     0,
     0,
-    mapGlobals.size,
+    mapGlobals.size * 2,
     Vector3.Zero(),
     scene
   ) as ArcRotateCamera;
@@ -17,7 +17,8 @@ function arcCamera(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
   camera.attachControl(canvas, true);
 
   // Attach Control
-  camera.upperRadiusLimit = mapGlobals.size * 2;
+  camera.upperRadiusLimit = mapGlobals.size * 3;
+  camera.lowerRadiusLimit = mapGlobals.size / 6;
 
   camera.upperBetaLimit = Math.PI / 2;
 
