@@ -19,7 +19,8 @@ import {
   enemyGlobals,
   towerGlobals,
   mapGlobals,
-  projectileGlobals
+  projectileGlobals,
+  economyGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
 import { waves } from "./waves";
@@ -378,6 +379,11 @@ function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
           existingLocation[1] === newLocation.z
       ) ||
       towerGlobals.occupiedSpaces.find(
+        existingLocation =>
+          existingLocation[0] === newLocation.x &&
+          existingLocation[1] === newLocation.z
+      ) ||
+      economyGlobals.occupiedSpaces.find(
         existingLocation =>
           existingLocation[0] === newLocation.x &&
           existingLocation[1] === newLocation.z

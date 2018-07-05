@@ -56,9 +56,9 @@ const towerGlobals = {
 const enemyGlobals = {
   minNumber: 4, // for one generation
   maxNumber: 20, // for one generation
-  limit: 80,
+  limit: 20,
   originHeight: 30,
-  generationRate: 18000, // milliseconds
+  generationRate: 25000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 20000,
   mass: 5000,
@@ -71,7 +71,7 @@ const enemyGlobals = {
   fragments: 1,
   allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
-  boundaryLimit: 10, // meters
+  boundaryLimit: 14, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
@@ -87,7 +87,8 @@ const economyGlobals = {
   restartMessage: false,
   bankSize: 40,
   defeats: 0,
-  victories: 0
+  victories: 0,
+  occupiedSpaces: [[-15, 15], [15, -15], [5, -5], [-5, 5]]
 };
 
 const renderGlobals = {

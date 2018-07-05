@@ -51,7 +51,7 @@ function map(scene: Scene) {
   // atmosphere.infiniteDistance = true;
 
   atmosphere.flipFaces(true);
-  // atmosphere.freezeWorldMatrix(); // freeze ground
+  atmosphere.freezeWorldMatrix(); // freeze sky
 
   atmosphere.material = skyMaterial;
 
