@@ -142,7 +142,7 @@ module.exports = function e() {
     plugins: [
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
-      })
+      }),
       new OfflinePlugin({
         // externals: [],
         caches: "all",
