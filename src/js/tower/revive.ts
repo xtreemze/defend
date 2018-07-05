@@ -40,7 +40,7 @@ export function revive(
         tower.material = damagedMaterial;
         setTimeout(() => {
           tower.dispose();
-        }, 3000);
+        }, 5000);
       }, towerGlobals.lifeTime);
 
       if (tower.onDisposeObservable) {

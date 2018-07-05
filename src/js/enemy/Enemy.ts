@@ -48,26 +48,26 @@ class Enemy {
     Tags.AddTagsTo(sphereMesh, "enemy");
   }
 
-  nearTower(ray: any, scene: Scene) {
-    let result = false;
-    for (const direction in ray) {
-      if (ray.hasOwnProperty(direction)) {
-        const directionRay = ray[direction];
-        //@ts-ignore
-        scene.pickWithRay(directionRay, (mesh: AbstractMesh) => {
-          for (let index = 0; index < towerGlobals.allTowers.length; index++) {
-            const element = towerGlobals.allTowers[index];
+  // nearTower(ray: any, scene: Scene) {
+  //   let result = false;
+  //   for (const direction in ray) {
+  //     if (ray.hasOwnProperty(direction)) {
+  //       const directionRay = ray[direction];
+  //       //@ts-ignore
+  //       scene.pickWithRay(directionRay, (mesh: AbstractMesh) => {
+  //         for (let index = 0; index < towerGlobals.allTowers.length; index++) {
+  //           const element = towerGlobals.allTowers[index];
 
-            if (element === mesh) {
-              result = true;
-            }
-          }
-        });
-      }
-    }
+  //           if (element === mesh) {
+  //             result = true;
+  //           }
+  //         }
+  //       });
+  //     }
+  //   }
 
-    return result;
-  }
+  //   return result;
+  // }
 
   checkHitPoints(
     scene: Scene,
@@ -92,7 +92,7 @@ class Enemy {
       ) {
         setTimeout(() => {
           this.fragment(level, enemyPosition, hitMaterial, enemyRotation);
-        }, 5);
+        }, 1);
       }
     } else {
       //@ts-ignore
@@ -154,7 +154,7 @@ class Enemy {
           fragment.physicsImpostor.dispose();
         }
         setTimeout(() => {}, 1);
-      }, projectileGlobals.lifeTime * 3);
+      }, projectileGlobals.lifeTime);
     }
 
     if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
@@ -168,59 +168,59 @@ class Enemy {
     }
   }
 
-  makeRays(sphereMesh: Mesh) {
-    const ray = {
-      up: new Ray(
-        sphereMesh.getAbsolutePosition(),
-        new Vector3(0, 0, 1),
-        20
-      ) as Ray,
-      down: new Ray(
-        sphereMesh.getAbsolutePosition(),
-        new Vector3(0, 0, -1),
-        20
-      ) as Ray,
-      left: new Ray(
-        sphereMesh.getAbsolutePosition(),
-        new Vector3(-1, 0, 0),
-        20
-      ) as Ray,
-      right: new Ray(
-        sphereMesh.getAbsolutePosition(),
-        new Vector3(1, 0, 0),
-        20
-      ) as Ray
-    };
+  // makeRays(sphereMesh: Mesh) {
+  //   const ray = {
+  //     up: new Ray(
+  //       sphereMesh.getAbsolutePosition(),
+  //       new Vector3(0, 0, 1),
+  //       20
+  //     ) as Ray,
+  //     down: new Ray(
+  //       sphereMesh.getAbsolutePosition(),
+  //       new Vector3(0, 0, -1),
+  //       20
+  //     ) as Ray,
+  //     left: new Ray(
+  //       sphereMesh.getAbsolutePosition(),
+  //       new Vector3(-1, 0, 0),
+  //       20
+  //     ) as Ray,
+  //     right: new Ray(
+  //       sphereMesh.getAbsolutePosition(),
+  //       new Vector3(1, 0, 0),
+  //       20
+  //     ) as Ray
+  //   };
 
-    return ray;
-  }
+  //   return ray;
+  // }
 
-  makeHelpers(ray: any, scene: Scene) {
-    let helpers = [] as RayHelper[];
+  // makeHelpers(ray: any, scene: Scene) {
+  //   let helpers = [] as RayHelper[];
 
-    const rayHelper1 = new RayHelper(ray.up) as RayHelper;
-    rayHelper1.show(scene, new Color3(1, 1, 0.1));
+  //   const rayHelper1 = new RayHelper(ray.up) as RayHelper;
+  //   rayHelper1.show(scene, new Color3(1, 1, 0.1));
 
-    const rayHelper2 = new RayHelper(ray.down) as RayHelper;
-    rayHelper2.show(scene, new Color3(0.5, 1, 0.5));
+  //   const rayHelper2 = new RayHelper(ray.down) as RayHelper;
+  //   rayHelper2.show(scene, new Color3(0.5, 1, 0.5));
 
-    const rayHelper3 = new RayHelper(ray.left) as RayHelper;
-    rayHelper3.show(scene, new Color3(1, 1, 0.1));
+  //   const rayHelper3 = new RayHelper(ray.left) as RayHelper;
+  //   rayHelper3.show(scene, new Color3(1, 1, 0.1));
 
-    const rayHelper4 = new RayHelper(ray.right) as RayHelper;
-    rayHelper4.show(scene, new Color3(0.5, 1, 0.5));
+  //   const rayHelper4 = new RayHelper(ray.right) as RayHelper;
+  //   rayHelper4.show(scene, new Color3(0.5, 1, 0.5));
 
-    helpers.push(rayHelper1, rayHelper2, rayHelper3, rayHelper4);
+  //   helpers.push(rayHelper1, rayHelper2, rayHelper3, rayHelper4);
 
-    return helpers;
-  }
+  //   return helpers;
+  // }
 
-  destroyHelpers(helpers: RayHelper[]) {
-    for (let index = 0; index < helpers.length; index++) {
-      const rayHelper = helpers[index];
-      rayHelper.dispose();
-    }
-  }
+  // destroyHelpers(helpers: RayHelper[]) {
+  //   for (let index = 0; index < helpers.length; index++) {
+  //     const rayHelper = helpers[index];
+  //     rayHelper.dispose();
+  //   }
+  // }
 
   revive(
     scene: Scene,
@@ -267,14 +267,14 @@ class Enemy {
 
     mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
 
-    const ray = this.makeRays(sphereMesh);
+    // const ray = this.makeRays(sphereMesh);
 
-    if (enemyGlobals.rayHelpers) {
-      const helpers = this.makeHelpers(ray, scene);
-      setTimeout(() => {
-        this.destroyHelpers(helpers);
-      }, 25000);
-    }
+    // if (enemyGlobals.rayHelpers) {
+    //   const helpers = this.makeHelpers(ray, scene);
+    //   setTimeout(() => {
+    //     this.destroyHelpers(helpers);
+    //   }, 25000);
+    // }
 
     let deltaTime = Date.now();
 
@@ -287,7 +287,7 @@ class Enemy {
           //@ts-ignore
           sphereMesh.hitPoints > enemyGlobals.deadHitPoints
         ) {
-          enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
+          enemyAi(sphereMesh, this.decide(sphereMesh, scene));
         }
         this.checkHitPoints(
           scene,
@@ -329,7 +329,7 @@ class Enemy {
     }, 1);
   }
 
-  decide(sphereMesh: Mesh, scene: Scene, ray: any) {
+  decide(sphereMesh: Mesh, scene: Scene, ray?: any) {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (
       sphereMesh.position.z <=
