@@ -110,14 +110,15 @@ function updateEconomy(scene: Scene) {
     economyGlobals.defeats += 1;
   }
   if (
-    economyGlobals.currentBalance > economyGlobals.maxBalance &&
-    economyGlobals.restartMessage === false || enemyGlobals.currentWave >= waves.length
+    (economyGlobals.currentBalance > economyGlobals.maxBalance &&
+      economyGlobals.restartMessage === false) ||
+    (enemyGlobals.currentWave >= waves.length &&
+      economyGlobals.restartMessage === false)
   ) {
     economyGlobals.currentBalance = economyGlobals.maxBalance;
     message(scene, "Victory", "&#8635;");
     economyGlobals.restartMessage = true;
     economyGlobals.victories += 1;
-
   }
 
   const currentBalance = document.getElementById(
