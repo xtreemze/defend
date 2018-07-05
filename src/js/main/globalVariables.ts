@@ -36,11 +36,12 @@ const projectileGlobals = {
 const towerGlobals = {
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
-  rateOfFire: 200, // milliseconds between each shot,
-  height: 2,
+  rateOfFire: 180, // milliseconds between each shot,
+  height: 3,
   mass: 0,
   restitution: 0,
   baseHitPoints: 0,
+  baseCost: 1000,
   allTowers: [] as Mesh[],
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
@@ -57,7 +58,7 @@ const enemyGlobals = {
   maxNumber: 20, // for one generation
   limit: 80,
   originHeight: 30,
-  generationRate: 8000, // milliseconds
+  generationRate: 18000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 20000,
   mass: 5000,
@@ -75,7 +76,8 @@ const enemyGlobals = {
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
   rayHelpers: false,
-  index: 0 as number
+  index: 0 as number,
+  currentWave: 0
 };
 
 const economyGlobals = {
@@ -83,7 +85,9 @@ const economyGlobals = {
   currentBalance: 1,
   maxBalance: 100000,
   restartMessage: false,
-  bankSize: 40
+  bankSize: 40,
+  defeats: 0,
+  victories: 0
 };
 
 const renderGlobals = {

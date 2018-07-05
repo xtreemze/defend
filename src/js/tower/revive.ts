@@ -23,6 +23,7 @@ export function revive(
   physicsEngine: PhysicsEngine
 ) {
   const towerMaterial = scene.getMaterialByID("towerMaterial") as Material;
+  const damagedMaterial = scene.getMaterialByID("hitMaterial") as Material;
   const projectileMaterial = scene.getMaterialByID(
     "projectileMaterial"
   ) as Material;
@@ -36,7 +37,10 @@ export function revive(
     case 1:
     default:
       const disposeTimer = setTimeout(() => {
-        tower.dispose();
+        tower.material = damagedMaterial;
+        setTimeout(() => {
+          tower.dispose();
+        }, 3000);
       }, towerGlobals.lifeTime);
 
       if (tower.onDisposeObservable) {
@@ -73,7 +77,11 @@ export function revive(
         },
         scene
       ) as Mesh;
-      innerTurret.position = new Vector3(0, 0, -0.2 * level) as Vector3;
+      innerTurret.position = new Vector3(
+        0,
+        0,
+        -0.1 * (towerGlobals.height * level)
+      ) as Vector3;
       const outerCSG = CSG.FromMesh(outerTurret);
       const innterCSG = CSG.FromMesh(innerTurret);
       innerTurret.dispose();
@@ -113,12 +121,10 @@ export function revive(
       flashMesh.material = projectileMaterial as Material;
 
       const rayLocal = new Vector3(0, 0, -1);
-      const rayLocalOrigin = new Vector3(0, 0, -5);
-      const turretDirection = turretMesh.getDirection(rayLocalOrigin) as Vector3;
 
       const ray = new Ray(
-        flashMesh.getAbsolutePosition(),
-        turretDirection,
+        turretMesh.getAbsolutePosition(),
+        turretMesh.getDirection(rayLocal),
         towerGlobals.range * 3
       ) as Ray;
 
@@ -139,7 +145,7 @@ export function revive(
         physicsEngine
       );
       const pillarMesh = MeshBuilder.CreateBox("pillar" + name, {
-        size: level / 2,
+        size: level / 1.5,
         height: towerGlobals.height * level,
         updatable: false
       }) as Mesh;
@@ -155,7 +161,10 @@ export function revive(
       Tags.AddTagsTo(turretMesh, "tower");
 
       const disposeTimer2 = setTimeout(() => {
-        tower.dispose();
+        tower.material = damagedMaterial;
+        setTimeout(() => {
+          tower.dispose();
+        }, 3000);
       }, towerGlobals.lifeTime);
 
       if (tower.onDisposeObservable) {
@@ -169,14 +178,23 @@ export function revive(
           true
         );
       }
-
+      pillarMesh.physicsImpostor = new PhysicsImpostor(
+        pillarMesh,
+        PhysicsImpostor.BoxImpostor,
+        {
+          mass: 0,
+          restitution: towerGlobals.restitution
+        },
+        scene
+      ) as PhysicsImpostor;
+      mapGlobals.allImpostors.unshift(pillarMesh.physicsImpostor);
       break;
   }
   tower.physicsImpostor = new PhysicsImpostor(
     tower,
     PhysicsImpostor.BoxImpostor,
     {
-      mass: towerGlobals.mass * level,
+      mass: 0,
       restitution: towerGlobals.restitution
     },
     scene

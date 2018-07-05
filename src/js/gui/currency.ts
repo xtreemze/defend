@@ -10,6 +10,7 @@ import {
 } from "babylonjs";
 
 import { message } from "./titleScreen";
+import { waves } from "../enemy/waves";
 
 function displayEconomy(scene: Scene) {
   const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
@@ -27,9 +28,10 @@ function displayEconomy(scene: Scene) {
     top: 1.5rem;
     left: 2rem;
     text-align: left;
-    font-weight: 500;
+    font-weight: 100;
     font-family: fantasy;
-    font-size: 2rem;
+    font-size: 1.2rem;
+    user-select: none;
         `
   );
 
@@ -40,11 +42,13 @@ function displayEconomy(scene: Scene) {
     {
       width: economyGlobals.bankSize,
       depth: economyGlobals.bankSize,
-      height: 20,
+      height: economyGlobals.bankSize / 2,
       updatable: false
     },
     scene
   ) as Mesh;
+
+  Tags.AddTagsTo(currencyTower, "tower");
 
   currencyTower.physicsImpostor = new PhysicsImpostor(
     currencyTower,
@@ -58,15 +62,13 @@ function displayEconomy(scene: Scene) {
   ) as PhysicsImpostor;
 
   currencyTower.material = scene.getMaterialByName("hitMaterial") as Material;
-  Tags.AddTagsTo(currencyTower, "tower");
 
   const hitPointsMeter = MeshBuilder.CreateBox(
-    "currencyMeter",
-    //@ts-ignore
+    "currencyMeter", //@ts-ignore
     {
       width: economyGlobals.bankSize,
       depth: economyGlobals.bankSize,
-      height: 19,
+      height: economyGlobals.bankSize / 2,
       updatable: false
     },
     scene
@@ -98,22 +100,36 @@ function rampUp(scene: Scene) {
   }, 1000 / 60);
 }
 function updateEconomy(scene: Scene) {
-  if (economyGlobals.currentBalance < 0 && economyGlobals.restartMessage === false) {
+  if (
+    economyGlobals.currentBalance < 0 &&
+    economyGlobals.restartMessage === false
+  ) {
     economyGlobals.currentBalance = 0;
     message(scene, "Defeat", "&#8635;");
     economyGlobals.restartMessage = true;
+    economyGlobals.defeats += 1;
   }
-  if (economyGlobals.currentBalance > economyGlobals.maxBalance && economyGlobals.restartMessage === false) {
+  if (
+    economyGlobals.currentBalance > economyGlobals.maxBalance &&
+    economyGlobals.restartMessage === false
+  ) {
     economyGlobals.currentBalance = economyGlobals.maxBalance;
     message(scene, "Victory", "&#8635;");
     economyGlobals.restartMessage = true;
+    economyGlobals.victories += 1;
   }
 
   const currentBalance = document.getElementById(
     "currentBalance"
   ) as HTMLDivElement;
 
-  currentBalance.innerText = Math.round(economyGlobals.currentBalance).toString();
+  const level = enemyGlobals.currentWave.toString();
+  const currency = Math.round(economyGlobals.currentBalance).toString();
+
+  currentBalance.innerText = `Wave: ${level}/${waves.length}
+  Energy: ${currency}
+  Defeats: ${economyGlobals.defeats}
+  Victores: ${economyGlobals.victories}`;
 
   const currencyMeter = scene.getMeshByName("currencyMeter");
   //@ts-ignore
@@ -121,7 +137,11 @@ function updateEconomy(scene: Scene) {
     1 / (economyGlobals.maxBalance / economyGlobals.currentBalance);
 
   //@ts-ignore
-  currencyMeter.scaling = new Vector3(scaleRate, 1, scaleRate) as Vector3;
+  currencyMeter.scaling = new Vector3(
+    scaleRate,
+    scaleRate,
+    scaleRate
+  ) as Vector3;
 }
 
 export { displayEconomy, updateEconomy, rampUp };

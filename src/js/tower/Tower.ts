@@ -7,7 +7,7 @@ import {
   Mesh,
   PhysicsImpostor,
   PhysicsEngine,
-  Material
+  Ray
 } from "babylonjs";
 import fireProjectile from "../projectile/Projectile";
 import positionGenerator from "../utility/positionGenerator";
@@ -28,8 +28,7 @@ class Tower {
     scene: Scene,
     physicsEngine: PhysicsEngine
   ) {
-
-    economyGlobals.currentBalance -= (level * 300);
+    economyGlobals.currentBalance -= level * towerGlobals.baseCost;
 
     updateEconomy(scene);
 
@@ -61,17 +60,13 @@ class Tower {
   }
 }
 
-function shotClearsTower(scene: any, ray: any, tower: Mesh) {
+function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
   let result = false as boolean;
-  scene.pickWithRay(ray, (mesh: Mesh) => {
-    for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
-      const element = towerGlobals.allTowers[index];
+  const hit = scene.pickWithRay(ray);
 
-      if (element === mesh && mesh !== tower) {
-        result = true as boolean;
-      }
-    }
-  });
+  if (hit && hit.pickedMesh === intendedEnemy) {
+    result = true as boolean;
+  }
   return result as boolean;
 }
 
@@ -105,8 +100,7 @@ function trackSpheres(
           //@ts-ignore
           enemy.hitPoints >= enemyGlobals.deadHitPoints &&
           Vector3.Distance(towerTurret.position, enemy.position) <=
-            towerGlobals.range * 3 &&
-          shotClearsTower(scene, ray, tower)
+            towerGlobals.range * 3
         ) {
           enemyDistances.push([
             Vector3.Distance(towerTurret.position, enemy.position),
@@ -116,13 +110,15 @@ function trackSpheres(
       }
       if (enemyDistances.length > 0) {
         const nearestEnemy = enemyDistances.sort()[0][1] as Mesh;
+
         const nearestEnemyImpostor = nearestEnemy.getPhysicsImpostor() as PhysicsImpostor;
 
         rotateTurret(nearestEnemy, towerTurret);
 
         if (
           Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
-          towerGlobals.shoot
+          towerGlobals.shoot &&
+          shotClearsTower(scene, ray, nearestEnemy)
         ) {
           deltaTime = Date.now();
           setTimeout(() => {
@@ -140,7 +136,7 @@ function trackSpheres(
               physicsEngine,
               nearestEnemyImpostor
             );
-          }, 5);
+          }, 1);
         }
       }
     }

@@ -8,7 +8,7 @@ interface coordinates {
 
 function randomNumber(): number {
   return Math.round(
-    randomNumberRange(-mapGlobals.size / 20, mapGlobals.size / 20) * 10 + 5
+    randomNumberRange(-mapGlobals.size / 30, mapGlobals.size / 30) * 10 + 5
   );
 }
 

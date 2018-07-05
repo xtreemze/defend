@@ -22,6 +22,7 @@ import {
   projectileGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
+import { waves } from "./waves";
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
@@ -72,7 +73,7 @@ class Enemy {
     sphereMesh: Mesh,
     loopTimer: any,
     level: number = 1 | 2 | 3,
-    hitPointsMeter: Mesh,
+    hitPointsMeter: Mesh
   ) {
     const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
 
@@ -148,8 +149,8 @@ class Enemy {
 
       setTimeout(() => {
         fragment.dispose();
-        if (fragment.physicsImpostor !== null){
-        fragment.physicsImpostor.dispose();
+        if (fragment.physicsImpostor !== null) {
+          fragment.physicsImpostor.dispose();
         }
         setTimeout(() => {}, 1);
       }, projectileGlobals.lifeTime * 3);
@@ -228,7 +229,7 @@ class Enemy {
     level: number = 1 | 2 | 3
   ) {
     const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
-    const currencyMeshImpostor = currencyMesh.getPhysicsImpostor() as PhysicsImpostor
+    const currencyMeshImpostor = currencyMesh.getPhysicsImpostor() as PhysicsImpostor;
 
     //@ts-ignore
     sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
@@ -285,10 +286,7 @@ class Enemy {
           //@ts-ignore
           sphereMesh.hitPoints > enemyGlobals.deadHitPoints
         ) {
-          enemyAi(
-            sphereMesh,
-            this.decide(sphereMesh, scene, ray),
-          );
+          enemyAi(sphereMesh, this.decide(sphereMesh, scene, ray));
         }
         this.checkHitPoints(
           scene,
@@ -300,14 +298,16 @@ class Enemy {
       }
     });
 
-    currencyCollide(sphereMesh, scene, sphereMesh.physicsImpostor, currencyMesh, currencyMeshImpostor);
+    currencyCollide(
+      sphereMesh,
+      scene,
+      sphereMesh.physicsImpostor,
+      currencyMesh,
+      currencyMeshImpostor
+    );
   }
 
-  destroyEnemy(
-    sphereMesh: Mesh,
-    loopTimer: any,
-    scene: Scene
-  ) {
+  destroyEnemy(sphereMesh: Mesh, loopTimer: any, scene: Scene) {
     enemyGlobals.occupiedSpaces.pop();
     //@ts-ignore
     sphereMesh.hitPoints = 0;
@@ -319,7 +319,7 @@ class Enemy {
 
     setTimeout(() => {
       if (sphereMesh.physicsImpostor !== null) {
-      sphereMesh.physicsImpostor.dispose();
+        sphereMesh.physicsImpostor.dispose();
       }
       enemyGlobals.allEnemies = [];
       sphereMesh.dispose();
@@ -331,7 +331,8 @@ class Enemy {
   decide(sphereMesh: Mesh, scene: Scene, ray: any) {
     const decideToMove = { up: true, left: true, right: true, down: true };
     if (
-      sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1
+      sphereMesh.position.z <=
+      enemyGlobals.boundaryLimit * -1
       // &&
       // this.nearTower(ray.up, scene) === false
     ) {
@@ -355,7 +356,8 @@ class Enemy {
       decideToMove.left = true;
     }
     if (
-      sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1
+      sphereMesh.position.x <=
+      enemyGlobals.boundaryLimit * -1
       //  &&
       // this.nearTower(ray.right, scene) === false
     ) {
@@ -366,7 +368,7 @@ class Enemy {
   }
 }
 
-function enemyGenerator(scene: Scene, quantity: number = 0) {
+function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
   for (let index = 0; index < quantity; index += 1) {
     let newLocation = positionGenerator();
     while (
@@ -387,21 +389,18 @@ function enemyGenerator(scene: Scene, quantity: number = 0) {
     enemyGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
     new Enemy(
-      randomNumberRange(1, 3),
+      level,
       {
         x: enemyGlobals.occupiedSpaces[0][0],
         z: enemyGlobals.occupiedSpaces[0][1]
       },
       scene
     ) as Enemy;
-
   }
 }
 
 function enemies(scene: Scene) {
-  enemyGenerator(scene, enemyGlobals.minNumber);
-
-  let deltaTime = Date.now();
+  let deltaTime = Date.now() - enemyGlobals.generationRate;
 
   scene.registerAfterRender(() => {
     if (
@@ -411,7 +410,16 @@ function enemies(scene: Scene) {
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit
     ) {
       deltaTime = Date.now();
-      enemyGenerator(scene, randomNumberRange(2, 5));
+      setTimeout(() => {
+        //@ts-ignore
+        enemyGenerator(scene, waves[enemyGlobals.currentWave][0], 1);
+        //@ts-ignore
+        enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
+        //@ts-ignore
+        enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
+
+        enemyGlobals.currentWave += 1;
+      }, 2);
     }
   });
 }

@@ -6,6 +6,7 @@ import {
   PickingInfo
 } from "babylonjs";
 import { Tower } from "../tower/Tower";
+import { economyGlobals, towerGlobals } from "../main/globalVariables";
 
 function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer down event is raised
@@ -16,7 +17,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
     if (
       pickResult.pickedMesh !== null &&
       pickResult.pickedMesh.material !== null &&
-      pickResult.pickedMesh.material.name === "towerMaterial"
+      pickResult.pickedMesh.name.match(/tower*/)
     ) {
       if (pickResult.hit && pickResult.pickedMesh.name[10] === "1") {
         const samePosition = {
@@ -24,13 +25,14 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           z: pickResult.pickedMesh.position.z
         };
 
-        pickResult.pickedMesh.dispose();
 
         const level = 2;
-
-        setTimeout(() => {
-          new Tower(level, samePosition, scene, physicsEngine) as Tower;
-        }, 20);
+        if (economyGlobals.currentBalance > towerGlobals.baseCost * level) {
+          pickResult.pickedMesh.dispose();
+          setTimeout(() => {
+            new Tower(level, samePosition, scene, physicsEngine) as Tower;
+          }, 20);
+        }
       }
       if (
         pickResult.hit &&
@@ -42,12 +44,14 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           z: pickResult.pickedMesh.position.z
         };
 
-        pickResult.pickedMesh.dispose();
 
         const level = 3;
-        setTimeout(() => {
-          new Tower(level, samePosition, scene, physicsEngine) as Tower;
-        }, 20);
+        if (economyGlobals.currentBalance > towerGlobals.baseCost * level) {
+          pickResult.pickedMesh.dispose();
+          setTimeout(() => {
+            new Tower(level, samePosition, scene, physicsEngine) as Tower;
+          }, 20);
+        }
       }
     }
   }, PointerEventTypes._POINTERTAP);

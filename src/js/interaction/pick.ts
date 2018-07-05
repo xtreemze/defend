@@ -7,14 +7,18 @@ import {
 } from "babylonjs";
 import { Tower } from "../tower/Tower";
 import { towerGlobals, economyGlobals } from "../main/globalVariables";
-import randomNumberRange from "../utility/randomNumberRange";
 
 function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
+
   //When pointer down event is raised
 
   scene.onPointerObservable.add(function(evt: PointerInfo) {
     const pickResult = evt.pickInfo as PickingInfo;
-    if (pickResult.pickedPoint !== null && pickResult.pickedMesh !== null) {
+    if (
+      pickResult.pickedPoint !== null &&
+      pickResult.pickedMesh !== null &&
+      economyGlobals.currentBalance > towerGlobals.baseCost
+    ) {
       if (pickResult.hit && pickResult.pickedMesh.name === "ground") {
         let newLocation: { x: number; y: number; z: number } = {
           x: 0,

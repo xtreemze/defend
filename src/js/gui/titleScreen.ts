@@ -18,9 +18,7 @@ function titleScreen(
 ) {
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = `Defend`;
-  title.setAttribute(
-    "style",
-    `
+  title.setAttribute("style", `
       position: absolute;
       color: ${projectileGlobals.livingColor.toHexString()};
       top: 30vh;
@@ -30,15 +28,13 @@ function titleScreen(
       font-weight: 500;
       font-family: fantasy;
       font-size: 4rem;
-      `
-  );
+      user-select: none;
+      `);
 
   const startButton = document.createElement("button") as HTMLButtonElement;
   startButton.innerHTML = `&#x1f50a;`;
   startButton.id = "startButton";
-  startButton.setAttribute(
-    "style",
-    `
+  startButton.setAttribute("style", `
       position: absolute;
       background-color: ${mapGlobals.sceneAmbient.toHexString()};
       color: ${projectileGlobals.livingColor.toHexString()};
@@ -53,8 +49,8 @@ function titleScreen(
       font-weight: 600;
       outline: none;
       font-size: 3rem;
-      `
-  );
+      user-select: none;
+      `);
   const canvasParent = canvas.parentNode as Node;
 
   canvasParent.insertBefore(title, canvas);
@@ -96,9 +92,7 @@ function message(scene: Scene, message: string, icon: string) {
   const canvas = document.getElementById("renderCanvas");
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = message;
-  title.setAttribute(
-    "style",
-    `
+  title.setAttribute("style", `
     position: absolute;
     color: ${projectileGlobals.livingColor.toHexString()};
       top: 30vh;
@@ -108,15 +102,13 @@ function message(scene: Scene, message: string, icon: string) {
       font-weight: 500;
       font-family: fantasy;
       font-size: 4rem;
-      `
-  );
+      user-select: none;
+      `);
 
   const startButton = document.createElement("button") as HTMLButtonElement;
   startButton.innerHTML = icon;
   startButton.id = "startButton";
-  startButton.setAttribute(
-    "style",
-    `
+  startButton.setAttribute("style", `
     position: absolute;
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
@@ -131,8 +123,8 @@ function message(scene: Scene, message: string, icon: string) {
       font-weight: 600;
       outline: none;
       font-size: 3rem;
-      `
-  );
+      user-select: none;
+      `);
   if (canvas !== null) {
     const canvasParent = canvas.parentNode as Node;
 
