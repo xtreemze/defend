@@ -65,13 +65,13 @@ const enemyGlobals = {
   restitution: 0.3,
   jumpForce: 60,
   friction: 1,
-  decayRate: 10, // hitpoints per decision
+  decayRate: 20, // hitpoints per decision
   baseHitPoints: 5000,
   deadHitPoints: 0,
   fragments: 1,
   allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
-  boundaryLimit: 14, // meters
+  boundaryLimit: 5, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
