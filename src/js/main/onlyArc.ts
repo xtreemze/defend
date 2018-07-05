@@ -8,7 +8,7 @@ function arcCamera(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
     "arc",
     0,
     0,
-    mapGlobals.size * 1.2,
+    mapGlobals.size / 2,
     Vector3.Zero(),
     scene
   ) as ArcRotateCamera;
