@@ -4,20 +4,20 @@ const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
   size: 200, // map radius
-  optimizerOn: true,
+  optimizerOn: false,
   cameraCutDelay: 4200,
-  rotateCameras: true,
+  rotateCameras: false,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
-  impostorLimit: 300, // keep low for mobile device limits
+  impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 170,
+  soundDelay: 150,
   soundLimit: 2, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
-  ambientColor: new Color3(0.2, 0.2, 0.2),
-  sceneAmbient: new Color3(0.01, 0.0, 0.2),
+  ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
+  sceneAmbient: new Color3(0.01, 0.0, 0.2) as Color3,
   soundOn: false
 };
 
@@ -27,7 +27,7 @@ const projectileGlobals = {
   mass: 30,
   restitution: 0,
   baseHitPoints: 40,
-  livingColor: new Color3(1, 0.5, 0.2),
+  livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
   particleLimit: 2,
   particleIndex: 0
@@ -76,7 +76,7 @@ const enemyGlobals = {
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
   rayHelpers: false,
-  index: 0 as number,
+  index: 0,
   currentWave: 0
 };
 
@@ -88,7 +88,7 @@ const economyGlobals = {
   bankSize: 40,
   defeats: 0,
   victories: 0,
-  occupiedSpaces: [[-15, 15], [15, -15], [5, -5], [-5, 5]]
+  occupiedSpaces: [[-15, 15], [15, -15], [5, -5], [-5, 5]] as any[]
 };
 
 const renderGlobals = {
@@ -103,13 +103,13 @@ const renderGlobals = {
 };
 
 //@ts-ignore
-window.globals = {
-  projectileGlobals,
-  towerGlobals,
-  enemyGlobals,
-  mapGlobals,
-  renderGlobals
-};
+// window.globals = {
+//   projectileGlobals,
+//   towerGlobals,
+//   enemyGlobals,
+//   mapGlobals,
+//   renderGlobals
+// };
 
 export {
   projectileGlobals,
@@ -120,5 +120,3 @@ export {
   economyGlobals
 };
 
-//@ts-ignore
-window.occupied = towerGlobals.occupiedSpaces;
