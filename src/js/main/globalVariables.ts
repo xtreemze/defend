@@ -58,7 +58,7 @@ const enemyGlobals = {
   maxNumber: 20, // for one generation
   limit: 100,
   originHeight: 30,
-  generationRate: 25000, // milliseconds
+  generationRate: 20000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 20000,
   mass: 5000,
@@ -119,4 +119,3 @@ export {
   renderGlobals,
   economyGlobals
 };
-

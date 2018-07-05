@@ -89,6 +89,7 @@ function titleScreen(
 
 function message(scene: Scene, message: string, icon: string) {
   enemyGlobals.limit = 0;
+
   const canvas = document.getElementById("renderCanvas");
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = message;
@@ -136,6 +137,7 @@ function message(scene: Scene, message: string, icon: string) {
       titleParent.removeChild(title);
       const startButtonParent = startButton.parentNode as Node;
       startButtonParent.removeChild(startButton);
+      enemyGlobals.currentWave = 0;
       rampUp(scene);
       enemyGlobals.limit = mapGlobals.size;
       economyGlobals.restartMessage = false;
