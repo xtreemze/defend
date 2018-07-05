@@ -66,7 +66,7 @@ function displayEconomy(scene: Scene) {
     {
       width: economyGlobals.bankSize,
       depth: economyGlobals.bankSize,
-      height: 20,
+      height: 19,
       updatable: false
     },
     scene
@@ -112,6 +112,7 @@ function updateEconomy(scene: Scene) {
   const currentBalance = document.getElementById(
     "currentBalance"
   ) as HTMLDivElement;
+
   currentBalance.innerText = Math.round(economyGlobals.currentBalance).toString();
 
   const currencyMeter = scene.getMeshByName("currencyMeter");

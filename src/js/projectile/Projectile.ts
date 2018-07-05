@@ -33,7 +33,7 @@ class Projectile {
       width: level / 2,
       updatable: false
     }) as Mesh;
-
+    projectile.isPickable = false;
     projectile.convertToUnIndexedMesh();
 
     startLife(
@@ -137,9 +137,9 @@ function hitEffect(
       enemy.material = hitMaterial as Material;
       //@ts-ignore
       if (enemy.hitPoints > 0) {
-      //@ts-ignore
-      economyGlobals.currentBalance += projectile.hitPoints;
-      updateEconomy(scene);
+        //@ts-ignore
+        economyGlobals.currentBalance += projectile.hitPoints;
+        updateEconomy(scene);
       }
       setTimeout(() => {
         enemy.material = enemyMaterial as Material;
@@ -180,7 +180,7 @@ function impulsePhys(
         projectile.getAbsolutePosition()
       );
     }
-    }, 1);
+  }, 1);
 }
 
 function destroyProjectile(projectile: Mesh, physicsEngine: PhysicsEngine) {
