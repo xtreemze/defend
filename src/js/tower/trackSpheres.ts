@@ -6,6 +6,7 @@ import {
   mapGlobals
 } from "../main/globalVariables";
 import { rotateTurret, shotClearsTower } from "./Tower";
+import { shoot } from "../main/sound";
 function trackSpheres(
   scene: Scene,
   tower: Mesh,
@@ -51,6 +52,17 @@ function trackSpheres(
             flash.setEnabled(false);
           }, 30);
           flash.setEnabled(true);
+
+          if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
+            setTimeout(() => {
+              mapGlobals.projectileSounds -= 1;
+            }, mapGlobals.soundDelay);
+
+            mapGlobals.projectileSounds += 1;
+
+            if (mapGlobals.soundOn) shoot(flash, level);
+          }
+
           setTimeout(() => {
             fireProjectile(
               scene,

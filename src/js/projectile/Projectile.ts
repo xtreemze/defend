@@ -88,15 +88,6 @@ function startLife(
   destroyOnCollide(scene, projectile, physicsEngine); // Detects collissions with enemies
   impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
-  if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
-    setTimeout(() => {
-      mapGlobals.projectileSounds -= 1;
-    }, mapGlobals.soundDelay);
-
-    mapGlobals.projectileSounds += 1;
-
-    if (mapGlobals.soundOn) shoot(projectile, level);
-  }
   setTimeout(() => {
     destroyProjectile(projectile, physicsEngine);
   }, projectileGlobals.lifeTime);
@@ -118,43 +109,42 @@ function destroyOnCollide(
   }
 }
 
-function hitEffect(
-  scene: Scene,
-  projectile: Mesh,
-  enemy: Mesh,
-) {
+function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
   const hitMaterial = scene.getMaterialByID("damagedMaterial") as Material;
   const enemyMaterial = scene.getMaterialByID("hitMaterial") as Material;
   if (projectile.physicsImpostor !== null && enemy.physicsImpostor !== null) {
-    projectile.physicsImpostor.registerOnPhysicsCollide(enemy.physicsImpostor, () => {
-      //@ts-ignore
-      enemy.hitPoints -= projectile.hitPoints;
-
-      enemy.material = hitMaterial as Material;
-      //@ts-ignore
-      if (enemy.hitPoints > 0) {
+    projectile.physicsImpostor.registerOnPhysicsCollide(
+      enemy.physicsImpostor,
+      () => {
         //@ts-ignore
-        economyGlobals.currentBalance += projectile.hitPoints;
-        updateEconomy(scene);
-      }
-      setTimeout(() => {
-        enemy.material = enemyMaterial as Material;
-      }, 30);
+        enemy.hitPoints -= projectile.hitPoints;
 
-      if (
-        mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
+        enemy.material = hitMaterial as Material;
         //@ts-ignore
-        enemy.hitPoints > 0
-      ) {
+        if (enemy.hitPoints > 0) {
+          //@ts-ignore
+          economyGlobals.currentBalance += projectile.hitPoints;
+          updateEconomy(scene);
+        }
         setTimeout(() => {
-          mapGlobals.simultaneousSounds -= 1;
-        }, mapGlobals.soundDelay);
+          enemy.material = enemyMaterial as Material;
+        }, 30);
 
-        mapGlobals.simultaneousSounds += 1;
+        if (
+          mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
+          //@ts-ignore
+          enemy.hitPoints > 0
+        ) {
+          setTimeout(() => {
+            mapGlobals.simultaneousSounds -= 1;
+          }, mapGlobals.soundDelay);
 
-        if (mapGlobals.soundOn) damage(enemy);
+          mapGlobals.simultaneousSounds += 1;
+
+          if (mapGlobals.soundOn) damage(enemy);
+        }
       }
-    });
+    );
   }
 }
 
