@@ -18,10 +18,7 @@ function trackSpheres(
 ) {
   let deltaTime = Date.now();
   tower.registerAfterRender(() => {
-    if (
-      enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-      mapGlobals.allImpostors.length < mapGlobals.impostorLimit
-    ) {
+    if (enemyGlobals.allEnemies.length > 0) {
       const enemyDistances = [] as any;
       for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
         const enemy = enemyGlobals.allEnemies[index];

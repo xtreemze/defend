@@ -40,9 +40,9 @@ class Game {
   constructor(canvasElement: string) {
     this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
     this.engine = new Engine(this.canvas, true, {
-      preserveDrawingBuffer: true,
-      stencil: true,
-      doNotHandleContextLost: true
+      // preserveDrawingBuffer: true,
+      // stencil: true,
+      // doNotHandleContextLost: true
     });
     this.engine.enableOfflineSupport = false;
     this.engine.disableManifestCheck = true;
@@ -53,22 +53,22 @@ class Game {
     // this.scene.autoClear = false; // Color buffer
     // this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
     if (mapGlobals.optimizerOn) {
-      const originalGenerationRate = enemyGlobals.generationRate;
-      const originalTowerLifetime = towerGlobals.lifeTime;
+      // const originalGenerationRate = enemyGlobals.generationRate;
+      // const originalTowerLifetime = towerGlobals.lifeTime;
       SceneOptimizer.OptimizeAsync(
         this.scene,
-        SceneOptimizerOptions.ModerateDegradationAllowed(40),
+        SceneOptimizerOptions.HighDegradationAllowed(60),
         function() {
           // On success
           // towerGlobals.shoot = true;
-          enemyGlobals.generationRate = originalGenerationRate;
-          towerGlobals.lifeTime = originalTowerLifetime;
+          // enemyGlobals.generationRate = originalGenerationRate;
+          // towerGlobals.lifeTime = originalTowerLifetime;
         },
         function() {
           // FPS target not reached
           // towerGlobals.shoot = false;
-          enemyGlobals.generationRate = originalGenerationRate * 10;
-          towerGlobals.lifeTime = originalTowerLifetime / 5;
+          // enemyGlobals.generationRate = originalGenerationRate * 10;
+          // towerGlobals.lifeTime = originalTowerLifetime / 5;
         }
       );
     }
