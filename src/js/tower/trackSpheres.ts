@@ -46,7 +46,6 @@ function trackSpheres(
       }
       if (enemyDistances.length > 0) {
         const nearestEnemy = enemyDistances.sort()[0][1] as Mesh;
-        const nearestEnemyImpostor = nearestEnemy.getPhysicsImpostor() as PhysicsImpostor;
         rotateTurret(nearestEnemy, towerTurret);
         if (
           Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
@@ -64,10 +63,9 @@ function trackSpheres(
               towerTurret,
               level,
               nearestEnemy,
-              physicsEngine,
-              nearestEnemyImpostor
+              physicsEngine
             );
-          }, 1);
+          }, 5);
         }
       }
     }

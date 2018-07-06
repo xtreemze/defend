@@ -22,8 +22,7 @@ class Projectile {
     scene: Scene,
     level: number = 1 | 2 | 3,
     nearestEnemy: Mesh,
-    physicsEngine: PhysicsEngine,
-    nearestEnemyImpostor: PhysicsImpostor
+    physicsEngine: PhysicsEngine
   ) {
     const name = `projectile${level}` as string;
 
@@ -42,8 +41,7 @@ class Projectile {
       level,
       projectile,
       nearestEnemy,
-      physicsEngine,
-      nearestEnemyImpostor
+      physicsEngine
     );
   }
 }
@@ -54,8 +52,7 @@ function startLife(
   level: number = 1 | 2 | 3,
   projectile: Mesh,
   nearestEnemy: Mesh,
-  physicsEngine: PhysicsEngine,
-  enemyImpostor: PhysicsImpostor
+  physicsEngine: PhysicsEngine
 ) {
   const projectileMaterial = scene.getMaterialByID(
     "projectileMaterial"
@@ -87,7 +84,7 @@ function startLife(
 
   projectile.rotation.copyFrom(clonedRotation);
 
-  hitEffect(scene, projectile, nearestEnemy, enemyImpostor); // Detects collissions with enemies
+  hitEffect(scene, projectile, nearestEnemy); // Detects collissions with enemies
   destroyOnCollide(scene, projectile, physicsEngine); // Detects collissions with enemies
   impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
@@ -125,12 +122,11 @@ function hitEffect(
   scene: Scene,
   projectile: Mesh,
   enemy: Mesh,
-  enemyImpostor: PhysicsImpostor
 ) {
   const hitMaterial = scene.getMaterialByID("damagedMaterial") as Material;
   const enemyMaterial = scene.getMaterialByID("hitMaterial") as Material;
-  if (projectile.physicsImpostor !== null) {
-    projectile.physicsImpostor.registerOnPhysicsCollide(enemyImpostor, () => {
+  if (projectile.physicsImpostor !== null && enemy.physicsImpostor !== null) {
+    projectile.physicsImpostor.registerOnPhysicsCollide(enemy.physicsImpostor, () => {
       //@ts-ignore
       enemy.hitPoints -= projectile.hitPoints;
 
@@ -204,15 +200,7 @@ export default function fireProjectile(
   originMesh: Mesh,
   level: number = 1 | 2 | 3,
   nearestEnemy: Mesh,
-  physicsEngine: PhysicsEngine,
-  nearestEnemyImpostor: PhysicsImpostor
+  physicsEngine: PhysicsEngine
 ) {
-  new Projectile(
-    originMesh,
-    scene,
-    level,
-    nearestEnemy,
-    physicsEngine,
-    nearestEnemyImpostor
-  );
+  new Projectile(originMesh, scene, level, nearestEnemy, physicsEngine);
 }
