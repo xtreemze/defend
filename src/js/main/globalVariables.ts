@@ -57,8 +57,8 @@ const enemyGlobals = {
   minNumber: 1, // for one generation
   maxNumber: 8, // for one generation
   limit: 0, // wait for this enemy count before next wave
-  originHeight: 10,
-  generationRate: 12000, // milliseconds
+  originHeight: 6,
+  generationRate: 10000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 20000,
   mass: 5000,

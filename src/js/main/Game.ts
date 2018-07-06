@@ -57,7 +57,7 @@ class Game {
       // const originalTowerLifetime = towerGlobals.lifeTime;
       SceneOptimizer.OptimizeAsync(
         this.scene,
-        SceneOptimizerOptions.HighDegradationAllowed(60),
+        SceneOptimizerOptions.ModerateDegradationAllowed(55),
         function() {
           // On success
           // towerGlobals.shoot = true;
