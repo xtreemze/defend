@@ -224,7 +224,7 @@ function enemies(scene: Scene) {
     if (
       Date.now() - deltaTime > enemyGlobals.generationRate &&
       enemyGlobals.allEnemies.length <
-        enemyGlobals.limit - enemyGlobals.maxNumber &&
+        ( enemyGlobals.limit) &&
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit
     ) {
       deltaTime = Date.now();

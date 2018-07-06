@@ -54,9 +54,9 @@ const towerGlobals = {
 };
 
 const enemyGlobals = {
-  minNumber: 4, // for one generation
-  maxNumber: 20, // for one generation
-  limit: 100,
+  minNumber: 1, // for one generation
+  maxNumber: 8, // for one generation
+  limit: 2,
   originHeight: 10,
   generationRate: 20000, // milliseconds
   decisionRate: 200, // milliseconds
