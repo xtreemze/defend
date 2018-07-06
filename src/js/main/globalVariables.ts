@@ -9,7 +9,7 @@ const mapGlobals = {
   rotateCameras: false,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
-  impostorLimit: 100, // keep low for mobile device limits
+  impostorLimit: 200, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 150,
