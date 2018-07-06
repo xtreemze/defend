@@ -1,9 +1,14 @@
-import { economyGlobals, enemyGlobals } from "../main/globalVariables";
-import { Scene, Vector3 } from "babylonjs";
+import {
+  economyGlobals,
+  enemyGlobals,
+  mapGlobals
+} from "../main/globalVariables";
+import { Scene, Vector3, Mesh } from "babylonjs";
 import { displayMessage } from "./displayMessage";
 import { waves } from "../enemy/waves";
+import { victory, defeated } from "../main/sound";
 
-export function updateEconomy(scene: Scene) {
+export function updateEconomy(scene: Scene, currencyTower?: any) {
   if (
     economyGlobals.currentBalance < 0 &&
     economyGlobals.restartMessage === false
@@ -12,6 +17,9 @@ export function updateEconomy(scene: Scene) {
     displayMessage(scene, "Defeat", "&#8635;");
     economyGlobals.restartMessage = true;
     economyGlobals.defeats += 1;
+    if (currencyTower !== null && mapGlobals.soundOn === true) {
+      defeated();
+    }
   }
   if (
     (economyGlobals.currentBalance > economyGlobals.maxBalance &&
@@ -23,6 +31,9 @@ export function updateEconomy(scene: Scene) {
     displayMessage(scene, "Victory", "&#8635;");
     economyGlobals.restartMessage = true;
     economyGlobals.victories += 1;
+    if (currencyTower !== null && mapGlobals.soundOn === true) {
+      victory();
+    }
   }
   const currentBalance = document.getElementById(
     "currentBalance"

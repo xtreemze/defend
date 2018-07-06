@@ -85,15 +85,15 @@ function displayEconomy(scene: Scene) {
     "enemyMaterial"
   ) as Material;
 
-  rampUp(scene);
+  rampUp(scene, currencyTower);
 }
 
-function rampUp(scene: Scene) {
+function rampUp(scene: Scene, currencyTower?: Mesh) {
   economyGlobals.currentBalance = 0;
 
   const interval1 = setInterval(() => {
     economyGlobals.currentBalance += 50;
-    updateEconomy(scene);
+    updateEconomy(scene, currencyTower);
     if (
       economyGlobals.currentBalance >= economyGlobals.initialBalance ||
       economyGlobals.currentBalance < 0

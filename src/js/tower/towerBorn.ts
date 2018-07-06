@@ -16,6 +16,7 @@ import {
 import { towerGlobals, mapGlobals } from "../main/globalVariables";
 import { destroyTower } from "./Tower";
 import { trackSpheres } from "./trackSpheres";
+import { removeTower } from "../main/sound";
 
 export function towerBorn(
   scene: Scene,
@@ -41,6 +42,7 @@ export function towerBorn(
       const disposeTimer = setTimeout(() => {
         tower.material = damagedMaterial;
         setTimeout(() => {
+          removeTower(tower, level);
           tower.dispose();
         }, 5000);
       }, towerGlobals.lifeTime);
@@ -179,6 +181,7 @@ export function towerBorn(
       const disposeTimer2 = setTimeout(() => {
         tower.material = damagedMaterial;
         setTimeout(() => {
+          removeTower(tower, level);
           tower.dispose();
         }, 3000);
       }, towerGlobals.lifeTime);

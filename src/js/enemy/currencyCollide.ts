@@ -1,7 +1,7 @@
 import { PhysicsImpostor, Mesh, Scene, Material } from "babylonjs";
 import { updateEconomy } from "../gui/updateEconomy";
 import { mapGlobals, economyGlobals } from "../main/globalVariables";
-import { damage } from "../main/sound";
+import { damageCurrency } from "../main/sound";
 
 function currencyCollide(
   enemy: Mesh,
@@ -18,9 +18,10 @@ function currencyCollide(
     if (enemy.hitPoints > 0 && economyGlobals.currentBalance > 0) {
       //@ts-ignore
       economyGlobals.currentBalance -= enemy.hitPoints;
-    }
-    //@ts-ignore
-    enemy.hitPoints = 0;
+
+
+      //@ts-ignore
+      enemy.hitPoints = 0;
       updateEconomy(scene);
 
       currencyMesh.material = hitMaterial as Material;
@@ -28,24 +29,22 @@ function currencyCollide(
         currencyMesh.material = enemyMaterial as Material;
       }, 30);
 
-    if (
-      mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
-      //@ts-ignore
-      enemy.hitPoints > 0
-    ) {
-      setTimeout(() => {
-        mapGlobals.simultaneousSounds -= 1;
-      }, mapGlobals.soundDelay);
+      if (
+        mapGlobals.simultaneousSounds < mapGlobals.soundLimit
 
-      mapGlobals.simultaneousSounds += 1;
+      ) {
+        setTimeout(() => {
+          mapGlobals.simultaneousSounds -= 1;
+        }, mapGlobals.soundDelay);
 
-      if (mapGlobals.soundOn) {
-        // @ts-ignore
-        currencyMesh.hitPoints = economyGlobals.currentBalance / 5000;
+        mapGlobals.simultaneousSounds += 1;
 
-        damage(currencyMesh);
+        if (mapGlobals.soundOn) {
+          damageCurrency(currencyMesh);
+        }
       }
     }
+
   });
 }
 

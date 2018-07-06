@@ -1,5 +1,14 @@
 import * as FX from "../../vendor/wafxr/wafxr";
-import { onDestroy, shoot, damage, addTower } from "./sound";
+import {
+  onDestroy,
+  shoot,
+  damage,
+  addTower,
+  removeTower,
+  damageCurrency,
+  defeated,
+  victory
+} from "./sound";
 import { Vector3 } from "babylonjs";
 import randomNumberRange from "../utility/randomNumberRange";
 import { towerGlobals } from "./globalVariables";
@@ -29,13 +38,21 @@ setInterval(() => {
   towerGlobals.allTowers.length = randomNumberRange(1, 50);
   testMesh.hitPoints = randomNumberRange(1, 400);
 
-  //   addTower(testMesh, randomNumberRange(1, 3));
-
-  //   onDestroy(testMesh, randomNumberRange(1, 3));
-
   shoot(testMesh, randomNumberRange(1, 3));
 
   setTimeout(() => {
-    damage(testMesh);
+    // damage(testMesh);
+  }, 200);
+
+  // setTimeout(() => {
+  //   onDestroy(testMesh, randomNumberRange(1, 3));
+  // }, 600);
+
+  setTimeout(() => {
+    // addTower(testMesh, randomNumberRange(1, 3));
+    // removeTower(testMesh, randomNumberRange(1, 3));
+    defeated();
+    // victory(testMesh);
+    // damageCurrency(testMesh);
   }, 200);
 }, 1000);

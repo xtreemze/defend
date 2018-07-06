@@ -126,15 +126,15 @@ function fragment(
     }, projectileGlobals.lifeTime);
   }
 
-  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-    setTimeout(() => {
-      mapGlobals.simultaneousSounds -= 1;
-    }, mapGlobals.soundDelay);
+  // if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+  //   setTimeout(() => {
+  //     mapGlobals.simultaneousSounds -= 1;
+  //   }, mapGlobals.soundDelay);
 
-    mapGlobals.simultaneousSounds += 1;
+  //   mapGlobals.simultaneousSounds += 1;
 
-    if (mapGlobals.soundOn) onDestroy(enemyPosition, level);
-  }
+  //   if (mapGlobals.soundOn) {onDestroy(enemyPosition, level)};
+  // }
 }
 
 function destroyEnemy(sphereMesh: Mesh, loopTimer: any, scene: Scene) {
