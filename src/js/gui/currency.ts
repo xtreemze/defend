@@ -40,13 +40,30 @@ function displayEconomy(scene: Scene) {
     {
       width: economyGlobals.bankSize,
       depth: economyGlobals.bankSize,
-      height: economyGlobals.bankSize / 2,
+      height: economyGlobals.bankSize / 12,
       updatable: false
     },
     scene
   ) as Mesh;
 
   Tags.AddTagsTo(currencyTower, "tower");
+
+
+  const hitPointsMeter = MeshBuilder.CreateBox(
+    "currencyMeter", //@ts-ignore
+    {
+      width: economyGlobals.bankSize,
+      depth: economyGlobals.bankSize,
+      height: economyGlobals.bankSize / 12,
+      updatable: false
+    },
+    scene
+  ) as Mesh;
+
+  hitPointsMeter.isPickable = false;
+
+  currencyTower.position.y += economyGlobals.bankSize / 24;
+  hitPointsMeter.parent = currencyTower;
 
   currencyTower.isPickable = false;
   currencyTower.freezeWorldMatrix();
@@ -64,23 +81,6 @@ function displayEconomy(scene: Scene) {
   ) as PhysicsImpostor;
 
   currencyTower.material = scene.getMaterialByName("hitMaterial") as Material;
-
-  const hitPointsMeter = MeshBuilder.CreateBox(
-    "currencyMeter", //@ts-ignore
-    {
-      width: economyGlobals.bankSize,
-      depth: economyGlobals.bankSize,
-      height: economyGlobals.bankSize / 2,
-      updatable: false
-    },
-    scene
-  ) as Mesh;
-
-  hitPointsMeter.isPickable = false;
-  hitPointsMeter.parent = currencyTower;
-
-  currencyTower.position.y = -5;
-
   hitPointsMeter.material = scene.getMaterialByName(
     "enemyMaterial"
   ) as Material;

@@ -31,12 +31,12 @@ function trackSpheres(
       for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
         const enemy = enemyGlobals.allEnemies[index];
         if (
-          enemy.position.y <= towerGlobals.range * 3 &&
+          enemy.position.y <= towerGlobals.range * level &&
           enemy.position.y > 0 &&
           //@ts-ignore
           enemy.hitPoints >= enemyGlobals.deadHitPoints &&
           Vector3.Distance(towerTurret.position, enemy.position) <=
-            towerGlobals.range * 3
+            towerGlobals.range * level
         ) {
           enemyDistances.push([
             Vector3.Distance(towerTurret.position, enemy.position),
