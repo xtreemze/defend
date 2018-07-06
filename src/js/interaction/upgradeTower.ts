@@ -25,13 +25,12 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           z: pickResult.pickedMesh.position.z
         };
 
-
         const level = 2;
         if (economyGlobals.currentBalance > towerGlobals.baseCost * level) {
           pickResult.pickedMesh.dispose();
           setTimeout(() => {
             new Tower(level, samePosition, scene, physicsEngine) as Tower;
-          }, 20);
+          }, 5);
         }
       }
       if (
@@ -44,13 +43,12 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           z: pickResult.pickedMesh.position.z
         };
 
-
         const level = 3;
         if (economyGlobals.currentBalance > towerGlobals.baseCost * level) {
           pickResult.pickedMesh.dispose();
           setTimeout(() => {
             new Tower(level, samePosition, scene, physicsEngine) as Tower;
-          }, 20);
+          }, 5);
         }
       }
     }
