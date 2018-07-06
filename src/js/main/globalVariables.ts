@@ -46,7 +46,7 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 35,
+  range: 45,
   shoot: true,
   raysOn: false,
   lifeTime: 60000,
@@ -87,7 +87,25 @@ const economyGlobals = {
   restartMessage: false,
   bankSize: 40,
   defeats: 0,
-  victories: 0
+  victories: 0,
+  occupiedSpaces: [
+    [-15, -15],
+    [-15, -5],
+    [-15, 5],
+    [-15, 15],
+    [-5, 15],
+    [-5, 5],
+    [-5, -5],
+    [-5, -15],
+    [5, -15],
+    [5, -5],
+    [5, 5],
+    [5, 15],
+    [15, 15],
+    [15, 5],
+    [15, -5],
+    [15, -15]
+  ]
 };
 
 const renderGlobals = {
@@ -102,13 +120,13 @@ const renderGlobals = {
 };
 
 //@ts-ignore
-// window.globals = {
-//   projectileGlobals,
-//   towerGlobals,
-//   enemyGlobals,
-//   mapGlobals,
-//   renderGlobals
-// };
+window.globals = {
+  projectileGlobals,
+  towerGlobals,
+  enemyGlobals,
+  mapGlobals,
+  renderGlobals
+};
 
 export {
   projectileGlobals,

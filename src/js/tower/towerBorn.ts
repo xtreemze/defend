@@ -14,8 +14,10 @@ import {
 } from "babylonjs";
 
 import { towerGlobals, mapGlobals } from "../main/globalVariables";
-import { trackSpheres, destroyTower } from "./Tower";
-export function revive(
+import { destroyTower } from "./Tower";
+import { trackSpheres } from "./trackSpheres";
+
+export function towerBorn(
   scene: Scene,
   tower: Mesh,
   position: any,
@@ -94,11 +96,15 @@ export function revive(
         false
       ) as Mesh;
       turretMesh.convertToUnIndexedMesh();
+
+      turretMesh.isPickable = false as boolean;
+
       turretMesh.position = new Vector3(
         position.x,
         towerGlobals.height * level * 1.5,
         position.z
       ) as Vector3;
+
       const flashMesh = MeshBuilder.CreateIcoSphere(
         "flash" + name,
         {
@@ -117,33 +123,40 @@ export function revive(
       turretMesh.addChild(flashMesh) as Mesh;
 
       flashMesh.isPickable = false as boolean;
+      flashMesh.convertToUnIndexedMesh();
       flashMesh.setEnabled(false);
       flashMesh.material = projectileMaterial as Material;
 
       const rayLocal = new Vector3(0, 0, -1);
 
-      const ray = new Ray(
+      //@ts-ignore
+      const turretRay = new Ray(
         turretMesh.getAbsolutePosition(),
         turretMesh.getDirection(rayLocal),
-        towerGlobals.range * 3
+        towerGlobals.range * level
       ) as Ray;
 
       if (towerGlobals.raysOn) {
-        var rayHelper = new RayHelper(ray) as RayHelper;
-        rayHelper.show(scene, new Color3(1, 1, 0.3));
+        //@ts-ignore
+        turretMesh.turretRayHelper = new RayHelper(turretRay) as RayHelper;
+        //@ts-ignore
+        turretMesh.turretRayHelper.show(scene, new Color3(1, 1, 0.3));
       }
+
       scene.registerBeforeRender(() => {
-        ray.direction = turretMesh.getDirection(rayLocal) as Vector3;
+        turretRay.direction = turretMesh.getDirection(rayLocal) as Vector3;
       });
+
       trackSpheres(
         scene,
         tower,
         turretMesh,
         flashMesh,
-        ray,
+        turretRay,
         level,
         physicsEngine
       );
+
       const pillarMesh = MeshBuilder.CreateBox("pillar" + name, {
         size: level / 1.5,
         height: towerGlobals.height * level,
@@ -156,7 +169,10 @@ export function revive(
         position.z
       ) as Vector3;
 
-      pillarMesh.material = towerMaterial;
+      pillarMesh.material = towerMaterial as Material;
+      pillarMesh.isPickable = false as boolean;
+      pillarMesh.convertToUnIndexedMesh();
+
       Tags.AddTagsTo(pillarMesh, "tower");
       Tags.AddTagsTo(turretMesh, "tower");
 
@@ -178,6 +194,7 @@ export function revive(
           true
         );
       }
+
       pillarMesh.physicsImpostor = new PhysicsImpostor(
         pillarMesh,
         PhysicsImpostor.BoxImpostor,
@@ -187,6 +204,7 @@ export function revive(
         },
         scene
       ) as PhysicsImpostor;
+
       mapGlobals.allImpostors.unshift(pillarMesh.physicsImpostor);
       break;
   }

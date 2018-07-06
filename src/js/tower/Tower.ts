@@ -1,25 +1,11 @@
-import { revive } from "./revive";
+import { towerBorn } from "./towerBorn";
 
-import {
-  Scene,
-  Vector3,
-  MeshBuilder,
-  Mesh,
-  PhysicsImpostor,
-  PhysicsEngine,
-  Ray
-} from "babylonjs";
-import fireProjectile from "../projectile/Projectile";
+import { Scene, MeshBuilder, Mesh, PhysicsEngine, Ray } from "babylonjs";
 import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
 import { addTower } from "../main/sound";
-import {
-  towerGlobals,
-  enemyGlobals,
-  mapGlobals,
-  economyGlobals
-} from "../main/globalVariables";
-import { updateEconomy } from "../gui/currency";
+import { towerGlobals, economyGlobals } from "../main/globalVariables";
+import { updateEconomy } from "../gui/updateEconomy";
 
 class Tower {
   constructor(
@@ -31,16 +17,6 @@ class Tower {
     economyGlobals.currentBalance -= level * towerGlobals.baseCost;
 
     updateEconomy(scene);
-
-    // const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
-    // const towerMaterial = scene.getMaterialByName("towerMaterial") as Material;
-    // const hitMaterial = scene.getMaterialByName("hitMaterial") as Material;
-
-    // currencyMesh.material = towerMaterial as Material;
-
-    // setTimeout(() => {
-    //   currencyMesh.material = hitMaterial as Material;
-    // }, 20);
 
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
     towerGlobals.index += 1;
@@ -55,12 +31,12 @@ class Tower {
     ) as Mesh;
 
     tower.convertToUnIndexedMesh();
-    revive(scene, tower, position, level, physicsEngine);
+    towerBorn(scene, tower, position, level, physicsEngine);
     addTower(tower, level);
   }
 }
 
-function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
+export function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
   let result = false as boolean;
   const hit = scene.pickWithRay(ray);
 
@@ -70,77 +46,8 @@ function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
   return result as boolean;
 }
 
-function rotateTurret(sortedDistances: any, towerTurret: Mesh) {
+export function rotateTurret(sortedDistances: any, towerTurret: Mesh) {
   towerTurret.lookAt(sortedDistances.position);
-}
-
-function trackSpheres(
-  scene: Scene,
-  tower: Mesh,
-  towerTurret: Mesh,
-  flash: Mesh,
-  ray: any,
-  level: number = 1 | 2 | 3,
-  physicsEngine: PhysicsEngine
-) {
-  let deltaTime = Date.now();
-
-  tower.registerBeforeRender(() => {
-    if (
-      enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-      mapGlobals.allImpostors.length < mapGlobals.impostorLimit
-    ) {
-      const enemyDistances = [] as any;
-      for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
-        const enemy = enemyGlobals.allEnemies[index];
-
-        if (
-          enemy.position.y <= towerGlobals.range * 3 &&
-          enemy.position.y > 0 &&
-          //@ts-ignore
-          enemy.hitPoints >= enemyGlobals.deadHitPoints &&
-          Vector3.Distance(towerTurret.position, enemy.position) <=
-            towerGlobals.range * 3
-        ) {
-          enemyDistances.push([
-            Vector3.Distance(towerTurret.position, enemy.position),
-            enemy
-          ]);
-        }
-      }
-      if (enemyDistances.length > 0) {
-        const nearestEnemy = enemyDistances.sort()[0][1] as Mesh;
-
-        const nearestEnemyImpostor = nearestEnemy.getPhysicsImpostor() as PhysicsImpostor;
-
-        rotateTurret(nearestEnemy, towerTurret);
-
-        if (
-          Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
-          towerGlobals.shoot &&
-          shotClearsTower(scene, ray, nearestEnemy)
-        ) {
-          deltaTime = Date.now();
-          setTimeout(() => {
-            flash.setEnabled(false);
-          }, 30);
-
-          flash.setEnabled(true);
-
-          setTimeout(() => {
-            fireProjectile(
-              scene,
-              towerTurret,
-              level,
-              nearestEnemy,
-              physicsEngine,
-              nearestEnemyImpostor
-            );
-          }, 1);
-        }
-      }
-    }
-  });
 }
 
 function towerGenerator(
@@ -208,10 +115,17 @@ function destroyTower(
   if (baseMesh.physicsImpostor !== null) {
     baseMesh.physicsImpostor.dispose();
   }
+
   // baseMesh.dispose();
   towerGlobals.allTowers = [];
   if (pillarMesh && turretMesh && flashMesh) {
+    if (towerGlobals.raysOn) {
+      //@ts-ignore
+      turretMesh.turretRayHelper.dispose();
+    }
     pillarMesh.dispose();
+    //@ts-ignore
+    delete turretMesh.ray;
     turretMesh.dispose();
     flashMesh.dispose();
   }
@@ -228,4 +142,4 @@ function towers(scene: Scene, physicsEngine: PhysicsEngine) {
   );
 }
 
-export { towers, Tower, trackSpheres, destroyTower };
+export { towers, Tower, destroyTower };

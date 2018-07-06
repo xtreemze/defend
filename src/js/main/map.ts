@@ -52,6 +52,7 @@ function map(scene: Scene) {
 
   atmosphere.flipFaces(true);
   atmosphere.freezeWorldMatrix(); // freeze sky
+  atmosphere.convertToUnIndexedMesh();
 
   atmosphere.material = skyMaterial;
 
@@ -68,6 +69,7 @@ function map(scene: Scene) {
 
   ground.material = groundMaterial;
   ground.freezeWorldMatrix(); // freeze ground
+  ground.convertToUnIndexedMesh();
 
   ground.physicsImpostor = new PhysicsImpostor(
     ground,

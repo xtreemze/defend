@@ -1,5 +1,5 @@
 import { PhysicsImpostor, Mesh, Scene, Material } from "babylonjs";
-import { updateEconomy } from "../gui/currency";
+import { updateEconomy } from "../gui/updateEconomy";
 import { mapGlobals, economyGlobals } from "../main/globalVariables";
 import { damage } from "../main/sound";
 

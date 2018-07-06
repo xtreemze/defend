@@ -17,8 +17,8 @@ import { map } from "./map";
 import runtime = require("offline-plugin/runtime");
 
 import { titleScreen } from "../gui/titleScreen";
-import { cameras } from "./cameras";
-import { arcCamera } from "./onlyArc";
+// import { cameras } from "./cameras";
+import { arcCamera } from "./arcCamera";
 import { generateMaterials } from "../utility/materialGenerator";
 import { renderPipeline } from "./renderPipeline";
 

@@ -1,3 +1,5 @@
+import { updateEconomy } from "./updateEconomy";
+
 import { economyGlobals, enemyGlobals } from "../main/globalVariables";
 import {
   MeshBuilder,
@@ -5,12 +7,8 @@ import {
   Mesh,
   PhysicsImpostor,
   Material,
-  Vector3,
   Tags
 } from "babylonjs";
-
-import { message } from "./titleScreen";
-import { waves } from "../enemy/waves";
 
 function displayEconomy(scene: Scene) {
   const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
@@ -50,6 +48,10 @@ function displayEconomy(scene: Scene) {
 
   Tags.AddTagsTo(currencyTower, "tower");
 
+  currencyTower.isPickable = false;
+  currencyTower.freezeWorldMatrix();
+  currencyTower.convertToUnIndexedMesh();
+
   currencyTower.physicsImpostor = new PhysicsImpostor(
     currencyTower,
     PhysicsImpostor.BoxImpostor,
@@ -74,6 +76,7 @@ function displayEconomy(scene: Scene) {
     scene
   ) as Mesh;
 
+  hitPointsMeter.isPickable = false;
   hitPointsMeter.parent = currencyTower;
 
   currencyTower.position.y = -5;
@@ -99,51 +102,4 @@ function rampUp(scene: Scene) {
     }
   }, 1000 / 60);
 }
-function updateEconomy(scene: Scene) {
-  if (
-    economyGlobals.currentBalance < 0 &&
-    economyGlobals.restartMessage === false
-  ) {
-    economyGlobals.currentBalance = 0;
-    message(scene, "Defeat", "&#8635;");
-    economyGlobals.restartMessage = true;
-    economyGlobals.defeats += 1;
-  }
-  if (
-    (economyGlobals.currentBalance > economyGlobals.maxBalance &&
-      economyGlobals.restartMessage === false) ||
-    (enemyGlobals.currentWave >= waves.length &&
-      economyGlobals.restartMessage === false)
-  ) {
-    economyGlobals.currentBalance = economyGlobals.maxBalance;
-    message(scene, "Victory", "&#8635;");
-    economyGlobals.restartMessage = true;
-    economyGlobals.victories += 1;
-  }
-
-  const currentBalance = document.getElementById(
-    "currentBalance"
-  ) as HTMLDivElement;
-
-  const level = enemyGlobals.currentWave.toString();
-  const currency = Math.round(economyGlobals.currentBalance).toString();
-
-  currentBalance.innerText = `Wave: ${level}/${waves.length}
-  Energy: ${currency}
-  Defeats: ${economyGlobals.defeats}
-  Victories: ${economyGlobals.victories}`;
-
-  const currencyMeter = scene.getMeshByName("currencyMeter");
-  //@ts-ignore
-  const scaleRate =
-    1 / (economyGlobals.maxBalance / economyGlobals.currentBalance);
-
-  //@ts-ignore
-  currencyMeter.scaling = new Vector3(
-    scaleRate,
-    scaleRate,
-    scaleRate
-  ) as Vector3;
-}
-
 export { displayEconomy, updateEconomy, rampUp };

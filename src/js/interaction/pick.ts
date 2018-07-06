@@ -9,7 +9,6 @@ import { Tower } from "../tower/Tower";
 import { towerGlobals, economyGlobals } from "../main/globalVariables";
 
 function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
-
   //When pointer down event is raised
 
   scene.onPointerObservable.add(function(evt: PointerInfo) {
@@ -29,25 +28,34 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
         // if the click hits the ground object, we change the impact position
 
         if (pickResult.pickedPoint.x > 0) {
-          newLocation.x =
-            pickResult.pickedPoint.x + 5 - (pickResult.pickedPoint.x % 10);
+          newLocation.x = Math.round(
+            pickResult.pickedPoint.x + 5 - (pickResult.pickedPoint.x % 10)
+          );
         } else {
-          newLocation.x =
-            pickResult.pickedPoint.x - 5 - (pickResult.pickedPoint.x % 10);
+          newLocation.x = Math.round(
+            pickResult.pickedPoint.x - 5 - (pickResult.pickedPoint.x % 10)
+          );
         }
         newLocation.y = 5 / 2;
 
         if (pickResult.pickedPoint.z > 0) {
-          newLocation.z =
-            pickResult.pickedPoint.z + 5 - (pickResult.pickedPoint.z % 10);
+          newLocation.z = Math.round(
+            pickResult.pickedPoint.z + 5 - (pickResult.pickedPoint.z % 10)
+          );
         } else {
-          newLocation.z =
-            pickResult.pickedPoint.z - 5 - (pickResult.pickedPoint.z % 10);
+          newLocation.z = Math.round(
+            pickResult.pickedPoint.z - 5 - (pickResult.pickedPoint.z % 10)
+          );
         }
         // const level = randomNumberRange(1, 3);
         const level = 1;
         if (
           towerGlobals.occupiedSpaces.find(
+            existingLocation =>
+              existingLocation[0] === newLocation.x &&
+              existingLocation[1] === newLocation.z
+          ) === undefined &&
+          economyGlobals.occupiedSpaces.find(
             existingLocation =>
               existingLocation[0] === newLocation.x &&
               existingLocation[1] === newLocation.z

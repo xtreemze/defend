@@ -14,7 +14,7 @@ import {
 } from "../main/globalVariables";
 import { shoot, damage } from "../main/sound";
 import { explosion } from "../enemy/explodeParticle";
-import { updateEconomy } from "../gui/currency";
+import { updateEconomy } from "../gui/updateEconomy";
 
 class Projectile {
   constructor(
@@ -173,14 +173,12 @@ function impulsePhys(
     projectileGlobals.speed * level * -1
   ) as Vector3;
   const speed = originMesh.getDirection(forwardLocal) as Vector3;
-  setTimeout(() => {
-    if (projectile.physicsImpostor !== null) {
-      projectile.physicsImpostor.applyImpulse(
-        speed,
-        projectile.getAbsolutePosition()
-      );
-    }
-  }, 1);
+  if (projectile.physicsImpostor !== null) {
+    projectile.physicsImpostor.applyImpulse(
+      speed,
+      projectile.getAbsolutePosition()
+    );
+  }
 }
 
 function destroyProjectile(projectile: Mesh, physicsEngine: PhysicsEngine) {
