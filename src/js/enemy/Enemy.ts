@@ -161,14 +161,15 @@ function destroyEnemy(sphereMesh: Mesh, loopTimer: any, scene: Scene) {
   //@ts-ignore
   delete sphereMesh.hitPoints;
 
+  if (sphereMesh.physicsImpostor !== null) {
+    sphereMesh.physicsImpostor.dispose();
+  }
+  Tags.RemoveTagsFrom(sphereMesh, "enemy");
   setTimeout(() => {
-    if (sphereMesh.physicsImpostor !== null) {
-      sphereMesh.physicsImpostor.dispose();
-    }
-    enemyGlobals.allEnemies = [];
     sphereMesh.dispose();
-
-    enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+    setTimeout(() => {
+      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+    }, 10);
   }, 1);
 }
 

@@ -5,7 +5,8 @@ import {
   Material,
   PhysicsImpostor,
   MeshBuilder,
-  PhysicsEngine
+  PhysicsEngine,
+  Tags
 } from "babylonjs";
 import {
   projectileGlobals,
@@ -172,16 +173,17 @@ function destroyProjectile(projectile: Mesh, physicsEngine: PhysicsEngine) {
 
   //@ts-ignore
   projectile.hitPoints = 0;
-
+  Tags.RemoveTagsFrom(projectile, "projectile");
+  //@ts-ignore
+  delete projectile.hitPoints;
   setTimeout(() => {
-    mapGlobals.allImpostors = [];
-    //@ts-ignore
-    delete projectile.hitPoints;
-    if (projectile.physicsImpostor !== null) {
-      projectile.physicsImpostor.dispose();
-    }
     projectile.dispose();
-    mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
+      if (projectile.physicsImpostor !== null) {
+        projectile.physicsImpostor.dispose();
+      }
+    setTimeout(() => {
+      mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
+    }, 10);
   }, 1);
 }
 

@@ -112,9 +112,6 @@ function destroyTower(
   flashMesh?: Mesh
 ): any {
   baseMesh.onDisposeObservable.clear();
-  if (baseMesh.physicsImpostor !== null) {
-    baseMesh.physicsImpostor.dispose();
-  }
 
   // baseMesh.dispose();
   towerGlobals.allTowers = [];
@@ -128,9 +125,19 @@ function destroyTower(
     delete turretMesh.ray;
     turretMesh.dispose();
     flashMesh.dispose();
+    if (pillarMesh.physicsImpostor !== null) {
+      pillarMesh.physicsImpostor.dispose();
+    }
   }
 
-  towerGlobals.allTowers = scene.getMeshesByTags("tower");
+  if (baseMesh.physicsImpostor !== null) {
+    baseMesh.physicsImpostor.dispose();
+  }
+
+  setTimeout(() => {
+
+    towerGlobals.allTowers = scene.getMeshesByTags("tower");
+  }, 10);
   towerGlobals.occupiedSpaces.pop();
 }
 

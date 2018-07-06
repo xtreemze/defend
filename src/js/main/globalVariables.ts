@@ -120,13 +120,13 @@ const renderGlobals = {
 };
 
 //@ts-ignore
-// window.globals = {
-//   projectileGlobals,
-//   towerGlobals,
-//   enemyGlobals,
-//   mapGlobals,
-//   renderGlobals
-// };
+window.globals = {
+  projectileGlobals,
+  towerGlobals,
+  enemyGlobals,
+  mapGlobals,
+  renderGlobals
+};
 
 export {
   projectileGlobals,
