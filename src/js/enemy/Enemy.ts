@@ -52,20 +52,22 @@ export function checkHitPoints(
 ) {
   const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
 
-  if (
+  if ( sphereMesh.physicsImpostor !== null && (
     //@ts-ignore
     sphereMesh.hitPoints <= 0 ||
-    sphereMesh.position.y < 0
+    sphereMesh.position.y < 0)
   ) {
     const enemyPosition = sphereMesh.position.clone() as Vector3;
     const enemyRotation = sphereMesh.rotation.clone() as Vector3;
+    const enemyLinearVelocity = sphereMesh.physicsImpostor.getLinearVelocity() as Vector3;
+    const enemyAngularVelocity = sphereMesh.physicsImpostor.getAngularVelocity() as Vector3;
     destroyEnemy(sphereMesh, loopTimer, scene);
     if (
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit &&
       sphereMesh.position.y > 0
     ) {
       setTimeout(() => {
-        fragment(level, enemyPosition, hitMaterial, enemyRotation);
+        fragment(level, enemyPosition, hitMaterial, enemyRotation, enemyLinearVelocity, enemyAngularVelocity);
       }, 1);
     }
   } else {
@@ -89,7 +91,9 @@ function fragment(
   level: number = 1 | 2 | 3,
   enemyPosition: Vector3,
   hitMaterial: Material,
-  enemyRotation: Vector3
+  enemyRotation: Vector3,
+  enemyLinearVelocity: Vector3,
+  enemyAngularVelocity: Vector3
 ) {
   for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
     const fragment = MeshBuilder.CreateBox("enemyFragment" + index, {
@@ -116,6 +120,9 @@ function fragment(
         friction: 0.8
       }
     ) as PhysicsImpostor;
+
+    fragment.physicsImpostor.setLinearVelocity(enemyLinearVelocity);
+    fragment.physicsImpostor.setAngularVelocity(enemyAngularVelocity);
 
     setTimeout(() => {
       fragment.dispose();

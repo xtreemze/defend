@@ -1,10 +1,4 @@
-import {
-  Scene,
-  Vector3,
-  Mesh,
-  PhysicsImpostor,
-  PhysicsEngine
-} from "babylonjs";
+import { Scene, Vector3, Mesh, PhysicsEngine } from "babylonjs";
 import fireProjectile from "../projectile/Projectile";
 import {
   towerGlobals,
