@@ -9,7 +9,7 @@ const mapGlobals = {
   rotateCameras: false,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
-  impostorLimit: 200, // keep low for mobile device limits
+  impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 150,
@@ -56,9 +56,9 @@ const towerGlobals = {
 const enemyGlobals = {
   minNumber: 1, // for one generation
   maxNumber: 8, // for one generation
-  limit: 2,
+  limit: 0, // wait for this enemy count before next wave
   originHeight: 10,
-  generationRate: 20000, // milliseconds
+  generationRate: 18000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 20000,
   mass: 5000,
@@ -120,13 +120,13 @@ const renderGlobals = {
 };
 
 //@ts-ignore
-window.globals = {
-  projectileGlobals,
-  towerGlobals,
-  enemyGlobals,
-  mapGlobals,
-  renderGlobals
-};
+// window.globals = {
+//   projectileGlobals,
+//   towerGlobals,
+//   enemyGlobals,
+//   mapGlobals,
+//   renderGlobals
+// };
 
 export {
   projectileGlobals,

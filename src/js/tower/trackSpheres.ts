@@ -16,7 +16,7 @@ function trackSpheres(
   physicsEngine: PhysicsEngine
 ) {
   let deltaTime = Date.now();
-  tower.registerBeforeRender(() => {
+  tower.registerAfterRender(() => {
     if (
       enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit
@@ -59,7 +59,7 @@ function trackSpheres(
               nearestEnemy,
               physicsEngine
             );
-          }, 5);
+          }, 2);
         }
       }
     }

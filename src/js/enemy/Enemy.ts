@@ -52,10 +52,10 @@ export function checkHitPoints(
 ) {
   const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
 
-  if ( sphereMesh.physicsImpostor !== null && (
+  if (
+    sphereMesh.physicsImpostor !== null &&
     //@ts-ignore
-    sphereMesh.hitPoints <= 0 ||
-    sphereMesh.position.y < 0)
+    (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < 0)
   ) {
     const enemyPosition = sphereMesh.position.clone() as Vector3;
     const enemyRotation = sphereMesh.rotation.clone() as Vector3;
@@ -67,7 +67,14 @@ export function checkHitPoints(
       sphereMesh.position.y > 0
     ) {
       setTimeout(() => {
-        fragment(level, enemyPosition, hitMaterial, enemyRotation, enemyLinearVelocity, enemyAngularVelocity);
+        fragment(
+          level,
+          enemyPosition,
+          hitMaterial,
+          enemyRotation,
+          enemyLinearVelocity,
+          enemyAngularVelocity
+        );
       }, 1);
     }
   } else {
@@ -223,18 +230,22 @@ function enemies(scene: Scene) {
   scene.registerAfterRender(() => {
     if (
       Date.now() - deltaTime > enemyGlobals.generationRate &&
-      enemyGlobals.allEnemies.length <
-        ( enemyGlobals.limit) &&
+      enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit
     ) {
       deltaTime = Date.now();
       setTimeout(() => {
         //@ts-ignore
         enemyGenerator(scene, waves[enemyGlobals.currentWave][0], 1);
-        //@ts-ignore
-        enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
-        //@ts-ignore
-        enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
+        setTimeout(() => {
+          //@ts-ignore
+          enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
+        }, 200);
+
+        setTimeout(() => {
+          //@ts-ignore
+          enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
+        }, 400);
 
         enemyGlobals.currentWave += 1;
       }, 2);
