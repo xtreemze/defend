@@ -182,6 +182,7 @@ export function towerBorn(
         setTimeout(() => {
           removeTower(tower, level);
           tower.dispose();
+
         }, 3000);
       }, towerGlobals.lifeTime);
 
