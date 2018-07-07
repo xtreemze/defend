@@ -72,7 +72,7 @@ function damageCurrency(enemy: Mesh) {
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
       //@ts-ignore
-      frequency: (1000 * enemy.hitPoints) / 500,
+      frequency: (1000 * enemy.hitPoints) / 5,
       sweep: -0.7 / 2,
       source: "triangle",
       vibrato: 0.5 / 2,
@@ -93,7 +93,7 @@ function newWave() {
       attack: 0.9,
       sustain: 0.0526,
       release: 0.5,
-      frequency: 706.4 * 1,
+      frequency: 706.4,
       sweep: 0.372 * 1,
       source: "triangle",
       pulseWidth: 0.48,
