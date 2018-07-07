@@ -1,4 +1,4 @@
-import { Color3, PhysicsImpostor, Mesh } from "babylonjs";
+import { Color3, PhysicsImpostor, Mesh, Material, GroundMesh } from "babylonjs";
 
 const mapGlobals = {
   diagnosticsOn: false,
@@ -18,7 +18,9 @@ const mapGlobals = {
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
   sceneAmbient: new Color3(0.01, 0.0, 0.2) as Color3,
-  soundOn: false
+  soundOn: false,
+  groundMesh: {} as GroundMesh,
+  atmosphereMesh: {} as Mesh
 };
 
 const projectileGlobals = {
@@ -88,6 +90,8 @@ const economyGlobals = {
   bankSize: 40,
   defeats: 0,
   victories: 0,
+  currencyMesh: {} as Mesh,
+  currencyMeter: {} as Mesh,
   occupiedSpaces: [
     [-15, -15],
     [-15, -5],
@@ -119,6 +123,8 @@ const renderGlobals = {
   screenshot: false
 };
 
+const materialGlobals = {} as any;
+
 //@ts-ignore
 window.globals = {
   projectileGlobals,
@@ -135,5 +141,6 @@ export {
   enemyGlobals,
   mapGlobals,
   renderGlobals,
-  economyGlobals
+  economyGlobals,
+  materialGlobals
 };

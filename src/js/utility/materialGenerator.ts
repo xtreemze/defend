@@ -3,7 +3,8 @@ import {
   enemyGlobals,
   mapGlobals,
   projectileGlobals,
-  towerGlobals
+  towerGlobals,
+  materialGlobals
 } from "../main/globalVariables";
 
 function generateMaterials(scene: Scene) {
@@ -56,6 +57,15 @@ function generateMaterials(scene: Scene) {
   hitMaterial.emissiveColor = enemyGlobals.hitColor;
   hitMaterial.wireframe = true;
   hitMaterial.alpha = 0.98;
+
+  materialGlobals.groundMaterial = groundMaterial;
+  materialGlobals.towerMaterial = towerMaterial;
+  materialGlobals.projectileMaterial = projectileMaterial;
+  materialGlobals.transparentMaterial = transparentMaterial;
+  materialGlobals.skyMaterial = skyMaterial;
+  materialGlobals.enemyMaterial = enemyMaterial;
+  materialGlobals.damagedMaterial = damagedMaterial;
+  materialGlobals.hitMaterial = hitMaterial;
 }
 
 export { generateMaterials };

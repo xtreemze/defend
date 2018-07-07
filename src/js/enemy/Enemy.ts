@@ -10,12 +10,13 @@ import {
   PhysicsImpostor
 } from "babylonjs";
 import positionGenerator from "../utility/positionGenerator";
-import { onDestroy } from "../main/sound";
+import { onDestroy, newWave } from "../main/sound";
 import {
   enemyGlobals,
   towerGlobals,
   mapGlobals,
-  projectileGlobals
+  projectileGlobals,
+  materialGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
 
@@ -49,12 +50,12 @@ export function checkHitPoints(
   level: number = 1 | 2 | 3,
   hitPointsMeter: Mesh
 ) {
-  const hitMaterial = scene.getMaterialByID("hitMaterial") as Material;
 
   if (
-    sphereMesh.physicsImpostor !== null &&
-    //@ts-ignore
-    sphereMesh.hitPoints <= 0 || sphereMesh.position.y < 0 && sphereMesh.physicsImpostor !== null
+    (sphereMesh.physicsImpostor !== null &&
+      //@ts-ignore
+      sphereMesh.hitPoints <= 0) ||
+    (sphereMesh.position.y < 0 && sphereMesh.physicsImpostor !== null)
   ) {
     const enemyPosition = sphereMesh.position.clone() as Vector3;
     const enemyRotation = sphereMesh.rotation.clone() as Vector3;
@@ -68,7 +69,6 @@ export function checkHitPoints(
         fragment(
           level,
           enemyPosition,
-          hitMaterial,
           enemyRotation,
           enemyLinearVelocity,
           enemyAngularVelocity
@@ -96,7 +96,6 @@ export function checkHitPoints(
 function fragment(
   level: number = 1 | 2 | 3,
   enemyPosition: Vector3,
-  hitMaterial: Material,
   enemyRotation: Vector3,
   enemyLinearVelocity: Vector3,
   enemyAngularVelocity: Vector3
@@ -115,7 +114,7 @@ function fragment(
       enemyRotation.y * index * 0.1,
       enemyRotation.z * index * 0.1
     );
-    fragment.material = hitMaterial;
+    fragment.material = materialGlobals.hitMaterial;
 
     fragment.physicsImpostor = new PhysicsImpostor(
       fragment,
@@ -138,16 +137,6 @@ function fragment(
       setTimeout(() => {}, 1);
     }, projectileGlobals.lifeTime);
   }
-
-  // if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-  //   setTimeout(() => {
-  //     mapGlobals.simultaneousSounds -= 1;
-  //   }, mapGlobals.soundDelay);
-
-  //   mapGlobals.simultaneousSounds += 1;
-
-  //   if (mapGlobals.soundOn) {onDestroy(enemyPosition, level)};
-  // }
 }
 
 function destroyEnemy(sphereMesh: Mesh, scene: Scene) {
@@ -157,7 +146,6 @@ function destroyEnemy(sphereMesh: Mesh, scene: Scene) {
 
   //@ts-ignore
   delete sphereMesh.hitPoints;
-  // clearInterval(loopTimer);
 
   if (sphereMesh.physicsImpostor !== null) {
     sphereMesh.physicsImpostor.dispose();
@@ -234,6 +222,7 @@ function enemies(scene: Scene) {
       mapGlobals.allImpostors.length <= mapGlobals.impostorLimit
     ) {
       enemyGlobals.currentWave += 1;
+      newWave();
       deltaTime = Date.now();
       setTimeout(() => {
         //@ts-ignore

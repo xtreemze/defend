@@ -8,10 +8,11 @@ import {
   GroundMesh,
   Mesh
 } from "babylonjs";
-import { renderGlobals, mapGlobals } from "./globalVariables";
+import { renderGlobals, mapGlobals, materialGlobals } from "./globalVariables";
 
 function renderPipeline(scene: Scene) {
-  const groundMaterial = scene.getMaterialByID("groundMaterial");
+  const groundMaterial = materialGlobals.groundMaterial;
+
   if (renderGlobals.pipelineOn) {
     const pipeline = new DefaultRenderingPipeline(
       "default", // The name of the pipeline
@@ -46,8 +47,6 @@ function renderPipeline(scene: Scene) {
 
   // Glow
   if (renderGlobals.glow) {
-    const ground = scene.getMeshByID("ground") as GroundMesh;
-    const atmosphere = scene.getMeshByID("atmosphere") as Mesh;
 
     const glowLayer = new GlowLayer("glow", scene, {
       // mainTextureFixedSize: 32,
@@ -58,8 +57,8 @@ function renderPipeline(scene: Scene) {
 
     glowLayer.intensity = renderGlobals.glowIntensity;
     // glowLayer.addIncludedOnlyMesh(projectile);
-    glowLayer.addExcludedMesh(ground);
-    glowLayer.addExcludedMesh(atmosphere);
+    glowLayer.addExcludedMesh(mapGlobals.groundMesh);
+    glowLayer.addExcludedMesh(mapGlobals.atmosphereMesh);
   }
   if (mapGlobals.demoSphere) {
     const demoSphere = MeshBuilder.CreateSphere(

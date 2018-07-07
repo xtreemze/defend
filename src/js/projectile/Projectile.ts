@@ -11,7 +11,8 @@ import {
 import {
   projectileGlobals,
   mapGlobals,
-  economyGlobals
+  economyGlobals,
+  materialGlobals
 } from "../main/globalVariables";
 import { shoot, damage } from "../main/sound";
 import { explosion } from "../enemy/explodeParticle";
@@ -55,9 +56,7 @@ function startLife(
   nearestEnemy: Mesh,
   physicsEngine: PhysicsEngine
 ) {
-  const projectileMaterial = scene.getMaterialByID(
-    "projectileMaterial"
-  ) as Material;
+  const projectileMaterial = materialGlobals.projectileMaterial;
   const forwardLocal = new Vector3(0, 0, 5);
   const space = originMesh.getDirection(forwardLocal) as Vector3;
 
@@ -79,7 +78,7 @@ function startLife(
     scene
   ) as PhysicsImpostor;
 
-  mapGlobals.allImpostors.unshift(projectile.physicsImpostor) as number;
+  mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
   const clonedRotation = originMesh.rotation.clone();
 
@@ -111,8 +110,6 @@ function destroyOnCollide(
 }
 
 function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
-  const hitMaterial = scene.getMaterialByID("damagedMaterial") as Material;
-  const enemyMaterial = scene.getMaterialByID("hitMaterial") as Material;
   if (projectile.physicsImpostor !== null && enemy.physicsImpostor !== null) {
     projectile.physicsImpostor.registerOnPhysicsCollide(
       enemy.physicsImpostor,
@@ -120,7 +117,7 @@ function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
         //@ts-ignore
         enemy.hitPoints -= projectile.hitPoints;
 
-        enemy.material = hitMaterial as Material;
+        enemy.material = materialGlobals.damagedMaterial;
         //@ts-ignore
         if (enemy.hitPoints > 0) {
           //@ts-ignore
@@ -131,7 +128,7 @@ function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
           enemy.hitPoints = 0;
         }
         setTimeout(() => {
-          enemy.material = enemyMaterial as Material;
+          enemy.material = materialGlobals.hitMaterial;
         }, 30);
 
         if (

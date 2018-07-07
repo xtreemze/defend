@@ -9,11 +9,11 @@ import {
   GroundMesh,
   Mesh
 } from "babylonjs";
-import { mapGlobals } from "./globalVariables";
+import { mapGlobals, materialGlobals } from "./globalVariables";
 
 function map(scene: Scene) {
-  const groundMaterial = scene.getMaterialByID("groundMaterial");
-  const skyMaterial = scene.getMaterialByID("skyMaterial");
+  const groundMaterial = materialGlobals.groundMaterial;
+  const skyMaterial = materialGlobals.skyMaterial;
 
   const skyLight = new HemisphericLight(
     "skyLight",

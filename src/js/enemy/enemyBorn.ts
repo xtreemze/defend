@@ -7,7 +7,11 @@ import {
   PhysicsImpostor
 } from "babylonjs";
 import enemyAi from "./enemyAi";
-import { enemyGlobals, mapGlobals } from "../main/globalVariables";
+import {
+  enemyGlobals,
+  mapGlobals,
+  materialGlobals
+} from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
 import { decide, checkHitPoints } from "./Enemy";
 export function enemyBorn(
@@ -17,8 +21,6 @@ export function enemyBorn(
   diameter: number = 0,
   level: number = 1 | 2 | 3
 ) {
-  const currencyMesh = scene.getMeshByName("currencyTower") as Mesh;
-  const currencyMeshImpostor = currencyMesh.getPhysicsImpostor() as PhysicsImpostor;
   //@ts-ignore
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
   const hitPointsMeter = MeshBuilder.CreateIcoSphere(
@@ -33,8 +35,9 @@ export function enemyBorn(
     (diameter / 2) * enemyGlobals.originHeight,
     position.z
   );
-  sphereMesh.material = scene.getMaterialByID("hitMaterial") as Material;
-  hitPointsMeter.material = scene.getMaterialByID("enemyMaterial") as Material;
+  sphereMesh.material = materialGlobals.hitMaterial;
+  hitPointsMeter.material = materialGlobals.enemyMaterial;
+
   sphereMesh.physicsImpostor = new PhysicsImpostor(
     sphereMesh,
     PhysicsImpostor.SphereImpostor,
@@ -62,11 +65,5 @@ export function enemyBorn(
       checkHitPoints(scene, sphereMesh, level, hitPointsMeter);
     }
   });
-  currencyCollide(
-    sphereMesh,
-    scene,
-    sphereMesh.physicsImpostor,
-    currencyMesh,
-    currencyMeshImpostor
-  );
+  currencyCollide(sphereMesh, scene);
 }

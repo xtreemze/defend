@@ -85,6 +85,27 @@ function damageCurrency(enemy: Mesh) {
   });
 }
 
+function newWave() {
+  setTimeout(() => {
+    FX.play({
+      volume: -5,
+      decay: 1,
+      attack: 0.9,
+      sustain: 0.0526,
+      release: 1,
+      frequency: 706.4 * 1,
+      sweep: 0.372 * 1,
+      source: "triangle",
+      pulseWidth: 0.48,
+      repeat: 3,
+      soundX: 0,
+      soundY: 0,
+      soundZ: 0,
+      rolloff: 0.3
+    } as FX.audioParams);
+  }, 1);
+}
+
 function addTower(tower: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
@@ -171,5 +192,6 @@ export {
   removeTower,
   damageCurrency,
   defeated,
-  victory
+  victory,
+  newWave
 };

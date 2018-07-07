@@ -13,7 +13,11 @@ import {
   PhysicsEngine
 } from "babylonjs";
 
-import { towerGlobals, mapGlobals } from "../main/globalVariables";
+import {
+  towerGlobals,
+  mapGlobals,
+  materialGlobals
+} from "../main/globalVariables";
 import { destroyTower } from "./Tower";
 import { trackSpheres } from "./trackSpheres";
 import { removeTower } from "../main/sound";
@@ -25,22 +29,17 @@ export function towerBorn(
   level: number,
   physicsEngine: PhysicsEngine
 ) {
-  const towerMaterial = scene.getMaterialByID("towerMaterial") as Material;
-  const damagedMaterial = scene.getMaterialByID("hitMaterial") as Material;
-  const projectileMaterial = scene.getMaterialByID(
-    "projectileMaterial"
-  ) as Material;
   tower.position = new Vector3(
     position.x,
     towerGlobals.height / 2,
     position.z
   ) as Vector3;
-  tower.material = towerMaterial as Material;
+  tower.material = materialGlobals.towerMaterial;
   switch (level) {
     case 1:
     default:
       const disposeTimer = setTimeout(() => {
-        tower.material = damagedMaterial;
+        tower.material = materialGlobals.hitMaterial;
         setTimeout(() => {
           removeTower(tower, level);
           tower.dispose();
@@ -121,13 +120,13 @@ export function towerBorn(
       const flashSpace = turretMesh.getDirection(flashLocal) as Vector3;
       flashMesh.position = turretMesh.position.subtract(flashSpace) as Vector3;
       flashMesh.rotation = turretMesh.rotation.clone() as Vector3;
-      turretMesh.material = towerMaterial as Material;
+      turretMesh.material = materialGlobals.towerMaterial as Material;
       turretMesh.addChild(flashMesh) as Mesh;
 
       flashMesh.isPickable = false as boolean;
       flashMesh.convertToUnIndexedMesh();
       flashMesh.setEnabled(false);
-      flashMesh.material = projectileMaterial as Material;
+      flashMesh.material = materialGlobals.projectileMaterial as Material;
 
       const rayLocal = new Vector3(0, 0, -1);
 
@@ -171,7 +170,7 @@ export function towerBorn(
         position.z
       ) as Vector3;
 
-      pillarMesh.material = towerMaterial as Material;
+      pillarMesh.material = materialGlobals.towerMaterial as Material;
       pillarMesh.isPickable = false as boolean;
       pillarMesh.convertToUnIndexedMesh();
 
@@ -179,7 +178,7 @@ export function towerBorn(
       Tags.AddTagsTo(turretMesh, "tower");
 
       const disposeTimer2 = setTimeout(() => {
-        tower.material = damagedMaterial;
+        tower.material = materialGlobals.damagedMaterial;
         setTimeout(() => {
           removeTower(tower, level);
           tower.dispose();

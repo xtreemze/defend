@@ -1,6 +1,10 @@
 import { updateEconomy } from "./updateEconomy";
 
-import { economyGlobals, enemyGlobals } from "../main/globalVariables";
+import {
+  economyGlobals,
+  enemyGlobals,
+  materialGlobals
+} from "../main/globalVariables";
 import {
   MeshBuilder,
   Scene,
@@ -46,8 +50,9 @@ function displayEconomy(scene: Scene) {
     scene
   ) as Mesh;
 
-  Tags.AddTagsTo(currencyTower, "tower");
+  economyGlobals.currencyMesh = currencyTower;
 
+  Tags.AddTagsTo(currencyTower, "tower");
 
   const hitPointsMeter = MeshBuilder.CreateBox(
     "currencyMeter", //@ts-ignore
@@ -59,6 +64,8 @@ function displayEconomy(scene: Scene) {
     },
     scene
   ) as Mesh;
+
+  economyGlobals.currencyMeter = hitPointsMeter;
 
   hitPointsMeter.isPickable = false;
 
@@ -80,10 +87,8 @@ function displayEconomy(scene: Scene) {
     scene
   ) as PhysicsImpostor;
 
-  currencyTower.material = scene.getMaterialByName("hitMaterial") as Material;
-  hitPointsMeter.material = scene.getMaterialByName(
-    "enemyMaterial"
-  ) as Material;
+  currencyTower.material = materialGlobals.hitMaterial;
+  hitPointsMeter.material = materialGlobals.enemyMaterial;
 
   rampUp(scene, currencyTower);
 }
