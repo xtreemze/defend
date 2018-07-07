@@ -47,18 +47,19 @@ export function enemyBorn(
   ) as PhysicsImpostor;
   mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
   let deltaTime = Date.now();
-  const loopTimer = sphereMesh.registerAfterRender(() => {
+  sphereMesh.registerAfterRender(() => {
     if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
       deltaTime = Date.now();
       if (
         sphereMesh.position.y > diameter / 2.5 &&
-        sphereMesh.position.y < diameter * 1 &&
+        sphereMesh.position.y < diameter &&
         //@ts-ignore
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
         enemyAi(sphereMesh, decide(sphereMesh));
       }
-      checkHitPoints(scene, sphereMesh, loopTimer, level, hitPointsMeter);
+
+      checkHitPoints(scene, sphereMesh, level, hitPointsMeter);
     }
   });
   currencyCollide(

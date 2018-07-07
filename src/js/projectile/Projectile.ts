@@ -126,6 +126,9 @@ function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
           //@ts-ignore
           economyGlobals.currentBalance += projectile.hitPoints;
           updateEconomy(scene);
+        } else {
+          //@ts-ignore
+          enemy.hitPoints = 0;
         }
         setTimeout(() => {
           enemy.material = enemyMaterial as Material;
@@ -178,12 +181,12 @@ function destroyProjectile(projectile: Mesh, physicsEngine: PhysicsEngine) {
   delete projectile.hitPoints;
   setTimeout(() => {
     projectile.dispose();
-      if (projectile.physicsImpostor !== null) {
-        projectile.physicsImpostor.dispose();
-      }
+    if (projectile.physicsImpostor !== null) {
+      projectile.physicsImpostor.dispose();
+    }
     setTimeout(() => {
       mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
-    }, 10);
+    }, 4);
   }, 1);
 }
 

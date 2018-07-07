@@ -46,7 +46,6 @@ class Enemy {
 export function checkHitPoints(
   scene: Scene,
   sphereMesh: Mesh,
-  loopTimer: any,
   level: number = 1 | 2 | 3,
   hitPointsMeter: Mesh
 ) {
@@ -55,13 +54,12 @@ export function checkHitPoints(
   if (
     sphereMesh.physicsImpostor !== null &&
     //@ts-ignore
-    (sphereMesh.hitPoints <= 0 || sphereMesh.position.y < 0)
+    sphereMesh.hitPoints <= 0 || sphereMesh.position.y < 0 && sphereMesh.physicsImpostor !== null
   ) {
     const enemyPosition = sphereMesh.position.clone() as Vector3;
     const enemyRotation = sphereMesh.rotation.clone() as Vector3;
     const enemyLinearVelocity = sphereMesh.physicsImpostor.getLinearVelocity() as Vector3;
     const enemyAngularVelocity = sphereMesh.physicsImpostor.getAngularVelocity() as Vector3;
-    destroyEnemy(sphereMesh, loopTimer, scene);
     if (
       mapGlobals.allImpostors.length < mapGlobals.impostorLimit &&
       sphereMesh.position.y > 0
@@ -77,6 +75,7 @@ export function checkHitPoints(
         );
       }, 1);
     }
+    destroyEnemy(sphereMesh, scene);
   } else {
     //@ts-ignore
     sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
@@ -151,25 +150,25 @@ function fragment(
   // }
 }
 
-function destroyEnemy(sphereMesh: Mesh, loopTimer: any, scene: Scene) {
+function destroyEnemy(sphereMesh: Mesh, scene: Scene) {
   enemyGlobals.occupiedSpaces.pop();
   //@ts-ignore
   sphereMesh.hitPoints = 0;
 
-  clearInterval(loopTimer);
-  loopTimer = null;
   //@ts-ignore
   delete sphereMesh.hitPoints;
+  // clearInterval(loopTimer);
 
   if (sphereMesh.physicsImpostor !== null) {
     sphereMesh.physicsImpostor.dispose();
   }
   Tags.RemoveTagsFrom(sphereMesh, "enemy");
+
   setTimeout(() => {
     sphereMesh.dispose();
     setTimeout(() => {
       enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-    }, 10);
+    }, 4);
   }, 1);
 }
 
@@ -232,8 +231,9 @@ function enemies(scene: Scene) {
     if (
       Date.now() - deltaTime > enemyGlobals.generationRate &&
       enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-      mapGlobals.allImpostors.length < mapGlobals.impostorLimit
+      mapGlobals.allImpostors.length <= mapGlobals.impostorLimit
     ) {
+      enemyGlobals.currentWave += 1;
       deltaTime = Date.now();
       setTimeout(() => {
         //@ts-ignore
@@ -246,9 +246,10 @@ function enemies(scene: Scene) {
         setTimeout(() => {
           //@ts-ignore
           enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
+          setTimeout(() => {
+            enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+          }, 100);
         }, 400);
-
-        enemyGlobals.currentWave += 1;
       }, 2);
     }
   });
