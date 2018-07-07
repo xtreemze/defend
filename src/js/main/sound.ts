@@ -5,7 +5,7 @@ import { towerGlobals } from "./globalVariables";
 function onDestroy(enemyPosition: Vector3, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: 3,
+      volume: 7,
       attack: 0.3,
       sustain: 0.7,
       release: 0.7,
@@ -26,7 +26,7 @@ function onDestroy(enemyPosition: Vector3, level: number) {
 function shoot(projectile: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: -4,
+      volume: 2,
       sustain: 0.04,
       release: 0.5,
       frequency: (760 / level) * 1.45,
@@ -47,7 +47,7 @@ function shoot(projectile: Mesh, level: number) {
 function damage(enemy: Mesh) {
   setTimeout(() => {
     FX.play({
-      volume: 8,
+      volume: 12,
       attack: 0.1,
       sustain: 0.0662,
       release: 0.1115,
@@ -68,7 +68,7 @@ function damage(enemy: Mesh) {
 function damageCurrency(enemy: Mesh) {
   setTimeout(() => {
     FX.play({
-      volume: 4,
+      volume: 8,
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
       //@ts-ignore
@@ -88,16 +88,16 @@ function damageCurrency(enemy: Mesh) {
 function newWave() {
   setTimeout(() => {
     FX.play({
-      volume: 4,
+      volume: 2,
       decay: 1,
       attack: 0.9,
       sustain: 0.0526,
-      release: 1,
+      release: 0.5,
       frequency: 706.4 * 1,
       sweep: 0.372 * 1,
       source: "triangle",
       pulseWidth: 0.48,
-      repeat: 3,
+      repeat: 2,
       soundX: 0,
       soundY: 0,
       soundZ: 0,
@@ -109,7 +109,7 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: 1,
+      volume: 4,
       sustain: 0.0794,
       release: 0.3501,
       frequency: 604.3 / level + towerGlobals.allTowers.length * 6,
@@ -127,7 +127,7 @@ function addTower(tower: Mesh, level: number) {
 function removeTower(tower: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: 1,
+      volume: 4,
       sustain: 0.0794 / 3,
       release: 0.3501 / 2,
       frequency: 604.3 / level + towerGlobals.allTowers.length * 4,
@@ -166,7 +166,7 @@ function defeated() {
 function victory() {
   setTimeout(() => {
     FX.play({
-      volume: -5,
+      volume: -3,
       decay: 0.8,
       attack: 0.5,
       sustain: 0.0526,
