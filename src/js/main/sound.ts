@@ -5,7 +5,7 @@ import { towerGlobals } from "./globalVariables";
 function onDestroy(enemyPosition: Vector3, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: 0,
+      volume: 3,
       attack: 0.3,
       sustain: 0.7,
       release: 0.7,
@@ -26,7 +26,7 @@ function onDestroy(enemyPosition: Vector3, level: number) {
 function shoot(projectile: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: -9,
+      volume: -4,
       sustain: 0.04,
       release: 0.5,
       frequency: (760 / level) * 1.45,
@@ -68,7 +68,7 @@ function damage(enemy: Mesh) {
 function damageCurrency(enemy: Mesh) {
   setTimeout(() => {
     FX.play({
-      volume: -5,
+      volume: 4,
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
       //@ts-ignore
@@ -88,7 +88,7 @@ function damageCurrency(enemy: Mesh) {
 function newWave() {
   setTimeout(() => {
     FX.play({
-      volume: -5,
+      volume: 4,
       decay: 1,
       attack: 0.9,
       sustain: 0.0526,
@@ -109,7 +109,7 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: -4,
+      volume: 1,
       sustain: 0.0794,
       release: 0.3501,
       frequency: 604.3 / level + towerGlobals.allTowers.length * 6,
@@ -127,7 +127,7 @@ function addTower(tower: Mesh, level: number) {
 function removeTower(tower: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: -4,
+      volume: 1,
       sustain: 0.0794 / 3,
       release: 0.3501 / 2,
       frequency: 604.3 / level + towerGlobals.allTowers.length * 4,
