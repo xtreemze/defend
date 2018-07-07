@@ -67,7 +67,7 @@ const enemyGlobals = {
   restitution: 0.3,
   jumpForce: 60,
   friction: 1,
-  decayRate: 50, // hitpoints per decision
+  decayRate: 100, // hitpoints per decision
   baseHitPoints: 5000,
   deadHitPoints: 0,
   fragments: 1,

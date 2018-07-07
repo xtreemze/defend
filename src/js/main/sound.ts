@@ -68,7 +68,7 @@ function damage(enemy: Mesh) {
 function damageCurrency(enemy: Mesh) {
   setTimeout(() => {
     FX.play({
-      volume: 12,
+      volume: 18,
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
       //@ts-ignore
@@ -109,7 +109,7 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: 10,
+      volume: 14,
       sustain: 0.0794,
       release: 0.3501,
       frequency: 604.3 / level + towerGlobals.allTowers.length * 6,
@@ -127,7 +127,7 @@ function addTower(tower: Mesh, level: number) {
 function removeTower(tower: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
-      volume: 10,
+      volume: 14,
       sustain: 0.0794 / 3,
       release: 0.3501 / 2,
       frequency: 604.3 / level + towerGlobals.allTowers.length * 4,

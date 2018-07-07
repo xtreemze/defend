@@ -27,7 +27,7 @@ function currencyCollide(enemy: Mesh, scene: Scene) {
           economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
           setTimeout(() => {
             economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
-          }, 30);
+          }, 20);
 
           if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
             setTimeout(() => {

@@ -30,7 +30,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           pickResult.pickedMesh.dispose();
           setTimeout(() => {
             new Tower(level, samePosition, scene, physicsEngine) as Tower;
-          }, 5);
+          }, 2);
         }
       }
       if (
@@ -48,7 +48,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           pickResult.pickedMesh.dispose();
           setTimeout(() => {
             new Tower(level, samePosition, scene, physicsEngine) as Tower;
-          }, 5);
+          }, 2);
         }
       }
     }
