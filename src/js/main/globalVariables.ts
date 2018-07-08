@@ -28,10 +28,10 @@ const projectileGlobals = {
   speed: 8000,
   mass: 80,
   restitution: 0,
-  baseHitPoints: 80,
+  baseHitPoints: 100,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
-  particleLimit: 1,
+  particleLimit: 2,
   particleIndex: 0
 };
 
