@@ -123,18 +123,13 @@ function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
           //@ts-ignore
           economyGlobals.currentBalance += projectile.hitPoints;
           updateEconomy(scene);
-        } else {
-          //@ts-ignore
-          enemy.hitPoints = 0;
         }
         setTimeout(() => {
           enemy.material = materialGlobals.hitMaterial;
-        }, 30);
+        }, 20);
 
         if (
-          mapGlobals.simultaneousSounds < mapGlobals.soundLimit &&
-          //@ts-ignore
-          enemy.hitPoints > 0
+          mapGlobals.simultaneousSounds < mapGlobals.soundLimit
         ) {
           setTimeout(() => {
             mapGlobals.simultaneousSounds -= 1;

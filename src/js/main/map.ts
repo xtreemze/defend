@@ -29,7 +29,6 @@ function map(scene: Scene) {
 
   upLight.intensity = mapGlobals.lightIntensity * 2;
   upLight.diffuse = new Color3(0.82, 0.89, 0.94);
-  // upLight.groundColor = new Color3(0.05, 0, 0.18);
 
   skyLight.intensity = mapGlobals.lightIntensity;
   skyLight.diffuse = new Color3(0.82, 0.89, 0.94);
@@ -48,7 +47,6 @@ function map(scene: Scene) {
   ) as Mesh;
 
   atmosphere.isPickable = false;
-  // atmosphere.infiniteDistance = true;
 
   atmosphere.flipFaces(true);
   atmosphere.freezeWorldMatrix(); // freeze sky

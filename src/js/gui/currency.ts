@@ -81,7 +81,7 @@ function displayEconomy(scene: Scene) {
     PhysicsImpostor.BoxImpostor,
     {
       mass: 0,
-      restitution: 0.2,
+      restitution: 0.8,
       friction: 1
     },
     scene
@@ -97,7 +97,7 @@ function rampUp(scene: Scene, currencyTower?: Mesh) {
   economyGlobals.currentBalance = 0;
 
   const interval1 = setInterval(() => {
-    economyGlobals.currentBalance += 50;
+    economyGlobals.currentBalance += 100;
     updateEconomy(scene, currencyTower);
     if (
       economyGlobals.currentBalance >= economyGlobals.initialBalance ||
@@ -105,6 +105,6 @@ function rampUp(scene: Scene, currencyTower?: Mesh) {
     ) {
       clearInterval(interval1);
     }
-  }, 1000 / 60);
+  }, 1000 / 30);
 }
 export { displayEconomy, updateEconomy, rampUp };

@@ -108,7 +108,7 @@ function destroyTower(
 
   setTimeout(() => {
     towerGlobals.allTowers = scene.getMeshesByTags("tower");
-  }, 10);
+  }, 2);
 }
 
 function towers(scene: Scene, physicsEngine: PhysicsEngine) {

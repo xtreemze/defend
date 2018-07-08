@@ -9,6 +9,8 @@ import { waves } from "../enemy/waves";
 import { victory, defeated } from "../main/sound";
 
 export function updateEconomy(scene: Scene, currencyTower?: any) {
+
+
   if (
     economyGlobals.currentBalance < 0 &&
     economyGlobals.restartMessage === false
@@ -20,6 +22,7 @@ export function updateEconomy(scene: Scene, currencyTower?: any) {
     if (currencyTower !== null && mapGlobals.soundOn === true) {
       defeated();
     }
+    enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
   if (
     (economyGlobals.currentBalance > economyGlobals.maxBalance &&
@@ -34,6 +37,7 @@ export function updateEconomy(scene: Scene, currencyTower?: any) {
     if (currencyTower !== null && mapGlobals.soundOn === true) {
       victory();
     }
+    enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
   const currentBalance = document.getElementById(
     "currentBalance"
