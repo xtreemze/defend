@@ -47,14 +47,8 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
             pickResult.pickedPoint.z - 5 - (pickResult.pickedPoint.z % 10)
           );
         }
-        // const level = randomNumberRange(1, 3);
         const level = 1;
         if (
-          towerGlobals.occupiedSpaces.find(
-            existingLocation =>
-              existingLocation[0] === newLocation.x &&
-              existingLocation[1] === newLocation.z
-          ) === undefined &&
           economyGlobals.occupiedSpaces.find(
             existingLocation =>
               existingLocation[0] === newLocation.x &&
@@ -62,17 +56,8 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
           ) === undefined &&
           economyGlobals.currentBalance >= level * 10
         ) {
-          towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
 
-          new Tower(
-            level,
-            {
-              x: towerGlobals.occupiedSpaces[0][0],
-              z: towerGlobals.occupiedSpaces[0][1]
-            },
-            scene,
-            physicsEngine
-          ) as Tower;
+          new Tower(level, { x: newLocation.x, z: newLocation.z }, scene, physicsEngine) as Tower;
         }
       }
     }

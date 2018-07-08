@@ -57,23 +57,9 @@ function towerGenerator(
 ) {
   let newLocation = positionGenerator();
 
-  while (
-    towerGlobals.occupiedSpaces.find(
-      existingLocation =>
-        existingLocation[0] === newLocation.x &&
-        existingLocation[1] === newLocation.z
-    ) !== undefined
-  ) {
-    newLocation = positionGenerator();
-  }
-  towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
-
   new Tower(
     3,
-    {
-      x: towerGlobals.occupiedSpaces[0][0],
-      z: towerGlobals.occupiedSpaces[0][1]
-    },
+    { x: newLocation.x, z: newLocation.z },
     scene,
     physicsEngine
   ) as Tower;
@@ -81,23 +67,9 @@ function towerGenerator(
   for (let index = 2; index < quantity; index += 1) {
     let newLocation = positionGenerator();
 
-    while (
-      towerGlobals.occupiedSpaces.find(
-        existingLocation =>
-          existingLocation[0] === newLocation.x &&
-          existingLocation[1] === newLocation.z
-      ) !== undefined
-    ) {
-      newLocation = positionGenerator();
-    }
-    towerGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
-
     new Tower(
       randomNumberRange(1, 3),
-      {
-        x: towerGlobals.occupiedSpaces[0][0],
-        z: towerGlobals.occupiedSpaces[0][1]
-      },
+      { x: newLocation.x, z: newLocation.z },
       scene,
       physicsEngine
     ) as Tower;
@@ -135,10 +107,8 @@ function destroyTower(
   }
 
   setTimeout(() => {
-
     towerGlobals.allTowers = scene.getMeshesByTags("tower");
   }, 10);
-  towerGlobals.occupiedSpaces.pop();
 }
 
 function towers(scene: Scene, physicsEngine: PhysicsEngine) {

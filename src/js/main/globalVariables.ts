@@ -3,7 +3,7 @@ import { Color3, PhysicsImpostor, Mesh, Material, GroundMesh } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 250, // map radius
+  size: 200, // map radius
   optimizerOn: true,
   cameraCutDelay: 4200,
   rotateCameras: false,
