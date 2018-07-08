@@ -1,10 +1,11 @@
 import {
   projectileGlobals,
   mapGlobals,
-  enemyGlobals
+  enemyGlobals,
+  economyGlobals
 } from "../main/globalVariables";
 import * as FX from "../../vendor/wafxr/wafxr";
-import { enemies } from "../enemy/Enemy";
+import { enemyWaves } from "../enemy/enemyWaves";
 import { newTower } from "../interaction/pick";
 import { Scene } from "babylonjs";
 import { displayEconomy } from "./currency";
@@ -60,37 +61,42 @@ function titleScreen(
 
   canvasParent.insertBefore(title, canvas);
   canvasParent.insertBefore(startButton, canvas);
+
+  // When no button is pressed, game starts without sound
   const noSoundTimer = setTimeout(() => {
-    displayEconomy(scene);
-    // towers(scene);
-    enemies(scene);
-    const titleParent = title.parentNode as Node;
-    titleParent.removeChild(title);
-    const startButtonParent = startButton.parentNode as Node;
-    startButtonParent.removeChild(startButton);
-    newTower(scene, physicsEngine);
-    upgradeTower(scene, physicsEngine);
     mapGlobals.soundOn = false;
-  }, 4000);
+    startGame();
+  }, 3000);
 
+  // Start button behavior
   startButton.addEventListener("click", () => {
-    enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
-    clearTimeout(noSoundTimer);
-    displayEconomy(scene);
-    // towers(scene);
-    enemies(scene);
-
+    // Enable sound
     mapGlobals.soundOn = true;
     FX._tone.context.resume();
     FX._tone.Master.mute = false;
+    clearTimeout(noSoundTimer);
 
+    startGame();
+  });
+
+  function startGame() {
+    displayEconomy(scene);
+    // start Enemy Generation and Waves
+    enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
+    economyGlobals.restartMessage = false;
+    enemyGlobals.currentWave = 0;
+    setTimeout(() => {
+      enemyWaves(scene);
+    }, 5);
+    // remove GUI
     const titleParent = title.parentNode as Node;
     titleParent.removeChild(title);
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
+    // enable interactive Tower generation and upgrade
     newTower(scene, physicsEngine);
     upgradeTower(scene, physicsEngine);
-  });
+  }
 }
 
 export { titleScreen };

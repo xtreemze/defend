@@ -6,6 +6,7 @@ import {
 } from "../main/globalVariables";
 import { Scene } from "babylonjs";
 import { rampUp } from "./currency";
+import { enemyWaves } from "../enemy/enemyWaves";
 
 function displayMessage(scene: Scene, message: string, icon: string) {
   enemyGlobals.limit = 0;
@@ -54,16 +55,24 @@ function displayMessage(scene: Scene, message: string, icon: string) {
     const canvasParent = canvas.parentNode as Node;
     canvasParent.insertBefore(title, canvas);
     canvasParent.insertBefore(startButton, canvas);
+
+    // Start button behavior
     startButton.addEventListener("click", () => {
-      enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
+      // Button and GUI
       const titleParent = title.parentNode as Node;
       titleParent.removeChild(title);
       const startButtonParent = startButton.parentNode as Node;
       startButtonParent.removeChild(startButton);
-      enemyGlobals.currentWave = 0;
       rampUp(scene);
+
+      // Enemy waves start
       enemyGlobals.limit = mapGlobals.size;
+      enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
+      enemyGlobals.currentWave = 0;
       economyGlobals.restartMessage = false;
+      setTimeout(() => {
+        enemyWaves(scene);
+      }, 5);
     });
   }
 }

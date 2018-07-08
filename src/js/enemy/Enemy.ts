@@ -6,20 +6,15 @@ import {
   MeshBuilder,
   Mesh,
   Tags,
-  Material,
   PhysicsImpostor
 } from "babylonjs";
 import positionGenerator from "../utility/positionGenerator";
-import { newWave } from "../main/sound";
 import {
   enemyGlobals,
-  towerGlobals,
   mapGlobals,
   projectileGlobals,
   materialGlobals
 } from "../main/globalVariables";
-import { waves } from "./waves";
-import { updateEconomy } from "../gui/updateEconomy";
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
@@ -181,7 +176,7 @@ export function decide(sphereMesh: Mesh) {
   return decideToMove;
 }
 
-function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
+export function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
   for (let index = 0; index < quantity; index += 1) {
     let newLocation = positionGenerator();
     while (
@@ -207,30 +202,4 @@ function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
   }
 }
 
-function enemies(scene: Scene) {
-  let deltaTime = Date.now() - enemyGlobals.generationRate;
-
-  scene.registerAfterRender(() => {
-    if (
-      Date.now() - deltaTime > enemyGlobals.generationRate &&
-      enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-      mapGlobals.allImpostors.length <= mapGlobals.impostorLimit
-    ) {
-      enemyGlobals.currentWave += 1;
-      newWave();
-      updateEconomy(scene);
-      deltaTime = Date.now();
-      setTimeout(() => {
-        //@ts-ignore
-        enemyGenerator(scene, waves[enemyGlobals.currentWave][0], 1);
-        //@ts-ignore
-        enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
-        //@ts-ignore
-        enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
-        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-      }, 2);
-    }
-  });
-}
-
-export { enemies, Enemy };
+export { Enemy };
