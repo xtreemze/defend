@@ -68,11 +68,11 @@ function damage(enemy: Mesh) {
 function damageCurrency(enemy: Mesh) {
   setTimeout(() => {
     FX.play({
-      volume: 24,
+      volume: 34,
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
       //@ts-ignore
-      frequency: (1000 * enemy.hitPoints) / 5,
+      frequency: (1000 * enemy.hitPoints) / 4,
       sweep: -0.7 / 2,
       source: "triangle",
       vibrato: 0.5 / 2,
@@ -147,9 +147,9 @@ function defeated() {
     FX.play({
       volume: 1,
       decay: 1,
-      attack: 0.9,
+      attack: 1,
       sustain: 0.05,
-      release: 1,
+      release: 0.5,
       frequency: 800,
       sweep: -0.4,
       source: "triangle",
@@ -166,11 +166,11 @@ function defeated() {
 function victory() {
   setTimeout(() => {
     FX.play({
-      volume: -3,
-      decay: 0.8,
+      volume: 1,
+      decay: 1,
       attack: 0.5,
       sustain: 0.05,
-      release: 0.8,
+      release: 0.3,
       frequency: 700,
       sweep: 0.4,
       source: "triangle",

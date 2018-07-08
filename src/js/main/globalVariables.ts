@@ -1,4 +1,4 @@
-import { Color3, PhysicsImpostor, Mesh, Material, GroundMesh } from "babylonjs";
+import { Color3, PhysicsImpostor, Mesh, GroundMesh } from "babylonjs";
 
 const mapGlobals = {
   diagnosticsOn: false,
@@ -25,8 +25,8 @@ const mapGlobals = {
 
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
-  speed: 8000,
-  mass: 80,
+  speed: 10000,
+  mass: 100,
   restitution: 0,
   baseHitPoints: 100,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
