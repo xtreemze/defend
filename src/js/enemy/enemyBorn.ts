@@ -1,11 +1,4 @@
-import {
-  Scene,
-  Vector3,
-  MeshBuilder,
-  Mesh,
-  Material,
-  PhysicsImpostor
-} from "babylonjs";
+import { Scene, Vector3, MeshBuilder, Mesh, PhysicsImpostor } from "babylonjs";
 import enemyAi from "./enemyAi";
 import {
   enemyGlobals,
@@ -13,7 +6,8 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
-import { decide, checkHitPoints } from "./Enemy";
+import { decide } from "./Enemy";
+import { checkHitPoints } from "./checkHitPoints";
 export function enemyBorn(
   scene: Scene,
   position: any = { x: 0, z: 0 },

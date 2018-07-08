@@ -81,18 +81,19 @@ function titleScreen(
 
   function startGame() {
     displayEconomy(scene);
+
     // start Enemy Generation and Waves
     enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
     economyGlobals.restartMessage = false;
     enemyGlobals.currentWave = 0;
-    setTimeout(() => {
-      enemyWaves(scene);
-    }, 5);
+    enemyWaves(scene);
+
     // remove GUI
     const titleParent = title.parentNode as Node;
     titleParent.removeChild(title);
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
+
     // enable interactive Tower generation and upgrade
     newTower(scene, physicsEngine);
     upgradeTower(scene, physicsEngine);

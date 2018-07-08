@@ -1,20 +1,19 @@
 import { enemyBorn } from "./enemyBorn";
 
 import {
-  Scene,
   Vector3,
   MeshBuilder,
   Mesh,
   Tags,
-  PhysicsImpostor
+  PhysicsImpostor,
+  Scene
 } from "babylonjs";
-import positionGenerator from "../utility/positionGenerator";
 import {
   enemyGlobals,
-  mapGlobals,
   projectileGlobals,
   materialGlobals
 } from "../main/globalVariables";
+import positionGenerator from "../utility/positionGenerator";
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
@@ -40,55 +39,7 @@ class Enemy {
   }
 }
 
-export function checkHitPoints(
-  scene: Scene,
-  sphereMesh: Mesh,
-  level: number = 1 | 2 | 3,
-  hitPointsMeter: Mesh
-) {
-  if (
-    (sphereMesh.physicsImpostor !== null &&
-      //@ts-ignore
-      sphereMesh.hitPoints <= 0) ||
-    (sphereMesh.position.y < 0 && sphereMesh.physicsImpostor !== null)
-  ) {
-    const enemyPosition = sphereMesh.position.clone() as Vector3;
-    const enemyRotation = sphereMesh.rotation.clone() as Vector3;
-    const enemyLinearVelocity = sphereMesh.physicsImpostor.getLinearVelocity() as Vector3;
-    const enemyAngularVelocity = sphereMesh.physicsImpostor.getAngularVelocity() as Vector3;
-    if (
-      mapGlobals.allImpostors.length < mapGlobals.impostorLimit &&
-      sphereMesh.position.y > 0
-    ) {
-      setTimeout(() => {
-        fragment(
-          level,
-          enemyPosition,
-          enemyRotation,
-          enemyLinearVelocity,
-          enemyAngularVelocity
-        );
-      }, 1);
-    }
-    destroyEnemy(sphereMesh, scene);
-  } else {
-    //@ts-ignore
-    sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
-
-    const scaleRate =
-      //@ts-ignore
-      1 / ((level * enemyGlobals.baseHitPoints) / sphereMesh.hitPoints);
-
-    //@ts-ignore
-    hitPointsMeter.scaling = new BABYLON.Vector3(
-      scaleRate,
-      scaleRate,
-      scaleRate
-    );
-  }
-}
-
-function fragment(
+export function fragment(
   level: number = 1 | 2 | 3,
   enemyPosition: Vector3,
   enemyRotation: Vector3,
@@ -134,7 +85,7 @@ function fragment(
   }
 }
 
-function destroyEnemy(sphereMesh: Mesh, scene: Scene) {
+export function destroyEnemy(sphereMesh: Mesh, scene: Scene) {
   enemyGlobals.occupiedSpaces.pop();
   //@ts-ignore
   sphereMesh.hitPoints = 0;

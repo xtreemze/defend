@@ -15,31 +15,34 @@ const enemyWaves = (scene: Scene) => {
 };
 
 const wave = (scene: Scene, deltaTime: number): any => {
+  console.log("happen");
+
   if (
     Date.now() - deltaTime > enemyGlobals.generationRate &&
-    enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-    mapGlobals.allImpostors.length <= mapGlobals.impostorLimit
+    enemyGlobals.allEnemies.length <= enemyGlobals.limit
   ) {
+    deltaTime = Date.now();
+    newWave(); // sound for new wave
+
     enemyGlobals.currentWave += 1;
 
-    newWave(); // sound for new wave
     updateEconomy(scene); // update GUI to reflect new wave number
 
     // Generate enemies for the wave
-    setTimeout(() => {
-      //@ts-ignore
-      enemyGenerator(scene, waves[enemyGlobals.currentWave][0], 1);
-      //@ts-ignore
-      enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
-      //@ts-ignore
-      enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
-      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-    }, 2);
+    //@ts-ignore
+    enemyGenerator(scene, waves[enemyGlobals.currentWave][0], 1);
+    //@ts-ignore
+    enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
+    //@ts-ignore
+    enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
 
-    deltaTime = Date.now();
-  }
-  if (economyGlobals.restartMessage === true) {
-    scene.unregisterAfterRender(wave(scene, deltaTime));
+    setTimeout(() => {
+      console.log("enemyGlobals.limit", enemyGlobals.allEnemies);
+      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+      if (economyGlobals.restartMessage === true) {
+        scene.unregisterAfterRender(wave(scene, deltaTime));
+      }
+    }, 2);
   }
 };
 

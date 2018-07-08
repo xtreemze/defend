@@ -58,21 +58,19 @@ function displayMessage(scene: Scene, message: string, icon: string) {
 
     // Start button behavior
     startButton.addEventListener("click", () => {
+      // Enemy waves start
+      enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
+      enemyGlobals.currentWave = 0;
+      economyGlobals.restartMessage = false;
+
+      enemyWaves(scene);
+
       // Button and GUI
       const titleParent = title.parentNode as Node;
       titleParent.removeChild(title);
       const startButtonParent = startButton.parentNode as Node;
       startButtonParent.removeChild(startButton);
       rampUp(scene);
-
-      // Enemy waves start
-      enemyGlobals.limit = mapGlobals.size;
-      enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
-      enemyGlobals.currentWave = 0;
-      economyGlobals.restartMessage = false;
-      setTimeout(() => {
-        enemyWaves(scene);
-      }, 5);
     });
   }
 }

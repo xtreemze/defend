@@ -9,8 +9,7 @@ import { waves } from "../enemy/waves";
 import { victory, defeated } from "../main/sound";
 
 export function updateEconomy(scene: Scene, currencyTower?: any) {
-
-
+  // on defeat
   if (
     economyGlobals.currentBalance < 0 &&
     economyGlobals.restartMessage === false
@@ -24,6 +23,8 @@ export function updateEconomy(scene: Scene, currencyTower?: any) {
     }
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
+
+  // On victory
   if (
     (economyGlobals.currentBalance > economyGlobals.maxBalance &&
       economyGlobals.restartMessage === false) ||
@@ -39,9 +40,11 @@ export function updateEconomy(scene: Scene, currencyTower?: any) {
     }
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
+
   const currentBalance = document.getElementById(
     "currentBalance"
   ) as HTMLDivElement;
+
   const level = enemyGlobals.currentWave.toString();
   const currency = Math.round(economyGlobals.currentBalance).toString();
   currentBalance.innerText = `Wave: ${level}/${waves.length}
