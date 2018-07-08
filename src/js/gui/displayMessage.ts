@@ -55,6 +55,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
     canvasParent.insertBefore(title, canvas);
     canvasParent.insertBefore(startButton, canvas);
     startButton.addEventListener("click", () => {
+      enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
       const titleParent = title.parentNode as Node;
       titleParent.removeChild(title);
       const startButtonParent = startButton.parentNode as Node;

@@ -1,4 +1,8 @@
-import { projectileGlobals, mapGlobals, enemyGlobals } from "../main/globalVariables";
+import {
+  projectileGlobals,
+  mapGlobals,
+  enemyGlobals
+} from "../main/globalVariables";
 import * as FX from "../../vendor/wafxr/wafxr";
 import { enemies } from "../enemy/Enemy";
 import { newTower } from "../interaction/pick";
@@ -69,9 +73,8 @@ function titleScreen(
     mapGlobals.soundOn = false;
   }, 4000);
 
-  const initialEnemyDecayRate = enemyGlobals.decayRate;
   startButton.addEventListener("click", () => {
-    enemyGlobals.decayRate = initialEnemyDecayRate;
+    enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
     clearTimeout(noSoundTimer);
     displayEconomy(scene);
     // towers(scene);

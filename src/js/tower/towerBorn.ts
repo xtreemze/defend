@@ -11,7 +11,6 @@ import {
   Color3,
   CSG,
   PhysicsEngine,
-  TouchCamera
 } from "babylonjs";
 
 import {
