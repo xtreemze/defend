@@ -19,6 +19,7 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
+import { updateEconomy } from "../gui/currency";
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
@@ -50,7 +51,6 @@ export function checkHitPoints(
   level: number = 1 | 2 | 3,
   hitPointsMeter: Mesh
 ) {
-
   if (
     (sphereMesh.physicsImpostor !== null &&
       //@ts-ignore
@@ -223,22 +223,16 @@ function enemies(scene: Scene) {
     ) {
       enemyGlobals.currentWave += 1;
       newWave();
+      updateEconomy(scene);
       deltaTime = Date.now();
       setTimeout(() => {
         //@ts-ignore
         enemyGenerator(scene, waves[enemyGlobals.currentWave][0], 1);
-        setTimeout(() => {
-          //@ts-ignore
-          enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
-        }, 200);
-
-        setTimeout(() => {
-          //@ts-ignore
-          enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
-          setTimeout(() => {
-            enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-          }, 100);
-        }, 400);
+        //@ts-ignore
+        enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
+        //@ts-ignore
+        enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
+        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
       }, 2);
     }
   });

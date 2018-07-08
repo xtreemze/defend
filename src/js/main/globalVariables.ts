@@ -3,7 +3,7 @@ import { Color3, PhysicsImpostor, Mesh, Material, GroundMesh } from "babylonjs";
 const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
-  size: 400, // map radius
+  size: 250, // map radius
   optimizerOn: true,
   cameraCutDelay: 4200,
   rotateCameras: false,
@@ -28,7 +28,7 @@ const projectileGlobals = {
   speed: 5000,
   mass: 30,
   restitution: 0,
-  baseHitPoints: 50,
+  baseHitPoints: 80,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
   particleLimit: 2,
@@ -60,15 +60,15 @@ const enemyGlobals = {
   maxNumber: 8, // for one generation
   limit: 0, // wait for this enemy count before next wave
   originHeight: 6,
-  generationRate: 10000, // milliseconds
+  generationRate: 8000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 20000,
-  mass: 5000,
+  mass: 7000,
   restitution: 0.3,
   jumpForce: 60,
   friction: 1,
-  decayRate: 100, // hitpoints per decision
-  baseHitPoints: 5000,
+  decayRate: 150, // hitpoints per decision
+  baseHitPoints: 10000,
   deadHitPoints: 0,
   fragments: 1,
   allEnemies: [] as Mesh[],
