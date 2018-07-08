@@ -12,7 +12,7 @@ const mapGlobals = {
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 150,
+  soundDelay: 100,
   soundLimit: 2, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
@@ -25,20 +25,20 @@ const mapGlobals = {
 
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
-  speed: 5000,
-  mass: 30,
+  speed: 8000,
+  mass: 50,
   restitution: 0,
   baseHitPoints: 80,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
-  particleLimit: 2,
+  particleLimit: 1,
   particleIndex: 0
 };
 
 const towerGlobals = {
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
-  rateOfFire: 180, // milliseconds between each shot,
+  rateOfFire: 160, // milliseconds between each shot,
   height: 3,
   mass: 0,
   restitution: 0,
@@ -48,7 +48,7 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 45,
+  range: 55,
   shoot: true,
   raysOn: false,
   lifeTime: 60000,
