@@ -10,7 +10,7 @@ import {
   PhysicsImpostor
 } from "babylonjs";
 import positionGenerator from "../utility/positionGenerator";
-import { onDestroy, newWave } from "../main/sound";
+import { newWave } from "../main/sound";
 import {
   enemyGlobals,
   towerGlobals,
@@ -19,7 +19,7 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
-import { updateEconomy } from "../gui/currency";
+import { updateEconomy } from "../gui/updateEconomy";
 
 class Enemy {
   constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {

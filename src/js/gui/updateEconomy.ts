@@ -40,7 +40,7 @@ export function updateEconomy(scene: Scene, currencyTower?: any) {
   ) as HTMLDivElement;
   const level = enemyGlobals.currentWave.toString();
   const currency = Math.round(economyGlobals.currentBalance).toString();
-  currentBalance.innerText = `Wave: ${level}/${waves.length - 1}
+  currentBalance.innerText = `Wave: ${level}/${waves.length}
   Energy: ${currency}
   Defeats: ${economyGlobals.defeats}
   Victories: ${economyGlobals.victories}`;

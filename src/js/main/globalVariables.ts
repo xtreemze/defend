@@ -26,7 +26,7 @@ const mapGlobals = {
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
   speed: 8000,
-  mass: 50,
+  mass: 80,
   restitution: 0,
   baseHitPoints: 80,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
@@ -60,7 +60,7 @@ const enemyGlobals = {
   minNumber: 1, // for one generation
   maxNumber: 8, // for one generation
   limit: 0, // wait for this enemy count before next wave
-  originHeight: 6,
+  originHeight: 3,
   generationRate: 8000, // milliseconds
   decisionRate: 200, // milliseconds
   speed: 20000,
@@ -68,7 +68,7 @@ const enemyGlobals = {
   restitution: 0.3,
   jumpForce: 60,
   friction: 1,
-  decayRate: 150, // hitpoints per decision
+  decayRate: 100, // hitpoints per decision
   baseHitPoints: 10000,
   deadHitPoints: 0,
   fragments: 1,
