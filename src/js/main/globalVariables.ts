@@ -52,7 +52,8 @@ const towerGlobals = {
   shoot: true,
   raysOn: false,
   lifeTime: 60000,
-  index: 0
+  index: 0,
+  disposeTime: 6000 // chance to keep towers before dispose
 };
 
 const enemyGlobals = {

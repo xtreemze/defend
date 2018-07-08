@@ -10,7 +10,8 @@ import {
   RayHelper,
   Color3,
   CSG,
-  PhysicsEngine
+  PhysicsEngine,
+  TouchCamera
 } from "babylonjs";
 
 import {
@@ -18,7 +19,7 @@ import {
   mapGlobals,
   materialGlobals
 } from "../main/globalVariables";
-import { destroyTower } from "./Tower";
+import { destroyTower, Tower } from "./Tower";
 import { trackSpheres } from "./trackSpheres";
 import { removeTower } from "../main/sound";
 
@@ -43,13 +44,14 @@ export function towerBorn(
         setTimeout(() => {
           removeTower(tower, level);
           tower.dispose();
-        }, 5000);
+        }, towerGlobals.disposeTime);
       }, towerGlobals.lifeTime);
 
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
           (d, s) => {
             window.clearTimeout(disposeTimer);
+
             destroyTower(scene, tower);
           },
           undefined,
@@ -178,12 +180,11 @@ export function towerBorn(
       Tags.AddTagsTo(turretMesh, "tower");
 
       const disposeTimer2 = setTimeout(() => {
-        tower.material = materialGlobals.damagedMaterial;
+        tower.material = materialGlobals.hitMaterial;
         setTimeout(() => {
           removeTower(tower, level);
           tower.dispose();
-
-        }, 3000);
+        }, towerGlobals.disposeTime);
       }, towerGlobals.lifeTime);
 
       if (tower.onDisposeObservable) {
@@ -191,6 +192,9 @@ export function towerBorn(
         tower.onDisposeObservable.add(
           (d, s) => {
             window.clearTimeout(disposeTimer2);
+            setTimeout(() => {
+              new Tower(level - 1, tower.position, scene, physicsEngine);
+            }, 2);
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
           },
           undefined,
