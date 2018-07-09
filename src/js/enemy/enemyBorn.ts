@@ -8,14 +8,18 @@ import {
 import { currencyCollide } from "./currencyCollide";
 import { decide } from "./Enemy";
 import { checkHitPoints } from "./checkHitPoints";
+
+interface EnemySphere extends Mesh {
+  hitPoints: number;
+}
+
 export function enemyBorn(
   scene: Scene,
   position: any = { x: 0, z: 0 },
-  sphereMesh: Mesh,
+  sphereMesh: EnemySphere,
   diameter: number = 0,
   level: number = 1 | 2 | 3
 ) {
-
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
   const hitPointsMeter = MeshBuilder.CreateIcoSphere(
     name + "hitPointMeter",
@@ -50,7 +54,6 @@ export function enemyBorn(
       if (
         sphereMesh.position.y > diameter / 2.5 &&
         sphereMesh.position.y < diameter &&
-
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
         enemyAi(sphereMesh, decide(sphereMesh));
@@ -61,3 +64,5 @@ export function enemyBorn(
   });
   currencyCollide(sphereMesh, scene);
 }
+
+export { EnemySphere };

@@ -6,7 +6,14 @@ import {
 } from "../main/globalVariables";
 import { damage } from "../main/sound";
 import { updateEconomy } from "../gui/updateEconomy";
-export function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
+import { EnemySphere } from "../enemy/enemyBorn";
+import { LiveProjectile } from "./startLife";
+
+export function hitEffect(
+  scene: Scene,
+  projectile: LiveProjectile,
+  enemy: EnemySphere
+) {
   if (
     projectile.physicsImpostor !== null &&
     enemy.physicsImpostor !== null &&

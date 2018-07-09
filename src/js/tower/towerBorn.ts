@@ -24,7 +24,17 @@ import { trackSpheres } from "./trackSpheres";
 import { removeTower } from "../main/sound";
 import { updateEconomy } from "../gui/updateEconomy";
 
-export function towerBorn(
+interface LiveTower extends Mesh {
+  hitPoints: number;
+}
+
+interface TowerTurret extends Mesh {
+  hitPoints: number;
+  turretRayHelper: RayHelper;
+  ray: Ray;
+}
+
+function towerBorn(
   scene: Scene,
   tower: Mesh,
   position: any,
@@ -98,7 +108,7 @@ export function towerBorn(
         null,
         scene,
         false
-      ) as Mesh;
+      ) as TowerTurret;
       turretMesh.convertToUnIndexedMesh();
 
       turretMesh.isPickable = false as boolean;
@@ -225,7 +235,8 @@ export function towerBorn(
   Tags.AddTagsTo(tower, "tower");
   towerGlobals.allTowers.unshift(tower);
 
-
   economyGlobals.currentBalance -= towerGlobals.baseCost * level;
   updateEconomy(scene);
 }
+
+export { TowerTurret, towerBorn };

@@ -1,10 +1,10 @@
-import { towerBorn } from "./towerBorn";
+import { towerBorn, TowerTurret } from "./towerBorn";
 
 import { Scene, MeshBuilder, Mesh, PhysicsEngine, Ray } from "babylonjs";
 import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
 import { addTower } from "../main/sound";
-import { towerGlobals, economyGlobals } from "../main/globalVariables";
+import { towerGlobals } from "../main/globalVariables";
 
 class Tower {
   constructor(
@@ -75,7 +75,7 @@ function destroyTower(
   scene: Scene,
   baseMesh: Mesh,
   pillarMesh?: Mesh,
-  turretMesh?: Mesh,
+  turretMesh?: TowerTurret,
   flashMesh?: Mesh
 ): any {
   baseMesh.onDisposeObservable.clear();

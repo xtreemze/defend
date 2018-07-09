@@ -3,12 +3,12 @@ import { updateEconomy } from "../gui/updateEconomy";
 import {
   mapGlobals,
   economyGlobals,
-  materialGlobals,
-  enemyGlobals
+  materialGlobals
 } from "../main/globalVariables";
 import { damageCurrency } from "../main/sound";
+import { EnemySphere } from "./enemyBorn";
 
-function currencyCollide(enemy: Mesh, scene: Scene) {
+function currencyCollide(enemy: EnemySphere, scene: Scene) {
   if (
     enemy.physicsImpostor !== null &&
     economyGlobals.currencyMesh.physicsImpostor !== null

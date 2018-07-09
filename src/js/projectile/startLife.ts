@@ -14,13 +14,18 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { destroyOnCollide, impulsePhys } from "./Projectile";
+import { EnemySphere } from "../enemy/enemyBorn";
+
+interface LiveProjectile extends Mesh {
+  hitPoints: number;
+}
 
 export function startLife(
   scene: Scene,
   originMesh: Mesh,
   level: number = 1 | 2 | 3,
-  projectile: Mesh,
-  nearestEnemy: Mesh,
+  projectile: LiveProjectile,
+  nearestEnemy: EnemySphere,
   physicsEngine: PhysicsEngine
 ) {
   const projectileMaterial = materialGlobals.projectileMaterial;
@@ -52,3 +57,5 @@ export function startLife(
     destroyProjectile(projectile, physicsEngine);
   }, projectileGlobals.lifeTime);
 }
+
+export { LiveProjectile };
