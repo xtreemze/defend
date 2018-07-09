@@ -1,6 +1,6 @@
 import { Scene, Vector3, Mesh } from "babylonjs";
-import { enemyGlobals, mapGlobals } from "../main/globalVariables";
-import { fragment, destroyEnemy, Enemy } from "./Enemy";
+import { enemyGlobals } from "../main/globalVariables";
+import { fragment, destroyEnemy } from "./Enemy";
 import { EnemySphere } from "./enemyBorn";
 
 function checkHitPoints(

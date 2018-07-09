@@ -70,7 +70,7 @@ function trackSpheres(
               nearestEnemy,
               physicsEngine
             );
-          }, 2);
+          }, 1);
         }
       }
     }

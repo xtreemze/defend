@@ -7,14 +7,14 @@ import {
 import * as FX from "../../vendor/wafxr/wafxr";
 import { enemyWaves } from "../enemy/enemyWaves";
 import { newTower } from "../interaction/pick";
-import { Scene } from "babylonjs";
+import { Scene, PhysicsEngine } from "babylonjs";
 import { displayEconomy } from "./currency";
 import { upgradeTower } from "../interaction/upgradeTower";
 
 function titleScreen(
   scene: Scene,
   canvas: HTMLCanvasElement,
-  physicsEngine: any
+  physicsEngine: PhysicsEngine
 ) {
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = `Defend`;

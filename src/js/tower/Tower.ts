@@ -77,7 +77,7 @@ function destroyTower(
   pillarMesh?: Mesh,
   turretMesh?: TowerTurret,
   flashMesh?: Mesh
-): any {
+): void {
   baseMesh.onDisposeObservable.clear();
 
   // baseMesh.dispose();

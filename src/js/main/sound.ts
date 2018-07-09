@@ -2,7 +2,6 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { Vector3, Mesh } from "babylonjs";
 import { towerGlobals } from "./globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
-import { LiveProjectile } from "../projectile/startLife";
 
 function onDestroy(enemyPosition: Vector3, level: number) {
   setTimeout(() => {

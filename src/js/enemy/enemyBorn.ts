@@ -6,7 +6,7 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
-import { decide } from "./Enemy";
+import { decide, Position2D } from "./Enemy";
 import { checkHitPoints } from "./checkHitPoints";
 
 interface EnemySphere extends Mesh {
@@ -15,9 +15,9 @@ interface EnemySphere extends Mesh {
 
 export function enemyBorn(
   scene: Scene,
-  position: any = { x: 0, z: 0 },
+  position: Position2D,
   sphereMesh: EnemySphere,
-  diameter: number = 0,
+  diameter: number,
   level: number = 1 | 2 | 3
 ) {
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;

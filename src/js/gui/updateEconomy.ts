@@ -8,7 +8,7 @@ import { displayMessage } from "./displayMessage";
 import { waves } from "../enemy/waves";
 import { victory, defeated } from "../main/sound";
 
-export function updateEconomy(scene: Scene, currencyTower?: any) {
+export function updateEconomy(scene: Scene, currencyTower?: Mesh) {
   // on defeat
   if (
     economyGlobals.currentBalance < 0 &&
@@ -51,7 +51,6 @@ export function updateEconomy(scene: Scene, currencyTower?: any) {
   Energy: ${currency}
   Defeats: ${economyGlobals.defeats}
   Victories: ${economyGlobals.victories}`;
-
 
   const scaleRate =
     1 / (economyGlobals.maxBalance / economyGlobals.currentBalance);

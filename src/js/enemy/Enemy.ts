@@ -15,8 +15,13 @@ import {
 } from "../main/globalVariables";
 import positionGenerator from "../utility/positionGenerator";
 
+interface Position2D {
+  x: number;
+  z: number;
+}
+
 class Enemy {
-  constructor(level: number = 1, position: any = { x: 0, z: 0 }, scene: Scene) {
+  constructor(level: number, position: Position2D, scene: Scene) {
     const name = `enemyLevel${level}Index${enemyGlobals.index}` as string;
     enemyGlobals.index += 1;
     const diameter = (level * level + 5) as number;
@@ -152,4 +157,4 @@ export function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
   }
 }
 
-export { Enemy };
+export { Enemy, Position2D };

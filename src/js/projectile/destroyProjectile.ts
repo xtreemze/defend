@@ -1,6 +1,7 @@
-import { Mesh, PhysicsImpostor, PhysicsEngine, Tags } from "babylonjs";
+import { PhysicsImpostor, PhysicsEngine, Tags } from "babylonjs";
 import { mapGlobals } from "../main/globalVariables";
 import { LiveProjectile } from "./startLife";
+
 export function destroyProjectile(
   projectile: LiveProjectile,
   physicsEngine: PhysicsEngine
@@ -18,6 +19,6 @@ export function destroyProjectile(
     }
     setTimeout(() => {
       mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
-    }, 4);
+    }, 1);
   }, 1);
 }

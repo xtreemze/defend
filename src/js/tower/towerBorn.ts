@@ -23,6 +23,7 @@ import { destroyTower, Tower } from "./Tower";
 import { trackSpheres } from "./trackSpheres";
 import { removeTower } from "../main/sound";
 import { updateEconomy } from "../gui/updateEconomy";
+import { Position2D } from "../enemy/Enemy";
 
 interface LiveTower extends Mesh {
   hitPoints: number;
@@ -37,7 +38,7 @@ interface TowerTurret extends Mesh {
 function towerBorn(
   scene: Scene,
   tower: Mesh,
-  position: any,
+  position: Position2D,
   level: number,
   physicsEngine: PhysicsEngine
 ) {
