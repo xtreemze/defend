@@ -64,7 +64,7 @@ function damage(enemy: EnemySphere) {
       soundZ: enemy.position.z,
       rolloff: 0.3
     } as FX.audioParams);
-  });
+  }, 1);
 }
 
 function damageCurrency(enemy: EnemySphere) {
@@ -83,7 +83,7 @@ function damageCurrency(enemy: EnemySphere) {
       soundZ: enemy.position.z,
       rolloff: 0.3
     } as FX.audioParams);
-  });
+  }, 1);
 }
 
 function newWave() {
