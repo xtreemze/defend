@@ -5,10 +5,10 @@ export function destroyProjectile(
   physicsEngine: PhysicsEngine
 ) {
   projectile.setEnabled(false);
-  //@ts-ignore
+
   projectile.hitPoints = 0;
   Tags.RemoveTagsFrom(projectile, "projectile");
-  //@ts-ignore
+
   delete projectile.hitPoints;
   setTimeout(() => {
     projectile.dispose();

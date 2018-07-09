@@ -10,17 +10,19 @@ import {
   RayHelper,
   Color3,
   CSG,
-  PhysicsEngine,
+  PhysicsEngine
 } from "babylonjs";
 
 import {
   towerGlobals,
   mapGlobals,
-  materialGlobals
+  materialGlobals,
+  economyGlobals
 } from "../main/globalVariables";
 import { destroyTower, Tower } from "./Tower";
 import { trackSpheres } from "./trackSpheres";
 import { removeTower } from "../main/sound";
+import { updateEconomy } from "../gui/updateEconomy";
 
 export function towerBorn(
   scene: Scene,
@@ -48,7 +50,7 @@ export function towerBorn(
 
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
-          (d, s) => {
+          () => {
             window.clearTimeout(disposeTimer);
 
             destroyTower(scene, tower);
@@ -131,7 +133,6 @@ export function towerBorn(
 
       const rayLocal = new Vector3(0, 0, -1);
 
-      //@ts-ignore
       const turretRay = new Ray(
         turretMesh.getAbsolutePosition(),
         turretMesh.getDirection(rayLocal),
@@ -139,9 +140,8 @@ export function towerBorn(
       ) as Ray;
 
       if (towerGlobals.raysOn) {
-        //@ts-ignore
         turretMesh.turretRayHelper = new RayHelper(turretRay) as RayHelper;
-        //@ts-ignore
+
         turretMesh.turretRayHelper.show(scene, new Color3(1, 1, 0.3));
       }
 
@@ -187,13 +187,10 @@ export function towerBorn(
       }, towerGlobals.lifeTime);
 
       if (tower.onDisposeObservable) {
-        // babylon 2.4+
         tower.onDisposeObservable.add(
-          (d, s) => {
+          () => {
             window.clearTimeout(disposeTimer2);
-            setTimeout(() => {
-              new Tower(level - 1, tower.position, scene, physicsEngine);
-            }, 2);
+            new Tower(level - 1, tower.position, scene, physicsEngine);
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
           },
           undefined,
@@ -227,4 +224,8 @@ export function towerBorn(
   mapGlobals.allImpostors.unshift(tower.physicsImpostor);
   Tags.AddTagsTo(tower, "tower");
   towerGlobals.allTowers.unshift(tower);
+
+
+  economyGlobals.currentBalance -= towerGlobals.baseCost * level;
+  updateEconomy(scene);
 }

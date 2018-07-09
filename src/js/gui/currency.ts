@@ -55,7 +55,7 @@ function displayEconomy(scene: Scene) {
   Tags.AddTagsTo(currencyTower, "tower");
 
   const hitPointsMeter = MeshBuilder.CreateBox(
-    "currencyMeter", //@ts-ignore
+    "currencyMeter",
     {
       width: economyGlobals.bankSize,
       depth: economyGlobals.bankSize,

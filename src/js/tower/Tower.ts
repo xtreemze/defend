@@ -5,7 +5,6 @@ import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
 import { addTower } from "../main/sound";
 import { towerGlobals, economyGlobals } from "../main/globalVariables";
-import { updateEconomy } from "../gui/updateEconomy";
 
 class Tower {
   constructor(
@@ -14,10 +13,6 @@ class Tower {
     scene: Scene,
     physicsEngine: PhysicsEngine
   ) {
-    economyGlobals.currentBalance -= level * towerGlobals.baseCost;
-
-    updateEconomy(scene);
-
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
     towerGlobals.index += 1;
     let tower = MeshBuilder.CreateBox(
@@ -89,11 +84,10 @@ function destroyTower(
   towerGlobals.allTowers = [];
   if (pillarMesh && turretMesh && flashMesh) {
     if (towerGlobals.raysOn) {
-      //@ts-ignore
       turretMesh.turretRayHelper.dispose();
     }
     pillarMesh.dispose();
-    //@ts-ignore
+
     delete turretMesh.ray;
     turretMesh.dispose();
     flashMesh.dispose();

@@ -25,7 +25,7 @@ const mapGlobals = {
 
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
-  speed: 10000,
+  speed: 12000,
   mass: 100,
   restitution: 0,
   baseHitPoints: 100,
@@ -127,7 +127,7 @@ const renderGlobals = {
 
 const materialGlobals = {} as any;
 
-//@ts-ignore
+// @ts-ignore
 window.globals = {
   projectileGlobals,
   towerGlobals,

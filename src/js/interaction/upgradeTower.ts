@@ -15,37 +15,26 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
     const pickResult = evt.pickInfo as PickingInfo;
 
     if (
+      pickResult.hit &&
       pickResult.pickedMesh !== null &&
       pickResult.pickedMesh.material !== null &&
       pickResult.pickedMesh.name.match(/tower*/)
     ) {
-      if (pickResult.hit && pickResult.pickedMesh.name[10] === "1") {
-        const samePosition = {
-          x: pickResult.pickedMesh.position.x,
-          z: pickResult.pickedMesh.position.z
-        };
+      const currentLevel = parseInt(pickResult.pickedMesh.name[10]);
+      let newLevel = 0;
+      const samePosition = {
+        x: pickResult.pickedMesh.position.x,
+        z: pickResult.pickedMesh.position.z
+      };
 
-        const level = 2;
-        if (economyGlobals.currentBalance > towerGlobals.baseCost * level) {
-          pickResult.pickedMesh.dispose();
-          new Tower(level, samePosition, scene, physicsEngine) as Tower;
-        }
+      if (currentLevel === 1) {
+        newLevel = 2;
+      } else {
+        newLevel = 3;
       }
-      if (
-        pickResult.hit &&
-        (pickResult.pickedMesh.name[10] === "2" ||
-          pickResult.pickedMesh.name[10] === "3")
-      ) {
-        const samePosition = {
-          x: pickResult.pickedMesh.position.x,
-          z: pickResult.pickedMesh.position.z
-        };
-
-        const level = 3;
-        if (economyGlobals.currentBalance > towerGlobals.baseCost * level) {
-          pickResult.pickedMesh.dispose();
-          new Tower(level, samePosition, scene, physicsEngine) as Tower;
-        }
+      if (economyGlobals.currentBalance > towerGlobals.baseCost * newLevel) {
+        pickResult.pickedMesh.dispose();
+        new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
       }
     }
   }, PointerEventTypes._POINTERTAP);

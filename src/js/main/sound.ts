@@ -51,7 +51,7 @@ function damage(enemy: Mesh) {
       attack: 0.1,
       sustain: 0.0662,
       release: 0.1115,
-      //@ts-ignore
+
       frequency: (500 * enemy.hitPoints) / 800,
       sweep: -0.6421,
       source: "sawtooth",
@@ -71,7 +71,7 @@ function damageCurrency(enemy: Mesh) {
       volume: 50,
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
-      //@ts-ignore
+
       frequency: (1000 * enemy.hitPoints) / 4,
       sweep: -0.7 / 2,
       source: "triangle",

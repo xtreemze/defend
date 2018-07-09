@@ -7,16 +7,20 @@ import {
 import { damage } from "../main/sound";
 import { updateEconomy } from "../gui/updateEconomy";
 export function hitEffect(scene: Scene, projectile: Mesh, enemy: Mesh) {
-  if (projectile.physicsImpostor !== null && enemy.physicsImpostor !== null) {
+  if (
+    projectile.physicsImpostor !== null &&
+    enemy.physicsImpostor !== null &&
+    typeof projectile.hitPoints === "number" &&
+    typeof enemy.hitPoints === "number" &&
+    typeof economyGlobals.currentBalance === "number"
+  ) {
     projectile.physicsImpostor.registerOnPhysicsCollide(
       enemy.physicsImpostor,
       () => {
         // hitpoints
-        //@ts-ignore
         enemy.hitPoints -= projectile.hitPoints;
         enemy.material = materialGlobals.damagedMaterial;
 
-        //@ts-ignore
         economyGlobals.currentBalance += projectile.hitPoints;
 
         // color

@@ -52,10 +52,10 @@ export function updateEconomy(scene: Scene, currencyTower?: any) {
   Defeats: ${economyGlobals.defeats}
   Victories: ${economyGlobals.victories}`;
 
-  //@ts-ignore
+
   const scaleRate =
     1 / (economyGlobals.maxBalance / economyGlobals.currentBalance);
-  //@ts-ignore
+
   if (economyGlobals.currencyMeter !== null) {
     economyGlobals.currencyMeter.scaling = new Vector3(
       scaleRate,

@@ -87,10 +87,10 @@ export function fragment(
 
 export function destroyEnemy(sphereMesh: Mesh, scene: Scene) {
   enemyGlobals.occupiedSpaces.pop();
-  //@ts-ignore
+
   sphereMesh.hitPoints = 0;
 
-  //@ts-ignore
+
   delete sphereMesh.hitPoints;
 
   if (sphereMesh.physicsImpostor !== null) {

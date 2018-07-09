@@ -27,7 +27,7 @@ export function startLife(
   const forwardLocal = new Vector3(0, 0, 5);
   const space = originMesh.getDirection(forwardLocal) as Vector3;
   projectile.position = originMesh.position.subtract(space) as Vector3;
-  //@ts-ignore
+
   projectile.hitPoints = (level +
     level * projectileGlobals.baseHitPoints) as number;
   projectile.material = projectileMaterial as Material;

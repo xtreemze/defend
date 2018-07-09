@@ -25,7 +25,7 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
           z: 0
         };
 
-        // if the click hits the ground object, we change the impact position
+        // if the click hits the ground object, position changes to match the grid
 
         if (pickResult.pickedPoint.x > 0) {
           newLocation.x = Math.round(
@@ -48,17 +48,13 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
           );
         }
         const level = 1;
-        if (
-          economyGlobals.occupiedSpaces.find(
-            existingLocation =>
-              existingLocation[0] === newLocation.x &&
-              existingLocation[1] === newLocation.z
-          ) === undefined &&
-          economyGlobals.currentBalance >= level * 10
-        ) {
 
-          new Tower(level, { x: newLocation.x, z: newLocation.z }, scene, physicsEngine) as Tower;
-        }
+        new Tower(
+          level,
+          { x: newLocation.x, z: newLocation.z },
+          scene,
+          physicsEngine
+        ) as Tower;
       }
     }
   }, PointerEventTypes._POINTERTAP);

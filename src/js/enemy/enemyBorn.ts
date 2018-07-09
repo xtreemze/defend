@@ -15,11 +15,11 @@ export function enemyBorn(
   diameter: number = 0,
   level: number = 1 | 2 | 3
 ) {
-  //@ts-ignore
+
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
   const hitPointsMeter = MeshBuilder.CreateIcoSphere(
     name + "hitPointMeter",
-    //@ts-ignore
+
     { subdivisions: level, radius: diameter / 2 },
     scene
   ) as Mesh;
@@ -50,7 +50,7 @@ export function enemyBorn(
       if (
         sphereMesh.position.y > diameter / 2.5 &&
         sphereMesh.position.y < diameter &&
-        //@ts-ignore
+
         sphereMesh.hitPoints > enemyGlobals.deadHitPoints
       ) {
         enemyAi(sphereMesh, decide(sphereMesh));
