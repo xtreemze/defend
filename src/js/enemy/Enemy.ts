@@ -1,4 +1,4 @@
-import { enemyBorn } from "./enemyBorn";
+import { enemyBorn, EnemySphere } from "./enemyBorn";
 
 import {
   Vector3,
@@ -28,7 +28,7 @@ class Enemy {
         updatable: false
       },
       scene
-    ) as Mesh;
+    ) as EnemySphere;
 
     sphereMesh.convertToUnIndexedMesh();
     enemyGlobals.allEnemies.unshift(sphereMesh);
@@ -85,11 +85,10 @@ export function fragment(
   }
 }
 
-export function destroyEnemy(sphereMesh: Mesh, scene: Scene) {
+export function destroyEnemy(sphereMesh: EnemySphere, scene: Scene) {
   enemyGlobals.occupiedSpaces.pop();
 
   sphereMesh.hitPoints = 0;
-
 
   delete sphereMesh.hitPoints;
 
