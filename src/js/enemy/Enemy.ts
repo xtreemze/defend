@@ -6,7 +6,8 @@ import {
   Mesh,
   Tags,
   PhysicsImpostor,
-  Scene
+  Scene,
+  Material
 } from "babylonjs";
 import {
   enemyGlobals,
@@ -65,7 +66,7 @@ export function fragment(
       enemyRotation.y * index * 0.1,
       enemyRotation.z * index * 0.1
     );
-    fragment.material = materialGlobals.hitMaterial;
+    fragment.material = materialGlobals.hitMaterial as Material;
 
     fragment.physicsImpostor = new PhysicsImpostor(
       fragment,
