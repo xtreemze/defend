@@ -1,16 +1,13 @@
 import { startLife, LiveProjectile } from "./startLife";
 
-import { destroyProjectile } from "./destroyProjectile";
 
 import {
   Scene,
   Vector3,
-  PhysicsImpostor,
   MeshBuilder,
   PhysicsEngine
 } from "babylonjs";
-import { projectileGlobals, mapGlobals } from "../main/globalVariables";
-import { explosion } from "../enemy/explodeParticle";
+import { projectileGlobals } from "../main/globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
 
@@ -43,26 +40,6 @@ class Projectile {
       projectile,
       nearestEnemy,
       physicsEngine
-    );
-  }
-}
-
-export function destroyOnCollide(
-  scene: Scene,
-  projectile: LiveProjectile,
-  physicsEngine: PhysicsEngine,
-  projectileLifetime: number
-) {
-  if (projectile.physicsImpostor !== null) {
-    projectile.physicsImpostor.registerOnPhysicsCollide(
-      mapGlobals.allImpostors as PhysicsImpostor[],
-      (collider: PhysicsImpostor) => {
-        explosion(scene, collider.getObjectCenter());
-        clearTimeout(projectileLifetime);
-        setTimeout(() => {
-          destroyProjectile(projectile, physicsEngine);
-        }, 3);
-      }
     );
   }
 }

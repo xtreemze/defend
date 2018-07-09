@@ -25,17 +25,21 @@ export function hitEffect(
     projectile.physicsImpostor.registerOnPhysicsCollide(
       enemy.physicsImpostor,
       () => {
-        // hitpoints
-        enemy.hitPoints -= projectile.hitPoints;
+        if (
+          typeof enemy.hitPoints === "number" &&
+          typeof projectile.hitPoints === "number"
+        ) {
+          // hitpoints
+          enemy.hitPoints -= projectile.hitPoints;
+          economyGlobals.currentBalance += projectile.hitPoints;
+          updateEconomy(scene);
+        }
+
+        // color
         setTimeout(() => {
           enemy.material = materialGlobals.hitMaterial;
         }, 20);
         enemy.material = materialGlobals.damagedMaterial;
-
-        economyGlobals.currentBalance += projectile.hitPoints;
-
-        // color
-        updateEconomy(scene);
 
         // sound
         if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {

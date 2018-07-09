@@ -13,7 +13,8 @@ import {
   mapGlobals,
   materialGlobals
 } from "../main/globalVariables";
-import { destroyOnCollide, impulsePhys } from "./Projectile";
+import { impulsePhys } from "./Projectile";
+import { destroyOnCollide } from "./destroyOnCollide";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
 
