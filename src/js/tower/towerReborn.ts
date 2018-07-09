@@ -12,11 +12,11 @@ function towerReborn(
     pickResult.pickedMesh !== null &&
     economyGlobals.currentBalance > towerGlobals.baseCost * newLevel
   ) {
-    pickResult.pickedMesh.dispose();
     const samePosition = {
       x: pickResult.pickedMesh.position.x,
       z: pickResult.pickedMesh.position.z
     };
+    pickResult.pickedMesh.dispose();
     towerGlobals.allPositions = towerBasePositions(scene);
     if (
       towerGlobals.allPositions.find(

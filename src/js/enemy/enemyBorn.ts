@@ -21,20 +21,22 @@ export function enemyBorn(
   level: number = 1 | 2 | 3
 ) {
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
+
   const hitPointsMeter = MeshBuilder.CreateIcoSphere(
     name + "hitPointMeter",
 
     { subdivisions: level, radius: diameter / 2 },
     scene
   ) as Mesh;
+
   hitPointsMeter.parent = sphereMesh;
+
   sphereMesh.position = new Vector3(
     position.x,
     (diameter / 2) * enemyGlobals.originHeight,
     position.z
   );
-  sphereMesh.material = materialGlobals.hitMaterial;
-  hitPointsMeter.material = materialGlobals.enemyMaterial;
+
 
   sphereMesh.physicsImpostor = new PhysicsImpostor(
     sphereMesh,
@@ -46,8 +48,14 @@ export function enemyBorn(
     },
     scene
   ) as PhysicsImpostor;
+
   mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
+
+  sphereMesh.material = materialGlobals.hitMaterial;
+  hitPointsMeter.material = materialGlobals.enemyMaterial;
+
   let deltaTime = Date.now();
+
   sphereMesh.registerAfterRender(() => {
     if (sphereMesh.position.y < 0) {
       destroyEnemy(sphereMesh, scene);

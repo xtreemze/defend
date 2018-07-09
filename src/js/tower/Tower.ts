@@ -1,5 +1,4 @@
 import { towerBorn, TowerTurret } from "./towerBorn";
-
 import { Scene, MeshBuilder, Mesh, PhysicsEngine, Ray, Tags } from "babylonjs";
 import { addTower } from "../main/sound";
 import { towerGlobals } from "../main/globalVariables";
@@ -44,7 +43,7 @@ function towerBasePositions(scene: Scene) {
   return positionalArray;
 }
 
-export function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
+function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
   let result = false as boolean;
   const hit = scene.pickWithRay(ray);
 
@@ -58,7 +57,7 @@ export function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
   return result as boolean;
 }
 
-export function rotateTurret(sortedDistances: any, towerTurret: Mesh) {
+function rotateTurret(sortedDistances: any, towerTurret: Mesh) {
   towerTurret.lookAt(sortedDistances.position);
 }
 
@@ -94,4 +93,10 @@ function destroyTower(
   towerGlobals.allTowers = scene.getMeshesByTags("tower" && "towerBase");
 }
 
-export { Tower, destroyTower, towerBasePositions };
+export {
+  Tower,
+  destroyTower,
+  towerBasePositions,
+  shotClearsTower,
+  rotateTurret
+};
