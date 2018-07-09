@@ -1,9 +1,8 @@
-import { startLife } from "./startLife";
+import { startLife, LiveProjectile } from "./startLife";
 
 import { destroyProjectile } from "./destroyProjectile";
 
 import {
-  Mesh,
   Scene,
   Vector3,
   PhysicsImpostor,
@@ -12,13 +11,15 @@ import {
 } from "babylonjs";
 import { projectileGlobals, mapGlobals } from "../main/globalVariables";
 import { explosion } from "../enemy/explodeParticle";
+import { EnemySphere } from "../enemy/enemyBorn";
+import { TowerTurret } from "../tower/towerBorn";
 
 class Projectile {
   constructor(
-    originMesh: Mesh,
+    originMesh: TowerTurret,
     scene: Scene,
     level: number = 1 | 2 | 3,
-    nearestEnemy: Mesh,
+    nearestEnemy: EnemySphere,
     physicsEngine: PhysicsEngine
   ) {
     const name = `projectile${level}` as string;
@@ -28,7 +29,7 @@ class Projectile {
       height: level / 4,
       width: level / 2,
       updatable: false
-    }) as Mesh;
+    }) as LiveProjectile;
     projectile.isPickable = false;
     projectile.convertToUnIndexedMesh();
 
@@ -45,13 +46,15 @@ class Projectile {
 
 export function destroyOnCollide(
   scene: Scene,
-  projectile: Mesh,
-  physicsEngine: PhysicsEngine
+  projectile: LiveProjectile,
+  physicsEngine: PhysicsEngine,
+  projectileLifetime: number
 ) {
   if (projectile.physicsImpostor !== null) {
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors as PhysicsImpostor[],
       (collider: PhysicsImpostor) => {
+        clearTimeout(projectileLifetime);
         destroyProjectile(projectile, physicsEngine);
         explosion(scene, collider.getObjectCenter());
       }
@@ -60,8 +63,8 @@ export function destroyOnCollide(
 }
 
 export function impulsePhys(
-  originMesh: Mesh,
-  projectile: Mesh,
+  originMesh: TowerTurret,
+  projectile: LiveProjectile,
   level: number = 1 | 2 | 3
 ) {
   const forwardLocal = new Vector3(
@@ -80,9 +83,9 @@ export function impulsePhys(
 
 export default function fireProjectile(
   scene: Scene,
-  originMesh: Mesh,
+  originMesh: TowerTurret,
   level: number = 1 | 2 | 3,
-  nearestEnemy: Mesh,
+  nearestEnemy: EnemySphere,
   physicsEngine: PhysicsEngine
 ) {
   new Projectile(originMesh, scene, level, nearestEnemy, physicsEngine);

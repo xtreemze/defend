@@ -15,6 +15,7 @@ import {
 } from "../main/globalVariables";
 import { destroyOnCollide, impulsePhys } from "./Projectile";
 import { EnemySphere } from "../enemy/enemyBorn";
+import { TowerTurret } from "../tower/towerBorn";
 
 interface LiveProjectile extends Mesh {
   hitPoints: number;
@@ -22,7 +23,7 @@ interface LiveProjectile extends Mesh {
 
 export function startLife(
   scene: Scene,
-  originMesh: Mesh,
+  originMesh: TowerTurret,
   level: number = 1 | 2 | 3,
   projectile: LiveProjectile,
   nearestEnemy: EnemySphere,
@@ -33,8 +34,8 @@ export function startLife(
   const space = originMesh.getDirection(forwardLocal) as Vector3;
   projectile.position = originMesh.position.subtract(space) as Vector3;
 
-  projectile.hitPoints = (level +
-    level * projectileGlobals.baseHitPoints) as number;
+  projectile.hitPoints = ((level + level) *
+    projectileGlobals.baseHitPoints) as number;
   projectile.material = projectileMaterial as Material;
   // For Physics
   projectile.physicsImpostor = new PhysicsImpostor(
@@ -42,8 +43,8 @@ export function startLife(
     PhysicsImpostor.BoxImpostor,
     {
       mass: projectileGlobals.mass * level,
-      restitution: projectileGlobals.restitution,
-      friction: 1
+      restitution: 0,
+      friction: 0
     },
     scene
   ) as PhysicsImpostor;
@@ -51,11 +52,11 @@ export function startLife(
   const clonedRotation = originMesh.rotation.clone();
   projectile.rotation.copyFrom(clonedRotation);
   hitEffect(scene, projectile, nearestEnemy); // Detects collissions with enemies
-  destroyOnCollide(scene, projectile, physicsEngine); // Detects collissions with enemies
-  impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
-  setTimeout(() => {
+  const projectileLifetime = setTimeout(() => {
     destroyProjectile(projectile, physicsEngine);
   }, projectileGlobals.lifeTime);
+  destroyOnCollide(scene, projectile, physicsEngine, projectileLifetime); // Detects collissions with enemies
+  impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 }
 
 export { LiveProjectile };
