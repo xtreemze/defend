@@ -1,6 +1,8 @@
 import * as FX from "../../vendor/wafxr/wafxr";
 import { Vector3, Mesh } from "babylonjs";
 import { towerGlobals } from "./globalVariables";
+import { EnemySphere } from "../enemy/enemyBorn";
+import { LiveProjectile } from "../projectile/startLife";
 
 function onDestroy(enemyPosition: Vector3, level: number) {
   setTimeout(() => {
@@ -23,7 +25,7 @@ function onDestroy(enemyPosition: Vector3, level: number) {
   }, 1);
 }
 
-function shoot(projectile: Mesh, level: number) {
+function shoot(originMesh: Mesh, level: number) {
   setTimeout(() => {
     FX.play({
       volume: 12,
@@ -36,15 +38,15 @@ function shoot(projectile: Mesh, level: number) {
       lowpass: 3650,
       // bitcrush: 3,
       // compressorThreshold: -10,
-      soundX: projectile.position.x,
-      soundY: projectile.position.y,
-      soundZ: projectile.position.z,
+      soundX: originMesh.position.x,
+      soundY: originMesh.position.y,
+      soundZ: originMesh.position.z,
       rolloff: 0.03
     } as FX.audioParams);
   }, 1);
 }
 
-function damage(enemy: Mesh) {
+function damage(enemy: EnemySphere) {
   setTimeout(() => {
     FX.play({
       volume: 30,
@@ -65,13 +67,12 @@ function damage(enemy: Mesh) {
   });
 }
 
-function damageCurrency(enemy: Mesh) {
+function damageCurrency(enemy: EnemySphere) {
   setTimeout(() => {
     FX.play({
       volume: 50,
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
-
       frequency: (1000 * enemy.hitPoints) / 4,
       sweep: -0.7 / 2,
       source: "triangle",

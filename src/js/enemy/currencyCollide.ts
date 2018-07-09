@@ -26,7 +26,6 @@ function currencyCollide(enemy: EnemySphere, scene: Scene) {
 
           updateEconomy(scene);
 
-          enemy.hitPoints = 0;
           economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
           setTimeout(() => {
             economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
@@ -41,9 +40,10 @@ function currencyCollide(enemy: EnemySphere, scene: Scene) {
             mapGlobals.simultaneousSounds += 1;
 
             if (mapGlobals.soundOn) {
-              damageCurrency(economyGlobals.currencyMesh);
+              damageCurrency(enemy);
             }
           }
+          enemy.hitPoints = 0;
         }
       }
     );
