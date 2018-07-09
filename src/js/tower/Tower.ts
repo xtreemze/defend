@@ -1,8 +1,6 @@
 import { towerBorn, TowerTurret } from "./towerBorn";
 
 import { Scene, MeshBuilder, Mesh, PhysicsEngine, Ray, Tags } from "babylonjs";
-import positionGenerator from "../utility/positionGenerator";
-import randomNumberRange from "../utility/randomNumberRange";
 import { addTower } from "../main/sound";
 import { towerGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
@@ -64,32 +62,6 @@ export function rotateTurret(sortedDistances: any, towerTurret: Mesh) {
   towerTurret.lookAt(sortedDistances.position);
 }
 
-function towerGenerator(
-  scene: Scene,
-  quantity: number = 0,
-  physicsEngine: PhysicsEngine
-) {
-  let newLocation = positionGenerator();
-
-  new Tower(
-    3,
-    { x: newLocation.x, z: newLocation.z },
-    scene,
-    physicsEngine
-  ) as Tower;
-
-  for (let index = 2; index < quantity; index += 1) {
-    let newLocation = positionGenerator();
-
-    new Tower(
-      randomNumberRange(1, 3),
-      { x: newLocation.x, z: newLocation.z },
-      scene,
-      physicsEngine
-    ) as Tower;
-  }
-}
-
 function destroyTower(
   scene: Scene,
   baseMesh: Mesh,
@@ -122,12 +94,4 @@ function destroyTower(
   towerGlobals.allTowers = scene.getMeshesByTags("tower" && "towerBase");
 }
 
-function towers(scene: Scene, physicsEngine: PhysicsEngine) {
-  towerGenerator(
-    scene,
-    randomNumberRange(towerGlobals.minNumber, towerGlobals.maxNumber),
-    physicsEngine
-  );
-}
-
-export { towers, Tower, destroyTower, towerBasePositions };
+export { Tower, destroyTower, towerBasePositions };
