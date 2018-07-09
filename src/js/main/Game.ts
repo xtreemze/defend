@@ -6,7 +6,8 @@ import {
   Vector3,
   SceneOptimizer,
   SceneOptimizerOptions,
-  CannonJSPlugin
+  CannonJSPlugin,
+  PhysicsEngine
 } from "babylonjs";
 
 import * as FX from "../../vendor/wafxr/wafxr";
@@ -108,6 +109,9 @@ window.addEventListener("DOMContentLoaded", () => {
   renderPipeline(game.scene);
 
   window.addEventListener("load", () => {
-    titleScreen(game.scene, game.canvas, game.scene.getPhysicsEngine());
+    const physicsEngine = game.scene.getPhysicsEngine() as PhysicsEngine;
+    if (game.scene.getPhysicsEngine() !== null) {
+      titleScreen(game.scene, game.canvas, physicsEngine);
+    }
   });
 });
