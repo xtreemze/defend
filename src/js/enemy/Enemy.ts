@@ -89,7 +89,7 @@ export function fragment(
   }
 }
 
-export function destroyEnemy(sphereMesh: EnemySphere, scene: Scene) {
+function destroyEnemy(sphereMesh: EnemySphere, scene: Scene) {
   enemyGlobals.occupiedSpaces.pop();
 
   delete sphereMesh.hitPoints;
@@ -105,7 +105,7 @@ export function destroyEnemy(sphereMesh: EnemySphere, scene: Scene) {
   }, 1);
 }
 
-export function decide(sphereMesh: EnemySphere) {
+function decide(sphereMesh: EnemySphere) {
   const decideToMove = { up: true, left: true, right: true, down: true };
   if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1) {
     decideToMove.down = false;
@@ -127,9 +127,14 @@ export function decide(sphereMesh: EnemySphere) {
   return decideToMove;
 }
 
-export function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
+function enemyGenerator(
+  scene: Scene,
+  quantity = 1,
+  level = 1,
+  waveOrigin = -1
+) {
   for (let index = 0; index < quantity; index += 1) {
-    let newLocation = positionGenerator();
+    let newLocation = positionGenerator(waveOrigin);
     while (
       enemyGlobals.occupiedSpaces.find(
         existingLocation =>
@@ -137,7 +142,7 @@ export function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
           existingLocation[1] === newLocation.z
       )
     ) {
-      newLocation = positionGenerator();
+      newLocation = positionGenerator(waveOrigin);
     }
 
     enemyGlobals.occupiedSpaces.unshift([newLocation.x, newLocation.z]);
@@ -153,4 +158,4 @@ export function enemyGenerator(scene: Scene, quantity = 1, level = 1) {
   }
 }
 
-export { Enemy, Position2D };
+export { Enemy, Position2D, enemyGenerator, decide, destroyEnemy };

@@ -34,11 +34,26 @@ const enemyWaves = (scene: Scene) => {
 
       // Generate enemies for the wave
 
-      enemyGenerator(scene, waves[enemyGlobals.currentWave][0], 1);
+      enemyGenerator(
+        scene,
+        waves[enemyGlobals.currentWave][0],
+        1,
+        waves[enemyGlobals.currentWave][3]
+      );
 
-      enemyGenerator(scene, waves[enemyGlobals.currentWave][1], 2);
+      enemyGenerator(
+        scene,
+        waves[enemyGlobals.currentWave][1],
+        2,
+        waves[enemyGlobals.currentWave][3]
+      );
 
-      enemyGenerator(scene, waves[enemyGlobals.currentWave][2], 3);
+      enemyGenerator(
+        scene,
+        waves[enemyGlobals.currentWave][2],
+        3,
+        waves[enemyGlobals.currentWave][3]
+      );
 
       setTimeout(() => {
         enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");

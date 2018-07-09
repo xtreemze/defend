@@ -17,7 +17,6 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
     if (
       pickResult.hit &&
       pickResult.pickedMesh !== null &&
-      pickResult.pickedMesh.name.match(/tower*/) &&
       Tags.MatchesQuery(pickResult.pickedMesh, "towerBase") &&
       pickResult.pickedMesh.name !== "ground"
     ) {
@@ -27,11 +26,12 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
       let newLevel = 0;
       if (currentLevel === 1) {
         newLevel = 2;
+        towerReborn(newLevel, pickResult, scene, physicsEngine);
       } else if (currentLevel === 2) {
         newLevel = 3;
+        towerReborn(newLevel, pickResult, scene, physicsEngine);
       } else if (currentLevel === 3) {
       }
-      towerReborn(newLevel, pickResult, scene, physicsEngine);
     }
   }, PointerEventTypes._POINTERTAP);
 }
