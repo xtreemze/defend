@@ -6,10 +6,10 @@ import {
 } from "../main/globalVariables";
 import * as FX from "../../vendor/wafxr/wafxr";
 import { enemyWaves } from "../enemy/enemyWaves";
-import { newTower } from "../interaction/pick";
+import { newTower } from "../tower/pick";
 import { Scene, PhysicsEngine } from "babylonjs";
 import { displayEconomy } from "./currency";
-import { upgradeTower } from "../interaction/upgradeTower";
+import { upgradeTower } from "../tower/upgradeTower";
 
 function titleScreen(
   scene: Scene,
