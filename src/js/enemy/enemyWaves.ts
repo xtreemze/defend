@@ -3,8 +3,6 @@ import { newWave } from "../main/sound";
 import {
   enemyGlobals,
   economyGlobals,
-  mapGlobals,
-  materialGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
 import { updateEconomy } from "../gui/updateEconomy";

@@ -53,8 +53,8 @@ function damage(enemy: EnemySphere) {
       sustain: 0.0662,
       release: 0.1115,
 
-      frequency: (500 * enemy.hitPoints) / 800,
-      sweep: -0.6421,
+      frequency: (500 * enemy.hitPoints) / 1000,
+      sweep: -0.5,
       source: "sawtooth",
       vibrato: 0.5,
       vibratoFreq: 30,
@@ -69,7 +69,7 @@ function damage(enemy: EnemySphere) {
 function damageCurrency(enemy: EnemySphere) {
   setTimeout(() => {
     FX.play({
-      volume: 50,
+      volume: 54,
       sustain: 0.0662 * 2,
       release: 0.1115 * 3,
       frequency: (1000 * enemy.hitPoints) / 4,
@@ -88,7 +88,7 @@ function damageCurrency(enemy: EnemySphere) {
 function newWave() {
   setTimeout(() => {
     FX.play({
-      volume: 4,
+      volume: 10,
       decay: 0.8,
       attack: 0.9,
       sustain: 0.025,
@@ -112,7 +112,7 @@ function addTower(tower: Mesh, level: number) {
       volume: 30,
       sustain: 0.0794,
       release: 0.3501,
-      frequency: 604.3 / level + towerGlobals.allTowers.length * 6,
+      frequency: 500 / level + towerGlobals.allTowers.length * 6,
       sweep: 0.5565,
       repeat: 11.78,
       source: "sawtooth",
@@ -130,7 +130,7 @@ function removeTower(tower: Mesh, level: number) {
       volume: 30,
       sustain: 0.0794 / 3,
       release: 0.3501 / 2,
-      frequency: 604.3 / level + towerGlobals.allTowers.length * 4,
+      frequency: 500 / level + towerGlobals.allTowers.length * 4,
       sweep: -0.5565,
       repeat: 11.78 * 3,
       source: "sawtooth",
