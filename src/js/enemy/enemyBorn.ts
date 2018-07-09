@@ -56,8 +56,7 @@ export function enemyBorn(
       deltaTime = Date.now();
       if (
         sphereMesh.position.y > diameter / 2.5 &&
-        sphereMesh.position.y < diameter &&
-        sphereMesh.hitPoints > enemyGlobals.deadHitPoints
+        sphereMesh.position.y < diameter
       ) {
         enemyAi(sphereMesh, decide(sphereMesh));
       }

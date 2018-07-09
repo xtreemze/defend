@@ -36,7 +36,7 @@ function map(scene: Scene) {
 
   scene.ambientColor = mapGlobals.sceneAmbient;
 
-  const atmosphere = MeshBuilder.CreateIcoSphere(
+  mapGlobals.atmosphereMesh = MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
       radius: mapGlobals.size * 2,
@@ -46,15 +46,15 @@ function map(scene: Scene) {
     scene
   ) as Mesh;
 
-  atmosphere.isPickable = false;
 
-  atmosphere.flipFaces(true);
-  atmosphere.freezeWorldMatrix(); // freeze sky
-  atmosphere.convertToUnIndexedMesh();
+  mapGlobals.atmosphereMesh.isPickable = false;
+  mapGlobals.atmosphereMesh.flipFaces(true);
+  mapGlobals.atmosphereMesh.freezeWorldMatrix(); // freeze sky
+  mapGlobals.atmosphereMesh.convertToUnIndexedMesh();
 
-  atmosphere.material = skyMaterial;
+  mapGlobals.atmosphereMesh.material = skyMaterial;
 
-  const ground = MeshBuilder.CreateGround(
+  mapGlobals.groundMesh = MeshBuilder.CreateGround(
     "ground",
     {
       height: mapGlobals.size,
@@ -65,12 +65,12 @@ function map(scene: Scene) {
     scene
   ) as GroundMesh;
 
-  ground.material = groundMaterial;
-  ground.freezeWorldMatrix(); // freeze ground
-  ground.convertToUnIndexedMesh();
+  mapGlobals.groundMesh.material = groundMaterial;
+  mapGlobals.groundMesh.freezeWorldMatrix(); // freeze ground
+  mapGlobals.groundMesh.convertToUnIndexedMesh();
 
-  ground.physicsImpostor = new PhysicsImpostor(
-    ground,
+  mapGlobals.groundMesh.physicsImpostor = new PhysicsImpostor(
+    mapGlobals.groundMesh,
     PhysicsImpostor.BoxImpostor,
     { mass: 0, restitution: 0.9, friction: 1 },
     scene

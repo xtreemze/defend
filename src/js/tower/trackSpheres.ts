@@ -22,7 +22,7 @@ function trackSpheres(
   let deltaTime = Date.now();
   tower.registerAfterRender(() => {
     if (enemyGlobals.allEnemies.length > 0) {
-      const enemyDistances = [] as any;
+      const enemyDistances = [] as any[];
       for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
         const enemy = enemyGlobals.allEnemies[index] as EnemySphere;
         if (

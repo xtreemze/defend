@@ -1,6 +1,11 @@
-import { Scene } from "babylonjs";
+import { Scene, Material } from "babylonjs";
 import { newWave } from "../main/sound";
-import { enemyGlobals, economyGlobals } from "../main/globalVariables";
+import {
+  enemyGlobals,
+  economyGlobals,
+  mapGlobals,
+  materialGlobals
+} from "../main/globalVariables";
 import { waves } from "./waves";
 import { updateEconomy } from "../gui/updateEconomy";
 import { enemyGenerator } from "./Enemy";
@@ -16,6 +21,12 @@ const enemyWaves = (scene: Scene) => {
     ) {
       deltaTime = Date.now() - enemyGlobals.generationRate;
       newWave(); // sound for new wave
+
+      // Color change on new wave
+      // mapGlobals.atmosphereMesh.material = materialGlobals.hitMaterial as Material;
+      // setTimeout(() => {
+      //   mapGlobals.atmosphereMesh.material = materialGlobals.skyMaterial as Material;
+      // }, 20);
 
       enemyGlobals.currentWave += 1;
 
