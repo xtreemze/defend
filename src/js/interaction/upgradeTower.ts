@@ -34,7 +34,6 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
 
       if (economyGlobals.currentBalance > towerGlobals.baseCost * newLevel) {
         pickResult.pickedMesh.dispose();
-        console.log(pickResult.pickedMesh.isDisposed());
 
         const samePosition = {
           x: pickResult.pickedMesh.position.x,
@@ -42,7 +41,6 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         };
 
         towerGlobals.allPositions = towerBasePositions(scene);
-        console.log(towerGlobals.allPositions);
 
         if (
           towerGlobals.allPositions.find(
