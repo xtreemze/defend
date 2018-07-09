@@ -58,7 +58,7 @@ export function updateEconomy(scene: Scene, currencyTower?: Mesh) {
   if (economyGlobals.currencyMeter !== null) {
     economyGlobals.currencyMeter.scaling = new Vector3(
       scaleRate,
-      scaleRate,
+      0.99,
       scaleRate
     ) as Vector3;
   }

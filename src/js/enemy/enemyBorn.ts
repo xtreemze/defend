@@ -6,7 +6,7 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
-import { decide, Position2D } from "./Enemy";
+import { decide, Position2D, destroyEnemy } from "./Enemy";
 import { checkHitPoints } from "./checkHitPoints";
 
 interface EnemySphere extends Mesh {
@@ -49,6 +49,9 @@ export function enemyBorn(
   mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
   let deltaTime = Date.now();
   sphereMesh.registerAfterRender(() => {
+    if (sphereMesh.position.y < 0) {
+      destroyEnemy(sphereMesh, scene);
+    }
     if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
       deltaTime = Date.now();
       if (

@@ -30,8 +30,11 @@ class Projectile {
       width: level / 2,
       updatable: false
     }) as LiveProjectile;
+
     projectile.isPickable = false;
     projectile.convertToUnIndexedMesh();
+
+    projectile.hitPoints = (level + level) * projectileGlobals.baseHitPoints;
 
     startLife(
       scene,
@@ -54,9 +57,11 @@ export function destroyOnCollide(
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors as PhysicsImpostor[],
       (collider: PhysicsImpostor) => {
-        clearTimeout(projectileLifetime);
-        destroyProjectile(projectile, physicsEngine);
         explosion(scene, collider.getObjectCenter());
+        clearTimeout(projectileLifetime);
+        setTimeout(() => {
+          destroyProjectile(projectile, physicsEngine);
+        }, 3);
       }
     );
   }

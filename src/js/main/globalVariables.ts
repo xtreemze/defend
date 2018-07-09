@@ -1,4 +1,5 @@
 import { Color3, PhysicsImpostor, Mesh, GroundMesh } from "babylonjs";
+import { Position2D } from "../enemy/Enemy";
 
 const mapGlobals = {
   diagnosticsOn: false,
@@ -52,7 +53,8 @@ const towerGlobals = {
   raysOn: false,
   lifeTime: 60000,
   index: 0,
-  disposeTime: 6000 // chance to keep towers before dispose
+  disposeTime: 6000, // chance to keep towers before dispose
+  allPositions: [] as Position2D[]
 };
 
 const enemyGlobals = {
@@ -67,8 +69,8 @@ const enemyGlobals = {
   restitution: 0.3,
   jumpForce: 60,
   friction: 1,
-  decayRate: 100, // hitpoints per decision
-  initialDecayRate: 100, // hitpoints per decision
+  decayRate: 50, // hitpoints per decision
+  initialDecayRate: 50, // hitpoints per decision
   baseHitPoints: 10000,
   deadHitPoints: 0,
   fragments: 1,

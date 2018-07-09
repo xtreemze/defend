@@ -3,25 +3,31 @@ import {
   PointerInfo,
   PhysicsEngine,
   PointerEventTypes,
-  PickingInfo
+  PickingInfo,
+  Tags
 } from "babylonjs";
 import { Tower } from "../tower/Tower";
 import { towerGlobals, economyGlobals } from "../main/globalVariables";
+import { Position2D } from "../enemy/Enemy";
 
 function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer down event is raised
 
   scene.onPointerObservable.add(function(evt: PointerInfo) {
     const pickResult = evt.pickInfo as PickingInfo;
+
     if (
       pickResult.pickedPoint !== null &&
       pickResult.pickedMesh !== null &&
       economyGlobals.currentBalance > towerGlobals.baseCost
     ) {
-      if (pickResult.hit && pickResult.pickedMesh.name === "ground") {
-        let newLocation: { x: number; y: number; z: number } = {
+      if (
+        pickResult.hit &&
+        pickResult.pickedMesh.name === "ground" &&
+        !Tags.MatchesQuery(pickResult.pickedMesh, "towerBase")
+      ) {
+        let newLocation: Position2D = {
           x: 0,
-          y: 0,
           z: 0
         };
 
@@ -36,7 +42,6 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
             pickResult.pickedPoint.x - 5 - (pickResult.pickedPoint.x % 10)
           );
         }
-        newLocation.y = 5 / 2;
 
         if (pickResult.pickedPoint.z > 0) {
           newLocation.z = Math.round(
@@ -49,12 +54,25 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
         }
         const level = 1;
 
-        new Tower(
-          level,
-          { x: newLocation.x, z: newLocation.z },
-          scene,
-          physicsEngine
-        ) as Tower;
+        if (
+          towerGlobals.allPositions.find(
+            existingLocation =>
+              existingLocation.x === newLocation.x &&
+              existingLocation.z === newLocation.z
+          ) === undefined &&
+          economyGlobals.occupiedSpaces.find(
+            existingLocation =>
+              existingLocation[0] === newLocation.x &&
+              existingLocation[1] === newLocation.z
+          ) === undefined
+        ) {
+          new Tower(
+            level,
+            { x: newLocation.x, z: newLocation.z },
+            scene,
+            physicsEngine
+          ) as Tower;
+        }
       }
     }
   }, PointerEventTypes._POINTERTAP);

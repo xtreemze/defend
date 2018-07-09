@@ -1,4 +1,4 @@
-import { Mesh, Scene } from "babylonjs";
+import { Scene } from "babylonjs";
 import {
   mapGlobals,
   economyGlobals,
@@ -19,22 +19,23 @@ export function hitEffect(
     enemy.physicsImpostor !== null &&
     typeof projectile.hitPoints === "number" &&
     typeof enemy.hitPoints === "number" &&
-    typeof economyGlobals.currentBalance === "number"
+    typeof economyGlobals.currentBalance === "number" &&
+    !isNaN(projectile.hitPoints)
   ) {
     projectile.physicsImpostor.registerOnPhysicsCollide(
       enemy.physicsImpostor,
       () => {
         // hitpoints
         enemy.hitPoints -= projectile.hitPoints;
+        setTimeout(() => {
+          enemy.material = materialGlobals.hitMaterial;
+        }, 20);
         enemy.material = materialGlobals.damagedMaterial;
 
         economyGlobals.currentBalance += projectile.hitPoints;
 
         // color
         updateEconomy(scene);
-        setTimeout(() => {
-          enemy.material = materialGlobals.hitMaterial;
-        }, 20);
 
         // sound
         if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {

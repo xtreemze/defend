@@ -3,9 +3,10 @@ import {
   PointerInfo,
   PhysicsEngine,
   PointerEventTypes,
-  PickingInfo
+  PickingInfo,
+  Tags
 } from "babylonjs";
-import { Tower } from "../tower/Tower";
+import { Tower, towerBasePositions, destroyTower } from "../tower/Tower";
 import { economyGlobals, towerGlobals } from "../main/globalVariables";
 
 function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
@@ -17,24 +18,41 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
     if (
       pickResult.hit &&
       pickResult.pickedMesh !== null &&
-      pickResult.pickedMesh.material !== null &&
-      pickResult.pickedMesh.name.match(/tower*/)
+      pickResult.pickedMesh.name.match(/tower*/) &&
+      Tags.MatchesQuery(pickResult.pickedMesh, "towerBase") &&
+      pickResult.pickedMesh.name !== "ground"
     ) {
+      // determine current and previous tower level
       const currentLevel = parseInt(pickResult.pickedMesh.name[10]);
-      let newLevel = 0;
-      const samePosition = {
-        x: pickResult.pickedMesh.position.x,
-        z: pickResult.pickedMesh.position.z
-      };
 
+      let newLevel = 0;
       if (currentLevel === 1) {
         newLevel = 2;
-      } else {
+      } else if (currentLevel === 2 || currentLevel === 3) {
         newLevel = 3;
       }
+
       if (economyGlobals.currentBalance > towerGlobals.baseCost * newLevel) {
         pickResult.pickedMesh.dispose();
-        new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+        console.log(pickResult.pickedMesh.isDisposed());
+
+        const samePosition = {
+          x: pickResult.pickedMesh.position.x,
+          z: pickResult.pickedMesh.position.z
+        };
+
+        towerGlobals.allPositions = towerBasePositions(scene);
+        console.log(towerGlobals.allPositions);
+
+        if (
+          towerGlobals.allPositions.find(
+            existingLocation =>
+              existingLocation.x === samePosition.x &&
+              existingLocation.z === samePosition.z
+          ) === undefined
+        ) {
+          new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+        }
       }
     }
   }, PointerEventTypes._POINTERTAP);

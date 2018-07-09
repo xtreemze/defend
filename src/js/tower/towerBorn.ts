@@ -186,8 +186,8 @@ function towerBorn(
       pillarMesh.isPickable = false as boolean;
       pillarMesh.convertToUnIndexedMesh();
 
-      Tags.AddTagsTo(pillarMesh, "tower");
-      Tags.AddTagsTo(turretMesh, "tower");
+      Tags.AddTagsTo(pillarMesh, "obstacle");
+      Tags.AddTagsTo(turretMesh, "obstacle");
 
       const disposeTimer2 = setTimeout(() => {
         tower.material = materialGlobals.hitMaterial;
@@ -201,8 +201,10 @@ function towerBorn(
         tower.onDisposeObservable.add(
           () => {
             window.clearTimeout(disposeTimer2);
-            new Tower(level - 1, tower.position, scene, physicsEngine);
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
+            economyGlobals.currentBalance +=
+              (level - 1) * towerGlobals.baseCost;
+            new Tower(level - 1, tower.position, scene, physicsEngine);
           },
           undefined,
           true
@@ -233,7 +235,7 @@ function towerBorn(
   ) as PhysicsImpostor;
 
   mapGlobals.allImpostors.unshift(tower.physicsImpostor);
-  Tags.AddTagsTo(tower, "tower");
+  Tags.AddTagsTo(tower, "obstacle");
   towerGlobals.allTowers.unshift(tower);
 
   economyGlobals.currentBalance -= towerGlobals.baseCost * level;

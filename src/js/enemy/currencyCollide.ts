@@ -19,6 +19,7 @@ function currencyCollide(enemy: EnemySphere, scene: Scene) {
         if (
           typeof enemy.hitPoints === "number" &&
           typeof economyGlobals.currentBalance === "number" &&
+          !isNaN(enemy.hitPoints) &&
           enemy.hitPoints > 0 &&
           economyGlobals.currentBalance > 0
         ) {

@@ -85,15 +85,12 @@ export function fragment(
       if (fragment.physicsImpostor !== null) {
         fragment.physicsImpostor.dispose();
       }
-      setTimeout(() => {}, 1);
     }, projectileGlobals.lifeTime);
   }
 }
 
 export function destroyEnemy(sphereMesh: EnemySphere, scene: Scene) {
   enemyGlobals.occupiedSpaces.pop();
-
-  sphereMesh.hitPoints = 0;
 
   delete sphereMesh.hitPoints;
 
@@ -104,13 +101,11 @@ export function destroyEnemy(sphereMesh: EnemySphere, scene: Scene) {
 
   setTimeout(() => {
     sphereMesh.dispose();
-    setTimeout(() => {
-      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-    }, 4);
+    enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
   }, 1);
 }
 
-export function decide(sphereMesh: Mesh) {
+export function decide(sphereMesh: EnemySphere) {
   const decideToMove = { up: true, left: true, right: true, down: true };
   if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1) {
     decideToMove.down = false;
@@ -128,6 +123,7 @@ export function decide(sphereMesh: Mesh) {
     decideToMove.left = false;
     decideToMove.right = true;
   }
+
   return decideToMove;
 }
 

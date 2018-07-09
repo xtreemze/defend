@@ -1,93 +1,91 @@
-import { Vector3, Mesh, PhysicsImpostor } from "babylonjs";
+import { Vector3 } from "babylonjs";
 import randomNumberRange from "../utility/randomNumberRange";
 import { enemyGlobals } from "../main/globalVariables";
+import { EnemySphere } from "./enemyBorn";
 
-function vector(
-  enemy: Mesh,
-  direction: string = "",
-  sphereMeshImpostor: PhysicsImpostor
-) {
-  switch (direction) {
-    case "down":
-      sphereMeshImpostor.applyImpulse(
-        new Vector3(0, 0, enemyGlobals.speed * -1),
-        enemy.getAbsolutePosition()
-      );
-      break;
-    case "right":
-      sphereMeshImpostor.applyImpulse(
-        new Vector3(enemyGlobals.speed, 0, 0),
-        enemy.getAbsolutePosition()
-      );
-      break;
-    case "up":
-      sphereMeshImpostor.applyImpulse(
-        new Vector3(0, 0, enemyGlobals.speed),
-        enemy.getAbsolutePosition()
-      );
-      break;
-    case "left":
-      sphereMeshImpostor.applyImpulse(
-        new Vector3(enemyGlobals.speed * -1, 0, 0),
-        enemy.getAbsolutePosition()
-      );
-      break;
+function vector(enemy: EnemySphere, direction: string = "") {
+  if (enemy.physicsImpostor !== null) {
+    switch (direction) {
+      case "down":
+        enemy.physicsImpostor.applyImpulse(
+          new Vector3(0, 0, enemyGlobals.speed * -1),
+          enemy.getAbsolutePosition()
+        );
+        break;
+      case "right":
+        enemy.physicsImpostor.applyImpulse(
+          new Vector3(enemyGlobals.speed, 0, 0),
+          enemy.getAbsolutePosition()
+        );
+        break;
+      case "up":
+        enemy.physicsImpostor.applyImpulse(
+          new Vector3(0, 0, enemyGlobals.speed),
+          enemy.getAbsolutePosition()
+        );
+        break;
+      case "left":
+        enemy.physicsImpostor.applyImpulse(
+          new Vector3(enemyGlobals.speed * -1, 0, 0),
+          enemy.getAbsolutePosition()
+        );
+        break;
 
-    default:
-      break;
+      default:
+        break;
+    }
   }
 }
 
 function orient(
-  enemy: Mesh,
+  enemy: EnemySphere,
   decision = { up: true, left: true, right: true, down: true },
-  result: number = 1,
-  sphereMeshImpostor: PhysicsImpostor
+  result: number = 1
 ) {
-  if (sphereMeshImpostor !== null) {
+  if (enemy.physicsImpostor !== null) {
     switch (result) {
       case 1:
         if (decision.down) {
-          vector(enemy, "down", sphereMeshImpostor);
+          vector(enemy, "down");
         } else if (decision.right) {
-          vector(enemy, "right", sphereMeshImpostor);
+          vector(enemy, "right");
         } else if (decision.up) {
-          vector(enemy, "up", sphereMeshImpostor);
+          vector(enemy, "up");
         } else if (decision.left) {
-          vector(enemy, "left", sphereMeshImpostor);
+          vector(enemy, "left");
         }
         break;
       case 2:
         if (decision.up) {
-          vector(enemy, "up", sphereMeshImpostor);
+          vector(enemy, "up");
         } else if (decision.right) {
-          vector(enemy, "right", sphereMeshImpostor);
+          vector(enemy, "right");
         } else if (decision.left) {
-          vector(enemy, "left", sphereMeshImpostor);
+          vector(enemy, "left");
         } else if (decision.down) {
-          vector(enemy, "down", sphereMeshImpostor);
+          vector(enemy, "down");
         }
         break;
       case 3:
         if (decision.left) {
-          vector(enemy, "left", sphereMeshImpostor);
+          vector(enemy, "left");
         } else if (decision.up) {
-          vector(enemy, "up", sphereMeshImpostor);
+          vector(enemy, "up");
         } else if (decision.down) {
-          vector(enemy, "down", sphereMeshImpostor);
+          vector(enemy, "down");
         } else if (decision.right) {
-          vector(enemy, "right", sphereMeshImpostor);
+          vector(enemy, "right");
         }
         break;
       case 4:
         if (decision.right) {
-          vector(enemy, "right", sphereMeshImpostor);
+          vector(enemy, "right");
         } else if (decision.left) {
-          vector(enemy, "left", sphereMeshImpostor);
+          vector(enemy, "left");
         } else if (decision.up) {
-          vector(enemy, "up", sphereMeshImpostor);
+          vector(enemy, "up");
         } else if (decision.down) {
-          vector(enemy, "down", sphereMeshImpostor);
+          vector(enemy, "down");
         }
         break;
 
@@ -98,11 +96,11 @@ function orient(
 }
 
 export default function enemyAi(
-  enemy: Mesh,
+  enemy: EnemySphere,
   decision = { up: true, left: true, right: true, down: true }
 ) {
   const result = randomNumberRange(1, 4);
   if (enemy.physicsImpostor !== null) {
-    orient(enemy, decision, result, enemy.physicsImpostor);
+    orient(enemy, decision, result);
   }
 }

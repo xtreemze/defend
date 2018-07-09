@@ -1,15 +1,16 @@
 import { towerBorn, TowerTurret } from "./towerBorn";
 
-import { Scene, MeshBuilder, Mesh, PhysicsEngine, Ray } from "babylonjs";
+import { Scene, MeshBuilder, Mesh, PhysicsEngine, Ray, Tags } from "babylonjs";
 import positionGenerator from "../utility/positionGenerator";
 import randomNumberRange from "../utility/randomNumberRange";
 import { addTower } from "../main/sound";
 import { towerGlobals } from "../main/globalVariables";
+import { Position2D } from "../enemy/Enemy";
 
 class Tower {
   constructor(
     level: number = 1 | 2 | 3,
-    position = { x: -25, z: -25 },
+    position: Position2D = { x: -25, z: -25 },
     scene: Scene,
     physicsEngine: PhysicsEngine
   ) {
@@ -25,17 +26,35 @@ class Tower {
       scene
     ) as Mesh;
 
+    Tags.AddTagsTo(tower, "towerBase");
     tower.convertToUnIndexedMesh();
     towerBorn(scene, tower, position, level, physicsEngine);
     addTower(tower, level);
+    towerGlobals.allPositions = towerBasePositions(scene);
   }
+}
+
+function towerBasePositions(scene: Scene) {
+  let positionalArray: Position2D[] = [];
+  scene.getMeshesByTags("towerBase", towerBaseMesh => {
+    const towerLocation = {
+      x: towerBaseMesh.position.x,
+      z: towerBaseMesh.position.z
+    } as Position2D;
+    positionalArray.push(towerLocation);
+  });
+  return positionalArray;
 }
 
 export function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
   let result = false as boolean;
   const hit = scene.pickWithRay(ray);
 
-  if (hit && hit.pickedMesh === intendedEnemy) {
+  if (
+    hit &&
+    hit.pickedMesh === intendedEnemy &&
+    !Tags.MatchesQuery(intendedEnemy, "obstacle")
+  ) {
     result = true as boolean;
   }
   return result as boolean;
@@ -78,9 +97,9 @@ function destroyTower(
   turretMesh?: TowerTurret,
   flashMesh?: Mesh
 ): void {
+  Tags.RemoveTagsFrom(baseMesh, "towerBase");
+  towerGlobals.allPositions = towerBasePositions(scene);
   baseMesh.onDisposeObservable.clear();
-
-  // baseMesh.dispose();
   towerGlobals.allTowers = [];
   if (pillarMesh && turretMesh && flashMesh) {
     if (towerGlobals.raysOn) {
@@ -100,9 +119,7 @@ function destroyTower(
     baseMesh.physicsImpostor.dispose();
   }
 
-  setTimeout(() => {
-    towerGlobals.allTowers = scene.getMeshesByTags("tower");
-  }, 2);
+  towerGlobals.allTowers = scene.getMeshesByTags("tower" && "towerBase");
 }
 
 function towers(scene: Scene, physicsEngine: PhysicsEngine) {
@@ -113,4 +130,4 @@ function towers(scene: Scene, physicsEngine: PhysicsEngine) {
   );
 }
 
-export { towers, Tower, destroyTower };
+export { towers, Tower, destroyTower, towerBasePositions };

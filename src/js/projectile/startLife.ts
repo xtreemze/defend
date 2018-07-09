@@ -34,8 +34,6 @@ export function startLife(
   const space = originMesh.getDirection(forwardLocal) as Vector3;
   projectile.position = originMesh.position.subtract(space) as Vector3;
 
-  projectile.hitPoints = ((level + level) *
-    projectileGlobals.baseHitPoints) as number;
   projectile.material = projectileMaterial as Material;
   // For Physics
   projectile.physicsImpostor = new PhysicsImpostor(
@@ -48,14 +46,19 @@ export function startLife(
     },
     scene
   ) as PhysicsImpostor;
+
+  hitEffect(scene, projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
+
   mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
   const clonedRotation = originMesh.rotation.clone();
   projectile.rotation.copyFrom(clonedRotation);
-  hitEffect(scene, projectile, nearestEnemy); // Detects collissions with enemies
+
   const projectileLifetime = setTimeout(() => {
     destroyProjectile(projectile, physicsEngine);
   }, projectileGlobals.lifeTime);
+
   destroyOnCollide(scene, projectile, physicsEngine, projectileLifetime); // Detects collissions with enemies
+
   impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 }
 

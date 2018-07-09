@@ -11,8 +11,7 @@ function checkHitPoints(
 ) {
   if (
     sphereMesh.physicsImpostor !== null &&
-    (sphereMesh.hitPoints <= enemyGlobals.deadHitPoints ||
-      sphereMesh.position.y < 0)
+    sphereMesh.hitPoints <= enemyGlobals.deadHitPoints
   ) {
     const enemyPosition = sphereMesh.position.clone() as Vector3;
     const enemyRotation = sphereMesh.rotation.clone() as Vector3;

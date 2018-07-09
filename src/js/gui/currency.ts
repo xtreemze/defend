@@ -52,7 +52,7 @@ function displayEconomy(scene: Scene) {
 
   economyGlobals.currencyMesh = currencyTower;
 
-  Tags.AddTagsTo(currencyTower, "tower");
+  Tags.AddTagsTo(currencyTower, "obstacle");
 
   const hitPointsMeter = MeshBuilder.CreateBox(
     "currencyMeter",
