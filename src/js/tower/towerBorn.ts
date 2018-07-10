@@ -21,7 +21,7 @@ import {
 } from "../main/globalVariables";
 import { destroyTower, Tower } from "./Tower";
 import { trackSpheres } from "./trackSpheres";
-import { removeTower } from "../main/sound";
+import { removeTower, addTower } from "../main/sound";
 import { updateEconomy } from "../gui/updateEconomy";
 import { Position2D } from "../enemy/Enemy";
 
@@ -202,7 +202,8 @@ function towerBorn(
             removeTower(tower, level); // sound
             tower.dispose();
             economyGlobals.currentBalance +=
-              (level - 1) * towerGlobals.baseCost;
+            (level - 1) * towerGlobals.baseCost;
+            addTower(tower, level-1); // sound
             new Tower(level - 1, tower.position, scene, physicsEngine);
           }, towerGlobals.disposeTime);
         }
