@@ -1,15 +1,24 @@
 import { Scene, Material } from "babylonjs";
 import { newWave } from "../main/sound";
-import {
-  enemyGlobals,
-  economyGlobals,
-} from "../main/globalVariables";
+import { enemyGlobals, economyGlobals } from "../main/globalVariables";
 import { waves } from "./waves";
 import { updateEconomy } from "../gui/updateEconomy";
 import { enemyGenerator } from "./Enemy";
 
 const enemyWaves = (scene: Scene) => {
   let deltaTime = Date.now() - enemyGlobals.generationRate;
+
+  const checkEnemyY = setInterval(() => {
+    if (economyGlobals.restartMessage === false) {
+      enemyGlobals.allEnemies.forEach(enemy => {
+        if (enemy.position.y < 0) {
+          enemy.dispose();
+        }
+      });
+    } else {
+      clearInterval(checkEnemyY);
+    }
+  }, 5000);
 
   scene.registerAfterRender(() => {
     if (
