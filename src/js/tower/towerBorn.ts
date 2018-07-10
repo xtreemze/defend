@@ -51,18 +51,22 @@ function towerBorn(
   switch (level) {
     case 1:
     default:
-      const disposeTimer = setTimeout(() => {
-        tower.material = materialGlobals.hitMaterial;
-        setTimeout(() => {
-          removeTower(tower, level);
-          tower.dispose();
-        }, towerGlobals.disposeTime);
-      }, towerGlobals.lifeTime);
+      const deltaTime = Date.now();
+
+      tower.registerAfterRender(() => {
+        if (Date.now() - deltaTime > towerGlobals.lifeTime) {
+          tower.material = materialGlobals.hitMaterial;
+          setTimeout(() => {
+            removeTower(tower, level);
+            tower.dispose();
+          }, towerGlobals.disposeTime);
+        }
+      });
 
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
           () => {
-            window.clearTimeout(disposeTimer);
+            // window.clearTimeout(disposeTimer);
 
             destroyTower(scene, tower);
           },
@@ -189,20 +193,24 @@ function towerBorn(
       Tags.AddTagsTo(pillarMesh, "obstacle");
       Tags.AddTagsTo(turretMesh, "obstacle");
 
-      const disposeTimer2 = setTimeout(() => {
-        tower.material = materialGlobals.hitMaterial;
-        setTimeout(() => {
-          removeTower(tower, level); // sound
-          tower.dispose();
-          economyGlobals.currentBalance += (level - 1) * towerGlobals.baseCost;
-          new Tower(level - 1, tower.position, scene, physicsEngine);
-        }, towerGlobals.disposeTime);
-      }, towerGlobals.lifeTime);
+      const deltaTime2 = Date.now();
+
+      tower.registerAfterRender(() => {
+        if (Date.now() - deltaTime2 > towerGlobals.lifeTime) {
+          tower.material = materialGlobals.hitMaterial;
+          setTimeout(() => {
+            removeTower(tower, level); // sound
+            tower.dispose();
+            economyGlobals.currentBalance +=
+              (level - 1) * towerGlobals.baseCost;
+            new Tower(level - 1, tower.position, scene, physicsEngine);
+          }, towerGlobals.disposeTime);
+        }
+      });
 
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
           () => {
-            window.clearTimeout(disposeTimer2);
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
           },
           undefined,

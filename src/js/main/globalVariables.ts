@@ -76,7 +76,7 @@ const enemyGlobals = {
   fragments: 1,
   allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
-  boundaryLimit: 5, // meters
+  boundaryLimit: 2, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
