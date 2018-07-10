@@ -6,14 +6,16 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
-import { decide, Position2D, destroyEnemy } from "./Enemy";
+import { Position2D } from "./Enemy";
+import { destroyEnemy } from "./destroyEnemy";
+import { decide } from "./decide";
 import { checkHitPoints } from "./checkHitPoints";
 
 interface EnemySphere extends Mesh {
   hitPoints: number;
 }
 
-export function enemyBorn(
+function enemyBorn(
   scene: Scene,
   position: Position2D,
   sphereMesh: EnemySphere,
@@ -37,7 +39,6 @@ export function enemyBorn(
     position.z
   );
 
-
   sphereMesh.physicsImpostor = new PhysicsImpostor(
     sphereMesh,
     PhysicsImpostor.SphereImpostor,
@@ -58,7 +59,7 @@ export function enemyBorn(
 
   sphereMesh.registerAfterRender(() => {
     if (sphereMesh.position.y < 0) {
-      destroyEnemy(sphereMesh, scene);
+      destroyEnemy(sphereMesh, scene, level);
     }
     if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
       deltaTime = Date.now();
@@ -75,4 +76,4 @@ export function enemyBorn(
   currencyCollide(sphereMesh, scene);
 }
 
-export { EnemySphere };
+export { EnemySphere, enemyBorn };

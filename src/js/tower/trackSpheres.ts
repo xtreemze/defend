@@ -52,15 +52,7 @@ function trackSpheres(
           }, 30);
           flash.setEnabled(true);
 
-          if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
-            setTimeout(() => {
-              mapGlobals.projectileSounds -= 1;
-            }, mapGlobals.soundDelay);
-
-            mapGlobals.projectileSounds += 1;
-
-            if (mapGlobals.soundOn) shoot(flash, level);
-          }
+          shoot(flash, level);
 
           setTimeout(() => {
             fireProjectile(

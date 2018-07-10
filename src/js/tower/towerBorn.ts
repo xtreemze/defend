@@ -194,6 +194,8 @@ function towerBorn(
         setTimeout(() => {
           removeTower(tower, level);
           tower.dispose();
+          economyGlobals.currentBalance += (level - 1) * towerGlobals.baseCost;
+          new Tower(level - 1, tower.position, scene, physicsEngine);
         }, towerGlobals.disposeTime);
       }, towerGlobals.lifeTime);
 
@@ -202,9 +204,6 @@ function towerBorn(
           () => {
             window.clearTimeout(disposeTimer2);
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
-            economyGlobals.currentBalance +=
-              (level - 1) * towerGlobals.baseCost;
-            new Tower(level - 1, tower.position, scene, physicsEngine);
           },
           undefined,
           true

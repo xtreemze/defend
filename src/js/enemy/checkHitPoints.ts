@@ -1,6 +1,7 @@
 import { Scene, Vector3, Mesh } from "babylonjs";
 import { enemyGlobals } from "../main/globalVariables";
-import { fragment, destroyEnemy } from "./Enemy";
+import { fragment } from "./Enemy";
+import { destroyEnemy } from "./destroyEnemy";
 import { EnemySphere } from "./enemyBorn";
 
 function checkHitPoints(
@@ -28,7 +29,7 @@ function checkHitPoints(
       );
     }, 1);
 
-    destroyEnemy(sphereMesh, scene);
+    destroyEnemy(sphereMesh, scene, level);
   } else {
     sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
     const scaleRate =

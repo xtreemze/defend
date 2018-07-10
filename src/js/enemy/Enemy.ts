@@ -90,44 +90,6 @@ export function fragment(
   }
 }
 
-function destroyEnemy(sphereMesh: EnemySphere, scene: Scene) {
-  enemyGlobals.occupiedSpaces.pop();
-
-  delete sphereMesh.hitPoints;
-
-  if (sphereMesh.physicsImpostor !== null) {
-    sphereMesh.physicsImpostor.dispose();
-  }
-  Tags.RemoveTagsFrom(sphereMesh, "enemy");
-
-  setTimeout(() => {
-    sphereMesh.dispose();
-    enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-  }, 1);
-}
-
-function decide(sphereMesh: EnemySphere) {
-  const decideToMove = { up: true, left: true, right: true, down: true };
-  if (sphereMesh.position.z <= enemyGlobals.boundaryLimit * -1) {
-    decideToMove.down = false;
-    decideToMove.up = true;
-  }
-  if (sphereMesh.position.z >= enemyGlobals.boundaryLimit) {
-    decideToMove.up = false;
-    decideToMove.down = true;
-  }
-  if (sphereMesh.position.x >= enemyGlobals.boundaryLimit) {
-    decideToMove.right = false;
-    decideToMove.left = true;
-  }
-  if (sphereMesh.position.x <= enemyGlobals.boundaryLimit * -1) {
-    decideToMove.left = false;
-    decideToMove.right = true;
-  }
-
-  return decideToMove;
-}
-
 function enemyGenerator(
   scene: Scene,
   quantity = 1,
@@ -159,4 +121,4 @@ function enemyGenerator(
   }
 }
 
-export { Enemy, Position2D, enemyGenerator, decide, destroyEnemy };
+export { Enemy, Position2D, enemyGenerator };

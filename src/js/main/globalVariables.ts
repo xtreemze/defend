@@ -38,7 +38,7 @@ const projectileGlobals = {
 const towerGlobals = {
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
-  rateOfFire: 160, // milliseconds between each shot,
+  rateOfFire: 170, // milliseconds between each shot,
   height: 3,
   mass: 0,
   restitution: 0,

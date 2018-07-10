@@ -68,7 +68,7 @@ class Game {
       );
     }
 
-    FX.setVolume(1);
+    FX.setVolume(0.5);
     FX._tone.Master.mute = true;
 
     this.scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());

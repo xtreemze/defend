@@ -42,13 +42,8 @@ export function hitEffect(
         enemy.material = materialGlobals.damagedMaterial;
 
         // sound
-        if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-          setTimeout(() => {
-            mapGlobals.simultaneousSounds -= 1;
-          }, mapGlobals.soundDelay);
-          mapGlobals.simultaneousSounds += 1;
-          if (mapGlobals.soundOn) damage(enemy);
-        }
+  damage(enemy);
+
       }
     );
   }
