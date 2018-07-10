@@ -52,16 +52,18 @@ function towerBorn(
     case 1:
     default:
       const deltaTime = Date.now();
-
-      tower.registerAfterRender(() => {
-        if (Date.now() - deltaTime > towerGlobals.lifeTime) {
+      const disposeTower = () => {
+        if (Date.now() - deltaTime > towerGlobals.lifeTime && !tower.isDisposed()) {
+          tower.unregisterAfterRender(disposeTower);
           tower.material = materialGlobals.hitMaterial;
+          removeTower(tower, level); // sound
           setTimeout(() => {
-            removeTower(tower, level);
+            removeTower(tower, level); // sound
             tower.dispose();
           }, towerGlobals.disposeTime);
         }
-      });
+      };
+      tower.registerAfterRender(disposeTower);
 
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
@@ -195,19 +197,21 @@ function towerBorn(
 
       const deltaTime2 = Date.now();
 
-      tower.registerAfterRender(() => {
-        if (Date.now() - deltaTime2 > towerGlobals.lifeTime) {
+      const disposeTower2 = () => {
+        if (Date.now() - deltaTime2 > towerGlobals.lifeTime && !tower.isDisposed()) {
+          tower.unregisterAfterRender(disposeTower2);
           tower.material = materialGlobals.hitMaterial;
+          removeTower(tower, level); // sound
           setTimeout(() => {
             removeTower(tower, level); // sound
             tower.dispose();
-            economyGlobals.currentBalance +=
-            (level - 1) * towerGlobals.baseCost;
-            addTower(tower, level-1); // sound
+            economyGlobals.currentBalance += (level - 1) * towerGlobals.baseCost;
             new Tower(level - 1, tower.position, scene, physicsEngine);
           }, towerGlobals.disposeTime);
         }
-      });
+      };
+
+      tower.registerAfterRender(disposeTower2);
 
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(

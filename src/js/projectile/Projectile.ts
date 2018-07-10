@@ -1,12 +1,6 @@
 import { startLife, LiveProjectile } from "./startLife";
 
-
-import {
-  Scene,
-  Vector3,
-  MeshBuilder,
-  PhysicsEngine
-} from "babylonjs";
+import { Scene, Vector3, MeshBuilder, PhysicsEngine } from "babylonjs";
 import { projectileGlobals } from "../main/globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
@@ -31,7 +25,7 @@ class Projectile {
     projectile.isPickable = false;
     projectile.convertToUnIndexedMesh();
 
-    projectile.hitPoints = (level + level) * projectileGlobals.baseHitPoints;
+    projectile.hitPoints = level * level * projectileGlobals.baseHitPoints;
 
     startLife(
       scene,

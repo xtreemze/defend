@@ -97,7 +97,7 @@ function rampUp(scene: Scene, currencyTower?: Mesh) {
   economyGlobals.currentBalance = 0;
 
   const interval1 = setInterval(() => {
-    economyGlobals.currentBalance += 1000;
+    economyGlobals.currentBalance += 2000;
     updateEconomy(scene, currencyTower);
     if (
       economyGlobals.currentBalance >= economyGlobals.initialBalance ||

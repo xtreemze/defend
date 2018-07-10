@@ -2,7 +2,8 @@ import {
   projectileGlobals,
   mapGlobals,
   economyGlobals,
-  enemyGlobals
+  enemyGlobals,
+  towerGlobals
 } from "../main/globalVariables";
 import { Scene } from "babylonjs";
 import { rampUp } from "./currency";
@@ -59,6 +60,10 @@ function displayMessage(scene: Scene, message: string, icon: string) {
 
     // Start button behavior
     startButton.addEventListener("click", () => {
+      towerGlobals.allTowers.forEach(tower => {
+        tower.dispose();
+      });
+
       // Enemy waves start
       enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
       enemyGlobals.currentWave = 0;

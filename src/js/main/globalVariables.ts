@@ -2,10 +2,10 @@ import { Color3, PhysicsImpostor, Mesh, GroundMesh } from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
 
 const mapGlobals = {
+  optimizerOn: false,
   diagnosticsOn: false,
   demoSphere: false,
   size: 200, // map radius
-  optimizerOn: true,
   cameraCutDelay: 4200,
   rotateCameras: false,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
@@ -13,7 +13,7 @@ const mapGlobals = {
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 100,
+  soundDelay: 200,
   soundLimit: 2, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles

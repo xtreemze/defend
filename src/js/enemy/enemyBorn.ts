@@ -58,10 +58,10 @@ function enemyBorn(
   let deltaTime = Date.now();
 
   sphereMesh.registerAfterRender(() => {
-    if (sphereMesh.position.y < 0) {
-      destroyEnemy(sphereMesh, scene, level);
-    }
     if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
+      if (sphereMesh.position.y < 0) {
+        destroyEnemy(sphereMesh, scene, level);
+      }
       deltaTime = Date.now();
       if (
         sphereMesh.position.y > diameter / 2.5 &&
