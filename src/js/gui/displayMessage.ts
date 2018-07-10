@@ -26,6 +26,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
       font-family: fantasy;
       font-size: 4rem;
       user-select: none;
+      text-shadow: black 0px 0px 18px;
       `
   );
   const startButton = document.createElement("button") as HTMLButtonElement;

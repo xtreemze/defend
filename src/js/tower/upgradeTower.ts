@@ -1,5 +1,3 @@
-import { towerReborn } from "./towerReborn";
-
 import {
   Scene,
   PointerInfo,
@@ -9,19 +7,23 @@ import {
   Tags
 } from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
-import { towerGlobals } from "../main/globalVariables";
-import { towerBasePositions } from "./Tower";
+import { towerGlobals, economyGlobals } from "../main/globalVariables";
+import { towerBasePositions, Tower } from "./Tower";
 
 function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer tap event is raised
   scene.onPointerObservable.add(function(evt: PointerInfo) {
+    let currentLevel = 0;
     const pickResult = evt.pickInfo as PickingInfo;
-
+    if (pickResult.pickedMesh !== null) {
+      currentLevel = parseInt(pickResult.pickedMesh.name[10]);
+    }
     if (
       pickResult.hit &&
       pickResult.pickedMesh !== null &&
       Tags.MatchesQuery(pickResult.pickedMesh, "towerBase") &&
-      pickResult.pickedMesh.name !== "ground"
+      pickResult.pickedMesh.name !== "ground" &&
+      economyGlobals.currentBalance > towerGlobals.baseCost * (currentLevel + 1)
     ) {
       const samePosition = {
         x: pickResult.pickedMesh.position.x,
@@ -43,33 +45,15 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         switch (currentLevel) {
           case 1:
             newLevel = 2;
-            towerReborn(
-              newLevel,
-              pickResult,
-              scene,
-              physicsEngine,
-              samePosition
-            );
+            new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
             break;
           case 2:
             newLevel = 3;
-            towerReborn(
-              newLevel,
-              pickResult,
-              scene,
-              physicsEngine,
-              samePosition
-            );
+            new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
             break;
           case 3:
             newLevel = 3;
-            towerReborn(
-              newLevel,
-              pickResult,
-              scene,
-              physicsEngine,
-              samePosition
-            );
+            new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
             break;
 
           default:

@@ -192,7 +192,7 @@ function towerBorn(
       const disposeTimer2 = setTimeout(() => {
         tower.material = materialGlobals.hitMaterial;
         setTimeout(() => {
-          removeTower(tower, level);
+          removeTower(tower, level); // sound
           tower.dispose();
           economyGlobals.currentBalance += (level - 1) * towerGlobals.baseCost;
           new Tower(level - 1, tower.position, scene, physicsEngine);

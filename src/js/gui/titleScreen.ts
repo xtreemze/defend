@@ -31,6 +31,7 @@ function titleScreen(
       font-family: fantasy;
       font-size: 4rem;
       user-select: none;
+      text-shadow: black 0px 0px 18px;
       `
   );
 
