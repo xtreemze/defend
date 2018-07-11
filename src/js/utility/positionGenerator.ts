@@ -13,7 +13,7 @@ function randomNumber(): number {
 }
 
 export default function positionGenerator(waveOrigin: number): coordinates {
-  const x = ((mapGlobals.size * waveOrigin) / 25) * 10 + 5;
+  const x = ((mapGlobals.size * waveOrigin) / 35) * 10 + 5;
   const z = randomNumber();
 
   return { x, z };

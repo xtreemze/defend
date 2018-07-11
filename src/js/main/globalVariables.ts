@@ -5,7 +5,7 @@ const mapGlobals = {
   optimizerOn: false,
   diagnosticsOn: false,
   demoSphere: false,
-  size: 200, // map radius
+  size: 160, // map radius
   cameraCutDelay: 4200,
   rotateCameras: false,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
@@ -26,8 +26,8 @@ const mapGlobals = {
 
 const projectileGlobals = {
   lifeTime: 2000, // milliseconds
-  speed: 12000,
-  mass: 100,
+  speed: 10000,
+  mass: 80,
   baseHitPoints: 80,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
@@ -43,7 +43,7 @@ const towerGlobals = {
   mass: 0,
   restitution: 0,
   baseHitPoints: 10000,
-  baseCost: 3000,
+  baseCost: 2000,
   allTowers: [] as Mesh[],
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
@@ -63,12 +63,12 @@ const enemyGlobals = {
   limit: 0, // wait for this enemy count before next wave
   originHeight: 3,
   generationRate: 8000, // milliseconds
-  decisionRate: 100, // milliseconds
-  speed: 20000,
+  decisionRate: 150, // milliseconds
+  speed: 15000,
   mass: 7000,
-  restitution: 0.3,
+  restitution: 0.8,
   jumpForce: 60,
-  friction: 1,
+  friction: 0.5,
   decayRate: 25, // hitpoints per decision
   initialDecayRate: 25, // hitpoints per decision
   baseHitPoints: 10000,
@@ -88,7 +88,7 @@ const enemyGlobals = {
 const economyGlobals = {
   initialBalance: 30000,
   currentBalance: 1,
-  maxBalance: 200000,
+  maxBalance: 500000,
   restartMessage: false,
   bankSize: 40,
   defeats: 0,

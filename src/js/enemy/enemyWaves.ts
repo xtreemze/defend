@@ -1,21 +1,27 @@
-import { Scene, Material } from "babylonjs";
+import { Scene } from "babylonjs";
+import { EnemySphere } from "./enemyBorn";
 import { newWave } from "../main/sound";
 import { enemyGlobals, economyGlobals } from "../main/globalVariables";
 import { waves } from "./waves";
 import { updateEconomy } from "../gui/updateEconomy";
 import { enemyGenerator } from "./Enemy";
+import { destroyEnemy } from "./destroyEnemy";
 
 const enemyWaves = (scene: Scene) => {
   let deltaTime = Date.now() - enemyGlobals.generationRate;
 
   const checkEnemyY = setInterval(() => {
     if (economyGlobals.restartMessage === false) {
-      enemyGlobals.allEnemies.forEach(enemy => {
+      let disposedEnemies = 0;
+      enemyGlobals.allEnemies.forEach((enemy: any) => {
         if (enemy.position.y < 0) {
+          enemy.hitPoints = 0;
+          destroyEnemy(enemy, scene);
           enemy.dispose();
+          disposedEnemies += 1;
         }
       });
-    } else {
+    } else if (economyGlobals.restartMessage === true) {
       clearInterval(checkEnemyY);
     }
   }, 5000);
@@ -24,7 +30,8 @@ const enemyWaves = (scene: Scene) => {
     if (
       Date.now() - deltaTime > enemyGlobals.generationRate &&
       enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-      economyGlobals.restartMessage === false
+      economyGlobals.restartMessage === false &&
+      enemyGlobals.currentWave < waves.length
     ) {
       deltaTime = Date.now() - enemyGlobals.generationRate;
       newWave(); // sound for new wave

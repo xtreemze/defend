@@ -46,7 +46,7 @@ export function impulsePhys(
   const forwardLocal = new Vector3(
     0,
     0,
-    projectileGlobals.speed * level * -1
+    projectileGlobals.speed * (level * level) * -1
   ) as Vector3;
   const speed = originMesh.getDirection(forwardLocal) as Vector3;
   if (projectile.physicsImpostor !== null) {

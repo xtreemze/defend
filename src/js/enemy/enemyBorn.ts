@@ -43,7 +43,7 @@ function enemyBorn(
     sphereMesh,
     PhysicsImpostor.SphereImpostor,
     {
-      mass: enemyGlobals.mass * level,
+      mass: enemyGlobals.mass * (level * level),
       restitution: enemyGlobals.restitution,
       friction: enemyGlobals.friction
     },

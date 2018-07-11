@@ -76,7 +76,7 @@ function titleScreen(
     FX._tone.context.resume();
     FX._tone.Master.mute = false;
     clearTimeout(noSoundTimer);
-
+    // Start game
     startGame();
   });
 
