@@ -96,15 +96,15 @@ function displayEconomy(scene: Scene) {
 function rampUp(scene: Scene, currencyTower?: Mesh) {
   economyGlobals.currentBalance = 0;
 
-  const interval1 = setInterval(() => {
-    economyGlobals.currentBalance += 2000;
+  scene.registerAfterRender(function interval1() {
+    economyGlobals.currentBalance += 500;
     updateEconomy(scene, currencyTower);
     if (
       economyGlobals.currentBalance >= economyGlobals.initialBalance ||
       economyGlobals.currentBalance < 0
     ) {
-      clearInterval(interval1);
+      scene.unregisterAfterRender(interval1);
     }
-  }, 1000 / 15);
+  });
 }
 export { displayEconomy, updateEconomy, rampUp };

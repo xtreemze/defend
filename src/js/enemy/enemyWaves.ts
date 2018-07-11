@@ -1,7 +1,12 @@
+import { rampLight } from "./rampLight";
+
 import { Scene } from "babylonjs";
-import { EnemySphere } from "./enemyBorn";
 import { newWave } from "../main/sound";
-import { enemyGlobals, economyGlobals } from "../main/globalVariables";
+import {
+  enemyGlobals,
+  economyGlobals,
+  mapGlobals
+} from "../main/globalVariables";
 import { waves } from "./waves";
 import { updateEconomy } from "../gui/updateEconomy";
 import { enemyGenerator } from "./Enemy";
@@ -12,13 +17,11 @@ const enemyWaves = (scene: Scene) => {
 
   const checkEnemyY = setInterval(() => {
     if (economyGlobals.restartMessage === false) {
-      let disposedEnemies = 0;
       enemyGlobals.allEnemies.forEach((enemy: any) => {
         if (enemy.position.y < 0) {
           enemy.hitPoints = 0;
           destroyEnemy(enemy, scene);
           enemy.dispose();
-          disposedEnemies += 1;
         }
       });
     } else if (economyGlobals.restartMessage === true) {
@@ -37,10 +40,14 @@ const enemyWaves = (scene: Scene) => {
       newWave(); // sound for new wave
 
       // Color change on new wave
-      // mapGlobals.atmosphereMesh.material = materialGlobals.hitMaterial as Material;
-      // setTimeout(() => {
-      //   mapGlobals.atmosphereMesh.material = materialGlobals.skyMaterial as Material;
-      // }, 20);
+
+      rampLight(scene, mapGlobals.skyLight, 1.3, mapGlobals.lightIntensity);
+      rampLight(
+        scene,
+        mapGlobals.upLight,
+        1.3 * 2,
+        mapGlobals.lightIntensity * 2
+      );
 
       enemyGlobals.currentWave += 1;
 

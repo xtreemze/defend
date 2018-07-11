@@ -47,8 +47,9 @@ export function updateEconomy(scene: Scene, currencyTower?: Mesh) {
 
   const level = enemyGlobals.currentWave.toString();
   const currency = Math.round(economyGlobals.currentBalance / 1000).toString();
+  const currencyMax = (economyGlobals.maxBalance / 1000).toString();
   currentBalance.innerText = `Wave: ${level}/${waves.length}
-  Energy: ${currency}
+  Energy: ${currency}/${currencyMax}k
   Defeats: ${economyGlobals.defeats}
   Victories: ${economyGlobals.victories}`;
 

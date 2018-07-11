@@ -1,9 +1,10 @@
-import { Mesh, Scene, Material } from "babylonjs";
+import { Scene, Material } from "babylonjs";
+import { rampLight } from "./rampLight";
 import { updateEconomy } from "../gui/updateEconomy";
 import {
-  mapGlobals,
   economyGlobals,
-  materialGlobals
+  materialGlobals,
+  mapGlobals
 } from "../main/globalVariables";
 import { damageCurrency } from "../main/sound";
 import { EnemySphere } from "./enemyBorn";
@@ -27,14 +28,22 @@ function currencyCollide(enemy: EnemySphere, scene: Scene) {
 
           updateEconomy(scene);
 
+          // color
           economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
           setTimeout(() => {
             economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
-          }, 20);
+          }, 10);
+
+          rampLight(scene, mapGlobals.skyLight, 0.6, mapGlobals.lightIntensity);
+          rampLight(
+            scene,
+            mapGlobals.upLight,
+            0.6 * 2,
+            mapGlobals.lightIntensity * 2
+          );
 
           // sound
-
-              damageCurrency(enemy);
+          damageCurrency(enemy);
 
           enemy.hitPoints = 0;
         }

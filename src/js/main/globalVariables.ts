@@ -1,4 +1,11 @@
-import { Color3, PhysicsImpostor, Mesh, GroundMesh } from "babylonjs";
+import {
+  Color3,
+  PhysicsImpostor,
+  Mesh,
+  GroundMesh,
+  HemisphericLight,
+  DirectionalLight
+} from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
 
 const mapGlobals = {
@@ -21,7 +28,9 @@ const mapGlobals = {
   sceneAmbient: new Color3(0.01, 0.0, 0.2) as Color3,
   soundOn: false,
   groundMesh: {} as GroundMesh,
-  atmosphereMesh: {} as Mesh
+  atmosphereMesh: {} as Mesh,
+  skyLight: {} as HemisphericLight,
+  upLight: {} as DirectionalLight
 };
 
 const projectileGlobals = {
