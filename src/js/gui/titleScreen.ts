@@ -45,11 +45,11 @@ function titleScreen(
       background-color: ${mapGlobals.sceneAmbient.toHexString()};
       color: ${projectileGlobals.livingColor.toHexString()};
       border-color: ${projectileGlobals.livingColor.toHexString()};
-      top: 70vh;
+      bottom: 20vh;
       left: 50vw;
       width: 6rem;
       height: 6rem;
-      margin-top: -1.5rem;
+      margin-bottom: 1.5rem;
       margin-left: -3rem;
       border-radius: 6rem;
       font-weight: 600;
@@ -58,10 +58,67 @@ function titleScreen(
       user-select: none;
       `
   );
+
+  const helpButton = document.createElement("button") as HTMLButtonElement;
+  helpButton.innerHTML = `?`;
+  helpButton.id = "helpButton";
+  helpButton.setAttribute(
+    "style",
+    `
+      position: absolute;
+      background-color: ${mapGlobals.sceneAmbient.toHexString()};
+      color: ${projectileGlobals.livingColor.toHexString()};
+      border-color: ${projectileGlobals.livingColor.toHexString()};
+      bottom: 8vh;
+      left: 50vw;
+      width: 3rem;
+      height: 3rem;
+      margin-bottom: 1.5rem;
+      margin-left: -1.5rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      outline: none;
+      font-size: 1.5rem;
+      user-select: none;
+      `
+  );
+
+  const help = document.createElement("div") as HTMLDivElement;
+  help.innerHTML = `<p>Tap on the grid to deploy towers and tap on the towers to upgrade them.</p><p>Absorb energy from the enemy to fill our energy bank or survive the enemy waves for victory.</p><p>Keep the spheres away from the bank to avoid defeat!</p> <button id="okHelp" style="
+      background-color: ${mapGlobals.sceneAmbient.toHexString()};
+      color: ${projectileGlobals.livingColor.toHexString()};
+      border-color: ${projectileGlobals.livingColor.toHexString()};
+    width: 100%;
+    height: 6rem;
+    border-radius: 6rem;
+    font-weight: 600;
+    outline: none;
+    font-size: 3vh;
+    text-align: center;
+    user-select: none;
+    ">OK!</button>`;
+  help.id = "help";
+  help.setAttribute("style", `
+    position: absolute;
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    padding: 10%;
+    width: 60%;
+    border-radius: 1rem;
+    font-weight: 100;
+    outline: none;
+    border: 1px solid ${projectileGlobals.livingColor.toHexString()};
+    font-size: 3vh;
+    user-select: none;
+    margin: 10%;
+    text-align: center;
+      `);
+
   const canvasParent = canvas.parentNode as Node;
 
   canvasParent.insertBefore(title, canvas);
   canvasParent.insertBefore(startButton, canvas);
+  canvasParent.insertBefore(helpButton, canvas);
 
   // When no button is pressed, game starts without sound
   const noSoundTimer = setTimeout(() => {
@@ -80,6 +137,29 @@ function titleScreen(
     startGame();
   });
 
+  // Help button behavior
+  helpButton.addEventListener("click", () => {
+    clearTimeout(noSoundTimer);
+    const titleParent = title.parentNode as Node;
+    titleParent.removeChild(title);
+
+    const startButtonParent = startButton.parentNode as Node;
+    startButtonParent.removeChild(startButton);
+
+    canvasParent.insertBefore(help, canvas);
+    const helpButtonParent = helpButton.parentNode as Node;
+    helpButtonParent.removeChild(helpButton);
+
+    const okHelp = document.getElementById("okHelp") as HTMLButtonElement;
+
+    okHelp.addEventListener("click", function() {
+      const help = document.getElementById("help") as HTMLDivElement;
+      const helpParent = help.parentNode as Node;
+      helpParent.removeChild(help);
+      startGame();
+    });
+  });
+
   function startGame() {
     displayEconomy(scene);
 
@@ -91,9 +171,20 @@ function titleScreen(
 
     // remove GUI
     const titleParent = title.parentNode as Node;
-    titleParent.removeChild(title);
+    if (titleParent !== null) {
+      titleParent.removeChild(title);
+    }
     const startButtonParent = startButton.parentNode as Node;
-    startButtonParent.removeChild(startButton);
+
+    if (startButtonParent !== null) {
+      startButtonParent.removeChild(startButton);
+    }
+
+    const helpButtonParent = helpButton.parentNode as Node;
+
+    if (helpButtonParent !== null) {
+      helpButtonParent.removeChild(helpButton);
+    }
 
     // enable interactive Tower generation and upgrade
     newTower(scene, physicsEngine);

@@ -42,6 +42,7 @@ function generateMaterials(scene: Scene) {
   // enemyMaterial.wireframe = true;
   enemyMaterial.diffuseColor = enemyGlobals.livingColor;
   enemyMaterial.ambientColor = mapGlobals.ambientColor;
+  enemyMaterial.specularColor = mapGlobals.ambientColor;
 
   const damagedMaterial = new StandardMaterial("damagedMaterial", scene);
   damagedMaterial.diffuseColor = enemyGlobals.deadColor;
