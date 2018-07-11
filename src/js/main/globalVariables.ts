@@ -57,10 +57,10 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 45,
+  range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 40000,
+  lifeTime: 30000,
   index: 0,
   disposeTime: 6000, // chance to keep towers before dispose
   allPositions: [] as Position2D[]
@@ -70,16 +70,16 @@ const enemyGlobals = {
   minNumber: 1, // for one generation
   maxNumber: 8, // for one generation
   limit: 0, // wait for this enemy count before next wave
-  originHeight: 3,
+  originHeight: 4,
   generationRate: 8000, // milliseconds
-  decisionRate: 150, // milliseconds
-  speed: 15000,
-  mass: 7000,
+  decisionRate: 100, // milliseconds
+  speed: 10000,
+  mass: 6000,
   restitution: 0.8,
   jumpForce: 60,
-  friction: 0.5,
-  decayRate: 25, // hitpoints per decision
-  initialDecayRate: 25, // hitpoints per decision
+  friction: 0.8,
+  decayRate: 15, // hitpoints per decision
+  initialDecayRate: 15, // hitpoints per decision
   baseHitPoints: 10000,
   deadHitPoints: 0,
   fragments: 1,
@@ -97,7 +97,7 @@ const enemyGlobals = {
 const economyGlobals = {
   initialBalance: 30000,
   currentBalance: 1,
-  maxBalance: 500000,
+  maxBalance: 600000,
   restartMessage: false,
   bankSize: 40,
   defeats: 0,

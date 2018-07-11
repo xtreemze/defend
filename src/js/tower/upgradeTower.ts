@@ -53,7 +53,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
             break;
           case 3:
             newLevel = 3;
-            // new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+            new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
             break;
 
           default:
