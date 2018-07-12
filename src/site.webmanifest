@@ -1,0 +1,11 @@
+{
+  "name": "Defend",
+  "short_name": "Defend",
+  "start_url": "https://xtreemze.github.io/defend/",
+  "display": "standalone",
+  "version": "0.0.1",
+  "lang": "English",
+  "description":
+    "Procedural Cross-Platform 3D Tower Defense WebGame with Physics and AI and Procedural Sound",
+  "orientation": "undefined"
+}

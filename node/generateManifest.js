@@ -10,7 +10,7 @@ const content = `{
   "version": "${version}",
   "lang" : "English",
   "description" : "Procedural Cross-Platform 3D Tower Defense WebGame with Physics and AI and Procedural Sound",
-  "orientation" : "undefined",
+  "orientation" : "undefined"
 }
 `;
 
