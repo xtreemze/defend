@@ -8,7 +8,7 @@ const content = `{
   "start_url": "https://xtreemze.github.io/defend/",
   "display": "standalone",
   "version": "${version}",
-  "lang" : "English",
+  "lang" : "en_US",
   "description" : "Procedural Cross-Platform 3D Tower Defense WebGame with Physics and AI and Procedural Sound",
   "orientation" : "undefined"
 }
