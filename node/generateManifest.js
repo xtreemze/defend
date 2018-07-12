@@ -5,7 +5,7 @@ const version = process.env.npm_package_version;
 const content = `{
   "name": "Defend",
   "short_name": "Defend",
-  "start_url": "./",
+  "start_url": "https://xtreemze.github.io/defend/",
   "display": "standalone",
   "version": "${version}",
   "lang" : "English",
