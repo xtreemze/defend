@@ -21,18 +21,18 @@ function titleScreen(
   title.setAttribute(
     "style",
     `
-      position: absolute;
-      color: ${projectileGlobals.livingColor.toHexString()};
-      top: 30vh;
-      width: 100vw;
-      text-align: center;
-      margin-top: -1.5rem;
-      font-weight: 500;
-      font-family: fantasy;
-      font-size: 4rem;
-      user-select: none;
-      text-shadow: black 0px 0px 18px;
-      `
+    position: absolute;
+    color: ${projectileGlobals.livingColor.toHexString()};
+    top: 30vh;
+    width: 100vw;
+    text-align: center;
+    margin-top: -1.5rem;
+    font-weight: 500;
+    font-family: fantasy;
+    font-size: 4rem;
+    user-select: none;
+    text-shadow: black 0px 0px 18px;
+    `
   );
 
   const startButton = document.createElement("button") as HTMLButtonElement;
@@ -41,22 +41,22 @@ function titleScreen(
   startButton.setAttribute(
     "style",
     `
-      position: absolute;
-      background-color: ${mapGlobals.sceneAmbient.toHexString()};
-      color: ${projectileGlobals.livingColor.toHexString()};
-      border-color: ${projectileGlobals.livingColor.toHexString()};
-      bottom: 20vh;
-      left: 50vw;
-      width: 6rem;
-      height: 6rem;
-      margin-bottom: 1.5rem;
-      margin-left: -3rem;
-      border-radius: 6rem;
-      font-weight: 600;
-      outline: none;
-      font-size: 3rem;
-      user-select: none;
-      `
+    position: absolute;
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    border-color: ${projectileGlobals.livingColor.toHexString()};
+    bottom: 20vh;
+    left: 50vw;
+    width: 6rem;
+    height: 6rem;
+    margin-bottom: 1.5rem;
+    margin-left: -3rem;
+    border-radius: 6rem;
+    font-weight: 600;
+    outline: none;
+    font-size: 3rem;
+    user-select: none;
+    `
   );
 
   const helpButton = document.createElement("button") as HTMLButtonElement;
@@ -65,29 +65,29 @@ function titleScreen(
   helpButton.setAttribute(
     "style",
     `
-      position: absolute;
-      background-color: ${mapGlobals.sceneAmbient.toHexString()};
-      color: ${projectileGlobals.livingColor.toHexString()};
-      border-color: ${projectileGlobals.livingColor.toHexString()};
-      bottom: 8vh;
-      left: 50vw;
-      width: 3rem;
-      height: 3rem;
-      margin-bottom: 1.5rem;
-      margin-left: -1.5rem;
-      border-radius: 3rem;
-      font-weight: 600;
-      outline: none;
-      font-size: 1.5rem;
-      user-select: none;
-      `
+    position: absolute;
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    border-color: ${projectileGlobals.livingColor.toHexString()};
+    bottom: 8vh;
+    left: 50vw;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.5rem;
+    margin-left: -1.5rem;
+    border-radius: 3rem;
+    font-weight: 600;
+    outline: none;
+    font-size: 1.5rem;
+    user-select: none;
+    `
   );
 
   const help = document.createElement("div") as HTMLDivElement;
-  help.innerHTML = `<p>Tap on the grid to deploy towers and tap on the towers to upgrade them.</p><p>Absorb energy from the enemy to fill our energy bank or survive the enemy waves for victory.</p><p>Keep the spheres away from the bank to avoid defeat!</p> <button id="okHelp" style="
-      background-color: ${mapGlobals.sceneAmbient.toHexString()};
-      color: ${projectileGlobals.livingColor.toHexString()};
-      border-color: ${projectileGlobals.livingColor.toHexString()};
+  help.innerHTML = `<p>To accomplish victory: Absorb energy from the enemy to fill your energy bank or survive all the enemy waves.</p><p>Tap the grid to strategically deploy or upgrade towers.</p><p>You will be defeated if your energy bank is depleted!</p> <button id="okHelp" style="
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    border-color: ${projectileGlobals.livingColor.toHexString()};
     width: 100%;
     height: 6rem;
     border-radius: 6rem;
@@ -96,7 +96,7 @@ function titleScreen(
     font-size: 3vh;
     text-align: center;
     user-select: none;
-    ">OK!</button>`;
+    ">Defend!</button>`;
   help.id = "help";
   help.setAttribute("style", `
     position: absolute;
