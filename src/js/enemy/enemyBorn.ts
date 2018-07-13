@@ -22,6 +22,9 @@ function enemyBorn(
   diameter: number,
   level: number = 1 | 2 | 3
 ) {
+  const enemyMass = (enemyGlobals.mass * level) as number;
+  console.log(enemyMass);
+
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
 
   const hitPointsMeter = MeshBuilder.CreateIcoSphere(
@@ -43,7 +46,7 @@ function enemyBorn(
     sphereMesh,
     PhysicsImpostor.SphereImpostor,
     {
-      mass: enemyGlobals.mass * level ** level,
+      mass: enemyMass,
       restitution: enemyGlobals.restitution,
       friction: enemyGlobals.friction
     },
@@ -59,7 +62,10 @@ function enemyBorn(
 
   sphereMesh.registerAfterRender(() => {
     if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
-      if (sphereMesh.position.y < 0) {
+      if (
+        sphereMesh.position.y < 0 &&
+        sphereMesh.hitPoints < (enemyGlobals.baseHitPoints * level) / 2
+      ) {
         destroyEnemy(sphereMesh, scene, level);
       }
       deltaTime = Date.now();

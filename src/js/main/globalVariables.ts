@@ -12,7 +12,7 @@ const mapGlobals = {
   optimizerOn: false,
   diagnosticsOn: false,
   demoSphere: false,
-  size: 200, // map radius
+  size: 160, // map radius
   cameraCutDelay: 4200,
   rotateCameras: false,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
@@ -72,8 +72,8 @@ const enemyGlobals = {
   limit: 0, // wait for this enemy count before next wave
   originHeight: 7,
   generationRate: 8000, // milliseconds
-  decisionRate: 80, // milliseconds
-  speed: 15000,
+  decisionRate: 100, // milliseconds
+  speed: 12000,
   mass: 9000,
   restitution: 0.8,
   jumpForce: 60,

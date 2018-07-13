@@ -18,7 +18,7 @@ const enemyWaves = (scene: Scene) => {
   const checkEnemyY = setInterval(() => {
     if (economyGlobals.restartMessage === false) {
       enemyGlobals.allEnemies.forEach((enemy: any) => {
-        if (enemy.position.y < 0) {
+        if (enemy.position.y < -10) {
           enemy.hitPoints = 0;
           destroyEnemy(enemy, scene);
           enemy.dispose();
