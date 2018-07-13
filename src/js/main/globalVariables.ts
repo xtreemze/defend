@@ -47,7 +47,7 @@ const projectileGlobals = {
 const towerGlobals = {
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
-  rateOfFire: 170, // milliseconds between each shot,
+  rateOfFire: 180, // milliseconds between each shot,
   height: 3,
   mass: 0,
   restitution: 0,
@@ -73,11 +73,11 @@ const enemyGlobals = {
   originHeight: 4,
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
-  speed: 10000,
+  speed: 14000,
   mass: 8000,
   restitution: 0.8,
   jumpForce: 60,
-  friction: 0.8,
+  friction: 0.5,
   decayRate: 20, // hitpoints per decision
   initialDecayRate: 20, // hitpoints per decision
   baseHitPoints: 10000,

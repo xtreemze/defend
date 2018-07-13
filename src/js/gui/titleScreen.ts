@@ -36,7 +36,7 @@ function titleScreen(
   );
 
   const startButton = document.createElement("button") as HTMLButtonElement;
-  startButton.innerHTML = `&#x1f50a;`;
+  startButton.innerHTML = `&#9654;`;
   startButton.id = "startButton";
   startButton.setAttribute(
     "style",
@@ -127,7 +127,7 @@ function titleScreen(
   const noSoundTimer = setTimeout(() => {
     mapGlobals.soundOn = false;
     startGame();
-  }, 3000);
+  }, 9000);
 
   // Start button behavior
   startButton.addEventListener("click", () => {
