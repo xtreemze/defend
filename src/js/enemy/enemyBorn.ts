@@ -43,7 +43,7 @@ function enemyBorn(
     sphereMesh,
     PhysicsImpostor.SphereImpostor,
     {
-      mass: enemyGlobals.mass * (level * level),
+      mass: enemyGlobals.mass * level ** level,
       restitution: enemyGlobals.restitution,
       friction: enemyGlobals.friction
     },
@@ -67,7 +67,7 @@ function enemyBorn(
         sphereMesh.position.y > diameter / 2.5 &&
         sphereMesh.position.y < diameter
       ) {
-        enemyAi(sphereMesh, decide(sphereMesh));
+        enemyAi(sphereMesh, decide(sphereMesh), level);
       }
 
       checkHitPoints(scene, sphereMesh, level, hitPointsMeter);

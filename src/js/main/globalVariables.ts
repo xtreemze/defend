@@ -52,7 +52,7 @@ const towerGlobals = {
   mass: 0,
   restitution: 0,
   baseHitPoints: 10000,
-  baseCost: 2000,
+  baseCost: 2500,
   allTowers: [] as Mesh[],
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
@@ -70,11 +70,11 @@ const enemyGlobals = {
   minNumber: 1, // for one generation
   maxNumber: 8, // for one generation
   limit: 0, // wait for this enemy count before next wave
-  originHeight: 4,
+  originHeight: 7,
   generationRate: 8000, // milliseconds
-  decisionRate: 100, // milliseconds
-  speed: 14000,
-  mass: 8000,
+  decisionRate: 80, // milliseconds
+  speed: 15000,
+  mass: 9000,
   restitution: 0.8,
   jumpForce: 60,
   friction: 0.5,
