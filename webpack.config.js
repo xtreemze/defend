@@ -1,6 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const OfflinePlugin = require("offline-plugin");
-const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
+// const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 
 module.exports = function e() {
   return {
@@ -144,23 +144,23 @@ module.exports = function e() {
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
       }),
-      new HtmlMinifierPlugin({
-        minifyCSS: true,
-        minifyJS: true,
-        removeComments: true,
-        removeEmptyAttributes: true,
-        removeEmtpyElements: false,
-        removeOptionalTags: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        removeStyleLinkTypeAttributes: true,
-        sortAttributes: true,
-        sortClassName: true,
-        minifyURLs: true,
-        collapseWhitespace: true,
-        collapseInlineTagWhitespace: true,
-        collapseBooleanAttributes: true
-      }),
+      // new HtmlMinifierPlugin({
+      //   minifyCSS: true,
+      //   minifyJS: true,
+      //   removeComments: true,
+      //   removeEmptyAttributes: true,
+      //   removeEmtpyElements: false,
+      //   removeOptionalTags: true,
+      //   removeRedundantAttributes: true,
+      //   useShortDoctype: true,
+      //   removeStyleLinkTypeAttributes: true,
+      //   sortAttributes: true,
+      //   sortClassName: true,
+      //   minifyURLs: true,
+      //   collapseWhitespace: true,
+      //   collapseInlineTagWhitespace: true,
+      //   collapseBooleanAttributes: true
+      // }),
       new OfflinePlugin({
         // externals: [],
         caches: "all",
