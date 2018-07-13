@@ -12,7 +12,7 @@ const mapGlobals = {
   optimizerOn: false,
   diagnosticsOn: false,
   demoSphere: false,
-  size: 160, // map radius
+  size: 200, // map radius
   cameraCutDelay: 4200,
   rotateCameras: false,
   rotationSpeedMultiplier: 16, // higher is slower camera rotation
@@ -34,9 +34,9 @@ const mapGlobals = {
 };
 
 const projectileGlobals = {
-  lifeTime: 2000, // milliseconds
-  speed: 10000,
-  mass: 80,
+  lifeTime: 1500, // milliseconds
+  speed: 8000,
+  mass: 50,
   baseHitPoints: 80,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
@@ -74,12 +74,12 @@ const enemyGlobals = {
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
   speed: 10000,
-  mass: 6000,
+  mass: 8000,
   restitution: 0.8,
   jumpForce: 60,
   friction: 0.8,
-  decayRate: 15, // hitpoints per decision
-  initialDecayRate: 15, // hitpoints per decision
+  decayRate: 20, // hitpoints per decision
+  initialDecayRate: 20, // hitpoints per decision
   baseHitPoints: 10000,
   deadHitPoints: 0,
   fragments: 1,
@@ -95,9 +95,9 @@ const enemyGlobals = {
 };
 
 const economyGlobals = {
-  initialBalance: 30000,
+  initialBalance: 50000,
   currentBalance: 1,
-  maxBalance: 600000,
+  maxBalance: 900000,
   restartMessage: false,
   bankSize: 40,
   defeats: 0,
