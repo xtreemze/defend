@@ -98,7 +98,9 @@ function titleScreen(
     user-select: none;
     ">Defend!</button>`;
   help.id = "help";
-  help.setAttribute("style", `
+  help.setAttribute(
+    "style",
+    `
     position: absolute;
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
@@ -112,7 +114,8 @@ function titleScreen(
     user-select: none;
     margin: 10%;
     text-align: center;
-      `);
+      `
+  );
 
   const canvasParent = canvas.parentNode as Node;
 
@@ -139,6 +142,10 @@ function titleScreen(
 
   // Help button behavior
   helpButton.addEventListener("click", () => {
+    // Enable sound
+    mapGlobals.soundOn = true;
+    FX._tone.context.resume();
+    FX._tone.Master.mute = false;
     clearTimeout(noSoundTimer);
     const titleParent = title.parentNode as Node;
     titleParent.removeChild(title);

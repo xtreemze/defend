@@ -53,10 +53,70 @@ function displayMessage(scene: Scene, message: string, icon: string) {
       user-select: none;
       `
   );
+
+  const helpButton = document.createElement("button") as HTMLButtonElement;
+  helpButton.innerHTML = `?`;
+  helpButton.id = "helpButton";
+  helpButton.setAttribute(
+    "style",
+    `
+    position: absolute;
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    border-color: ${projectileGlobals.livingColor.toHexString()};
+    bottom: 8vh;
+    left: 50vw;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.5rem;
+    margin-left: -1.5rem;
+    border-radius: 3rem;
+    font-weight: 600;
+    outline: none;
+    font-size: 1.5rem;
+    user-select: none;
+    `
+  );
+
+  const help = document.createElement("div") as HTMLDivElement;
+  help.innerHTML = `<p>To accomplish victory: Absorb energy from the enemy to fill your energy bank or survive all the enemy waves.</p><p>Tap the grid to strategically deploy or upgrade towers.</p><p>You will be defeated if your energy bank is depleted!</p> <button id="okHelp" style="
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    border-color: ${projectileGlobals.livingColor.toHexString()};
+    width: 100%;
+    height: 6rem;
+    border-radius: 6rem;
+    font-weight: 600;
+    outline: none;
+    font-size: 3vh;
+    text-align: center;
+    user-select: none;
+    ">Defend!</button>`;
+  help.id = "help";
+  help.setAttribute(
+    "style",
+    `
+    position: absolute;
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    padding: 10%;
+    width: 60%;
+    border-radius: 1rem;
+    font-weight: 100;
+    outline: none;
+    border: 1px solid ${projectileGlobals.livingColor.toHexString()};
+    font-size: 3vh;
+    user-select: none;
+    margin: 10%;
+    text-align: center;
+      `
+  );
+
   if (canvas !== null) {
     const canvasParent = canvas.parentNode as Node;
     canvasParent.insertBefore(title, canvas);
     canvasParent.insertBefore(startButton, canvas);
+    canvasParent.insertBefore(helpButton, canvas);
 
     // Start button behavior
     startButton.addEventListener("click", () => {
@@ -76,7 +136,47 @@ function displayMessage(scene: Scene, message: string, icon: string) {
       titleParent.removeChild(title);
       const startButtonParent = startButton.parentNode as Node;
       startButtonParent.removeChild(startButton);
+
+      // Clear Help Button
+      const help = document.getElementById("helpButton") as HTMLDivElement;
+      const helpParent = help.parentNode as Node;
+      helpParent.removeChild(help);
       rampUp(scene);
+    });
+
+    // Help button behavior
+    helpButton.addEventListener("click", () => {
+      const titleParent = title.parentNode as Node;
+      titleParent.removeChild(title);
+
+      const startButtonParent = startButton.parentNode as Node;
+      startButtonParent.removeChild(startButton);
+
+      canvasParent.insertBefore(help, canvas);
+      const helpButtonParent = helpButton.parentNode as Node;
+      helpButtonParent.removeChild(helpButton);
+
+      const okHelp = document.getElementById("okHelp") as HTMLButtonElement;
+
+      okHelp.addEventListener("click", function() {
+        const help = document.getElementById("help") as HTMLDivElement;
+        const helpParent = help.parentNode as Node;
+        helpParent.removeChild(help);
+
+        towerGlobals.allTowers.forEach(tower => {
+          tower.dispose();
+        });
+
+        // Enemy waves start
+        enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
+        enemyGlobals.currentWave = 0;
+        economyGlobals.restartMessage = false;
+
+        enemyWaves(scene);
+
+        // Button and GUI
+        rampUp(scene);
+      });
     });
   }
 }
