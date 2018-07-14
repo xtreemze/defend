@@ -96,8 +96,8 @@ const enemyGlobals = {
 
 const economyGlobals = {
   initialBalance: 20000,
-  currentBalance: 1,
   maxBalance: 30000,
+  currentBalance: 1,
   restartMessage: false,
   bankSize: 40,
   defeats: 0,
