@@ -95,7 +95,7 @@ const enemyGlobals = {
 };
 
 const economyGlobals = {
-  initialBalance: 50000,
+  initialBalance: 20000,
   currentBalance: 1,
   maxBalance: 30000,
   restartMessage: false,
