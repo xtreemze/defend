@@ -32,11 +32,11 @@ export function hitEffect(
           // hitpoints
           enemy.hitPoints -= projectile.hitPoints;
           economyGlobals.currentBalance += projectile.hitPoints;
-          updateEconomy(scene);
-        }
 
-        if (economyGlobals.currentBalance > economyGlobals.maxBalance) {
-          economyGlobals.currentBalance = economyGlobals.maxBalance;
+          if (economyGlobals.currentBalance > economyGlobals.maxBalance) {
+            economyGlobals.currentBalance = economyGlobals.maxBalance;
+          }
+          updateEconomy(scene);
         }
 
         // color
