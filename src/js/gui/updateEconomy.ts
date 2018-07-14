@@ -9,7 +9,7 @@ import { waves } from "../enemy/waves";
 import { victory, defeated } from "../main/sound";
 
 export function updateEconomy(scene: Scene, currencyTower?: Mesh) {
-  // on defeat
+  // Defeat Conditions
   if (
     economyGlobals.currentBalance < 0 &&
     economyGlobals.restartMessage === false
@@ -24,10 +24,10 @@ export function updateEconomy(scene: Scene, currencyTower?: Mesh) {
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
 
-  // On victory
+  // Victory Conditions
   if (
-    (economyGlobals.currentBalance > economyGlobals.maxBalance &&
-      economyGlobals.restartMessage === false) ||
+    // (economyGlobals.currentBalance > economyGlobals.maxBalance &&
+    //   economyGlobals.restartMessage === false) ||
     (enemyGlobals.currentWave >= waves.length &&
       economyGlobals.restartMessage === false)
   ) {

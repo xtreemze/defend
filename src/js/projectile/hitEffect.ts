@@ -35,6 +35,10 @@ export function hitEffect(
           updateEconomy(scene);
         }
 
+        if (economyGlobals.currentBalance > economyGlobals.maxBalance) {
+          economyGlobals.currentBalance = economyGlobals.maxBalance;
+        }
+
         // color
         setTimeout(() => {
           enemy.material = materialGlobals.hitMaterial;
@@ -42,8 +46,7 @@ export function hitEffect(
         enemy.material = materialGlobals.damagedMaterial;
 
         // sound
-  damage(enemy);
-
+        damage(enemy);
       }
     );
   }

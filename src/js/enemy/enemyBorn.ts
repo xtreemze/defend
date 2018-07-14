@@ -22,7 +22,7 @@ function enemyBorn(
   diameter: number,
   level: number = 1 | 2 | 3
 ) {
-  const enemyMass = (enemyGlobals.mass * level) as number;
+  const enemyMass = (enemyGlobals.mass * level * level) as number;
 
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
 

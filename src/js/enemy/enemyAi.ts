@@ -5,28 +5,30 @@ import { EnemySphere } from "./enemyBorn";
 
 function vector(enemy: EnemySphere, direction: string = "", level: number) {
   if (enemy.physicsImpostor !== null) {
+    const speed = enemyGlobals.speed * level;
+
     switch (direction) {
       case "down":
         enemy.physicsImpostor.applyImpulse(
-          new Vector3(0, 0, enemyGlobals.speed * level * -1),
+          new Vector3(0, 0, speed * -1),
           enemy.getAbsolutePosition()
         );
         break;
       case "right":
         enemy.physicsImpostor.applyImpulse(
-          new Vector3(enemyGlobals.speed * level, 0, 0),
+          new Vector3(speed, 0, 0),
           enemy.getAbsolutePosition()
         );
         break;
       case "up":
         enemy.physicsImpostor.applyImpulse(
-          new Vector3(0, 0, enemyGlobals.speed * level),
+          new Vector3(0, 0, speed),
           enemy.getAbsolutePosition()
         );
         break;
       case "left":
         enemy.physicsImpostor.applyImpulse(
-          new Vector3(enemyGlobals.speed * level * -1, 0, 0),
+          new Vector3(speed * -1, 0, 0),
           enemy.getAbsolutePosition()
         );
         break;
