@@ -12,7 +12,8 @@ import {
 import {
   enemyGlobals,
   projectileGlobals,
-  materialGlobals
+  materialGlobals,
+  economyGlobals
 } from "../main/globalVariables";
 import positionGenerator from "../utility/positionGenerator";
 
@@ -92,13 +93,6 @@ export function fragment(
       }
     };
     fragment.registerAfterRender(disposeFragment);
-
-    // setTimeout(() => {
-    //   fragment.dispose();
-    //   if (fragment.physicsImpostor !== null) {
-    //     fragment.physicsImpostor.dispose();
-    //   }
-    // }, projectileGlobals.lifeTime);
   }
 }
 
@@ -112,6 +106,11 @@ function enemyGenerator(
     let newLocation = positionGenerator(waveOrigin);
     while (
       enemyGlobals.occupiedSpaces.find(
+        existingLocation =>
+          existingLocation[0] === newLocation.x &&
+          existingLocation[1] === newLocation.z
+      ) &&
+      economyGlobals.occupiedSpaces.find(
         existingLocation =>
           existingLocation[0] === newLocation.x &&
           existingLocation[1] === newLocation.z
