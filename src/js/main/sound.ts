@@ -12,7 +12,6 @@ function onDestroy(enemyPosition: Vector3, level: number) {
     mapGlobals.simultaneousSounds += 1;
 
     if (mapGlobals.soundOn) {
-      setTimeout(() => {
         FX.play({
           volume: 40,
           attack: 0.01,
@@ -28,7 +27,6 @@ function onDestroy(enemyPosition: Vector3, level: number) {
           soundZ: enemyPosition.z,
           rolloff: 0.3
         } as FX.audioParams);
-      }, 1);
     }
   }
 }
@@ -42,7 +40,6 @@ function shoot(originMesh: Mesh, level: number) {
     mapGlobals.projectileSounds += 1;
 
     if (mapGlobals.soundOn) {
-      setTimeout(() => {
         FX.play({
           volume: 0.8,
           attack: 0.1,
@@ -59,7 +56,6 @@ function shoot(originMesh: Mesh, level: number) {
           soundZ: originMesh.position.z,
           rolloff: 0.03
         } as FX.audioParams);
-      }, 1);
     }
   }
 }
@@ -71,7 +67,6 @@ function damage(enemy: EnemySphere) {
     }, mapGlobals.soundDelay);
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
-      setTimeout(() => {
         FX.play({
           volume: 30,
           attack: 0.2,
@@ -88,7 +83,6 @@ function damage(enemy: EnemySphere) {
           soundZ: enemy.position.z,
           rolloff: 0.3
         } as FX.audioParams);
-      }, 1);
     }
   }
 }
@@ -102,7 +96,6 @@ function damageCurrency(enemy: EnemySphere) {
     mapGlobals.simultaneousSounds += 1;
 
     if (mapGlobals.soundOn) {
-      setTimeout(() => {
         FX.play({
           volume: 50,
           release: 0.1,
@@ -117,7 +110,6 @@ function damageCurrency(enemy: EnemySphere) {
           soundZ: enemy.position.z,
           rolloff: 0.3
         } as FX.audioParams);
-      }, 1);
     }
   }
 }

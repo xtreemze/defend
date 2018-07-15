@@ -91,6 +91,10 @@ function displayEconomy(scene: Scene) {
   hitPointsMeter.material = materialGlobals.enemyMaterial;
 
   rampUp(scene, currencyTower);
+
+  scene.registerAfterRender(() => {
+    updateEconomy(scene);
+  });
 }
 
 function rampUp(scene: Scene, currencyTower?: Mesh) {
@@ -98,7 +102,7 @@ function rampUp(scene: Scene, currencyTower?: Mesh) {
 
   scene.registerAfterRender(function interval1() {
     economyGlobals.currentBalance += economyGlobals.rampUpValue;
-    updateEconomy(scene, currencyTower);
+
     if (
       economyGlobals.currentBalance >= economyGlobals.initialBalance ||
       economyGlobals.currentBalance < 0
@@ -107,4 +111,4 @@ function rampUp(scene: Scene, currencyTower?: Mesh) {
     }
   });
 }
-export { displayEconomy, updateEconomy, rampUp };
+export { displayEconomy, rampUp };

@@ -1,6 +1,5 @@
 import { Scene, Material } from "babylonjs";
 import { rampLight } from "./rampLight";
-import { updateEconomy } from "../gui/updateEconomy";
 import {
   economyGlobals,
   materialGlobals,
@@ -26,7 +25,6 @@ function currencyCollide(enemy: EnemySphere, scene: Scene) {
         ) {
           economyGlobals.currentBalance -= enemy.hitPoints;
 
-          updateEconomy(scene);
 
           // color
           economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;

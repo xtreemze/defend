@@ -8,7 +8,6 @@ import {
   mapGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
-import { updateEconomy } from "../gui/updateEconomy";
 import { enemyGenerator } from "./Enemy";
 import { destroyEnemy } from "./destroyEnemy";
 
@@ -51,7 +50,6 @@ const enemyWaves = (scene: Scene) => {
 
       enemyGlobals.currentWave += 1;
 
-      updateEconomy(scene); // update GUI to reflect new wave number
 
       // Generate enemies for the wave
 

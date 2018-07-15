@@ -22,7 +22,6 @@ import {
 import { destroyTower, Tower } from "./Tower";
 import { trackSpheres } from "./trackSpheres";
 import { removeTower, addTower } from "../main/sound";
-import { updateEconomy } from "../gui/updateEconomy";
 import { Position2D } from "../enemy/Enemy";
 
 interface LiveTower extends Mesh {
@@ -224,7 +223,7 @@ function towerBorn(
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
           () => {
-            window.clearTimeout(disposeTimeout2)
+            window.clearTimeout(disposeTimeout2);
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
           },
           undefined,
@@ -260,7 +259,6 @@ function towerBorn(
   towerGlobals.allTowers.unshift(tower);
 
   economyGlobals.currentBalance -= towerGlobals.baseCost * level;
-  updateEconomy(scene);
 }
 
 export { TowerTurret, towerBorn };

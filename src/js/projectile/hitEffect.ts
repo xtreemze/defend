@@ -5,7 +5,6 @@ import {
   materialGlobals
 } from "../main/globalVariables";
 import { damage } from "../main/sound";
-import { updateEconomy } from "../gui/updateEconomy";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { LiveProjectile } from "./startLife";
 
@@ -37,14 +36,14 @@ export function hitEffect(
           if (economyGlobals.currentBalance > economyGlobals.maxBalance) {
             economyGlobals.currentBalance = economyGlobals.maxBalance;
           }
-          updateEconomy(scene);
         }
-
-        // color
-        setTimeout(() => {
-          enemy.material = materialGlobals.hitMaterial;
-        }, 20);
-        enemy.material = materialGlobals.damagedMaterial;
+        if (enemy.material === materialGlobals.hitMaterial) {
+          // color
+          setTimeout(() => {
+            enemy.material = materialGlobals.hitMaterial;
+          }, 20);
+          enemy.material = materialGlobals.damagedMaterial;
+        }
 
         // sound
         damage(enemy);
