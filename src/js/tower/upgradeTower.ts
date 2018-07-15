@@ -36,10 +36,8 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         z: pickResult.pickedMesh.position.z
       } as Position2D;
       // determine current and previous tower level
-      const currentLevel = parseInt(pickResult.pickedMesh.name[10]);
 
       let newLevel = 0;
-      pickResult.pickedMesh.dispose();
       towerGlobals.allPositions = towerBasePositions(scene);
       if (
         towerGlobals.allPositions.find(
@@ -48,6 +46,8 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
             existingLocation.z === samePosition.z
         ) === undefined
       ) {
+        pickResult.pickedMesh.dispose();
+
         switch (currentLevel) {
           case 1:
             newLevel = 2;
@@ -60,6 +60,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           case 3:
             newLevel = 3;
             new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+
             break;
 
           default:
@@ -70,13 +71,14 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
       economyGlobals.currentBalance <=
       towerGlobals.baseCost * currentLevel + 1
     ) {
-      // color
+      // color when insufficient funds
       economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
       setTimeout(() => {
         economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
       }, 10);
 
-      removeTower(economyGlobals.currencyMesh, currentLevel + 1); // sound
+      // sound when insufficient funds
+      removeTower(economyGlobals.currencyMesh, currentLevel + 1);
     }
   }, PointerEventTypes._POINTERTAP);
 }

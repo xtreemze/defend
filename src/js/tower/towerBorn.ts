@@ -53,11 +53,14 @@ function towerBorn(
     default:
       const deltaTime = Date.now();
       const disposeTower = () => {
-        if (Date.now() - deltaTime > towerGlobals.lifeTime && !tower.isDisposed()) {
+        if (
+          Date.now() - deltaTime > towerGlobals.lifeTime &&
+          !tower.isDisposed()
+        ) {
           tower.unregisterAfterRender(disposeTower);
           tower.material = materialGlobals.hitMaterial;
           removeTower(tower, level); // sound
-          setTimeout(() => {
+          const disposeTimeout = setTimeout(() => {
             removeTower(tower, level); // sound
             tower.dispose();
           }, towerGlobals.disposeTime);
@@ -198,14 +201,18 @@ function towerBorn(
       const deltaTime2 = Date.now();
 
       const disposeTower2 = () => {
-        if (Date.now() - deltaTime2 > towerGlobals.lifeTime && !tower.isDisposed()) {
+        if (
+          Date.now() - deltaTime2 > towerGlobals.lifeTime &&
+          !tower.isDisposed()
+        ) {
           tower.unregisterAfterRender(disposeTower2);
           tower.material = materialGlobals.hitMaterial;
           removeTower(tower, level); // sound
-          setTimeout(() => {
+          const disposeTimeout2 = setTimeout(() => {
             removeTower(tower, level); // sound
             tower.dispose();
-            economyGlobals.currentBalance += (level - 1) * towerGlobals.baseCost;
+            economyGlobals.currentBalance +=
+              (level - 1) * towerGlobals.baseCost;
             new Tower(level - 1, tower.position, scene, physicsEngine);
           }, towerGlobals.disposeTime);
         }

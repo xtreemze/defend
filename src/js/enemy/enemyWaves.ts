@@ -18,7 +18,7 @@ const enemyWaves = (scene: Scene) => {
   const checkEnemyY = setInterval(() => {
     if (economyGlobals.restartMessage === false) {
       enemyGlobals.allEnemies.forEach((enemy: any) => {
-        if (enemy.position.y < -10) {
+        if (enemy.position.y < -5) {
           enemy.hitPoints = 0;
           destroyEnemy(enemy, scene);
           enemy.dispose();
@@ -27,7 +27,7 @@ const enemyWaves = (scene: Scene) => {
     } else if (economyGlobals.restartMessage === true) {
       clearInterval(checkEnemyY);
     }
-  }, 5000);
+  }, 4000);
 
   scene.registerAfterRender(() => {
     if (
