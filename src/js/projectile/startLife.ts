@@ -54,11 +54,22 @@ export function startLife(
   const clonedRotation = originMesh.rotation.clone();
   projectile.rotation.copyFrom(clonedRotation);
 
-  const projectileLifetime = setTimeout(() => {
-    destroyProjectile(projectile, physicsEngine);
-  }, projectileGlobals.lifeTime);
+  const deltaTime = Date.now();
 
-  destroyOnCollide(scene, projectile, physicsEngine, projectileLifetime); // Detects collissions with enemies
+  const projectileExpires = () => {
+    if (Date.now() - deltaTime > projectileGlobals.lifeTime) {
+      projectile.unregisterAfterRender(projectileExpires);
+      destroyProjectile(projectile, physicsEngine);
+    }
+  };
+
+  projectile.registerAfterRender(projectileExpires);
+
+  // const projectileLifetime = setTimeout(() => {
+  //   destroyProjectile(projectile, physicsEngine);
+  // }, projectileGlobals.lifeTime);
+
+  destroyOnCollide(scene, projectile, physicsEngine, projectileExpires); // Detects collissions with enemies
 
   impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 }

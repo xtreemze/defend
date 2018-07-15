@@ -8,17 +8,16 @@ function destroyOnCollide(
   scene: Scene,
   projectile: LiveProjectile,
   physicsEngine: PhysicsEngine,
-  projectileLifetime: number
+  projectileExpires: any
 ) {
   if (projectile.physicsImpostor !== null) {
     projectile.physicsImpostor.registerOnPhysicsCollide(
       mapGlobals.allImpostors as PhysicsImpostor[],
       (collider: PhysicsImpostor) => {
         explosion(scene, collider.getObjectCenter());
-        clearTimeout(projectileLifetime);
-        setTimeout(() => {
-          destroyProjectile(projectile, physicsEngine);
-        }, 3);
+        // clearTimeout(projectileLifetime);
+        projectile.unregisterAfterRender(projectileExpires);
+        destroyProjectile(projectile, physicsEngine);
       }
     );
   }

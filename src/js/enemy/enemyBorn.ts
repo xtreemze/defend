@@ -3,7 +3,8 @@ import enemyAi from "./enemyAi";
 import {
   enemyGlobals,
   mapGlobals,
-  materialGlobals
+  materialGlobals,
+  projectileGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
 import { Position2D } from "./Enemy";
@@ -70,7 +71,8 @@ function enemyBorn(
       deltaTime = Date.now();
       if (
         sphereMesh.position.y > diameter / 2.5 &&
-        sphereMesh.position.y < diameter
+        sphereMesh.position.y < diameter &&
+        sphereMesh.hitPoints > projectileGlobals.baseHitPoints
       ) {
         enemyAi(sphereMesh, decide(sphereMesh), level);
       }

@@ -49,7 +49,7 @@ function trackSpheres(
           deltaTime = Date.now();
           setTimeout(() => {
             flash.setEnabled(false);
-          }, 30);
+          }, 20);
           flash.setEnabled(true);
 
           shoot(flash, level);

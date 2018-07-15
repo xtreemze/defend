@@ -78,7 +78,7 @@ const enemyGlobals = {
   restitution: 0.8,
   jumpForce: 60,
   friction: 0.5,
-  decayRate: 20, // hitpoints per decision
+  decayRate: 40, // hitpoints per decision
   initialDecayRate: 20, // hitpoints per decision
   baseHitPoints: 10000,
   deadHitPoints: 0,
@@ -95,7 +95,9 @@ const enemyGlobals = {
 };
 
 const economyGlobals = {
-  initialBalance: 20000,
+  rampUpValue: 400,
+  energyRecoveryRatio: 0.25,
+  initialBalance: 30000,
   maxBalance: 30000,
   currentBalance: 1,
   restartMessage: false,

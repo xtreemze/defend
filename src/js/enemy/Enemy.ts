@@ -81,12 +81,24 @@ export function fragment(
     fragment.physicsImpostor.setLinearVelocity(enemyLinearVelocity);
     fragment.physicsImpostor.setAngularVelocity(enemyAngularVelocity);
 
-    setTimeout(() => {
-      fragment.dispose();
-      if (fragment.physicsImpostor !== null) {
-        fragment.physicsImpostor.dispose();
+    let deltaTime = Date.now();
+    const disposeFragment = () => {
+      if (Date.now() - deltaTime > projectileGlobals.lifeTime) {
+        fragment.unregisterAfterRender(disposeFragment);
+        fragment.dispose();
+        if (fragment.physicsImpostor !== null) {
+          fragment.physicsImpostor.dispose();
+        }
       }
-    }, projectileGlobals.lifeTime);
+    };
+    fragment.registerAfterRender(disposeFragment);
+
+    // setTimeout(() => {
+    //   fragment.dispose();
+    //   if (fragment.physicsImpostor !== null) {
+    //     fragment.physicsImpostor.dispose();
+    //   }
+    // }, projectileGlobals.lifeTime);
   }
 }
 

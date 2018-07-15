@@ -76,12 +76,10 @@ const enemyWaves = (scene: Scene) => {
         waves[enemyGlobals.currentWave][3]
       );
 
-      setTimeout(() => {
-        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-        // if (economyGlobals.restartMessage === true) {
-        //   scene.unregisterAfterRender(wave(scene, deltaTime));
-        // }
-      }, 1);
+      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+      // if (economyGlobals.restartMessage === true) {
+      //   scene.unregisterAfterRender(wave(scene, deltaTime));
+      // }
     }
   });
 };

@@ -31,7 +31,8 @@ export function hitEffect(
         ) {
           // hitpoints
           enemy.hitPoints -= projectile.hitPoints;
-          economyGlobals.currentBalance += projectile.hitPoints / 1.8;
+          economyGlobals.currentBalance +=
+            projectile.hitPoints * economyGlobals.energyRecoveryRatio;
 
           if (economyGlobals.currentBalance > economyGlobals.maxBalance) {
             economyGlobals.currentBalance = economyGlobals.maxBalance;
