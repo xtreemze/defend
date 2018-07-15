@@ -34,7 +34,7 @@ const mapGlobals = {
 };
 
 const projectileGlobals = {
-  lifeTime: 1500, // milliseconds
+  lifeTime: 2500, // milliseconds
   speed: 8000,
   mass: 50,
   baseHitPoints: 80,
