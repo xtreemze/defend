@@ -52,6 +52,7 @@ function towerBorn(
     case 1:
     default:
       const deltaTime = Date.now();
+      let disposeTimeout: any;
       const disposeTower = () => {
         if (
           Date.now() - deltaTime > towerGlobals.lifeTime &&
@@ -60,7 +61,7 @@ function towerBorn(
           tower.unregisterAfterRender(disposeTower);
           tower.material = materialGlobals.hitMaterial;
           removeTower(tower, level); // sound
-          const disposeTimeout = setTimeout(() => {
+          disposeTimeout = setTimeout(() => {
             removeTower(tower, level); // sound
             tower.dispose();
           }, towerGlobals.disposeTime);
@@ -71,7 +72,7 @@ function towerBorn(
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
           () => {
-            // window.clearTimeout(disposeTimer);
+            window.clearTimeout(disposeTimeout);
 
             destroyTower(scene, tower);
           },
@@ -199,7 +200,7 @@ function towerBorn(
       Tags.AddTagsTo(turretMesh, "obstacle");
 
       const deltaTime2 = Date.now();
-
+      let disposeTimeout2: any;
       const disposeTower2 = () => {
         if (
           Date.now() - deltaTime2 > towerGlobals.lifeTime &&
@@ -208,7 +209,7 @@ function towerBorn(
           tower.unregisterAfterRender(disposeTower2);
           tower.material = materialGlobals.hitMaterial;
           removeTower(tower, level); // sound
-          const disposeTimeout2 = setTimeout(() => {
+          disposeTimeout2 = setTimeout(() => {
             removeTower(tower, level); // sound
             tower.dispose();
             economyGlobals.currentBalance +=
@@ -223,6 +224,7 @@ function towerBorn(
       if (tower.onDisposeObservable) {
         tower.onDisposeObservable.add(
           () => {
+            window.clearTimeout(disposeTimeout2)
             destroyTower(scene, tower, pillarMesh, turretMesh, flashMesh);
           },
           undefined,
