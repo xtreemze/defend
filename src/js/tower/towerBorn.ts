@@ -129,7 +129,7 @@ function towerBorn(
       const flashMesh = MeshBuilder.CreateIcoSphere(
         "flash" + name,
         {
-          radius: level * 1.5,
+          radius: level * 2,
           subdivisions: 1,
           updatable: false
         },

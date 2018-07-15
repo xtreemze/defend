@@ -52,7 +52,7 @@ const towerGlobals = {
   mass: 0,
   restitution: 0,
   baseHitPoints: 10000,
-  baseCost: 2500,
+  baseCost: 2000,
   allTowers: [] as Mesh[],
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
@@ -60,7 +60,7 @@ const towerGlobals = {
   range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 30000,
+  lifeTime: 25000,
   index: 0,
   disposeTime: 6000, // chance to keep towers before dispose
   allPositions: [] as Position2D[]
@@ -96,9 +96,9 @@ const enemyGlobals = {
 
 const economyGlobals = {
   rampUpValue: 400,
-  energyRecoveryRatio: 0.25,
-  initialBalance: 30000,
-  maxBalance: 30000,
+  energyRecoveryRatio: 0.4,
+  initialBalance: 20000,
+  maxBalance: 20000,
   currentBalance: 1,
   restartMessage: false,
   bankSize: 40,
