@@ -37,6 +37,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
       } as Position2D;
       // determine current and previous tower level
 
+      pickResult.pickedMesh.dispose();
       let newLevel = 0;
       towerGlobals.allPositions = towerBasePositions(scene);
       if (
@@ -46,7 +47,6 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
             existingLocation.z === samePosition.z
         ) === undefined
       ) {
-        pickResult.pickedMesh.dispose();
 
         switch (currentLevel) {
           case 1:
