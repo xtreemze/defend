@@ -62,14 +62,13 @@ function enemyBorn(
 
   sphereMesh.registerAfterRender(() => {
     if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
-      if (
-        sphereMesh.position.y < 0 &&
-        sphereMesh.hitPoints < (enemyGlobals.baseHitPoints * level) / 2
-      ) {
-        destroyEnemy(sphereMesh, scene, level);
-      }
       deltaTime = Date.now();
       if (
+        sphereMesh.position.y < 0 &&
+        sphereMesh.hitPoints < enemyGlobals.baseHitPoints * level
+      ) {
+        destroyEnemy(sphereMesh, scene, level);
+      } else if (
         sphereMesh.position.y > diameter / 2.5 &&
         sphereMesh.position.y < diameter &&
         sphereMesh.hitPoints > projectileGlobals.baseHitPoints

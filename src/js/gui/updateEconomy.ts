@@ -10,10 +10,14 @@ export function updateEconomy(scene: Scene): any {
     economyGlobals.currentBalance < 0 &&
     economyGlobals.restartMessage === false
   ) {
-    defeated();
-    economyGlobals.currentBalance = 0;
-    displayMessage(scene, "Defeat", "&#8635;");
+    setTimeout(() => {
+      defeated();
+      setTimeout(() => {
+        displayMessage(scene, "Defeat", "&#8635;");
+      }, 500);
+    }, 1000);
     economyGlobals.restartMessage = true;
+    economyGlobals.currentBalance = 0;
     economyGlobals.defeats += 1;
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
@@ -23,9 +27,13 @@ export function updateEconomy(scene: Scene): any {
     enemyGlobals.currentWave >= waves.length &&
     economyGlobals.restartMessage === false
   ) {
-    victory();
+    setTimeout(() => {
+      victory();
+      setTimeout(() => {
+        displayMessage(scene, "Victory", "&#8635;");
+      }, 500);
+    }, 1000);
     economyGlobals.currentBalance = economyGlobals.maxBalance;
-    displayMessage(scene, "Victory", "&#8635;");
     economyGlobals.restartMessage = true;
     economyGlobals.victories += 1;
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;

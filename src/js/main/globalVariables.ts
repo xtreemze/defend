@@ -20,8 +20,8 @@ const mapGlobals = {
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 200,
-  soundLimit: 2, // simultaneous sound limit
+  soundDelay: 190,
+  soundLimit: 1, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
@@ -40,7 +40,7 @@ const projectileGlobals = {
   baseHitPoints: 80,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
-  particleLimit: 2,
+  particleLimit: 0,
   particleIndex: 0
 };
 
@@ -132,7 +132,7 @@ const renderGlobals = {
   glow: true,
   glowIntensity: 2.8,
   sharpenning: false,
-  antialiasing: false,
+  antialiasing: true,
   depthOfField: false,
   bloom: false,
   screenshot: false

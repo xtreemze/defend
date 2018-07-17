@@ -22,7 +22,7 @@ function arcCamera(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
 
   camera.upperBetaLimit = Math.PI / 2;
 
-  scene.registerBeforeRender(() => {
+  scene.registerAfterRender(() => {
     const activeCamera = scene.activeCamera as Camera;
     const cameraDirection = activeCamera.getForwardRay().direction as Vector3;
     const cameraUp = activeCamera.upVector as Vector3;

@@ -48,7 +48,6 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
             existingLocation.z === samePosition.z
         ) === undefined
       ) {
-
         switch (currentLevel) {
           case 1:
             newLevel = 2;
@@ -68,12 +67,14 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
             break;
         }
       }
-    } else if (
+    }
+
+    if (
       economyGlobals.currentBalance <=
       towerGlobals.baseCost * currentLevel + 1
     ) {
       // color when insufficient funds
-      currencyMeshColor()
+      currencyMeshColor();
 
       // sound when insufficient funds
       removeTower(economyGlobals.currencyMesh, currentLevel + 1);

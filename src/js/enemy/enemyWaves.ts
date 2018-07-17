@@ -26,7 +26,7 @@ const enemyWaves = (scene: Scene) => {
     } else if (economyGlobals.restartMessage === true) {
       clearInterval(checkEnemyY);
     }
-  }, 4000);
+  }, 3000);
 
   scene.registerAfterRender(() => {
     if (
@@ -36,7 +36,10 @@ const enemyWaves = (scene: Scene) => {
       enemyGlobals.currentWave < waves.length
     ) {
       deltaTime = Date.now() - enemyGlobals.generationRate;
-      newWave(); // sound for new wave
+
+      setTimeout(() => {
+        newWave(); // sound for new wave
+      }, 100);
 
       // Color change on new wave
 
@@ -49,7 +52,6 @@ const enemyWaves = (scene: Scene) => {
       );
 
       enemyGlobals.currentWave += 1;
-
 
       // Generate enemies for the wave
 

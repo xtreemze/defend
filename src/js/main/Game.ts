@@ -42,13 +42,13 @@ class Game {
     this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
     this.engine = new Engine(
       this.canvas,
-      true,
+      false,
       {
         // preserveDrawingBuffer: true,
         // stencil: true,
         // doNotHandleContextLost: true
       },
-      false
+      true
     );
     this.engine.enableOfflineSupport = false;
     this.engine.disableManifestCheck = true;
@@ -73,7 +73,7 @@ class Game {
       );
     }
 
-    FX.setVolume(0.5);
+    FX.setVolume(1);
     FX._tone.Master.mute = true;
 
     this.scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());

@@ -30,14 +30,15 @@ function map(scene: Scene) {
   mapGlobals.skyLight.intensity = mapGlobals.lightIntensity;
   mapGlobals.skyLight.diffuse = new Color3(0.82, 0.89, 0.94);
   mapGlobals.skyLight.groundColor = new Color3(0.05, 0, 0.18);
+  // mapGlobals.skyLight.setEnabled(false);
 
   scene.ambientColor = mapGlobals.sceneAmbient;
 
   mapGlobals.atmosphereMesh = MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
-      radius: mapGlobals.size * 2,
-      subdivisions: 5,
+      radius: mapGlobals.size * 1,
+      subdivisions: 1,
       updatable: false
     },
     scene
