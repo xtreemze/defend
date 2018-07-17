@@ -31,6 +31,12 @@ function titleScreen(
   const credits = document.getElementById("credits") as HTMLHeadingElement;
   credits.style.display = "none";
 
+  const creditsParent = credits.parentNode as Node;
+
+  if (creditsParent !== null) {
+    creditsParent.removeChild(credits);
+  }
+
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = `Defend`;
   title.setAttribute("style", startStyle);
