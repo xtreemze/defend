@@ -71,7 +71,7 @@ function damageCurrency(enemy: EnemySphere) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 40,
+        volume: 35,
         release: 0.8,
         // decay: 0.2,
         frequency:
@@ -109,6 +109,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         sweep: -0.3,
         source: "sine",
         repeat: 6,
+        highpass: 200;
         // vibrato: 0.8,
         // vibratoFreq: 10,
         // pulseWidth: 0.5,
@@ -124,13 +125,12 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 function newWave() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 20,
+      volume: 15,
       decay: 0.8,
       // attack: 0.9,
       // sustain: 0.025,
       release: 0.9,
       frequency: 70,
-      lowpass: 1500,
       highpass: 150,
       sweep: 0.5,
       source: "sine"
