@@ -109,7 +109,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         sweep: -0.3,
         source: "sine",
         repeat: 6,
-        highpass: 200;
+        highpass: 200,
         // vibrato: 0.8,
         // vibratoFreq: 10,
         // pulseWidth: 0.5,
