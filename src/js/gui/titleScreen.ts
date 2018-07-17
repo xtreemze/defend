@@ -20,7 +20,7 @@ import {
   startButtonStyle,
   startStyle,
   installButtonStyle,
-  startButtonHTML,
+  startButtonHTML
 } from "./startHTML";
 
 function titleScreen(
@@ -28,6 +28,9 @@ function titleScreen(
   canvas: HTMLCanvasElement,
   physicsEngine: PhysicsEngine
 ) {
+  const credits = document.getElementById("credits") as HTMLHeadingElement;
+  credits.style.display = "none";
+
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = `Defend`;
   title.setAttribute("style", startStyle);
@@ -76,7 +79,6 @@ function titleScreen(
       });
     });
   });
-
 
   const canvasParent = canvas.parentNode as Node;
 

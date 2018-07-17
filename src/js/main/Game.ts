@@ -120,14 +120,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   game.createScene();
 
-  game.doRender();
+  const physicsEngine = game.scene.getPhysicsEngine() as PhysicsEngine;
+  if (game.scene.getPhysicsEngine() !== null) {
+    titleScreen(game.scene, game.canvas, physicsEngine);
+  }
 
   renderPipeline(game.scene);
 
-  window.addEventListener("load", () => {
-    const physicsEngine = game.scene.getPhysicsEngine() as PhysicsEngine;
-    if (game.scene.getPhysicsEngine() !== null) {
-      titleScreen(game.scene, game.canvas, physicsEngine);
-    }
-  });
+  game.doRender();
 });

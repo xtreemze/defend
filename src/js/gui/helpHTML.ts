@@ -51,6 +51,6 @@ const helpButtonStyle = `
     line-height: 0;
     `;
 
-const helpButtonHTML = `?`;
+const helpButtonHTML = `&#xFF1F;`;
 
 export { helpHTML, helpStyle, helpButtonStyle, helpButtonHTML };
