@@ -22,20 +22,17 @@ function displayEconomy(scene: Scene) {
   const currentBalance = document.createElement("div") as HTMLDivElement;
   currentBalance.id = "currentBalance";
   currentBalance.innerText = economyGlobals.currentBalance.toString();
-  currentBalance.setAttribute(
-    "style",
-    `
+  currentBalance.setAttribute("style", `
     position: absolute;
     color: ${enemyGlobals.livingColor.toHexString()};
     top: 1.5rem;
     left: 2rem;
     text-align: left;
     font-weight: 100;
-    font-family: sans-serif;
+    font-family: 'Titillium Web', sans-serif;
     font-size: 1.2rem;
     user-select: none;
-        `
-  );
+        `);
 
   canvasParent.insertBefore(currentBalance, canvas);
 

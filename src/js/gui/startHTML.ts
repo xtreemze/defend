@@ -10,7 +10,7 @@ const startHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>
     font-weight: 600;
     outline: none;
     font-size: 3vh;
-    font-family: sans-serif;
+    font-family: 'Titillium Web', sans-serif;
     text-align: center;
     user-select: none;
     ">Defend!</button>`;
@@ -23,7 +23,7 @@ const startStyle = `
       text-align: center;
       margin-top: -1.5rem;
       font-weight: 500;
-      font-family: sans-serif;
+      font-family: 'Titillium Web', sans-serif;
       font-size: 4rem;
       user-select: none;
       text-shadow: black 0px 0px 18px;
@@ -44,6 +44,7 @@ const startButtonStyle = `
       font-weight: 600;
       outline: none;
       font-size: 3rem;
+      font-family: 'Titillium Web', sans-serif;
       user-select: none;
       line-height: 0;
       `;
@@ -63,6 +64,7 @@ const installButtonStyle = `
     font-weight: 600;
     outline: none;
     font-size: 1.5rem;
+    font-family: 'Titillium Web', sans-serif;
     user-select: none;
     line-height: 0;
     `;
