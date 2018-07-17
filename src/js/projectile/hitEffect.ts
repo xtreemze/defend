@@ -1,15 +1,9 @@
-import { Scene } from "babylonjs";
-import {
-  mapGlobals,
-  economyGlobals,
-  materialGlobals
-} from "../main/globalVariables";
+import { economyGlobals, materialGlobals } from "../main/globalVariables";
 import { damage } from "../main/sound";
 import { EnemySphere } from "../enemy/enemyBorn";
-import { LiveProjectile, LiveProjectileInstance } from "./startLife";
+import { LiveProjectileInstance } from "./startLife";
 
 export function hitEffect(
-  scene: Scene,
   projectile: LiveProjectileInstance,
   enemy: EnemySphere
 ) {

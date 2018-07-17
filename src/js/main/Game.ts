@@ -25,7 +25,8 @@ import { renderPipeline } from "./renderPipeline";
 import { createProjectileInstances } from "../projectile/createProjectileInstance";
 import {
   createTowerBaseInstance,
-  createTurretInstanceL2
+  createTurretInstanceL2,
+  createTurretInstanceL3
 } from "../tower/createTowerInstance";
 
 runtime.install({

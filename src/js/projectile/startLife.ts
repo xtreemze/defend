@@ -45,7 +45,7 @@ export function startLife(
     scene
   ) as PhysicsImpostor;
 
-  hitEffect(scene, projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
+  hitEffect(projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
 
   mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
   const clonedRotation = originMesh.rotation.clone();

@@ -84,9 +84,23 @@ function towerBorn(
       break;
     case 2:
     case 3:
+      let turretMesh: any;
 
-
-      let turretMesh = towerGlobals.turretMeshL2.clone("turret" + name, undefined, undefined, true) as TowerTurret;
+      if (level === 2) {
+        turretMesh = towerGlobals.turretMeshL2.clone(
+          "turret" + name,
+          undefined,
+          undefined,
+          true
+        ) as TowerTurret;
+      } else if (level === 3) {
+        turretMesh = towerGlobals.turretMeshL3.clone(
+          "turret" + name,
+          undefined,
+          undefined,
+          true
+        ) as TowerTurret;
+      }
 
       turretMesh.position = new Vector3(
         position.x,
@@ -119,7 +133,6 @@ function towerBorn(
         turretMesh.getDirection(rayLocal),
         towerGlobals.range * level
       ) as Ray;
-
 
       if (towerGlobals.raysOn) {
         turretMesh.turretRayHelper = new RayHelper(turretRay) as RayHelper;
