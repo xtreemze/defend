@@ -46,7 +46,7 @@ const installButtonStyle = `
     margin-bottom: 1.5rem;
     margin-left: -1.5rem;
     border-radius: 3rem;
-    font-weight: 600;
+    font-weight: 400;
     outline: none;
     font-size: 1.5rem;
     font-family: 'Titillium Web', sans-serif;

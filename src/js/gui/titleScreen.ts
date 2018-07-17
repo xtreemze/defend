@@ -49,7 +49,7 @@ function titleScreen(
 
   const btnAdd = document.createElement("button") as HTMLButtonElement;
   let deferredPrompt: any;
-  btnAdd.innerHTML = "&#11123;";
+  btnAdd.innerHTML = "&#x2B73;";
   btnAdd.setAttribute("style", installButtonStyle);
   btnAdd.style.display = "none";
   window.addEventListener("beforeinstallprompt", eventResult => {
