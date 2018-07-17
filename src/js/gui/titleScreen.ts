@@ -52,31 +52,31 @@ function titleScreen(
   btnAdd.innerHTML = "&#11123;";
   btnAdd.setAttribute("style", installButtonStyle);
   btnAdd.style.display = "none";
-  window.addEventListener("beforeinstallprompt", e => {
+  window.addEventListener("beforeinstallprompt", eventResult => {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
-    e.preventDefault();
+    eventResult.preventDefault();
     // Stash the event so it can be triggered later.
-    deferredPrompt = e;
+    deferredPrompt = eventResult;
 
     // Update UI notify the user they can add to home screen
     btnAdd.style.display = "block";
-  });
-
-  btnAdd.addEventListener("click", e => {
-    // hide our user interface that shows our A2HS button
-    btnAdd.style.display = "none";
-    // Show the prompt
-    deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
-    deferredPrompt.userChoice.then((choiceResult: any) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the A2HS prompt");
-      } else {
-        console.log("User dismissed the A2HS prompt");
-      }
-      deferredPrompt = null;
+    btnAdd.addEventListener("click", e => {
+      // hide our user interface that shows our A2HS button
+      btnAdd.style.display = "none";
+      // Show the prompt
+      deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      deferredPrompt.userChoice.then((choiceResult: any) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the A2HS prompt");
+        } else {
+          console.log("User dismissed the A2HS prompt");
+        }
+        deferredPrompt = null;
+      });
     });
   });
+
 
   const canvasParent = canvas.parentNode as Node;
 
