@@ -89,6 +89,7 @@ class Game {
     map(this.scene);
     createTowerBaseInstance();
     createTurretInstanceL2(this.scene);
+    createTurretInstanceL3(this.scene);
     createProjectileInstances();
 
     arcCamera(this.scene, this.canvas);
