@@ -6,11 +6,11 @@ import {
 } from "../main/globalVariables";
 import { damage } from "../main/sound";
 import { EnemySphere } from "../enemy/enemyBorn";
-import { LiveProjectile } from "./startLife";
+import { LiveProjectile, LiveProjectileInstance } from "./startLife";
 
 export function hitEffect(
   scene: Scene,
-  projectile: LiveProjectile,
+  projectile: LiveProjectileInstance,
   enemy: EnemySphere
 ) {
   if (

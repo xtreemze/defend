@@ -6,7 +6,8 @@ import {
   Vector3,
   Material,
   PhysicsImpostor,
-  PhysicsEngine
+  PhysicsEngine,
+  InstancedMesh
 } from "babylonjs";
 import {
   projectileGlobals,
@@ -22,20 +23,21 @@ interface LiveProjectile extends Mesh {
   hitPoints: number;
 }
 
+interface LiveProjectileInstance extends InstancedMesh {
+  hitPoints: number;
+}
 export function startLife(
   scene: Scene,
   originMesh: TowerTurret,
   level: number = 1 | 2 | 3,
-  projectile: LiveProjectile,
+  projectile: LiveProjectileInstance,
   nearestEnemy: EnemySphere,
   physicsEngine: PhysicsEngine
 ) {
-  const projectileMaterial = materialGlobals.projectileMaterial;
   const forwardLocal = new Vector3(0, 0, 5);
   const space = originMesh.getDirection(forwardLocal) as Vector3;
   projectile.position = originMesh.position.subtract(space) as Vector3;
 
-  projectile.material = projectileMaterial as Material;
   // For Physics
   projectile.physicsImpostor = new PhysicsImpostor(
     projectile,
@@ -58,12 +60,12 @@ export function startLife(
 
   const projectileExpires = () => {
     if (Date.now() - deltaTime > projectileGlobals.lifeTime) {
-      projectile.unregisterAfterRender(projectileExpires);
+      projectile.unregisterAfterWorldMatrixUpdate(projectileExpires);
       destroyProjectile(projectile, physicsEngine);
     }
   };
 
-  projectile.registerAfterRender(projectileExpires);
+  projectile.registerAfterWorldMatrixUpdate(projectileExpires);
 
   // const projectileLifetime = setTimeout(() => {
   //   destroyProjectile(projectile, physicsEngine);
@@ -74,4 +76,4 @@ export function startLife(
   impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 }
 
-export { LiveProjectile };
+export { LiveProjectile, LiveProjectileInstance };

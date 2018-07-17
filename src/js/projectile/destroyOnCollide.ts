@@ -1,4 +1,4 @@
-import { LiveProjectile } from "./startLife";
+import { LiveProjectile, LiveProjectileInstance } from "./startLife";
 import { destroyProjectile } from "./destroyProjectile";
 import { Scene, PhysicsImpostor, PhysicsEngine } from "babylonjs";
 import { mapGlobals } from "../main/globalVariables";
@@ -6,7 +6,7 @@ import { explosion } from "../enemy/explodeParticle";
 
 function destroyOnCollide(
   scene: Scene,
-  projectile: LiveProjectile,
+  projectile: LiveProjectileInstance,
   physicsEngine: PhysicsEngine,
   projectileExpires: any
 ) {
@@ -16,7 +16,7 @@ function destroyOnCollide(
       (collider: PhysicsImpostor) => {
         explosion(scene, collider.getObjectCenter());
         // clearTimeout(projectileLifetime);
-        projectile.unregisterAfterRender(projectileExpires);
+        projectile.unregisterAfterWorldMatrixUpdate(projectileExpires);
         destroyProjectile(projectile, physicsEngine);
       }
     );

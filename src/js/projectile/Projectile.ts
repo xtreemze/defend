@@ -1,6 +1,6 @@
-import { startLife, LiveProjectile } from "./startLife";
+import { startLife, LiveProjectileInstance } from "./startLife";
 
-import { Scene, Vector3, MeshBuilder, PhysicsEngine } from "babylonjs";
+import { Scene, Vector3, PhysicsEngine } from "babylonjs";
 import { projectileGlobals } from "../main/globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
@@ -14,33 +14,43 @@ class Projectile {
     physicsEngine: PhysicsEngine
   ) {
     const name = `projectile${level}` as string;
+    let projectile;
+    switch (level) {
+      case 2:
+        projectile = projectileGlobals.projectileMeshL2.createInstance(
+          name
+        ) as LiveProjectileInstance;
+        break;
+      case 3:
+        projectile = projectileGlobals.projectileMeshL3.createInstance(
+          name
+        ) as LiveProjectileInstance;
 
-    const projectile = MeshBuilder.CreateBox(name, {
-      size: level,
-      height: level / 4,
-      width: level / 2,
-      updatable: false
-    }) as LiveProjectile;
-    projectile.setEnabled(false);
-    projectile.isPickable = false;
-    projectile.convertToUnIndexedMesh();
+        break;
 
-    projectile.hitPoints = level * level * projectileGlobals.baseHitPoints;
+      default:
+        break;
+    }
+    if (projectile !== undefined) {
+      projectile.setEnabled(true);
+      projectile.isPickable = false;
+      projectile.hitPoints = level * level * projectileGlobals.baseHitPoints;
 
-    startLife(
-      scene,
-      originMesh,
-      level,
-      projectile,
-      nearestEnemy,
-      physicsEngine
-    );
+      startLife(
+        scene,
+        originMesh,
+        level,
+        projectile,
+        nearestEnemy,
+        physicsEngine
+      );
+    }
   }
 }
 
 export function impulsePhys(
   originMesh: TowerTurret,
-  projectile: LiveProjectile,
+  projectile: LiveProjectileInstance,
   level: number = 1 | 2 | 3
 ) {
   const forwardLocal = new Vector3(

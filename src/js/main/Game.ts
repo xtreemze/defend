@@ -22,6 +22,7 @@ import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
 import { generateMaterials } from "../utility/materialGenerator";
 import { renderPipeline } from "./renderPipeline";
+import { createProjectileInstances } from "../projectile/createProjectileInstance";
 
 runtime.install({
   onUpdating: () => {},
@@ -82,6 +83,7 @@ class Game {
 
     generateMaterials(this.scene);
     map(this.scene);
+    createProjectileInstances();
 
     // cameras(this.scene, this.canvas, this.engine);
     arcCamera(this.scene, this.canvas, this.engine);

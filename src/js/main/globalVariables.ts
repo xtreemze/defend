@@ -7,6 +7,7 @@ import {
   DirectionalLight
 } from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
+import { LiveProjectile } from "../projectile/startLife";
 
 const mapGlobals = {
   optimizerOn: false,
@@ -34,6 +35,8 @@ const mapGlobals = {
 };
 
 const projectileGlobals = {
+  projectileMeshL2: {} as LiveProjectile,
+  projectileMeshL3: {} as LiveProjectile,
   lifeTime: 2500, // milliseconds
   speed: 8000,
   mass: 50,
@@ -67,6 +70,9 @@ const towerGlobals = {
 };
 
 const enemyGlobals = {
+  enemyMeshL1: {} as Mesh,
+  enemyMeshL2: {} as Mesh,
+  enemyMeshL3: {} as Mesh,
   minNumber: 1, // for one generation
   maxNumber: 8, // for one generation
   limit: 0, // wait for this enemy count before next wave

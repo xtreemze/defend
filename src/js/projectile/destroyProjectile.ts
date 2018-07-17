@@ -1,9 +1,9 @@
 import { PhysicsImpostor, PhysicsEngine, Tags } from "babylonjs";
 import { mapGlobals } from "../main/globalVariables";
-import { LiveProjectile } from "./startLife";
+import { LiveProjectile, LiveProjectileInstance } from "./startLife";
 
 export function destroyProjectile(
-  projectile: LiveProjectile,
+  projectile: LiveProjectileInstance,
   physicsEngine: PhysicsEngine
 ) {
   projectile.setEnabled(false);
