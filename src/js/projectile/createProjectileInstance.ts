@@ -1,6 +1,5 @@
-import { MeshBuilder, Material } from "babylonjs";
+import { MeshBuilder, Material, Mesh } from "babylonjs";
 import { projectileGlobals, materialGlobals } from "../main/globalVariables";
-import { LiveProjectile } from "./startLife";
 
 function createProjectileInstances() {
   projectileGlobals.projectileMeshL2 = MeshBuilder.CreateBox(
@@ -11,10 +10,10 @@ function createProjectileInstances() {
       width: 2 / 2,
       updatable: false
     }
-  ) as LiveProjectile;
-  projectileGlobals.projectileMeshL2.hitPoints =
-    2 * 2 * projectileGlobals.baseHitPoints;
+  ) as Mesh;
+
   projectileGlobals.projectileMeshL2.material = materialGlobals.projectileMaterial as Material;
+  projectileGlobals.projectileMeshL2.isPickable = false;
   projectileGlobals.projectileMeshL2.convertToUnIndexedMesh();
   projectileGlobals.projectileMeshL2.setEnabled(false);
 
@@ -26,10 +25,10 @@ function createProjectileInstances() {
       width: 3 / 2,
       updatable: false
     }
-  ) as LiveProjectile;
-  projectileGlobals.projectileMeshL3.hitPoints =
-    3 * 3 * projectileGlobals.baseHitPoints;
+  ) as Mesh;
+
   projectileGlobals.projectileMeshL3.material = materialGlobals.projectileMaterial as Material;
+  projectileGlobals.projectileMeshL3.isPickable = false;
   projectileGlobals.projectileMeshL3.convertToUnIndexedMesh();
   projectileGlobals.projectileMeshL3.setEnabled(false);
 }

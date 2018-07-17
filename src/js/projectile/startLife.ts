@@ -4,16 +4,11 @@ import {
   Mesh,
   Scene,
   Vector3,
-  Material,
   PhysicsImpostor,
   PhysicsEngine,
   InstancedMesh
 } from "babylonjs";
-import {
-  projectileGlobals,
-  mapGlobals,
-  materialGlobals
-} from "../main/globalVariables";
+import { projectileGlobals, mapGlobals } from "../main/globalVariables";
 import { impulsePhys } from "./Projectile";
 import { destroyOnCollide } from "./destroyOnCollide";
 import { EnemySphere } from "../enemy/enemyBorn";

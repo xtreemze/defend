@@ -33,7 +33,6 @@ class Projectile {
     }
     if (projectile !== undefined) {
       projectile.setEnabled(true);
-      projectile.isPickable = false;
       projectile.hitPoints = level * level * projectileGlobals.baseHitPoints;
 
       startLife(
@@ -60,7 +59,6 @@ export function impulsePhys(
   ) as Vector3;
   const speed = originMesh.getDirection(forwardLocal) as Vector3;
   if (projectile.physicsImpostor !== null) {
-    projectile.setEnabled(true);
     projectile.physicsImpostor.applyImpulse(
       speed,
       projectile.getAbsolutePosition()

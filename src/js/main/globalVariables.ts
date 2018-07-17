@@ -7,7 +7,7 @@ import {
   DirectionalLight
 } from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
-import { LiveProjectile } from "../projectile/startLife";
+import { LiveProjectileInstance } from "../projectile/startLife";
 
 const mapGlobals = {
   optimizerOn: false,
@@ -35,8 +35,8 @@ const mapGlobals = {
 };
 
 const projectileGlobals = {
-  projectileMeshL2: {} as LiveProjectile,
-  projectileMeshL3: {} as LiveProjectile,
+  projectileMeshL2: {} as any | LiveProjectileInstance,
+  projectileMeshL3: {} as any | LiveProjectileInstance,
   lifeTime: 2500, // milliseconds
   speed: 8000,
   mass: 50,
@@ -148,11 +148,11 @@ const materialGlobals = {} as any;
 
 // @ts-ignore
 window.globals = {
-  projectileGlobals,
+  // projectileGlobals,
   towerGlobals,
   enemyGlobals,
-  mapGlobals,
-  renderGlobals,
+  // mapGlobals,
+  // renderGlobals,
   economyGlobals
 };
 
