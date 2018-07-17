@@ -4,11 +4,17 @@ import {
   PhysicsEngine,
   PointerEventTypes,
   PickingInfo,
-  Tags
+  Tags,
+  Material
 } from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
-import { towerGlobals, economyGlobals } from "../main/globalVariables";
+import {
+  towerGlobals,
+  economyGlobals,
+  materialGlobals
+} from "../main/globalVariables";
 import { towerBasePositions, Tower } from "./Tower";
+import { removeTower } from "../main/sound";
 
 function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer tap event is raised
@@ -30,10 +36,9 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         z: pickResult.pickedMesh.position.z
       } as Position2D;
       // determine current and previous tower level
-      const currentLevel = parseInt(pickResult.pickedMesh.name[10]);
 
-      let newLevel = 0;
       pickResult.pickedMesh.dispose();
+      let newLevel = 0;
       towerGlobals.allPositions = towerBasePositions(scene);
       if (
         towerGlobals.allPositions.find(
@@ -42,6 +47,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
             existingLocation.z === samePosition.z
         ) === undefined
       ) {
+
         switch (currentLevel) {
           case 1:
             newLevel = 2;
@@ -54,12 +60,25 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
           case 3:
             newLevel = 3;
             new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+
             break;
 
           default:
             break;
         }
       }
+    } else if (
+      economyGlobals.currentBalance <=
+      towerGlobals.baseCost * currentLevel + 1
+    ) {
+      // color when insufficient funds
+      economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
+      setTimeout(() => {
+        economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
+      }, 10);
+
+      // sound when insufficient funds
+      removeTower(economyGlobals.currencyMesh, currentLevel + 1);
     }
   }, PointerEventTypes._POINTERTAP);
 }

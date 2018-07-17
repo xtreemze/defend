@@ -3,7 +3,8 @@ import enemyAi from "./enemyAi";
 import {
   enemyGlobals,
   mapGlobals,
-  materialGlobals
+  materialGlobals,
+  projectileGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
 import { Position2D } from "./Enemy";
@@ -22,6 +23,8 @@ function enemyBorn(
   diameter: number,
   level: number = 1 | 2 | 3
 ) {
+  const enemyMass = (enemyGlobals.mass * level * level) as number;
+
   sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
 
   const hitPointsMeter = MeshBuilder.CreateIcoSphere(
@@ -43,7 +46,7 @@ function enemyBorn(
     sphereMesh,
     PhysicsImpostor.SphereImpostor,
     {
-      mass: enemyGlobals.mass * (level * level),
+      mass: enemyMass,
       restitution: enemyGlobals.restitution,
       friction: enemyGlobals.friction
     },
@@ -59,15 +62,19 @@ function enemyBorn(
 
   sphereMesh.registerAfterRender(() => {
     if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
-      if (sphereMesh.position.y < 0) {
+      if (
+        sphereMesh.position.y < 0 &&
+        sphereMesh.hitPoints < (enemyGlobals.baseHitPoints * level) / 2
+      ) {
         destroyEnemy(sphereMesh, scene, level);
       }
       deltaTime = Date.now();
       if (
         sphereMesh.position.y > diameter / 2.5 &&
-        sphereMesh.position.y < diameter
+        sphereMesh.position.y < diameter &&
+        sphereMesh.hitPoints > projectileGlobals.baseHitPoints
       ) {
-        enemyAi(sphereMesh, decide(sphereMesh));
+        enemyAi(sphereMesh, decide(sphereMesh), level);
       }
 
       checkHitPoints(scene, sphereMesh, level, hitPointsMeter);

@@ -10,14 +10,14 @@ function destroyEnemy(sphereMesh: EnemySphere, scene: Scene, level?: number) {
     enemyExplode(sphereMesh, level);
   }
   delete sphereMesh.hitPoints;
-  if (sphereMesh.physicsImpostor !== null) {
-    sphereMesh.physicsImpostor.dispose();
-  }
   Tags.RemoveTagsFrom(sphereMesh, "enemy");
   setTimeout(() => {
     sphereMesh.dispose();
+    if (sphereMesh.physicsImpostor !== null) {
+      sphereMesh.physicsImpostor.dispose();
+    }
     enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-  }, 1);
+  }, 5);
 }
 
 export { destroyEnemy };

@@ -8,7 +8,6 @@ import {
   mapGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
-import { updateEconomy } from "../gui/updateEconomy";
 import { enemyGenerator } from "./Enemy";
 import { destroyEnemy } from "./destroyEnemy";
 
@@ -18,7 +17,7 @@ const enemyWaves = (scene: Scene) => {
   const checkEnemyY = setInterval(() => {
     if (economyGlobals.restartMessage === false) {
       enemyGlobals.allEnemies.forEach((enemy: any) => {
-        if (enemy.position.y < 0) {
+        if (enemy.position.y < -5) {
           enemy.hitPoints = 0;
           destroyEnemy(enemy, scene);
           enemy.dispose();
@@ -27,7 +26,7 @@ const enemyWaves = (scene: Scene) => {
     } else if (economyGlobals.restartMessage === true) {
       clearInterval(checkEnemyY);
     }
-  }, 5000);
+  }, 4000);
 
   scene.registerAfterRender(() => {
     if (
@@ -51,7 +50,6 @@ const enemyWaves = (scene: Scene) => {
 
       enemyGlobals.currentWave += 1;
 
-      updateEconomy(scene); // update GUI to reflect new wave number
 
       // Generate enemies for the wave
 
@@ -76,12 +74,10 @@ const enemyWaves = (scene: Scene) => {
         waves[enemyGlobals.currentWave][3]
       );
 
-      setTimeout(() => {
-        enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-        // if (economyGlobals.restartMessage === true) {
-        //   scene.unregisterAfterRender(wave(scene, deltaTime));
-        // }
-      }, 1);
+      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+      // if (economyGlobals.restartMessage === true) {
+      //   scene.unregisterAfterRender(wave(scene, deltaTime));
+      // }
     }
   });
 };

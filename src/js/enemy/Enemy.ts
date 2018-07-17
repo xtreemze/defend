@@ -12,7 +12,8 @@ import {
 import {
   enemyGlobals,
   projectileGlobals,
-  materialGlobals
+  materialGlobals,
+  economyGlobals
 } from "../main/globalVariables";
 import positionGenerator from "../utility/positionGenerator";
 
@@ -81,12 +82,17 @@ export function fragment(
     fragment.physicsImpostor.setLinearVelocity(enemyLinearVelocity);
     fragment.physicsImpostor.setAngularVelocity(enemyAngularVelocity);
 
-    setTimeout(() => {
-      fragment.dispose();
-      if (fragment.physicsImpostor !== null) {
-        fragment.physicsImpostor.dispose();
+    let deltaTime = Date.now();
+    const disposeFragment = () => {
+      if (Date.now() - deltaTime > projectileGlobals.lifeTime) {
+        fragment.unregisterAfterRender(disposeFragment);
+        fragment.dispose();
+        if (fragment.physicsImpostor !== null) {
+          fragment.physicsImpostor.dispose();
+        }
       }
-    }, projectileGlobals.lifeTime);
+    };
+    fragment.registerAfterRender(disposeFragment);
   }
 }
 
@@ -100,6 +106,11 @@ function enemyGenerator(
     let newLocation = positionGenerator(waveOrigin);
     while (
       enemyGlobals.occupiedSpaces.find(
+        existingLocation =>
+          existingLocation[0] === newLocation.x &&
+          existingLocation[1] === newLocation.z
+      ) &&
+      economyGlobals.occupiedSpaces.find(
         existingLocation =>
           existingLocation[0] === newLocation.x &&
           existingLocation[1] === newLocation.z

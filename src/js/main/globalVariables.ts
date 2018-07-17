@@ -34,9 +34,9 @@ const mapGlobals = {
 };
 
 const projectileGlobals = {
-  lifeTime: 2000, // milliseconds
-  speed: 10000,
-  mass: 80,
+  lifeTime: 2500, // milliseconds
+  speed: 8000,
+  mass: 50,
   baseHitPoints: 80,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
@@ -47,7 +47,7 @@ const projectileGlobals = {
 const towerGlobals = {
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
-  rateOfFire: 170, // milliseconds between each shot,
+  rateOfFire: 180, // milliseconds between each shot,
   height: 3,
   mass: 0,
   restitution: 0,
@@ -60,7 +60,7 @@ const towerGlobals = {
   range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 30000,
+  lifeTime: 25000,
   index: 0,
   disposeTime: 6000, // chance to keep towers before dispose
   allPositions: [] as Position2D[]
@@ -70,16 +70,16 @@ const enemyGlobals = {
   minNumber: 1, // for one generation
   maxNumber: 8, // for one generation
   limit: 0, // wait for this enemy count before next wave
-  originHeight: 4,
+  originHeight: 7,
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
-  speed: 10000,
-  mass: 6000,
+  speed: 12000,
+  mass: 9000,
   restitution: 0.8,
   jumpForce: 60,
-  friction: 0.8,
-  decayRate: 15, // hitpoints per decision
-  initialDecayRate: 15, // hitpoints per decision
+  friction: 0.5,
+  decayRate: 40, // hitpoints per decision
+  initialDecayRate: 20, // hitpoints per decision
   baseHitPoints: 10000,
   deadHitPoints: 0,
   fragments: 1,
@@ -95,9 +95,11 @@ const enemyGlobals = {
 };
 
 const economyGlobals = {
-  initialBalance: 30000,
+  rampUpValue: 400,
+  energyRecoveryRatio: 0.4,
+  initialBalance: 20000,
+  maxBalance: 20000,
   currentBalance: 1,
-  maxBalance: 600000,
   restartMessage: false,
   bankSize: 40,
   defeats: 0,

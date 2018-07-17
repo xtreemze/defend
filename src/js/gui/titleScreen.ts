@@ -36,7 +36,7 @@ function titleScreen(
   );
 
   const startButton = document.createElement("button") as HTMLButtonElement;
-  startButton.innerHTML = `&#x1f50a;`;
+  startButton.innerHTML = `&#9654;`;
   startButton.id = "startButton";
   startButton.setAttribute(
     "style",
@@ -84,7 +84,7 @@ function titleScreen(
   );
 
   const help = document.createElement("div") as HTMLDivElement;
-  help.innerHTML = `<p>To accomplish victory: Absorb energy from the enemy to fill your energy bank or survive all the enemy waves.</p><p>Tap the grid to strategically deploy or upgrade towers.</p><p>You will be defeated if your energy bank is depleted!</p> <button id="okHelp" style="
+  help.innerHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>Tap the grid to strategically deploy or upgrade towers.</p><p>Absorb energy by shooting the enemy to replenish your energy bank.</p><p>You will be defeated if your energy bank is depleted!</p> <button id="okHelp" style="
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
     border-color: ${projectileGlobals.livingColor.toHexString()};
@@ -127,7 +127,7 @@ function titleScreen(
   const noSoundTimer = setTimeout(() => {
     mapGlobals.soundOn = false;
     startGame();
-  }, 3000);
+  }, 9000);
 
   // Start button behavior
   startButton.addEventListener("click", () => {

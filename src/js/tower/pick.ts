@@ -4,11 +4,17 @@ import {
   PhysicsEngine,
   PointerEventTypes,
   PickingInfo,
-  Tags
+  Tags,
+  Material
 } from "babylonjs";
 import { Tower } from "../tower/Tower";
-import { towerGlobals, economyGlobals } from "../main/globalVariables";
+import {
+  towerGlobals,
+  economyGlobals,
+  materialGlobals
+} from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
+import { removeTower } from "../main/sound";
 
 function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer down event is raised
@@ -74,6 +80,16 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
           ) as Tower;
         }
       }
+    } else if (economyGlobals.currentBalance <= towerGlobals.baseCost) {
+      // When a tower is requested but balance is insuficient
+
+      // color
+      economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
+      setTimeout(() => {
+        economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
+      }, 10);
+
+      removeTower(economyGlobals.currencyMesh, 1); // sound
     }
   }, PointerEventTypes._POINTERTAP);
 }

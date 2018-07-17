@@ -19,15 +19,13 @@ function checkHitPoints(
     const enemyLinearVelocity = sphereMesh.physicsImpostor.getLinearVelocity() as Vector3;
     const enemyAngularVelocity = sphereMesh.physicsImpostor.getAngularVelocity() as Vector3;
 
-    setTimeout(() => {
-      fragment(
-        level,
-        enemyPosition,
-        enemyRotation,
-        enemyLinearVelocity,
-        enemyAngularVelocity
-      );
-    }, 1);
+    fragment(
+      level,
+      enemyPosition,
+      enemyRotation,
+      enemyLinearVelocity,
+      enemyAngularVelocity
+    );
 
     destroyEnemy(sphereMesh, scene, level);
   } else {

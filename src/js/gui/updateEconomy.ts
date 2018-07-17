@@ -1,43 +1,33 @@
-import {
-  economyGlobals,
-  enemyGlobals,
-  mapGlobals
-} from "../main/globalVariables";
+import { economyGlobals, enemyGlobals } from "../main/globalVariables";
 import { Scene, Vector3, Mesh } from "babylonjs";
 import { displayMessage } from "./displayMessage";
 import { waves } from "../enemy/waves";
 import { victory, defeated } from "../main/sound";
 
-export function updateEconomy(scene: Scene, currencyTower?: Mesh) {
-  // on defeat
+export function updateEconomy(scene: Scene): any {
+  // Defeat Conditions
   if (
     economyGlobals.currentBalance < 0 &&
     economyGlobals.restartMessage === false
   ) {
+    defeated();
     economyGlobals.currentBalance = 0;
     displayMessage(scene, "Defeat", "&#8635;");
     economyGlobals.restartMessage = true;
     economyGlobals.defeats += 1;
-    if (currencyTower !== null && mapGlobals.soundOn === true) {
-      defeated();
-    }
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
 
-  // On victory
+  // Victory Conditions
   if (
-    (economyGlobals.currentBalance > economyGlobals.maxBalance &&
-      economyGlobals.restartMessage === false) ||
-    (enemyGlobals.currentWave >= waves.length &&
-      economyGlobals.restartMessage === false)
+    enemyGlobals.currentWave >= waves.length &&
+    economyGlobals.restartMessage === false
   ) {
+    victory();
     economyGlobals.currentBalance = economyGlobals.maxBalance;
     displayMessage(scene, "Victory", "&#8635;");
     economyGlobals.restartMessage = true;
     economyGlobals.victories += 1;
-    if (currencyTower !== null && mapGlobals.soundOn === true) {
-      victory();
-    }
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
 
