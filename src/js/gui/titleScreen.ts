@@ -19,8 +19,8 @@ import { upgradeTower } from "../tower/upgradeTower";
 import {
   startButtonStyle,
   startStyle,
+  installButtonStyle,
   startButtonHTML,
-  installButtonStyle
 } from "./startHTML";
 
 function titleScreen(
