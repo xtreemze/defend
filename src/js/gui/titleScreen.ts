@@ -49,9 +49,9 @@ function titleScreen(
 
   const btnAdd = document.createElement("button") as HTMLButtonElement;
   let deferredPrompt: any;
-  btnAdd.innerHTML = "&#x2B73;";
+  btnAdd.innerHTML = "&#x1F3E0;";
   btnAdd.setAttribute("style", installButtonStyle);
-  btnAdd.style.display = "none";
+  // btnAdd.style.display = "none";
   window.addEventListener("beforeinstallprompt", eventResult => {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     eventResult.preventDefault();
