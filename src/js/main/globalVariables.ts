@@ -8,7 +8,6 @@ import {
 } from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
 import { LiveProjectileInstance } from "../projectile/startLife";
-import { TowerTurret } from "../tower/towerBorn";
 
 const mapGlobals = {
   optimizerOn: false,

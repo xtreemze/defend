@@ -62,32 +62,23 @@ function damage(enemy: EnemySphere) {
 }
 
 function damageCurrency(enemy: EnemySphere) {
-  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-    setTimeout(() => {
-      mapGlobals.simultaneousSounds -= 1;
-    }, mapGlobals.soundDelay);
-
-    mapGlobals.simultaneousSounds += 1;
-
-    if (mapGlobals.soundOn) {
-      FX.play({
-        volume: 35,
-        release: 0.8,
-        // decay: 0.2,
-        frequency:
-          (enemyGlobals.baseHitPoints * 3 - enemy.hitPoints) / 100 + 100,
-        sweep: -0.5,
-        source: "sine",
-        repeat: 9,
-        highpass: 100,
-        // vibrato: 0.6,
-        // vibratoFreq: 20,
-        soundX: enemy.position.x,
-        soundY: enemy.position.y,
-        soundZ: enemy.position.z,
-        rolloff: 0.5
-      } as FX.audioParams);
-    }
+  if (mapGlobals.soundOn) {
+    FX.play({
+      volume: 35,
+      release: 0.8,
+      // decay: 0.2,
+      frequency: (enemyGlobals.baseHitPoints * 3 - enemy.hitPoints) / 100 + 100,
+      sweep: -0.5,
+      source: "sine",
+      repeat: 9,
+      highpass: 100,
+      // vibrato: 0.6,
+      // vibratoFreq: 20,
+      soundX: enemy.position.x,
+      soundY: enemy.position.y,
+      soundZ: enemy.position.z,
+      rolloff: 0.5
+    } as FX.audioParams);
   }
 }
 
