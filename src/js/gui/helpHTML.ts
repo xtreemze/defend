@@ -10,7 +10,7 @@ const helpHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>T
     font-weight: 600;
     outline: none;
     font-size: 3vh;
-    font-family: sans-serif;
+    font-family: 'Titillium Web', sans-serif;
     text-align: center;
     user-select: none;
     ">Defend!</button>`;
