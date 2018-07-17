@@ -15,6 +15,7 @@ import {
 } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
 import { removeTower } from "../main/sound";
+import { currencyMeshColor } from "../enemy/currencyMeshColor";
 
 function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer down event is raised
@@ -84,10 +85,7 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
       // When a tower is requested but balance is insuficient
 
       // color
-      economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
-      setTimeout(() => {
-        economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
-      }, 10);
+      currencyMeshColor();
 
       removeTower(economyGlobals.currencyMesh, 1); // sound
     }

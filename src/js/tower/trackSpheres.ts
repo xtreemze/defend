@@ -48,9 +48,9 @@ function trackSpheres(
         ) {
           deltaTime = Date.now();
           setTimeout(() => {
-            flash.setEnabled(false);
+            flash.visibility = 0;
           }, 20);
-          flash.setEnabled(true);
+          flash.visibility = 1;
 
           shoot(flash, level);
 

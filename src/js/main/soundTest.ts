@@ -15,7 +15,7 @@ import { Vector3 } from "babylonjs";
 import randomNumberRange from "../utility/randomNumberRange";
 import { towerGlobals, enemyGlobals } from "./globalVariables";
 
-FX.setVolume(1);
+FX.setVolume(0.5);
 FX._tone.Master.mute = false;
 
 const testMesh = {} as any;
@@ -45,9 +45,9 @@ setInterval(() => {
   setTimeout(() => {
     // damage(testMesh);
     // onDestroy(testMesh, randomNumberRange(1, 3));
-    // addTower(testMesh, randomNumberRange(1, 3));
+    addTower(testMesh, randomNumberRange(1, 3));
     // removeTower(testMesh, randomNumberRange(1, 3));
-    // defeated();
+    defeated();
     // victory();
     enemyExplode(testMesh, randomNumberRange(1, 3));
     // damageCurrency(testMesh);

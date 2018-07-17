@@ -13,6 +13,7 @@
     "update": "npm up -D --depth 2 && npm outdated --depth 2",
     "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
     "dev": "webpack-dev-server --config webpack.configDev.js --mode development --hot --host 0.0.0.0",
+    "soundTest": "webpack-dev-server --config webpack.configSoundTest.js --mode development --hot --host 0.0.0.0",
     "preexportp": "npm run queryVersion && node ./node/rmDir.js && node ./node/cpDir.js",
     "exportp": "npm run manifest && webpack --mode production && npm run favicon",
     "posttoTest": "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags",

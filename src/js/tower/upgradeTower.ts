@@ -15,6 +15,7 @@ import {
 } from "../main/globalVariables";
 import { towerBasePositions, Tower } from "./Tower";
 import { removeTower } from "../main/sound";
+import { currencyMeshColor } from "../enemy/currencyMeshColor";
 
 function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer tap event is raised
@@ -72,10 +73,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
       towerGlobals.baseCost * currentLevel + 1
     ) {
       // color when insufficient funds
-      economyGlobals.currencyMesh.material = materialGlobals.damagedMaterial as Material;
-      setTimeout(() => {
-        economyGlobals.currencyMesh.material = materialGlobals.hitMaterial as Material;
-      }, 10);
+      currencyMeshColor()
 
       // sound when insufficient funds
       removeTower(economyGlobals.currencyMesh, currentLevel + 1);

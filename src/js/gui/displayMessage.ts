@@ -1,6 +1,4 @@
 import {
-  projectileGlobals,
-  mapGlobals,
   economyGlobals,
   enemyGlobals,
   towerGlobals
@@ -8,109 +6,34 @@ import {
 import { Scene } from "babylonjs";
 import { rampUp } from "./currency";
 import { enemyWaves } from "../enemy/enemyWaves";
+import {
+  helpHTML,
+  helpStyle,
+  helpButtonStyle,
+  helpButtonHTML
+} from "./helpHTML";
+import { startStyle, startButtonStyle } from "./startHTML";
 
 function displayMessage(scene: Scene, message: string, icon: string) {
   enemyGlobals.limit = 0;
   const canvas = document.getElementById("renderCanvas");
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = message;
-  title.setAttribute(
-    "style",
-    `
-    position: absolute;
-    color: ${projectileGlobals.livingColor.toHexString()};
-      top: 30vh;
-      width: 100vw;
-      text-align: center;
-      margin-top: -1.5rem;
-      font-weight: 500;
-      font-family: fantasy;
-      font-size: 4rem;
-      user-select: none;
-      text-shadow: black 0px 0px 18px;
-      `
-  );
+  title.setAttribute("style", startStyle);
   const startButton = document.createElement("button") as HTMLButtonElement;
   startButton.innerHTML = icon;
   startButton.id = "startButton";
-  startButton.setAttribute(
-    "style",
-    `
-    position: absolute;
-    background-color: ${mapGlobals.sceneAmbient.toHexString()};
-    color: ${projectileGlobals.livingColor.toHexString()};
-    border-color: ${projectileGlobals.livingColor.toHexString()};
-    top: 50vh;
-    left: 50vw;
-      width: 6rem;
-      height: 6rem;
-      margin-top: -1.5rem;
-      margin-left: -3rem;
-      border-radius: 6rem;
-      font-weight: 600;
-      outline: none;
-      font-size: 3rem;
-      user-select: none;
-      `
-  );
+  startButton.setAttribute("style", startButtonStyle);
 
   const helpButton = document.createElement("button") as HTMLButtonElement;
-  helpButton.innerHTML = `?`;
+  helpButton.innerHTML = helpButtonHTML;
   helpButton.id = "helpButton";
-  helpButton.setAttribute(
-    "style",
-    `
-    position: absolute;
-    background-color: ${mapGlobals.sceneAmbient.toHexString()};
-    color: ${projectileGlobals.livingColor.toHexString()};
-    border-color: ${projectileGlobals.livingColor.toHexString()};
-    bottom: 8vh;
-    left: 50vw;
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: 1.5rem;
-    margin-left: -1.5rem;
-    border-radius: 3rem;
-    font-weight: 600;
-    outline: none;
-    font-size: 1.5rem;
-    user-select: none;
-    `
-  );
+  helpButton.setAttribute("style", helpButtonStyle);
 
   const help = document.createElement("div") as HTMLDivElement;
-  help.innerHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>Tap the grid to strategically deploy or upgrade towers.</p><p>Absorb energy by shooting the enemy to replenish your energy bank.</p><p>You will be defeated if your energy bank is depleted!</p> <button id="okHelp" style="
-    background-color: ${mapGlobals.sceneAmbient.toHexString()};
-    color: ${projectileGlobals.livingColor.toHexString()};
-    border-color: ${projectileGlobals.livingColor.toHexString()};
-    width: 100%;
-    height: 6rem;
-    border-radius: 6rem;
-    font-weight: 600;
-    outline: none;
-    font-size: 3vh;
-    text-align: center;
-    user-select: none;
-    ">Defend!</button>`;
+  help.innerHTML = helpHTML;
   help.id = "help";
-  help.setAttribute(
-    "style",
-    `
-    position: absolute;
-    background-color: ${mapGlobals.sceneAmbient.toHexString()};
-    color: ${projectileGlobals.livingColor.toHexString()};
-    padding: 10%;
-    width: 60%;
-    border-radius: 1rem;
-    font-weight: 100;
-    outline: none;
-    border: 1px solid ${projectileGlobals.livingColor.toHexString()};
-    font-size: 3vh;
-    user-select: none;
-    margin: 10%;
-    text-align: center;
-      `
-  );
+  help.setAttribute("style", helpStyle);
 
   if (canvas !== null) {
     const canvasParent = canvas.parentNode as Node;

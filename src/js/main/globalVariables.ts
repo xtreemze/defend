@@ -123,7 +123,8 @@ const economyGlobals = {
     [15, 5],
     [15, -5],
     [15, -15]
-  ]
+  ],
+  guiString: ``
 };
 
 const renderGlobals = {

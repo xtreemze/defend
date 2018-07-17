@@ -85,6 +85,7 @@ export function fragment(
     let deltaTime = Date.now();
     const disposeFragment = () => {
       if (Date.now() - deltaTime > projectileGlobals.lifeTime) {
+        fragment.setEnabled(false);
         fragment.unregisterAfterRender(disposeFragment);
         fragment.dispose();
         if (fragment.physicsImpostor !== null) {

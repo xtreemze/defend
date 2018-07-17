@@ -21,7 +21,7 @@ class Projectile {
       width: level / 2,
       updatable: false
     }) as LiveProjectile;
-
+    projectile.setEnabled(false);
     projectile.isPickable = false;
     projectile.convertToUnIndexedMesh();
 
@@ -50,6 +50,7 @@ export function impulsePhys(
   ) as Vector3;
   const speed = originMesh.getDirection(forwardLocal) as Vector3;
   if (projectile.physicsImpostor !== null) {
+    projectile.setEnabled(true);
     projectile.physicsImpostor.applyImpulse(
       speed,
       projectile.getAbsolutePosition()

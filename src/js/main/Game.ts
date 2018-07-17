@@ -11,7 +11,7 @@ import {
 } from "babylonjs";
 
 import * as FX from "../../vendor/wafxr/wafxr";
-import { mapGlobals, towerGlobals, enemyGlobals } from "./globalVariables";
+import { mapGlobals } from "./globalVariables";
 
 import { map } from "./map";
 
@@ -40,19 +40,24 @@ class Game {
 
   constructor(canvasElement: string) {
     this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
-    this.engine = new Engine(this.canvas, true, {
-      // preserveDrawingBuffer: true,
-      // stencil: true,
-      // doNotHandleContextLost: true
-    });
+    this.engine = new Engine(
+      this.canvas,
+      true,
+      {
+        // preserveDrawingBuffer: true,
+        // stencil: true,
+        // doNotHandleContextLost: true
+      },
+      false
+    );
     this.engine.enableOfflineSupport = false;
     this.engine.disableManifestCheck = true;
   }
 
   createScene(): void {
     this.scene = new Scene(this.engine);
-    // this.scene.autoClear = false; // Color buffer
-    // this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+    this.scene.autoClear = false; // Color buffer
+    this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
     if (mapGlobals.optimizerOn) {
       // const originalGenerationRate = enemyGlobals.generationRate;
       // const originalTowerLifetime = towerGlobals.lifeTime;
@@ -84,6 +89,8 @@ class Game {
     if (mapGlobals.diagnosticsOn) {
       this.scene.debugLayer.show({ popup: true, initialTab: 2 });
     }
+
+    this.scene.cleanCachedTextureBuffer();
   }
 
   doRender(): void {

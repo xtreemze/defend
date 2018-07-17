@@ -72,6 +72,8 @@ function displayEconomy(scene: Scene) {
   currencyTower.position.y += economyGlobals.bankSize / 24;
   hitPointsMeter.parent = currencyTower;
 
+  hitPointsMeter.visibility = 0;
+
   currencyTower.isPickable = false;
   currencyTower.freezeWorldMatrix();
   currencyTower.convertToUnIndexedMesh();
@@ -95,6 +97,8 @@ function displayEconomy(scene: Scene) {
   scene.registerAfterRender(() => {
     updateEconomy(scene);
   });
+
+  hitPointsMeter.visibility = 1;
 }
 
 function rampUp(scene: Scene, currencyTower?: Mesh) {

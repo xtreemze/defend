@@ -59,6 +59,15 @@ function generateMaterials(scene: Scene) {
   hitMaterial.wireframe = true;
   hitMaterial.alpha = 0.98;
 
+  groundMaterial.freeze();
+  towerMaterial.freeze();
+  projectileMaterial.freeze();
+  transparentMaterial.freeze();
+  skyMaterial.freeze();
+  enemyMaterial.freeze();
+  damagedMaterial.freeze();
+  hitMaterial.freeze();
+
   materialGlobals.groundMaterial = groundMaterial;
   materialGlobals.towerMaterial = towerMaterial;
   materialGlobals.projectileMaterial = projectileMaterial;

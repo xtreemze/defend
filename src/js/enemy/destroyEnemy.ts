@@ -9,6 +9,7 @@ function destroyEnemy(sphereMesh: EnemySphere, scene: Scene, level?: number) {
   if (level) {
     enemyExplode(sphereMesh, level);
   }
+  sphereMesh.setEnabled(false);
   delete sphereMesh.hitPoints;
   Tags.RemoveTagsFrom(sphereMesh, "enemy");
   setTimeout(() => {
@@ -17,7 +18,7 @@ function destroyEnemy(sphereMesh: EnemySphere, scene: Scene, level?: number) {
       sphereMesh.physicsImpostor.dispose();
     }
     enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-  }, 5);
+  }, 10);
 }
 
 export { destroyEnemy };

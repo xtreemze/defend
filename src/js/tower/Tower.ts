@@ -69,10 +69,15 @@ function destroyTower(
   flashMesh?: Mesh
 ): void {
   Tags.RemoveTagsFrom(baseMesh, "towerBase");
+  baseMesh.setEnabled(false);
+
   towerGlobals.allPositions = towerBasePositions(scene);
   baseMesh.onDisposeObservable.clear();
   towerGlobals.allTowers = [];
   if (pillarMesh && turretMesh && flashMesh) {
+    pillarMesh.setEnabled(false);
+    turretMesh.setEnabled(false);
+    flashMesh.setEnabled(false);
     if (towerGlobals.raysOn) {
       turretMesh.turretRayHelper.dispose();
     }
