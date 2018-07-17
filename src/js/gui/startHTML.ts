@@ -10,6 +10,7 @@ const startHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>
     font-weight: 600;
     outline: none;
     font-size: 3vh;
+    font-family: sans-serif;
     text-align: center;
     user-select: none;
     ">Defend!</button>`;
@@ -22,7 +23,7 @@ const startStyle = `
       text-align: center;
       margin-top: -1.5rem;
       font-weight: 500;
-      font-family: fantasy;
+      font-family: sans-serif;
       font-size: 4rem;
       user-select: none;
       text-shadow: black 0px 0px 18px;
@@ -47,6 +48,31 @@ const startButtonStyle = `
       line-height: 0;
       `;
 
+const installButtonStyle = `
+    position: absolute;
+    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    color: ${projectileGlobals.livingColor.toHexString()};
+    border-color: ${projectileGlobals.livingColor.toHexString()};
+    bottom: 16vh;
+    left: 50vw;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.5rem;
+    margin-left: -1.5rem;
+    border-radius: 3rem;
+    font-weight: 600;
+    outline: none;
+    font-size: 1.5rem;
+    user-select: none;
+    line-height: 0;
+    `;
+
 const startButtonHTML = `&#9654;`;
 
-export { startHTML, startStyle, startButtonStyle, startButtonHTML };
+export {
+  startHTML,
+  startStyle,
+  startButtonStyle,
+  startButtonHTML,
+  installButtonStyle
+};

@@ -31,7 +31,7 @@ function displayEconomy(scene: Scene) {
     left: 2rem;
     text-align: left;
     font-weight: 100;
-    font-family: fantasy;
+    font-family: sans-serif;
     font-size: 1.2rem;
     user-select: none;
         `

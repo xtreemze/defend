@@ -16,7 +16,12 @@ import { newTower } from "../tower/pick";
 import { Scene, PhysicsEngine } from "babylonjs";
 import { displayEconomy } from "./currency";
 import { upgradeTower } from "../tower/upgradeTower";
-import { startButtonStyle, startStyle, startButtonHTML } from "./startHTML";
+import {
+  startButtonStyle,
+  startStyle,
+  startButtonHTML,
+  installButtonStyle
+} from "./startHTML";
 
 function titleScreen(
   scene: Scene,
@@ -42,10 +47,42 @@ function titleScreen(
   help.id = "help";
   help.setAttribute("style", helpStyle);
 
+  const btnAdd = document.createElement("button") as HTMLButtonElement;
+  let deferredPrompt: any;
+  btnAdd.innerHTML = "&#11123;";
+  btnAdd.setAttribute("style", installButtonStyle);
+  btnAdd.style.display = "none";
+  window.addEventListener("beforeinstallprompt", e => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+
+    // Update UI notify the user they can add to home screen
+    btnAdd.style.display = "block";
+  });
+
+  btnAdd.addEventListener("click", e => {
+    // hide our user interface that shows our A2HS button
+    btnAdd.style.display = "none";
+    // Show the prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult: any) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      deferredPrompt = null;
+    });
+  });
+
   const canvasParent = canvas.parentNode as Node;
 
   canvasParent.insertBefore(title, canvas);
   canvasParent.insertBefore(startButton, canvas);
+  canvasParent.insertBefore(btnAdd, canvas);
   canvasParent.insertBefore(helpButton, canvas);
 
   // When no button is pressed, game starts without sound
@@ -74,6 +111,8 @@ function titleScreen(
     // clearTimeout(noSoundTimer);
     const titleParent = title.parentNode as Node;
     titleParent.removeChild(title);
+    const installParent = btnAdd.parentNode as Node;
+    installParent.removeChild(btnAdd);
 
     const startButtonParent = startButton.parentNode as Node;
     startButtonParent.removeChild(startButton);
@@ -118,6 +157,10 @@ function titleScreen(
       helpButtonParent.removeChild(helpButton);
     }
 
+    const installParent = btnAdd.parentNode as Node;
+    if (installParent !== null) {
+      installParent.removeChild(btnAdd);
+    }
     // enable interactive Tower generation and upgrade
     newTower(scene, physicsEngine);
     upgradeTower(scene, physicsEngine);

@@ -33,7 +33,7 @@
         "name": "Defend",
         "short_name": "Defend",
         "start_url": "https://xtreemze.github.io/defend/",
-        "display": "standalone",
+        "display": "fullscreen",
         "version": "0.0.1",
         "lang": "en_US",
         "description":
