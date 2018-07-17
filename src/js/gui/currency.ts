@@ -28,7 +28,7 @@ function displayEconomy(scene: Scene) {
     top: 1.5rem;
     left: 2rem;
     text-align: left;
-    font-weight: 100;
+    font-weight: 600;
     font-family: 'Titillium Web', sans-serif;
     font-size: 1.2rem;
     user-select: none;

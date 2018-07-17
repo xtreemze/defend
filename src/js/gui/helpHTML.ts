@@ -7,7 +7,7 @@ const helpHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>T
     width: 100%;
     height: 6rem;
     border-radius: 6rem;
-    font-weight: 600;
+    font-weight: 800;
     outline: none;
     font-size: 3vh;
     font-family: 'Titillium Web', sans-serif;
@@ -22,10 +22,11 @@ const helpStyle = `
     padding: 10%;
     width: 60%;
     border-radius: 1rem;
-    font-weight: 100;
+    font-weight: 300;
     outline: none;
     border: 1px solid ${projectileGlobals.livingColor.toHexString()};
     font-size: 3vh;
+    font-family: 'Titillium Web', sans-serif;
     user-select: none;
     margin: 10%;
     text-align: center;

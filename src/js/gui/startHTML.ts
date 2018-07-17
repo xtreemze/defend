@@ -22,7 +22,7 @@ const startStyle = `
       width: 100vw;
       text-align: center;
       margin-top: -1.5rem;
-      font-weight: 500;
+      font-weight: 700;
       font-family: 'Titillium Web', sans-serif;
       font-size: 4rem;
       user-select: none;
@@ -41,7 +41,7 @@ const startButtonStyle = `
       margin-top: -1.5rem;
       margin-left: -3rem;
       border-radius: 6rem;
-      font-weight: 600;
+      font-weight: 700;
       outline: none;
       font-size: 3rem;
       font-family: 'Titillium Web', sans-serif;
