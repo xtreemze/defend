@@ -29,7 +29,7 @@ function renderPipeline(scene: Scene) {
     pipeline.depthOfField.fStop = 4.0; // aka F number of the camera defined in stops as it would be on a physical device
 
     // Antialiasing
-    pipeline.samples = 4;
+    pipeline.samples = 2;
     pipeline.fxaaEnabled = renderGlobals.antialiasing;
 
     // Sharpen
@@ -47,7 +47,6 @@ function renderPipeline(scene: Scene) {
 
   // Glow
   if (renderGlobals.glow) {
-
     const glowLayer = new GlowLayer("glow", scene, {
       // mainTextureFixedSize: 32,
       // blurKernelSize: 8,

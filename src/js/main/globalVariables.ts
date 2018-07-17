@@ -132,7 +132,7 @@ const renderGlobals = {
   glow: true,
   glowIntensity: 2.8,
   sharpenning: false,
-  antialiasing: true,
+  antialiasing: false,
   depthOfField: false,
   bloom: false,
   screenshot: false

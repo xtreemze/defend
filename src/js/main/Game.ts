@@ -48,7 +48,7 @@ class Game {
         // stencil: true,
         // doNotHandleContextLost: true
       },
-      true
+      false
     );
     this.engine.enableOfflineSupport = false;
     this.engine.disableManifestCheck = true;
