@@ -1,5 +1,13 @@
 import { towerBorn, TowerTurret } from "./towerBorn";
-import { Scene, MeshBuilder, Mesh, PhysicsEngine, Ray, Tags } from "babylonjs";
+import {
+  Scene,
+  MeshBuilder,
+  Mesh,
+  PhysicsEngine,
+  Ray,
+  Tags,
+  InstancedMesh
+} from "babylonjs";
 import { addTower } from "../main/sound";
 import { towerGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
@@ -13,18 +21,15 @@ class Tower {
   ) {
     const name = `towerLevel${level}Index${towerGlobals.index}` as string;
     towerGlobals.index += 1;
-    let tower = MeshBuilder.CreateBox(
+    let tower = towerGlobals.towerBaseMesh.clone(
       name,
-      {
-        size: 10,
-        height: towerGlobals.height,
-        updatable: false
-      },
-      scene
+      undefined,
+      undefined,
+      true
     ) as Mesh;
 
     Tags.AddTagsTo(tower, "towerBase");
-    tower.convertToUnIndexedMesh();
+
     towerBorn(scene, tower, position, level, physicsEngine);
     addTower(tower, level);
     towerGlobals.allPositions = towerBasePositions(scene);

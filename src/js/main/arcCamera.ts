@@ -1,8 +1,8 @@
-import { Scene, ArcRotateCamera, Vector3, Engine, Camera } from "babylonjs";
+import { Scene, ArcRotateCamera, Vector3, Camera } from "babylonjs";
 import { mapGlobals } from "./globalVariables";
 import * as FX from "../../vendor/wafxr/wafxr";
 
-function arcCamera(scene: Scene, canvas: HTMLCanvasElement, engine: Engine) {
+function arcCamera(scene: Scene, canvas: HTMLCanvasElement) {
   // Camera1
   const camera = new ArcRotateCamera(
     "arc",

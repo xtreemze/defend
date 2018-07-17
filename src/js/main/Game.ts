@@ -23,6 +23,10 @@ import { arcCamera } from "./arcCamera";
 import { generateMaterials } from "../utility/materialGenerator";
 import { renderPipeline } from "./renderPipeline";
 import { createProjectileInstances } from "../projectile/createProjectileInstance";
+import {
+  createTowerBaseInstance,
+  createTurretInstanceL2
+} from "../tower/createTowerInstance";
 
 runtime.install({
   onUpdating: () => {},
@@ -83,10 +87,11 @@ class Game {
 
     generateMaterials(this.scene);
     map(this.scene);
+    createTowerBaseInstance();
+    createTurretInstanceL2(this.scene);
     createProjectileInstances();
 
-    // cameras(this.scene, this.canvas, this.engine);
-    arcCamera(this.scene, this.canvas, this.engine);
+    arcCamera(this.scene, this.canvas);
 
     if (mapGlobals.diagnosticsOn) {
       this.scene.debugLayer.show({ popup: true, initialTab: 2 });
