@@ -145,54 +145,38 @@ function newWave() {
 }
 
 function addTower(tower: Mesh, level: number) {
-  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-    setTimeout(() => {
-      mapGlobals.simultaneousSounds -= 1;
-    }, mapGlobals.soundDelay);
-
-    mapGlobals.simultaneousSounds += 1;
-
-    if (mapGlobals.soundOn) {
-      FX.play({
-        volume: 40,
-        sustain: 0.1,
-        // release: 0.2,
-        frequency: 200 / level + towerGlobals.allTowers.length * 3,
-        sweep: 0.125,
-        repeat: 9,
-        source: "sine",
-        soundX: tower.position.x,
-        soundY: tower.position.y,
-        soundZ: tower.position.z,
-        rolloff: 0.5
-      } as FX.audioParams);
-    }
+  if (mapGlobals.soundOn) {
+    FX.play({
+      volume: 40,
+      sustain: 0.1,
+      // release: 0.2,
+      frequency: 200 / level + towerGlobals.allTowers.length * 3,
+      sweep: 0.125,
+      repeat: 9,
+      source: "sine",
+      soundX: tower.position.x,
+      soundY: tower.position.y,
+      soundZ: tower.position.z,
+      rolloff: 0.5
+    } as FX.audioParams);
   }
 }
 
 function removeTower(tower: Mesh, level: number) {
-  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
-    setTimeout(() => {
-      mapGlobals.simultaneousSounds -= 1;
-    }, mapGlobals.soundDelay);
-
-    mapGlobals.simultaneousSounds += 1;
-
-    if (mapGlobals.soundOn) {
-      FX.play({
-        volume: 40,
-        sustain: 0.1,
-        // release: 0.2,
-        frequency: 200 / level + towerGlobals.allTowers.length * 3,
-        sweep: -0.5,
-        repeat: 9,
-        source: "sine",
-        soundX: tower.position.x,
-        soundY: tower.position.y,
-        soundZ: tower.position.z,
-        rolloff: 0.5
-      } as FX.audioParams);
-    }
+  if (mapGlobals.soundOn) {
+    FX.play({
+      volume: 40,
+      sustain: 0.1,
+      // release: 0.2,
+      frequency: 200 / level + towerGlobals.allTowers.length * 3,
+      sweep: -0.5,
+      repeat: 9,
+      source: "sine",
+      soundX: tower.position.x,
+      soundY: tower.position.y,
+      soundZ: tower.position.z,
+      rolloff: 0.5
+    } as FX.audioParams);
   }
 }
 
