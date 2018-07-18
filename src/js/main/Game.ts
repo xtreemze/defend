@@ -29,6 +29,21 @@ import {
   createTurretInstanceL3
 } from "../tower/createTowerInstance";
 
+function sw() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("../../sw2.js")
+      .then(function() {
+        console.log("Service Worker registered successfully");
+      })
+      .catch(function() {
+        console.log("Service worker registration failed");
+      });
+  }
+}
+
+sw();
+
 runtime.install({
   onUpdating: () => {},
   onUpdateReady: () => {
