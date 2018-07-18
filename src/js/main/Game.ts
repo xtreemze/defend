@@ -32,7 +32,7 @@ import {
 function sw() {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker
-      .register("../../sw2.js")
+      .register("./sw2.js")
       .then(function() {
         console.log("Service Worker registered successfully");
       })
