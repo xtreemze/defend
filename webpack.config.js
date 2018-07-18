@@ -5,9 +5,9 @@ const OfflinePlugin = require("offline-plugin");
 module.exports = function e() {
   return {
     entry: {
-      shell: "./src/js/main/Game.ts",
-      // shell: "./src/js/main/soundTest.ts",
-      shims: "airbnb-browser-shims"
+      sw: "./src/js/main/registerServiceWorker.ts",
+      shims: "airbnb-browser-shims",
+      shell: "./src/js/main/Game.ts"
     },
     optimization: {
       runtimeChunk: "single",
