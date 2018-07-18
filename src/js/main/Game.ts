@@ -1,4 +1,5 @@
 // import "babylonjs-inspector";
+import "../../vendor/manup.js";
 import "./../../vendor/pep";
 import {
   Engine,
@@ -12,7 +13,6 @@ import {
 
 import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals } from "./globalVariables";
-
 import { map } from "./map";
 
 import runtime = require("offline-plugin/runtime");

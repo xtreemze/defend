@@ -8,6 +8,8 @@
     "manifest": "node ./node/generateManifest.js",
     "commits": "git log --graph --oneline --decorate -5",
     "queryVersion": "node ./node/queryVersion.js",
+    "pwa": "npx pwabuilder https://xtreemze.github.io/defend/ -d ./release/pwa -f w3c -i ./release/screenshot3.png",
+    "pwaWeb": "npx pwabuilder -m ./dist/site.webmanifest -d ./dist -f w3c -i ./release/screenshot3.png -p web",
     "lint": "npx eslint ./src/js --quiet",
     "clean": "node ./node/clean.js && npm cache clean && npm i -D -f && npm up -D --depth 2 && npm up --save && npm outdated --depth 2",
     "update": "npm up -D --depth 2 && npm outdated --depth 2",

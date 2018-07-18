@@ -62,7 +62,7 @@ const content = `{
   "theme_color": "#160230",
   "background_color": "#160230",
   "developer": {
-    "name": "@xtreemze",
+    "name": "Carlos Velasco @xtreemze",
     "url": "https://github.com/xtreemze/"
   },
   "default_locale": "en",

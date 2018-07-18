@@ -63,9 +63,9 @@ export function updateEconomy(scene: Scene): any {
     economyGlobals.guiString = `Wave: ${level}/${waves.length}
   Victories: ${economyGlobals.victories}/${economyGlobals.victories +
       economyGlobals.defeats}`;
-  }
 
-  currentBalance.innerText = economyGlobals.guiString;
+    currentBalance.innerText = economyGlobals.guiString;
+  }
 
   const scaleRate =
     1 / (economyGlobals.maxBalance / economyGlobals.currentBalance);
