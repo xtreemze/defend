@@ -15,7 +15,6 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals } from "./globalVariables";
 import { map } from "./map";
 
-import runtime = require("offline-plugin/runtime");
 
 import { titleScreen } from "../gui/titleScreen";
 // import { cameras } from "./cameras";
@@ -31,16 +30,6 @@ import {
 
 
 
-runtime.install({
-  onUpdating: () => {},
-  onUpdateReady: () => {
-    runtime.applyUpdate();
-  },
-  onUpdated: () => {
-    window.location.reload();
-  },
-  onUpdateFailed: () => {}
-});
 class Game {
   public canvas: HTMLCanvasElement;
   public engine: Engine;
