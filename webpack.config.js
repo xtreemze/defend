@@ -147,7 +147,7 @@ module.exports = function e() {
         template: "./src/index.ejs"
       }),
       new WorkboxPlugin.InjectManifest({
-        swSrc: './src/sw2.js',
+        swSrc: "./src/sw2.js"
       })
       // new HtmlMinifierPlugin({
       //   minifyCSS: true,
@@ -175,11 +175,11 @@ module.exports = function e() {
       //   ServiceWorker: {
       //     events: "true"
       //   }
-        // ,
-        // AppCache: {
-        //   events: "true"
-        // }
-      })
+      // ,
+      // AppCache: {
+      //   events: "true"
+      // }
+      // })
     ]
   };
 };
