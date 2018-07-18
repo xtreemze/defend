@@ -8,7 +8,12 @@ import {
   GroundMesh,
   Mesh
 } from "babylonjs";
-import { renderGlobals, mapGlobals, materialGlobals } from "./globalVariables";
+import {
+  renderGlobals,
+  mapGlobals,
+  materialGlobals,
+  economyGlobals
+} from "./globalVariables";
 
 function renderPipeline(scene: Scene) {
   const groundMaterial = materialGlobals.groundMaterial;
@@ -58,6 +63,7 @@ function renderPipeline(scene: Scene) {
     // glowLayer.addIncludedOnlyMesh(projectile);
     glowLayer.addExcludedMesh(mapGlobals.groundMesh);
     glowLayer.addExcludedMesh(mapGlobals.atmosphereMesh);
+    glowLayer.addExcludedMesh(economyGlobals.currencyMesh);
   }
   if (mapGlobals.demoSphere) {
     const demoSphere = MeshBuilder.CreateSphere(

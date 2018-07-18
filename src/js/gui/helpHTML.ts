@@ -37,7 +37,7 @@ const helpButtonStyle = `
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
     border-color: ${projectileGlobals.livingColor.toHexString()};
-    bottom: 8vh;
+    bottom: 6vh;
     left: 50vw;
     width: 3rem;
     height: 3rem;
@@ -49,8 +49,9 @@ const helpButtonStyle = `
     font-size: 1.5rem;
     user-select: none;
     line-height: 0;
+    text-align: center;
     `;
 
-const helpButtonHTML = `&#xFF1F;`;
+const helpButtonHTML = `?`;
 
 export { helpHTML, helpStyle, helpButtonStyle, helpButtonHTML };

@@ -15,7 +15,7 @@ function generateMaterials(scene: Scene) {
   groundMaterial.emissiveColor = enemyGlobals.hitColor;
   groundMaterial.specularColor = new Color3(0.68, 0.38, 0.1);
   groundMaterial.ambientColor = mapGlobals.ambientColor;
-  groundMaterial.alpha = 0.1;
+  groundMaterial.alpha = 0.3;
 
   const skyMaterial = new StandardMaterial("skyMaterial", scene);
 
@@ -57,7 +57,7 @@ function generateMaterials(scene: Scene) {
   hitMaterial.specularColor = new Color3(0.68, 0.38, 0.1);
   hitMaterial.emissiveColor = enemyGlobals.hitColor;
   hitMaterial.wireframe = true;
-  hitMaterial.alpha = 0.98;
+  hitMaterial.alpha = 0.99;
 
   groundMaterial.freeze();
   towerMaterial.freeze();

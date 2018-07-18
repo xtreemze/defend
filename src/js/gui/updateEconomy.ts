@@ -19,6 +19,7 @@ export function updateEconomy(scene: Scene): any {
     economyGlobals.restartMessage = true;
     economyGlobals.currentBalance = 0;
     economyGlobals.defeats += 1;
+    localStorage.setItem("defeats", `${economyGlobals.defeats}`);
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
 
@@ -36,6 +37,8 @@ export function updateEconomy(scene: Scene): any {
     economyGlobals.currentBalance = economyGlobals.maxBalance;
     economyGlobals.restartMessage = true;
     economyGlobals.victories += 1;
+    localStorage.setItem("victories", `${economyGlobals.victories}`);
+
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
 

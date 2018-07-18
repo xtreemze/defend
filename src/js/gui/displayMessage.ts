@@ -13,6 +13,7 @@ import {
   helpButtonHTML
 } from "./helpHTML";
 import { startStyle, startButtonStyle } from "./startHTML";
+import { shareButton, removeShareButton } from "../utility/share";
 
 function displayMessage(scene: Scene, message: string, icon: string) {
   enemyGlobals.limit = 0;
@@ -36,6 +37,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
   help.setAttribute("style", helpStyle);
 
   if (canvas !== null) {
+    shareButton();
     const canvasParent = canvas.parentNode as Node;
     canvasParent.insertBefore(title, canvas);
     canvasParent.insertBefore(startButton, canvas);
@@ -65,20 +67,24 @@ function displayMessage(scene: Scene, message: string, icon: string) {
       const helpParent = help.parentNode as Node;
       helpParent.removeChild(help);
       rampUp(scene);
+
+      removeShareButton();
     });
 
     // Help button behavior
     helpButton.addEventListener("click", () => {
+      // remove title
       const titleParent = title.parentNode as Node;
       titleParent.removeChild(title);
-
+      // remove start button
       const startButtonParent = startButton.parentNode as Node;
       startButtonParent.removeChild(startButton);
-
+      // remove help button
       canvasParent.insertBefore(help, canvas);
       const helpButtonParent = helpButton.parentNode as Node;
       helpButtonParent.removeChild(helpButton);
-
+      //remove share button
+      removeShareButton();
       const okHelp = document.getElementById("okHelp") as HTMLButtonElement;
 
       okHelp.addEventListener("click", function() {

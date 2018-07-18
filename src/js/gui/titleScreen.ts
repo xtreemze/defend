@@ -1,15 +1,9 @@
 import {
-  projectileGlobals,
   mapGlobals,
   enemyGlobals,
   economyGlobals
 } from "../main/globalVariables";
-import {
-  helpHTML,
-  helpButtonHTML,
-  helpStyle,
-  helpButtonStyle
-} from "./helpHTML";
+import { helpHTML, helpStyle, helpButtonStyle, helpButtonHTML } from "./helpHTML";
 import * as FX from "../../vendor/wafxr/wafxr";
 import { enemyWaves } from "../enemy/enemyWaves";
 import { newTower } from "../tower/pick";
@@ -28,6 +22,22 @@ function titleScreen(
   canvas: HTMLCanvasElement,
   physicsEngine: PhysicsEngine
 ) {
+  // get records from localStorage
+  const localStorageVictories = parseInt(localStorage.getItem(
+    "victories"
+  ) as string) as number;
+  if (localStorageVictories !== NaN && localStorageVictories >= 0) {
+    economyGlobals.victories = localStorageVictories;
+  }
+
+  const localStorageDefeats = parseInt(localStorage.getItem(
+    "defeats"
+  ) as string) as number;
+  if (localStorageDefeats !== NaN && localStorageDefeats >= 0) {
+    economyGlobals.defeats = localStorageDefeats;
+  }
+
+  // clear Credits
   const credits = document.getElementById("credits") as HTMLHeadingElement;
   credits.style.display = "none";
 
@@ -36,18 +46,20 @@ function titleScreen(
   if (creditsParent !== null) {
     creditsParent.removeChild(credits);
   }
-
+  // Show Title
   const title = document.createElement("h1") as HTMLElement;
   title.innerText = `Defend`;
   title.setAttribute("style", startStyle);
 
+  // Show play button
   const startButton = document.createElement("button") as HTMLButtonElement;
   startButton.innerHTML = startButtonHTML;
   startButton.id = "startButton";
   startButton.setAttribute("style", startButtonStyle);
 
+  // Show help button
   const helpButton = document.createElement("button") as HTMLButtonElement;
-  helpButton.innerHTML = `?`;
+  helpButton.innerHTML = helpButtonHTML;
   helpButton.id = "helpButton";
   helpButton.setAttribute("style", helpButtonStyle);
 
@@ -56,6 +68,7 @@ function titleScreen(
   help.id = "help";
   help.setAttribute("style", helpStyle);
 
+  // Show add to home button
   const btnAdd = document.createElement("button") as HTMLButtonElement;
   let deferredPrompt: any;
   btnAdd.innerHTML = "&#x1F3E0;";

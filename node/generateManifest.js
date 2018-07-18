@@ -11,7 +11,7 @@ const content = `{
   "lang": "en_US",
   "description":
     "Procedural Cross-Platform 3D Tower Defense WebGame with Physics and AI and Procedural Sound",
-  "orientation": "undefined",
+  "orientation": "any",
   "icons": [
     {
       "src": "android-chrome-36x36.png",
