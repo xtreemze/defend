@@ -4,8 +4,8 @@ const helpHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>T
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
     border-color: ${projectileGlobals.livingColor.toHexString()};
-    width: 100%;
-    height: 6rem;
+    width: 80%;
+    height: 12vh;
     border-radius: 6rem;
     font-weight: 800;
     outline: none;
@@ -17,12 +17,12 @@ const helpHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>T
 
 const helpStyle = `
     position: absolute;
-    background-color: ${mapGlobals.sceneAmbient.toHexString()};
+    background-color: #0200337d;
     color: ${projectileGlobals.livingColor.toHexString()};
     padding: 10%;
-    width: 60%;
+    width: 70%;
     border-radius: 1rem;
-    font-weight: 300;
+    font-weight: 400;
     outline: none;
     border: 1px solid ${projectileGlobals.livingColor.toHexString()};
     font-size: 2.8vh;

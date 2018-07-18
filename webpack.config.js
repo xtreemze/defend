@@ -169,10 +169,11 @@ module.exports = function e() {
         minify: "true",
         ServiceWorker: {
           events: "true"
-        },
-        AppCache: {
-          events: "true"
         }
+        // ,
+        // AppCache: {
+        //   events: "true"
+        // }
       })
     ]
   };

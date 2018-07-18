@@ -1,5 +1,5 @@
 import { economyGlobals, enemyGlobals } from "../main/globalVariables";
-import { Scene, Vector3, Mesh } from "babylonjs";
+import { Scene, Vector3 } from "babylonjs";
 import { displayMessage } from "./displayMessage";
 import { waves } from "../enemy/waves";
 import { victory, defeated } from "../main/sound";

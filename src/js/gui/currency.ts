@@ -32,6 +32,7 @@ function displayEconomy(scene: Scene) {
     font-family: 'Titillium Web', sans-serif;
     font-size: 1.2rem;
     user-select: none;
+    line-height: 1.3rem;
         `);
 
   canvasParent.insertBefore(currentBalance, canvas);
