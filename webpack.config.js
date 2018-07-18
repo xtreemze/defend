@@ -8,7 +8,7 @@ module.exports = function e() {
   return {
     entry: {
       sw: "./src/js/main/registerServiceWorker.ts",
-      offline: "./src/js/main/offlineRuntime.ts",
+      // offline: "./src/js/main/offlineRuntime.ts",
       shims: "airbnb-browser-shims",
       shell: "./src/js/main/Game.ts"
     },
