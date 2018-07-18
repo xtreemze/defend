@@ -10,7 +10,7 @@ function sw2() {
     //Register the ServiceWorker
     navigator.serviceWorker
       .register("sw2.js", {
-        scope: "./"
+        scope: "./defend"
       })
       .then(function(reg) {
         console.log(
