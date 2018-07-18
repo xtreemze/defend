@@ -31,7 +31,6 @@ module.exports = function e() {
       extensions: [".tsx", ".ts", ".js"]
     },
     cache: true,
-    devServer: { contentBase: "./dist", compress: true, hot: true },
     stats: {
       // Add asset Information
       assets: true,
