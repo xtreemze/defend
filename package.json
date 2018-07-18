@@ -15,7 +15,7 @@
     "dev": "webpack-dev-server --config webpack.configDev.js --mode development --hot --host 0.0.0.0",
     "soundTest": "webpack-dev-server --config webpack.configSoundTest.js --mode development --hot --host 0.0.0.0",
     "preexportp": "npm run queryVersion && node ./node/rmDir.js && node ./node/cpDir.js",
-    "exportp": "npm run manifest && webpack --mode production && npm run favicon",
+    "exportp": "webpack --mode production && npm run favicon && npm run manifest",
     "posttoTest": "npm config set sign-git-tag true && git add -A && npm version patch -s --force && npm run commits & npm run queryVersion && git push && git push --tags",
     "favicon": "real-favicon generate faviconDescription.json faviconData.json ./dist/ && real-favicon inject faviconData.json ./dist/ ./dist/index.html",
     "faviconUpdate": "real-favicon check-for-update --fail-on-update faviconData.json",

@@ -8,7 +8,7 @@
         "ios6AndPriorIcons": true,
         "ios7AndLaterIcons": true,
         "precomposedIcons": false,
-        "declareOnlyDefaultIcon": true
+        "declareOnlyDefaultIcon": false
       }
     },
     "desktopBrowser": {},
@@ -34,7 +34,7 @@
         "short_name": "Defend",
         "start_url": "https://xtreemze.github.io/defend/",
         "display": "fullscreen",
-        "version": "0.0.1",
+        "version": "1.0.0",
         "lang": "en_US",
         "description":
           "Procedural Cross-Platform 3D Tower Defense WebGame with Physics and AI and Procedural Sound",
@@ -58,7 +58,7 @@
     "scalingAlgorithm": "Spline",
     "errorOnImageTooSmall": false,
     "readmeFile": false,
-    "htmlCodeFile": true,
+    "htmlCodeFile": false,
     "usePathAsIs": false
   }
 }
