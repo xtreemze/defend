@@ -1,5 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const OfflinePlugin = require("offline-plugin");
+// const OfflinePlugin = require("offline-plugin");
+
+const WorkboxPlugin = require("workbox-webpack-plugin");
 // const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 
 module.exports = function e() {
@@ -144,6 +146,9 @@ module.exports = function e() {
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
       }),
+      new WorkboxPlugin.InjectManifest({
+        swSrc: './src/sw2.js',
+      })
       // new HtmlMinifierPlugin({
       //   minifyCSS: true,
       //   minifyJS: true,
@@ -161,15 +166,15 @@ module.exports = function e() {
       //   collapseInlineTagWhitespace: true,
       //   collapseBooleanAttributes: true
       // }),
-      new OfflinePlugin({
-        // externals: [],
-        caches: "all",
-        responseStrategy: "network-first",
-        updateStrategy: "all",
-        minify: "true",
-        ServiceWorker: {
-          events: "true"
-        }
+      // new OfflinePlugin({
+      //   // externals: [],
+      //   caches: "all",
+      //   responseStrategy: "network-first",
+      //   updateStrategy: "all",
+      //   minify: "true",
+      //   ServiceWorker: {
+      //     events: "true"
+      //   }
         // ,
         // AppCache: {
         //   events: "true"
