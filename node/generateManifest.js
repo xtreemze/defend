@@ -60,7 +60,13 @@ const content = `{
     }
   ],
   "theme_color": "#160230",
-  "background_color": "#160230"
+  "background_color": "#160230",
+  "developer": {
+    "name": "@xtreemze",
+    "url": "https://github.com/xtreemze/"
+  },
+  "default_locale": "en",
+  "chrome": { "navigation": true }
 }
 `;
 
