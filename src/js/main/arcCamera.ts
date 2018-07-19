@@ -9,7 +9,7 @@ function arcCamera(scene: Scene, canvas: HTMLCanvasElement) {
     0,
     Math.PI / 8,
     200,
-    Vector3.Zero(),
+    new Vector3(0, 3, 0),
     scene
   ) as ArcRotateCamera;
 

@@ -14,8 +14,6 @@ function shoot(originMesh: Mesh, level: number) {
     if (mapGlobals.soundOn) {
       FX.play({
         volume: 30,
-        // attack: 0.01,
-        // sustain: 0.012,
         release: 0.25,
         decay: 0.05,
         frequency: 880 / (level * 1.5),
@@ -41,17 +39,10 @@ function damage(enemy: EnemySphere) {
     if (mapGlobals.soundOn) {
       FX.play({
         volume: 35,
-        // attack: 0.02,
-        // sustain: 0.03,
         release: 0.05,
-        // decay: 0.3,
-
-        frequency: enemy.hitPoints / 220 + 100, // sweep: -0.1,
-        // highpass: 100,
-        // lowpass: 3000,
+        frequency: enemy.hitPoints / 220 + 100,
+        highpass: 500,
         source: "triangle",
-        // vibrato: 0.3,
-        // vibratoFreq: 20,
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
@@ -64,16 +55,13 @@ function damage(enemy: EnemySphere) {
 function damageCurrency(enemy: EnemySphere) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 35,
+      volume: 32,
       release: 0.8,
-      // decay: 0.2,
       frequency: (enemyGlobals.baseHitPoints * 3 - enemy.hitPoints) / 100 + 100,
       sweep: -0.5,
       source: "sine",
       repeat: 9,
-      highpass: 200,
-      // vibrato: 0.6,
-      // vibratoFreq: 20,
+      highpass: 300,
       soundX: enemy.position.x,
       soundY: enemy.position.y,
       soundZ: enemy.position.z,
@@ -92,7 +80,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 40,
+        volume: 32,
         sustain: 0.2,
         release: 0.8,
         decay: 1,
@@ -101,9 +89,6 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         source: "sine",
         repeat: 6,
         highpass: 200,
-        // vibrato: 0.8,
-        // vibratoFreq: 10,
-        // pulseWidth: 0.5,
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
@@ -116,21 +101,13 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 function newWave() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 15,
+      volume: 8,
       decay: 0.8,
-      // attack: 0.9,
-      // sustain: 0.025,
       release: 0.9,
       frequency: 70,
-      highpass: 150,
+      highpass: 200,
       sweep: 0.5,
       source: "sine"
-      // pulseWidth: 0.5
-      // repeat: 2.5
-      // soundX: 0,
-      // soundY: 0,
-      // soundZ: 0,
-      // rolloff: 0.5
     } as FX.audioParams);
   }
 }
@@ -138,9 +115,8 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 40,
+      volume: 35,
       sustain: 0.1,
-      // release: 0.2,
       frequency: 200 / level + towerGlobals.allTowers.length * 3,
       sweep: 0.125,
       repeat: 9,
@@ -157,9 +133,8 @@ function addTower(tower: Mesh, level: number) {
 function removeTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 40,
+      volume: 35,
       sustain: 0.1,
-      // release: 0.2,
       frequency: 200 / level + towerGlobals.allTowers.length * 3,
       sweep: -0.5,
       repeat: 9,
@@ -176,8 +151,7 @@ function removeTower(tower: Mesh, level: number) {
 function defeated() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -5,
-      // decay: 1,
+      volume: -6,
       attack: 1,
       sustain: 0.08,
       release: 1,
@@ -187,9 +161,6 @@ function defeated() {
       source: "sine",
       pulseWidth: 0.5,
       repeat: 6,
-      // soundX: 0,
-      // soundY: 0,
-      // soundZ: 0,
       rolloff: 0.5
     } as FX.audioParams);
   }
@@ -198,8 +169,7 @@ function defeated() {
 function victory() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -5,
-      // decay: 0.8,
+      volume: -6,
       attack: 0.8,
       sustain: 0.12,
       release: 1,
@@ -209,9 +179,6 @@ function victory() {
       source: "sine",
       pulseWidth: 0.5,
       repeat: 8,
-      // soundX: 0,
-      // soundY: 0,
-      // soundZ: 0,
       rolloff: 0.5
     } as FX.audioParams);
   }

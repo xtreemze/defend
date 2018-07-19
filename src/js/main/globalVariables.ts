@@ -37,7 +37,7 @@ const mapGlobals = {
 const projectileGlobals = {
   projectileMeshL2: {} as any | LiveProjectileInstance,
   projectileMeshL3: {} as any | LiveProjectileInstance,
-  lifeTime: 2500, // milliseconds
+  lifeTime: 2000, // milliseconds
   speed: 8000,
   mass: 50,
   baseHitPoints: 80,
@@ -82,11 +82,11 @@ const enemyGlobals = {
   originHeight: 7,
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
-  speed: 12000,
-  mass: 9000,
+  speed: 15000,
+  mass: 10000,
   restitution: 0.8,
   jumpForce: 60,
-  friction: 0.5,
+  friction: 0.7,
   decayRate: 40, // hitpoints per decision
   initialDecayRate: 20, // hitpoints per decision
   baseHitPoints: 10000,
@@ -94,7 +94,7 @@ const enemyGlobals = {
   fragments: 1,
   allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
-  boundaryLimit: 2, // meters
+  boundaryLimit: 5, // meters
   livingColor: new Color3(0.1, 0.8, 1),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
