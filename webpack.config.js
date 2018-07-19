@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
 const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
-const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
+// const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = function e() {
   return {
@@ -84,24 +84,24 @@ module.exports = function e() {
       ]
     },
     plugins: [
-      new UglifyJSPlugin({
-        // include: `${__dirname}/src`
-        uglifyOptions: {
-          // cache: true,
-          // parallel: true,
-          // sourceMap: true,
-          compress: {
-            unsafe: true,
-            unsafe_comps: true,
-            unsafe_Function: true
-          },
-          mangle: {},
-          ecma: 8,
-          output: {
-            comments: false
-          }
-        }
-      }),
+      // new UglifyJSPlugin({
+      //   // include: `${__dirname}/src`
+      //   uglifyOptions: {
+      //     // cache: true,
+      //     // parallel: true,
+      //     // sourceMap: true,
+      //     compress: {
+      //       unsafe: true,
+      //       unsafe_comps: true,
+      //       unsafe_Function: true
+      //     },
+      //     mangle: {},
+      //     ecma: 8,
+      //     output: {
+      //       comments: false
+      //     }
+      //   }
+      // }),
       new HtmlWebpackPlugin({
         template: "./src/index.ejs"
       }),
