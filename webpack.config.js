@@ -1,6 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
-const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
+// const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 // const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = function e() {
@@ -32,6 +32,10 @@ module.exports = function e() {
       chunkFilename: "./js/[id].js"
     },
     resolve: { extensions: [".tsx", ".ts", ".js"] },
+    externals: {
+      oimo: true,
+      earcut: true
+    },
     cache: true,
     stats: {
       // Add asset Information
@@ -84,10 +88,7 @@ module.exports = function e() {
         { test: /\.(ts|tsx)?$/, use: "ts-loader", exclude: /node_modules/ }
       ]
     },
-    externals: {
-      oimo: true,
-      earcut: true
-    },
+
     plugins: [
       // new UglifyJSPlugin({
       //   // include: `${__dirname}/src`
@@ -112,24 +113,24 @@ module.exports = function e() {
       }),
       new WorkboxPlugin.InjectManifest({
         swSrc: "./src/sw2.js"
-      }),
-      new HtmlMinifierPlugin({
-        minifyCSS: true,
-        minifyJS: true,
-        removeComments: true,
-        removeEmptyAttributes: true,
-        removeEmtpyElements: false,
-        removeOptionalTags: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        removeStyleLinkTypeAttributes: true,
-        sortAttributes: true,
-        sortClassName: true,
-        minifyURLs: true,
-        collapseWhitespace: true,
-        collapseInlineTagWhitespace: true,
-        collapseBooleanAttributes: true
       })
+      // new HtmlMinifierPlugin({
+      //   minifyCSS: true,
+      //   minifyJS: true,
+      //   removeComments: true,
+      //   removeEmptyAttributes: true,
+      //   removeEmtpyElements: false,
+      //   removeOptionalTags: true,
+      //   removeRedundantAttributes: true,
+      //   useShortDoctype: false,
+      //   removeStyleLinkTypeAttributes: true,
+      //   sortAttributes: true,
+      //   sortClassName: true,
+      //   minifyURLs: true,
+      //   collapseWhitespace: true,
+      //   collapseInlineTagWhitespace: true,
+      //   collapseBooleanAttributes: true
+      // })
     ]
   };
 };
