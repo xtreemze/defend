@@ -4,8 +4,7 @@ const OfflinePlugin = require("offline-plugin");
 module.exports = function e() {
   return {
     entry: {
-      shell: "./src/js/main/Game.ts", // shell: "./src/js/main/soundTest.ts",
-      shims: "airbnb-browser-shims"
+      shell: "./src/js/main/Game.ts" // shell: "./src/js/main/soundTest.ts",
     },
     optimization: {
       runtimeChunk: "single",
@@ -14,6 +13,10 @@ module.exports = function e() {
           common: { minChunks: 2, chunks: "all", reuseExistingChunk: true }
         }
       }
+    },
+    externals: {
+      oimo: true,
+      earcut: true
     },
     devtool: "eval-source-map",
     output: {

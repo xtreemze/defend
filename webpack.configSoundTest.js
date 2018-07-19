@@ -4,8 +4,7 @@ module.exports = function e() {
   return {
     entry: {
       // shell: "./src/js/main/Game.ts",
-      shell: "./src/js/main/soundTest.ts",
-      shims: "airbnb-browser-shims"
+      shell: "./src/js/main/soundTest.ts"
     },
     optimization: {
       runtimeChunk: "single",
@@ -27,6 +26,10 @@ module.exports = function e() {
     },
     resolve: {
       extensions: [".tsx", ".ts", ".js"]
+    },
+    externals: {
+      oimo: true,
+      earcut: true
     },
     cache: true,
     devServer: { contentBase: "./dist", compress: true, hot: true },

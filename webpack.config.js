@@ -84,6 +84,10 @@ module.exports = function e() {
         { test: /\.(ts|tsx)?$/, use: "ts-loader", exclude: /node_modules/ }
       ]
     },
+    externals: {
+      oimo: true,
+      earcut: true
+    },
     plugins: [
       // new UglifyJSPlugin({
       //   // include: `${__dirname}/src`
