@@ -37,10 +37,10 @@ function displayMessage(scene: Scene, message: string, icon: string) {
   help.setAttribute("style", helpStyle);
 
   if (canvas !== null) {
-    shareButton();
     const canvasParent = canvas.parentNode as Node;
     canvasParent.insertBefore(title, canvas);
     canvasParent.insertBefore(startButton, canvas);
+    shareButton();
     canvasParent.insertBefore(helpButton, canvas);
 
     // Start button behavior

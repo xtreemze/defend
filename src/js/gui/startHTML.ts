@@ -3,7 +3,7 @@ import { mapGlobals, projectileGlobals } from "../main/globalVariables";
 const startStyle = `
     position: absolute;
     color: ${projectileGlobals.livingColor.toHexString()};
-      top: 30vh;
+      top: 26vh;
       width: 100vw;
       text-align: center;
       margin-top: -1.5rem;
@@ -19,7 +19,7 @@ const startButtonStyle = `
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
     border-color: ${projectileGlobals.livingColor.toHexString()};
-    top: 50vh;
+    top: 48vh;
     left: 50vw;
       width: 6rem;
       height: 6rem;
@@ -39,7 +39,7 @@ const installButtonStyle = `
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
     border-color: ${projectileGlobals.livingColor.toHexString()};
-    bottom: 16vh;
+    bottom: 13vh;
     left: 50vw;
     width: 3rem;
     height: 3rem;

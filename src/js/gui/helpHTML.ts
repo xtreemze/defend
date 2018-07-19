@@ -37,7 +37,7 @@ const helpButtonStyle = `
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
     border-color: ${projectileGlobals.livingColor.toHexString()};
-    bottom: 6vh;
+    bottom: 1vh;
     left: 50vw;
     width: 3rem;
     height: 3rem;
