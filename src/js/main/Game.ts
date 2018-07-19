@@ -1,5 +1,4 @@
 // import "babylonjs-inspector";
-import "../../vendor/manup.js";
 import "./../../vendor/pep";
 import {
   Engine,

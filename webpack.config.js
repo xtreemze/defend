@@ -6,11 +6,12 @@ const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 module.exports = function e() {
   return {
     entry: {
-      sw: ["./src/js/main/registerServiceWorker.ts", "./src/vendor/manup.js"],
+      sw: "./src/js/main/registerServiceWorker.ts",
       // shims: "airbnb-browser-shims",
       game: "./src/js/main/Game.ts",
       vendor: [
         "babylonjs",
+        // "./src/vendor/manup.js",
         "cannon",
         "./src/vendor/pep",
         "./src/vendor/wafxr/wafxr"
