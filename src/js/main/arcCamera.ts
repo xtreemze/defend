@@ -15,12 +15,14 @@ function arcCamera(scene: Scene, canvas: HTMLCanvasElement) {
 
   // Attach Control
   camera.attachControl(canvas, true);
-
+  camera.useAutoRotationBehavior = true;
+  camera.useFramingBehavior = true;
+  camera.useBouncingBehavior = true;
   // Attach Control
   camera.upperRadiusLimit = mapGlobals.size * 3;
   camera.lowerRadiusLimit = mapGlobals.size / 6;
 
-  camera.upperBetaLimit = Math.PI / 2;
+  // camera.upperBetaLimit = Math.PI / 2;
 
   scene.registerAfterRender(() => {
     const activeCamera = scene.activeCamera as Camera;
