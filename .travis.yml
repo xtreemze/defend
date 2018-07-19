@@ -7,7 +7,7 @@ cache:
 script: npm run exportp
 addons:
   apt:
-    update: true
+    update: false
 deploy:
   provider: pages
   skip_cleanup: true
