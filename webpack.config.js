@@ -10,8 +10,8 @@ module.exports = function e() {
       // shims: "airbnb-browser-shims",
       game: "./src/js/main/Game.ts",
       vendor: [
+        "./src/vendor/manup.js",
         "babylonjs",
-        // "./src/vendor/manup.js",
         "cannon",
         "./src/vendor/pep",
         "./src/vendor/wafxr/wafxr"
