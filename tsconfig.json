@@ -7,7 +7,7 @@
     // "module": "es6",
     "target": "es6",
     // "allowJs": true,
-    // "removeComments": true,
+    "removeComments": true,
     // "declaration": true,
     "pretty": true,
     "strict": true

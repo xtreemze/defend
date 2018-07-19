@@ -37,7 +37,7 @@ function map(scene: Scene) {
   mapGlobals.atmosphereMesh = MeshBuilder.CreateIcoSphere(
     "atmosphere",
     {
-      radius: mapGlobals.size * 1,
+      radius: mapGlobals.size * 2,
       subdivisions: 1,
       updatable: false
     },
