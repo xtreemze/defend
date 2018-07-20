@@ -5,11 +5,13 @@ import {
   PhysicsEngine,
   Ray,
   Tags,
-
+  PhysicsImpostor,
+  Vector3
 } from "babylonjs";
 import { addTower } from "../main/sound";
-import { towerGlobals } from "../main/globalVariables";
+import { towerGlobals, projectileGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
+import { EnemySphere } from "../enemy/enemyBorn";
 
 class Tower {
   constructor(
@@ -58,11 +60,41 @@ function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
   ) {
     result = true as boolean;
   }
-  return result as boolean;
+  return true as boolean;
 }
 
-function rotateTurret(sortedDistances: any, towerTurret: Mesh) {
-  towerTurret.lookAt(sortedDistances.position);
+function rotateTurret(
+  nearestEnemy: EnemySphere,
+  towerTurret: Mesh,
+  level: number
+) {
+  const impostor = nearestEnemy.physicsImpostor as PhysicsImpostor;
+
+  const enemyVelocity = impostor.getLinearVelocity() as Vector3;
+
+  const towerEnemyDistance = Vector3.Distance(
+    nearestEnemy.position,
+    towerTurret.position
+  );
+
+  const projectileTime =
+    (towerEnemyDistance /
+      (projectileGlobals.mass *
+        (level * level) *
+        (projectileGlobals.speed * (level * level)))) *
+    50000;
+
+  const newPosition = nearestEnemy.position.add(
+    new Vector3(
+      enemyVelocity.x * projectileTime,
+      enemyVelocity.y * projectileTime,
+      enemyVelocity.z * projectileTime
+    )
+  );
+  if (newPosition.y < 3) {
+    newPosition.y = 3;
+  }
+  towerTurret.lookAt(newPosition);
 }
 
 function destroyTower(

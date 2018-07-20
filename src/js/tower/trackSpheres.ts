@@ -1,10 +1,6 @@
 import { Scene, Vector3, Mesh, PhysicsEngine, Ray } from "babylonjs";
 import fireProjectile from "../projectile/Projectile";
-import {
-  towerGlobals,
-  enemyGlobals,
-  mapGlobals
-} from "../main/globalVariables";
+import { towerGlobals, enemyGlobals } from "../main/globalVariables";
 import { rotateTurret, shotClearsTower } from "./Tower";
 import { shoot } from "../main/sound";
 import { TowerTurret } from "./towerBorn";
@@ -40,11 +36,11 @@ function trackSpheres(
       }
       if (enemyDistances.length > 0) {
         const nearestEnemy = enemyDistances.sort()[0][1] as EnemySphere;
-        rotateTurret(nearestEnemy, towerTurret);
+        rotateTurret(nearestEnemy, towerTurret, level);
         if (
           Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
-          towerGlobals.shoot &&
-          shotClearsTower(scene, ray, nearestEnemy)
+          towerGlobals.shoot
+          //  &&           shotClearsTower(scene, ray, nearestEnemy)
         ) {
           deltaTime = Date.now();
           setTimeout(() => {
@@ -54,15 +50,13 @@ function trackSpheres(
 
           shoot(flash, level);
 
-          setTimeout(() => {
-            fireProjectile(
-              scene,
-              towerTurret,
-              level,
-              nearestEnemy,
-              physicsEngine
-            );
-          }, 1);
+          fireProjectile(
+            scene,
+            towerTurret,
+            level,
+            nearestEnemy,
+            physicsEngine
+          );
         }
       }
     }

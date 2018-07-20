@@ -63,7 +63,7 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 35,
+  range: 45,
   shoot: true,
   raysOn: false,
   lifeTime: 25000,
@@ -82,13 +82,13 @@ const enemyGlobals = {
   originHeight: 7,
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
-  speed: 15000,
-  mass: 10000,
+  speed: 28000,
+  mass: 14000,
   restitution: 0.8,
   jumpForce: 60,
   friction: 0.7,
-  decayRate: 40, // hitpoints per decision
-  initialDecayRate: 20, // hitpoints per decision
+  decayRate: 100, // hitpoints per decision
+  initialDecayRate: 100, // hitpoints per decision
   baseHitPoints: 10000,
   deadHitPoints: 0,
   fragments: 1,
