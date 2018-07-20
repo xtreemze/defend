@@ -14,7 +14,6 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals } from "./globalVariables";
 import { map } from "./map";
 
-
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
 import { generateMaterials } from "../utility/materialGenerator";
@@ -25,8 +24,6 @@ import {
   createTurretInstanceL2,
   createTurretInstanceL3
 } from "../tower/createTowerInstance";
-
-
 
 class Game {
   public canvas: HTMLCanvasElement;
@@ -77,10 +74,13 @@ class Game {
 
     generateMaterials(this.scene);
     map(this.scene);
-    createTowerBaseInstance();
-    createTurretInstanceL2(this.scene);
-    createTurretInstanceL3(this.scene);
-    createProjectileInstances();
+
+    setTimeout(() => {
+      createTowerBaseInstance();
+      createTurretInstanceL2(this.scene);
+      createTurretInstanceL3(this.scene);
+      createProjectileInstances();
+    }, 500);
 
     arcCamera(this.scene, this.canvas);
 
