@@ -38,7 +38,7 @@ function damage(enemy: EnemySphere) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 30,
+        volume: 28,
         release: 0.05,
         frequency: enemy.hitPoints / 220 + 100,
         highpass: 500,
@@ -80,7 +80,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 32,
+        volume: 30,
         sustain: 0.2,
         release: 0.8,
         decay: 1,
@@ -104,8 +104,8 @@ function newWave() {
       volume: 28,
       decay: 0.8,
       release: 0.9,
-      frequency: 70,
-      highpass: 400,
+      frequency: 100,
+      highpass: 200,
       sweep: 0.5,
       source: "sine"
     } as FX.audioParams);
@@ -153,7 +153,7 @@ function removeTower(tower: Mesh, level: number) {
 function defeated() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -6,
+      volume: -8,
       attack: 1,
       sustain: 0.08,
       release: 1,
@@ -171,7 +171,7 @@ function defeated() {
 function victory() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -6,
+      volume: -8,
       attack: 0.8,
       sustain: 0.12,
       release: 1,
