@@ -7,7 +7,7 @@ function createProjectileInstances() {
     {
       size: 3.5,
       height: 2 / 4,
-      width: 2 / 2,
+      width: 2 / 2.5,
       updatable: false
     }
   ) as Mesh;
@@ -22,7 +22,7 @@ function createProjectileInstances() {
     {
       size: 5,
       height: 3 / 4,
-      width: 3 / 2,
+      width: 3 / 2.5,
       updatable: false
     }
   ) as Mesh;

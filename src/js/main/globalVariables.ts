@@ -65,10 +65,10 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 45,
+  range: 55,
   shoot: true,
   raysOn: false,
-  lifeTime: 25000,
+  lifeTime: 20000,
   index: 0,
   disposeTime: 6000, // chance to keep towers before dispose
   allPositions: [] as Position2D[]
@@ -107,7 +107,7 @@ const enemyGlobals = {
 
 const economyGlobals = {
   rampUpValue: 400,
-  energyRecoveryRatio: 0.4,
+  energyRecoveryRatio: 0.2,
   initialBalance: 20000,
   maxBalance: 20000,
   currentBalance: 1,
