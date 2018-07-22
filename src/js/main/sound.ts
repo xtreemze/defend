@@ -101,7 +101,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 function newWave() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -32,
+      volume: -28,
       decay: 0.8,
       release: 0.9,
       frequency: 150,
@@ -116,7 +116,7 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 38,
+      volume: 36,
       sustain: 0.1,
       frequency: 400 / level + towerGlobals.allTowers.length * 3,
       sweep: 0.125,
