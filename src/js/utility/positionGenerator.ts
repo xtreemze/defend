@@ -8,12 +8,12 @@ interface coordinates {
 
 function randomNumber(): number {
   return Math.round(
-    randomNumberRange(-mapGlobals.size / 25, mapGlobals.size / 25) * 10 + 15
+    randomNumberRange(-mapGlobals.size / 35, mapGlobals.size / 35) * 10 + 5
   );
 }
 
 export default function positionGenerator(waveOrigin: number): coordinates {
-  const x = ((mapGlobals.size * waveOrigin) / 35) * 10 + 5;
+  const x = ((mapGlobals.size * waveOrigin) / 25) * 10 + 5;
   const z = randomNumber();
 
   return { x, z };

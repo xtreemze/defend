@@ -8,12 +8,12 @@ function rampLight(
   light.intensity = initialIntensity;
   scene.registerAfterRender(function lightInterval() {
     if (initialIntensity > normalIntensity) {
-      light.intensity -= 0.01;
+      light.intensity -= 0.015;
       if (light.intensity <= normalIntensity) {
         scene.unregisterAfterRender(lightInterval);
       }
     } else if (initialIntensity < normalIntensity) {
-      light.intensity += 0.01;
+      light.intensity += 0.015;
       if (light.intensity >= normalIntensity) {
         scene.unregisterAfterRender(lightInterval);
       }

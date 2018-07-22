@@ -109,7 +109,7 @@ function enemyGenerator(
 ) {
   for (let index = 0; index < quantity; index += 1) {
     let newLocation = positionGenerator(waveOrigin);
-    while (
+    if (
       enemyGlobals.occupiedSpaces.find(
         existingLocation =>
           existingLocation[0] === newLocation.x &&
@@ -121,6 +121,8 @@ function enemyGenerator(
           existingLocation[1] === newLocation.z
       )
     ) {
+      newLocation = positionGenerator(waveOrigin);
+    } else {
       newLocation = positionGenerator(waveOrigin);
     }
 
