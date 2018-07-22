@@ -13,7 +13,7 @@ function shoot(originMesh: Mesh, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 28,
+        volume: 30,
         release: 0.25,
         decay: 0.03,
         frequency: 880 / (level * 1.5),
@@ -38,9 +38,9 @@ function damage(enemy: EnemySphere) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 28,
+        volume: 25,
         release: 0.05,
-        frequency: enemy.hitPoints / 220 + 100,
+        frequency: enemy.hitPoints / 220 + 200,
         highpass: 500,
         source: "triangle",
         soundX: enemy.position.x,
@@ -88,7 +88,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         sweep: -0.3,
         source: "sine",
         repeat: 6,
-        highpass: 300,
+        highpass: 200,
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
