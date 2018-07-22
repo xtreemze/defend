@@ -34,6 +34,7 @@ function enemyBorn(
     scene
   ) as Mesh;
 
+  hitPointsMeter.isPickable = false;
   hitPointsMeter.parent = sphereMesh;
 
   sphereMesh.position = new Vector3(

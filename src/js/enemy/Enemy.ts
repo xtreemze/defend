@@ -36,6 +36,7 @@ class Enemy {
       },
       scene
     ) as EnemySphere;
+    sphereMesh.isPickable = false;
 
     sphereMesh.convertToUnIndexedMesh();
     enemyGlobals.allEnemies.unshift(sphereMesh);
@@ -67,7 +68,6 @@ export function fragment(
       enemyRotation.y * index * 0.1,
       enemyRotation.z * index * 0.1
     );
-    fragment.material = materialGlobals.hitMaterial as Material;
 
     fragment.physicsImpostor = new PhysicsImpostor(
       fragment,
@@ -81,6 +81,10 @@ export function fragment(
 
     fragment.physicsImpostor.setLinearVelocity(enemyLinearVelocity);
     fragment.physicsImpostor.setAngularVelocity(enemyAngularVelocity);
+    fragment.material = materialGlobals.hitMaterial as Material;
+
+    fragment.isPickable = false;
+    fragment.convertToUnIndexedMesh();
 
     let deltaTime = Date.now();
     const disposeFragment = () => {

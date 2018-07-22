@@ -29,6 +29,8 @@ export function startLife(
   nearestEnemy: EnemySphere,
   physicsEngine: PhysicsEngine
 ) {
+  const clonedRotation = originMesh.rotation.clone();
+  projectile.rotation = clonedRotation;
   const forwardLocal = new Vector3(0, 0, 5);
   const space = originMesh.getDirection(forwardLocal) as Vector3;
   projectile.position = originMesh.position.subtract(space) as Vector3;
@@ -48,8 +50,6 @@ export function startLife(
   hitEffect(projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
 
   mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
-  const clonedRotation = originMesh.rotation.clone();
-  projectile.rotation.copyFrom(clonedRotation);
 
   const deltaTime = Date.now();
 
@@ -66,6 +66,7 @@ export function startLife(
   //   destroyProjectile(projectile, physicsEngine);
   // }, projectileGlobals.lifeTime);
 
+  projectile.setEnabled(true);
   destroyOnCollide(scene, projectile, physicsEngine, projectileExpires); // Detects collissions with enemies
 
   impulsePhys(originMesh, projectile, level); // Moves the projectile with physics

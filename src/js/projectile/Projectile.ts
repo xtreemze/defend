@@ -32,7 +32,7 @@ class Projectile {
         break;
     }
     if (projectile !== undefined) {
-      projectile.setEnabled(true);
+
       projectile.hitPoints = level * level * projectileGlobals.baseHitPoints;
 
       startLife(
