@@ -15,11 +15,11 @@ const mapGlobals = {
   demoSphere: false,
   size: 200, // map radius
   allImpostors: [] as PhysicsImpostor[],
-  impostorLimit: 100, // keep low for mobile device limits
+  impostorLimit: 80, // keep low for mobile device limits
   lightIntensity: 1,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 180,
-  soundLimit: 1, // simultaneous sound limit
+  soundLimit: 2, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
