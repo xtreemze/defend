@@ -38,9 +38,9 @@ const projectileGlobals = {
   projectileMeshL2: {} as any | LiveProjectileInstance,
   projectileMeshL3: {} as any | LiveProjectileInstance,
   lifeTime: 2000, // milliseconds
-  speed: 8000,
-  mass: 50,
-  baseHitPoints: 80,
+  speed: 15000,
+  mass: 100,
+  baseHitPoints: 100,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
   particleLimit: 0,
@@ -88,8 +88,8 @@ const enemyGlobals = {
   restitution: 0.8,
   jumpForce: 60,
   friction: 0.7,
-  decayRate: 200, // hitpoints per decision
-  initialDecayRate: 200, // hitpoints per decision
+  decayRate: 100, // hitpoints per decision
+  initialDecayRate: 100, // hitpoints per decision
   baseHitPoints: 20000,
   deadHitPoints: 0,
   fragments: 1,

@@ -36,6 +36,7 @@ function trackSpheres(
       }
       if (enemyDistances.length > 0) {
         const nearestEnemy = enemyDistances.sort()[0][1] as EnemySphere;
+        const clonedRotation = towerTurret.rotation.clone();
         rotateTurret(nearestEnemy, towerTurret, level);
         if (
           Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
@@ -45,7 +46,7 @@ function trackSpheres(
           deltaTime = Date.now();
           setTimeout(() => {
             flash.visibility = 0;
-          }, 20);
+          }, 15);
           flash.visibility = 1;
 
           shoot(flash, level);
@@ -55,7 +56,8 @@ function trackSpheres(
             towerTurret,
             level,
             nearestEnemy,
-            physicsEngine
+            physicsEngine,
+            clonedRotation
           );
         }
       }

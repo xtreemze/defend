@@ -11,7 +11,8 @@ class Projectile {
     scene: Scene,
     level: number = 1 | 2 | 3,
     nearestEnemy: EnemySphere,
-    physicsEngine: PhysicsEngine
+    physicsEngine: PhysicsEngine,
+    clonedRotation: Vector3
   ) {
     const name = `projectile${level}` as string;
     let projectile;
@@ -41,7 +42,8 @@ class Projectile {
         level,
         projectile,
         nearestEnemy,
-        physicsEngine
+        physicsEngine,
+        clonedRotation
       );
     }
   }
@@ -71,7 +73,8 @@ export default function fireProjectile(
   originMesh: TowerTurret,
   level: number = 1 | 2 | 3,
   nearestEnemy: EnemySphere,
-  physicsEngine: PhysicsEngine
+  physicsEngine: PhysicsEngine,
+  clonedRotation: Vector3
 ) {
-  new Projectile(originMesh, scene, level, nearestEnemy, physicsEngine);
+  new Projectile(originMesh, scene, level, nearestEnemy, physicsEngine, clonedRotation);
 }

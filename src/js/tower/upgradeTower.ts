@@ -72,7 +72,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         }
       } else if (
         economyGlobals.currentBalance <=
-        towerGlobals.baseCost * currentLevel + 1
+        towerGlobals.baseCost * (currentLevel + 1)
       ) {
         createBaseInstance(samePosition);
         // color when insufficient funds

@@ -82,7 +82,7 @@ function rotateTurret(
       (projectileGlobals.mass *
         (level * level) *
         (projectileGlobals.speed * (level * level)))) *
-    50000;
+    (140000 * level);
 
   const newPosition = nearestEnemy.position.add(
     new Vector3(

@@ -27,9 +27,10 @@ export function startLife(
   level: number = 1 | 2 | 3,
   projectile: LiveProjectileInstance,
   nearestEnemy: EnemySphere,
-  physicsEngine: PhysicsEngine
+  physicsEngine: PhysicsEngine,
+  clonedRotation: Vector3
 ) {
-  const clonedRotation = originMesh.rotation.clone();
+
   projectile.rotation = clonedRotation;
   const forwardLocal = new Vector3(0, 0, 5);
   const space = originMesh.getDirection(forwardLocal) as Vector3;

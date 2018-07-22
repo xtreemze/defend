@@ -5,7 +5,7 @@ function createProjectileInstances() {
   projectileGlobals.projectileMeshL2 = MeshBuilder.CreateBox(
     "projectileInstanceLevel2",
     {
-      size: 2,
+      size: 3.5,
       height: 2 / 4,
       width: 2 / 2,
       updatable: false
@@ -20,7 +20,7 @@ function createProjectileInstances() {
   projectileGlobals.projectileMeshL3 = MeshBuilder.CreateBox(
     "projectileInstanceLevel3",
     {
-      size: 3,
+      size: 5,
       height: 3 / 4,
       width: 3 / 2,
       updatable: false
