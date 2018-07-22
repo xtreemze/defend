@@ -101,7 +101,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 function newWave() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 18,
+      volume: 5,
       decay: 0.8,
       release: 0.9,
       frequency: 400,
