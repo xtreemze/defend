@@ -13,7 +13,7 @@ function shoot(originMesh: Mesh, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 25,
+        volume: 28,
         release: 0.25,
         decay: 0.03,
         frequency: 880 / (level * 1.5),
@@ -38,7 +38,7 @@ function damage(enemy: EnemySphere) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 35,
+        volume: 30,
         release: 0.05,
         frequency: enemy.hitPoints / 220 + 100,
         highpass: 500,
@@ -88,7 +88,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         sweep: -0.3,
         source: "sine",
         repeat: 6,
-        highpass: 200,
+        highpass: 300,
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
@@ -101,11 +101,11 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 function newWave() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 25,
+      volume: 24,
       decay: 0.8,
       release: 0.9,
       frequency: 70,
-      highpass: 200,
+      highpass: 400,
       sweep: 0.5,
       source: "sine"
     } as FX.audioParams);
@@ -115,12 +115,13 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 34,
+      volume: 35,
       sustain: 0.1,
       frequency: 200 / level + towerGlobals.allTowers.length * 3,
       sweep: 0.125,
       repeat: 9,
-      highpass: 100,
+      highpass: 400,
+      lowpass: 4000,
       source: "sine",
       soundX: tower.position.x,
       soundY: tower.position.y,
@@ -133,12 +134,13 @@ function addTower(tower: Mesh, level: number) {
 function removeTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 34,
+      volume: 35,
       sustain: 0.1,
       frequency: 200 / level + towerGlobals.allTowers.length * 3,
       sweep: -0.5,
       repeat: 9,
-      highpass: 200,
+      highpass: 400,
+      lowpass: 4000,
       source: "sine",
       soundX: tower.position.x,
       soundY: tower.position.y,
