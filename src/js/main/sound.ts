@@ -117,7 +117,7 @@ function addTower(tower: Mesh, level: number) {
     FX.play({
       volume: 35,
       sustain: 0.1,
-      frequency: 200 / level + towerGlobals.allTowers.length * 3,
+      frequency: 400 / level + towerGlobals.allTowers.length * 3,
       sweep: 0.125,
       repeat: 9,
       highpass: 400,
@@ -136,10 +136,10 @@ function removeTower(tower: Mesh, level: number) {
     FX.play({
       volume: 35,
       sustain: 0.1,
-      frequency: 200 / level + towerGlobals.allTowers.length * 3,
+      frequency: 400 / level + towerGlobals.allTowers.length * 3,
       sweep: -0.5,
       repeat: 9,
-      highpass: 400,
+      highpass: 200,
       lowpass: 4000,
       source: "sine",
       soundX: tower.position.x,
