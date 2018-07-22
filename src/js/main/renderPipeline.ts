@@ -6,7 +6,8 @@ import {
   Scene,
   MeshBuilder,
   GroundMesh,
-  Mesh
+  Mesh,
+  IGlowLayerOptions
 } from "babylonjs";
 import {
   renderGlobals,
@@ -53,11 +54,11 @@ function renderPipeline(scene: Scene) {
   // Glow
   if (renderGlobals.glow) {
     const glowLayer = new GlowLayer("glow", scene, {
-      // mainTextureFixedSize: 32,
-      // blurKernelSize: 8,
-      // mainTextureSamples: 2
-      mainTextureRatio: 0.2
-    });
+      // mainTextureFixedSize: 3,
+      blurKernelSize: 24,
+      // mainTextureSamples: 2,
+      mainTextureRatio: 0.4
+    }as IGlowLayerOptions);
 
     glowLayer.intensity = renderGlobals.glowIntensity;
     // glowLayer.addIncludedOnlyMesh(projectile);

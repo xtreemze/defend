@@ -14,14 +14,11 @@ const mapGlobals = {
   diagnosticsOn: false,
   demoSphere: false,
   size: 160, // map radius
-  cameraCutDelay: 4200,
-  rotateCameras: false,
-  rotationSpeedMultiplier: 16, // higher is slower camera rotation
   allImpostors: [] as PhysicsImpostor[],
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 190,
+  soundDelay: 210,
   soundLimit: 2, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
@@ -52,9 +49,7 @@ const towerGlobals = {
   turretMeshL3: {} as Mesh,
   towerBaseMesh: {} as Mesh,
   indicator: {} as Mesh,
-  lookAheadRatio: 130000,
-  minNumber: mapGlobals.size / 90,
-  maxNumber: mapGlobals.size / 25,
+  lookAheadRatio: 110000,
   rateOfFire: 180, // milliseconds between each shot,
   height: 3,
   mass: 0,
@@ -107,7 +102,7 @@ const enemyGlobals = {
 
 const economyGlobals = {
   rampUpValue: 400,
-  energyRecoveryRatio: 0.2,
+  energyRecoveryRatio: 0.4,
   initialBalance: 20000,
   maxBalance: 20000,
   currentBalance: 1,
