@@ -83,14 +83,14 @@ const enemyGlobals = {
   originHeight: 7,
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
-  speed: 28000,
-  mass: 14000,
+  speed: 35000,
+  mass: 15000,
   restitution: 0.8,
   jumpForce: 60,
   friction: 0.7,
-  decayRate: 100, // hitpoints per decision
-  initialDecayRate: 100, // hitpoints per decision
-  baseHitPoints: 10000,
+  decayRate: 200, // hitpoints per decision
+  initialDecayRate: 200, // hitpoints per decision
+  baseHitPoints: 20000,
   deadHitPoints: 0,
   fragments: 1,
   allEnemies: [] as Mesh[],
