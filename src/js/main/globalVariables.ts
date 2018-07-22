@@ -60,10 +60,10 @@ const towerGlobals = {
   occupiedSpaces: [] as any[],
   specularColor: new Color3(0.19, 0.05, 0.08),
   livingColor: new Color3(0.09, 0.57, 0.42),
-  range: 55,
+  range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 20000,
+  lifeTime: 22000,
   index: 0,
   disposeTime: 6000, // chance to keep towers before dispose
   allPositions: [] as Position2D[]
