@@ -84,7 +84,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         sustain: 0.2,
         release: 0.8,
         decay: 1,
-        frequency: 100 / level + 100,
+        frequency: 400 / level + 100,
         sweep: -0.3,
         source: "sine",
         repeat: 6,
@@ -104,7 +104,7 @@ function newWave() {
       volume: 28,
       decay: 0.8,
       release: 0.9,
-      frequency: 100,
+      frequency: 400,
       highpass: 200,
       sweep: 0.5,
       source: "sine"
