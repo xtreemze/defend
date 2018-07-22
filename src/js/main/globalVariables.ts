@@ -13,7 +13,7 @@ const mapGlobals = {
   optimizerOn: false,
   diagnosticsOn: false,
   demoSphere: false,
-  size: 160, // map radius
+  size: 200, // map radius
   allImpostors: [] as PhysicsImpostor[],
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 1,
