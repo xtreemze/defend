@@ -18,8 +18,8 @@ const mapGlobals = {
   impostorLimit: 100, // keep low for mobile device limits
   lightIntensity: 0.79,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 210,
-  soundLimit: 2, // simultaneous sound limit
+  soundDelay: 180,
+  soundLimit: 1, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
