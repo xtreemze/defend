@@ -6,7 +6,7 @@ function createProjectileInstances() {
     "projectileInstanceLevel2",
     {
       size: 3.5,
-      height: 2 / 4,
+      height: 2.2 / 3,
       width: 2 / 2.5,
       updatable: false
     }
@@ -21,7 +21,7 @@ function createProjectileInstances() {
     "projectileInstanceLevel3",
     {
       size: 5,
-      height: 3 / 4,
+      height: 3.5 / 3,
       width: 3 / 2.5,
       updatable: false
     }

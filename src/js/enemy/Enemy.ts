@@ -38,7 +38,7 @@ class Enemy {
     ) as EnemySphere;
     sphereMesh.isPickable = false;
 
-    sphereMesh.convertToUnIndexedMesh();
+    // sphereMesh.convertToUnIndexedMesh();
     enemyGlobals.allEnemies.unshift(sphereMesh);
 
     enemyBorn(scene, position, sphereMesh, diameter, level);

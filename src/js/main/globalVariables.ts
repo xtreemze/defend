@@ -16,7 +16,7 @@ const mapGlobals = {
   size: 160, // map radius
   allImpostors: [] as PhysicsImpostor[],
   impostorLimit: 100, // keep low for mobile device limits
-  lightIntensity: 0.79,
+  lightIntensity: 1,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 180,
   soundLimit: 1, // simultaneous sound limit

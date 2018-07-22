@@ -24,7 +24,7 @@ function map(scene: Scene) {
     scene
   );
 
-  mapGlobals.upLight.intensity = mapGlobals.lightIntensity * 2;
+  mapGlobals.upLight.intensity = mapGlobals.lightIntensity * 1.6;
   mapGlobals.upLight.diffuse = new Color3(0.82, 0.89, 0.94);
 
   mapGlobals.skyLight.intensity = mapGlobals.lightIntensity;
@@ -64,7 +64,7 @@ function map(scene: Scene) {
 
   mapGlobals.groundMesh.material = materialGlobals.groundMaterial;
   mapGlobals.groundMesh.freezeWorldMatrix(); // freeze ground
-  mapGlobals.groundMesh.convertToUnIndexedMesh();
+  // mapGlobals.groundMesh.convertToUnIndexedMesh();
 
   mapGlobals.groundMesh.physicsImpostor = new PhysicsImpostor(
     mapGlobals.groundMesh,
