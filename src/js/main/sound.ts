@@ -104,7 +104,7 @@ function newWave() {
       volume: 5,
       decay: 0.8,
       release: 0.9,
-      frequency: 400,
+      frequency: 200,
       highpass: 200,
       sweep: 0.5,
       source: "sine"
@@ -115,12 +115,12 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 35,
+      volume: 38,
       sustain: 0.1,
       frequency: 400 / level + towerGlobals.allTowers.length * 3,
       sweep: 0.125,
       repeat: 9,
-      highpass: 400,
+      highpass: 200,
       lowpass: 4000,
       source: "sine",
       soundX: tower.position.x,
@@ -134,7 +134,7 @@ function addTower(tower: Mesh, level: number) {
 function removeTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 35,
+      volume: 38,
       sustain: 0.1,
       frequency: 400 / level + towerGlobals.allTowers.length * 3,
       sweep: -0.5,
