@@ -16,6 +16,7 @@ import {
 import { towerBasePositions, Tower } from "./Tower";
 import { removeTower } from "../main/sound";
 import { currencyMeshColor } from "../enemy/currencyMeshColor";
+import { createBaseInstance } from "./indicatorInstance";
 
 function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer tap event is raised
@@ -29,55 +30,57 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
       pickResult.hit &&
       pickResult.pickedMesh !== null &&
       Tags.MatchesQuery(pickResult.pickedMesh, "towerBase") &&
-      pickResult.pickedMesh.name !== "ground" &&
-      economyGlobals.currentBalance > towerGlobals.baseCost * (currentLevel + 1)
+      pickResult.pickedMesh.name !== "ground"
     ) {
       const samePosition = {
         x: pickResult.pickedMesh.position.x,
         z: pickResult.pickedMesh.position.z
       } as Position2D;
       // determine current and previous tower level
-
-      pickResult.pickedMesh.dispose();
-      let newLevel = 0;
-      towerGlobals.allPositions = towerBasePositions(scene);
       if (
-        towerGlobals.allPositions.find(
-          existingLocation =>
-            existingLocation.x === samePosition.x &&
-            existingLocation.z === samePosition.z
-        ) === undefined
+        economyGlobals.currentBalance >
+        towerGlobals.baseCost * (currentLevel + 1)
       ) {
-        switch (currentLevel) {
-          case 1:
-            newLevel = 2;
-            new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
-            break;
-          case 2:
-            newLevel = 3;
-            new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
-            break;
-          case 3:
-            newLevel = 3;
-            new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+        pickResult.pickedMesh.dispose();
+        let newLevel = 0;
+        towerGlobals.allPositions = towerBasePositions(scene);
+        if (
+          towerGlobals.allPositions.find(
+            existingLocation =>
+              existingLocation.x === samePosition.x &&
+              existingLocation.z === samePosition.z
+          ) === undefined
+        ) {
+          switch (currentLevel) {
+            case 1:
+              newLevel = 2;
+              new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+              break;
+            case 2:
+              newLevel = 3;
+              new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
+              break;
+            case 3:
+              newLevel = 3;
+              new Tower(newLevel, samePosition, scene, physicsEngine) as Tower;
 
-            break;
+              break;
 
-          default:
-            break;
+            default:
+              break;
+          }
         }
+      } else if (
+        economyGlobals.currentBalance <=
+        towerGlobals.baseCost * currentLevel + 1
+      ) {
+        createBaseInstance(samePosition);
+        // color when insufficient funds
+        currencyMeshColor();
+
+        // sound when insufficient funds
+        removeTower(economyGlobals.currencyMesh, currentLevel + 1);
       }
-    }
-
-    if (
-      economyGlobals.currentBalance <=
-      towerGlobals.baseCost * currentLevel + 1
-    ) {
-      // color when insufficient funds
-      currencyMeshColor();
-
-      // sound when insufficient funds
-      removeTower(economyGlobals.currencyMesh, currentLevel + 1);
     }
   }, PointerEventTypes._POINTERTAP);
 }

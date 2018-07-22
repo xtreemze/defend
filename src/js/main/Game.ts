@@ -24,6 +24,7 @@ import {
   createTurretInstanceL2,
   createTurretInstanceL3
 } from "../tower/createTowerInstance";
+import { createIndicatorInstance } from "../tower/indicatorInstance";
 
 class Game {
   public canvas: HTMLCanvasElement;
@@ -76,6 +77,7 @@ class Game {
     map(this.scene);
 
     setTimeout(() => {
+      createIndicatorInstance();
       createTowerBaseInstance();
       createTurretInstanceL2(this.scene);
       createTurretInstanceL3(this.scene);

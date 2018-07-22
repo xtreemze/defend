@@ -1,4 +1,4 @@
-import { Color3, StandardMaterial, Scene } from "babylonjs";
+import { Color3, StandardMaterial, Scene, Material } from "babylonjs";
 import {
   enemyGlobals,
   mapGlobals,
@@ -32,28 +32,21 @@ function generateMaterials(scene: Scene) {
   projectileMaterial.emissiveColor = projectileGlobals.livingColor;
   projectileMaterial.linkEmissiveWithDiffuse = true;
 
-  const transparentMaterial = new StandardMaterial(
-    "transparentMaterial",
-    scene
-  );
-  transparentMaterial.alpha = 0;
-
   const enemyMaterial = new StandardMaterial("enemyMaterial", scene);
   // enemyMaterial.wireframe = true;
   enemyMaterial.diffuseColor = enemyGlobals.livingColor;
   enemyMaterial.ambientColor = mapGlobals.ambientColor;
   enemyMaterial.specularColor = mapGlobals.ambientColor;
 
-  const damagedMaterial = new StandardMaterial("damagedMaterial", scene);
+  const damagedMaterial = enemyMaterial.clone("damagedMaterial");
   damagedMaterial.diffuseColor = enemyGlobals.deadColor;
-  damagedMaterial.specularColor = mapGlobals.ambientColor;
-  damagedMaterial.ambientColor = mapGlobals.ambientColor;
   // damagedMaterial.alpha = 0.9;
 
-  const hitMaterial = new StandardMaterial("hitMaterial", scene);
+  const instanceMaterial = damagedMaterial.clone("instanceMaterial");
+  instanceMaterial.alpha = 0.6;
+
+  const hitMaterial = enemyMaterial.clone("hitMaterial") as StandardMaterial;
   hitMaterial.diffuseColor = enemyGlobals.hitColor;
-  hitMaterial.specularColor = mapGlobals.sceneAmbient;
-  hitMaterial.ambientColor = mapGlobals.ambientColor;
   hitMaterial.specularColor = new Color3(0.68, 0.38, 0.1);
   hitMaterial.emissiveColor = enemyGlobals.hitColor;
   hitMaterial.wireframe = true;
@@ -62,19 +55,19 @@ function generateMaterials(scene: Scene) {
   groundMaterial.freeze();
   towerMaterial.freeze();
   projectileMaterial.freeze();
-  transparentMaterial.freeze();
   skyMaterial.freeze();
   enemyMaterial.freeze();
   damagedMaterial.freeze();
+  instanceMaterial.freeze();
   hitMaterial.freeze();
 
   materialGlobals.groundMaterial = groundMaterial;
   materialGlobals.towerMaterial = towerMaterial;
   materialGlobals.projectileMaterial = projectileMaterial;
-  materialGlobals.transparentMaterial = transparentMaterial;
   materialGlobals.skyMaterial = skyMaterial;
   materialGlobals.enemyMaterial = enemyMaterial;
   materialGlobals.damagedMaterial = damagedMaterial;
+  materialGlobals.instanceMaterial = instanceMaterial;
   materialGlobals.hitMaterial = hitMaterial;
 }
 

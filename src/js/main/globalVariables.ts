@@ -51,6 +51,7 @@ const towerGlobals = {
   turretMeshL2: {} as Mesh,
   turretMeshL3: {} as Mesh,
   towerBaseMesh: {} as Mesh,
+  indicator: {} as Mesh,
   minNumber: mapGlobals.size / 90,
   maxNumber: mapGlobals.size / 25,
   rateOfFire: 180, // milliseconds between each shot,

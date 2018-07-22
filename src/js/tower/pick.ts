@@ -4,41 +4,33 @@ import {
   PhysicsEngine,
   PointerEventTypes,
   PickingInfo,
-  Tags,
-  Material
+  Tags
 } from "babylonjs";
 import { Tower } from "../tower/Tower";
-import {
-  towerGlobals,
-  economyGlobals,
-  materialGlobals
-} from "../main/globalVariables";
+import { towerGlobals, economyGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
 import { removeTower } from "../main/sound";
 import { currencyMeshColor } from "../enemy/currencyMeshColor";
+import { createBaseInstance } from "./indicatorInstance";
 
 function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
   //When pointer down event is raised
 
   scene.onPointerObservable.add(function(evt: PointerInfo) {
     const pickResult = evt.pickInfo as PickingInfo;
+    let newLocation: Position2D = {
+      x: 0,
+      z: 0
+    };
 
     if (
       pickResult.pickedPoint !== null &&
       pickResult.pickedMesh !== null &&
-      economyGlobals.currentBalance > towerGlobals.baseCost
+      pickResult.hit &&
+      pickResult.pickedMesh.name === "ground"
     ) {
-      if (
-        pickResult.hit &&
-        pickResult.pickedMesh.name === "ground" &&
-        !Tags.MatchesQuery(pickResult.pickedMesh, "towerBase")
-      ) {
-        let newLocation: Position2D = {
-          x: 0,
-          z: 0
-        };
-
-        // if the click hits the ground object, position changes to match the grid
+      if (!Tags.MatchesQuery(pickResult.pickedMesh, "towerBase")) {
+        // if ground object is clicked, position changes to match the grid
 
         if (pickResult.pickedPoint.x > 0) {
           newLocation.x = Math.round(
@@ -59,35 +51,38 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
             pickResult.pickedPoint.z - 5 - (pickResult.pickedPoint.z % 10)
           );
         }
-        const level = 1;
-
-        if (
-          towerGlobals.allPositions.find(
-            existingLocation =>
-              existingLocation.x === newLocation.x &&
-              existingLocation.z === newLocation.z
-          ) === undefined &&
-          economyGlobals.occupiedSpaces.find(
-            existingLocation =>
-              existingLocation[0] === newLocation.x &&
-              existingLocation[1] === newLocation.z
-          ) === undefined
-        ) {
-          new Tower(
-            level,
-            { x: newLocation.x, z: newLocation.z },
-            scene,
-            physicsEngine
-          ) as Tower;
-        }
       }
-    } else if (economyGlobals.currentBalance <= towerGlobals.baseCost) {
-      // When a tower is requested but balance is insuficient
+      const level = 1;
+      // check if a tower already exists at the position
+      if (
+        economyGlobals.currentBalance > towerGlobals.baseCost &&
+        towerGlobals.allPositions.find(
+          existingLocation =>
+            existingLocation.x === newLocation.x &&
+            existingLocation.z === newLocation.z
+        ) === undefined &&
+        economyGlobals.occupiedSpaces.find(
+          existingLocation =>
+            existingLocation[0] === newLocation.x &&
+            existingLocation[1] === newLocation.z
+        ) === undefined
+      ) {
+        new Tower(
+          level,
+          { x: newLocation.x, z: newLocation.z },
+          scene,
+          physicsEngine
+        ) as Tower;
+      }
 
-      // color
-      currencyMeshColor();
+      if (economyGlobals.currentBalance <= towerGlobals.baseCost) {
+        // When a tower is requested but balance is insuficient
+        createBaseInstance(newLocation);
+        // color
+        currencyMeshColor();
 
-      removeTower(economyGlobals.currencyMesh, 1); // sound
+        removeTower(economyGlobals.currencyMesh, 1); // sound
+      }
     }
   }, PointerEventTypes._POINTERTAP);
 }
