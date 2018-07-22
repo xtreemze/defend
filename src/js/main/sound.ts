@@ -106,6 +106,7 @@ function newWave() {
       release: 0.9,
       frequency: 150,
       highpass: 200,
+      lowpass: 4000,
       sweep: 0.5,
       source: "sine"
     } as FX.audioParams);
