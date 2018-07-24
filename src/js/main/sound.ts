@@ -1,6 +1,11 @@
 import * as FX from "../../vendor/wafxr/wafxr";
 import { Mesh } from "babylonjs";
-import { towerGlobals, mapGlobals, enemyGlobals } from "./globalVariables";
+import {
+  towerGlobals,
+  mapGlobals,
+  enemyGlobals,
+  economyGlobals
+} from "./globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
 const third = 1 / 3;
 function shoot(originMesh: Mesh, level: number) {
@@ -124,7 +129,7 @@ function newWave() {
         volume: 20,
         decay: 0.25,
         release: 0.8,
-        frequency: 100,
+        frequency: 96 + enemyGlobals.currentWave,
         highpass: 540,
         lowpass: 2000,
         sweep: 1.8,
