@@ -15,7 +15,7 @@ function shoot(originMesh: Mesh, level: number) {
       FX.play({
         volume: 36,
         release: 0.04,
-        frequency: 880 / (level * 1.5),
+        frequency: 920 / (level * 1.4),
         sweep: -third,
         source: "triangle",
         highpass: 860,
@@ -30,14 +30,16 @@ function shoot(originMesh: Mesh, level: number) {
 }
 
 function damage(enemy: EnemySphere) {
-  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+  if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
     setTimeout(() => {
-      mapGlobals.simultaneousSounds -= 1;
+      mapGlobals.projectileSounds -= 1;
     }, mapGlobals.soundDelay);
-    mapGlobals.simultaneousSounds += 1;
+
+    mapGlobals.projectileSounds += 1;
+
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 26,
+        volume: 24,
         release: 0.01,
         frequency: enemy.hitPoints / 220 + 220,
         highpass: 720,
@@ -60,6 +62,7 @@ function damageCurrency(enemy: EnemySphere) {
     }, mapGlobals.soundDelay);
 
     mapGlobals.simultaneousSounds += 1;
+
     if (mapGlobals.soundOn) {
       FX.play({
         volume: 32,
@@ -81,16 +84,16 @@ function damageCurrency(enemy: EnemySphere) {
 }
 
 function enemyExplode(enemy: EnemySphere, level: number) {
-  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+  if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
     setTimeout(() => {
-      mapGlobals.simultaneousSounds -= 1;
+      mapGlobals.projectileSounds -= 1;
     }, mapGlobals.soundDelay);
 
-    mapGlobals.simultaneousSounds += 1;
+    mapGlobals.projectileSounds += 1;
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 32,
+        volume: 34,
         sustain: 0.25,
         release: 0.8,
         decay: 0.2,
@@ -140,13 +143,13 @@ function addTower(tower: Mesh, level: number) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 34,
+        volume: 33,
         sustain: 0.1,
-        frequency: 500 / level + towerGlobals.allTowers.length * 3,
+        frequency: 450 / level + towerGlobals.allTowers.length * 3,
         sweep: 0.125,
         repeat: 9,
         highpass: 680,
-        lowpass: 3200,
+        lowpass: 3000,
         source: "sine",
         soundX: tower.position.x,
         soundY: tower.position.y,
@@ -166,9 +169,9 @@ function removeTower(tower: Mesh, level: number) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 35,
+        volume: 31,
         sustain: 0.1,
-        frequency: 720 / (level + towerGlobals.allTowers.length * 3 + 100),
+        frequency: 730 / 2 + towerGlobals.allTowers.length + 80 * level,
         sweep: -0.5,
         repeat: 9,
         highpass: 490,
