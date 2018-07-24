@@ -18,12 +18,12 @@ const mapGlobals = {
   impostorLimit: 80, // keep low for mobile device limits
   lightIntensity: 1,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 190,
+  soundDelay: 80,
   soundLimit: 1, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
-  sceneAmbient: new Color3(0.01, 0.0, 0.2) as Color3,
+  sceneAmbient: new Color3(0.01, 0.0, 0.3) as Color3,
   soundOn: false,
   groundMesh: {} as GroundMesh,
   atmosphereMesh: {} as Mesh,
@@ -58,8 +58,8 @@ const towerGlobals = {
   baseCost: 2000,
   allTowers: [] as Mesh[],
   occupiedSpaces: [] as any[],
-  specularColor: new Color3(0.19, 0.05, 0.08),
-  livingColor: new Color3(0.09, 0.57, 0.42),
+  specularColor: new Color3(0.2, 0.051, 0.09),
+  livingColor: new Color3(0.1, 0.54, 0.4),
   range: 35,
   shoot: true,
   raysOn: false,
@@ -92,7 +92,7 @@ const enemyGlobals = {
   allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
   boundaryLimit: 5, // meters
-  livingColor: new Color3(0.1, 0.8, 1),
+  livingColor: new Color3(0.1, 0.8, 0.95),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
   rayHelpers: false,

@@ -14,8 +14,8 @@ export function updateEconomy(scene: Scene): any {
       defeated();
       setTimeout(() => {
         displayMessage(scene, "Defeat", "&#8635;");
-      }, 500);
-    }, 1000);
+      }, 100);
+    }, 900);
     economyGlobals.restartMessage = true;
     economyGlobals.currentBalance = 0;
     economyGlobals.defeats += 1;
@@ -32,8 +32,8 @@ export function updateEconomy(scene: Scene): any {
       victory();
       setTimeout(() => {
         displayMessage(scene, "Victory", "&#8635;");
-      }, 500);
-    }, 1000);
+      }, 100);
+    }, 900);
     economyGlobals.currentBalance = economyGlobals.maxBalance;
     economyGlobals.restartMessage = true;
     economyGlobals.victories += 1;

@@ -19,9 +19,9 @@ function generateMaterials(scene: Scene) {
 
   const skyMaterial = new StandardMaterial("skyMaterial", scene);
 
-  skyMaterial.diffuseColor = new Color3(0.12, 0.02, 0.19);
-  skyMaterial.specularColor = new Color3(0.12, 0.04, 0.08);
-  skyMaterial.ambientColor = mapGlobals.ambientColor;
+  skyMaterial.diffuseColor = new Color3(0.11, 0.02, 0.19);
+  skyMaterial.specularColor = new Color3(0.09, 0.05, 0.05);
+  skyMaterial.ambientColor = mapGlobals.sceneAmbient;
 
   const towerMaterial = new StandardMaterial("towerMaterial", scene);
   towerMaterial.diffuseColor = towerGlobals.livingColor;
