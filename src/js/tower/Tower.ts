@@ -82,7 +82,7 @@ function rotateTurret(
       (projectileGlobals.mass *
         (level * level) *
         (projectileGlobals.speed * (level * level)))) *
-    (towerGlobals.lookAheadRatio * level);
+    (towerGlobals.lookAheadRatio * level * level);
 
   const newPosition = nearestEnemy.position.add(
     new Vector3(

@@ -13,14 +13,13 @@ function shoot(originMesh: Mesh, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 30,
-        release: 0.25,
-        decay: 0.03,
+        volume: 34,
+        release: 0.15,
         frequency: 880 / (level * 1.5),
         sweep: -0.12,
         source: "triangle",
         highpass: 880,
-        lowpass: 4800,
+        lowpass: 4600,
         soundX: originMesh.position.x,
         soundY: originMesh.position.y,
         soundZ: originMesh.position.z,
@@ -101,12 +100,12 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 function newWave() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -25,
+      volume: 1,
       decay: 0.8,
       release: 0.9,
-      frequency: 200,
+      frequency: 100,
       highpass: 200,
-      lowpass: 4000,
+      lowpass: 2000,
       sweep: 0.5,
       source: "sine"
     } as FX.audioParams);
@@ -116,9 +115,9 @@ function newWave() {
 function addTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 36,
+      volume: 32,
       sustain: 0.1,
-      frequency: 400 / level + towerGlobals.allTowers.length * 3,
+      frequency: 500 / level + towerGlobals.allTowers.length * 3,
       sweep: 0.125,
       repeat: 9,
       highpass: 200,
@@ -135,9 +134,9 @@ function addTower(tower: Mesh, level: number) {
 function removeTower(tower: Mesh, level: number) {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: 38,
+      volume: 32,
       sustain: 0.1,
-      frequency: 400 / level + towerGlobals.allTowers.length * 3,
+      frequency: 500 / level + towerGlobals.allTowers.length * 3,
       sweep: -0.5,
       repeat: 9,
       highpass: 200,
@@ -154,7 +153,7 @@ function removeTower(tower: Mesh, level: number) {
 function defeated() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -8,
+      volume: -10,
       attack: 1,
       sustain: 0.08,
       release: 1,
@@ -172,7 +171,7 @@ function defeated() {
 function victory() {
   if (mapGlobals.soundOn) {
     FX.play({
-      volume: -8,
+      volume: -10,
       attack: 0.8,
       sustain: 0.12,
       release: 1,

@@ -28,7 +28,7 @@ function NodePool(definition) {
     }
 
     // mark as in use, clean up and return
-    inUseUntil[i] = now + duration + 0.3;
+    inUseUntil[i] = now + duration + 0.9;
     return node;
   };
 

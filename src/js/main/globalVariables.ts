@@ -18,8 +18,8 @@ const mapGlobals = {
   impostorLimit: 80, // keep low for mobile device limits
   lightIntensity: 1,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 180,
-  soundLimit: 2, // simultaneous sound limit
+  soundDelay: 190,
+  soundLimit: 1, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
@@ -49,8 +49,8 @@ const towerGlobals = {
   turretMeshL3: {} as Mesh,
   towerBaseMesh: {} as Mesh,
   indicator: {} as Mesh,
-  lookAheadRatio: 110000,
-  rateOfFire: 200, // milliseconds between each shot,
+  lookAheadRatio: 60000,
+  rateOfFire: 220, // milliseconds between each shot,
   height: 3,
   mass: 0,
   restitution: 0,

@@ -56,7 +56,7 @@ class Game {
       // const originalTowerLifetime = towerGlobals.lifeTime;
       SceneOptimizer.OptimizeAsync(
         this.scene,
-        SceneOptimizerOptions.LowDegradationAllowed(55),
+        SceneOptimizerOptions.LowDegradationAllowed(58),
         function() {
           // On success
         },
@@ -68,6 +68,8 @@ class Game {
 
     FX.setVolume(1);
     FX._tone.Master.mute = true;
+    FX._tone.context.latencyHint = "fastest";
+    // FX._tone.Transport.start("+0.5");
 
     this.scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());
 
