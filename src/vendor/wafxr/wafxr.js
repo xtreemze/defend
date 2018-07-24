@@ -150,7 +150,7 @@ function FX() {
     } else {
       // synth-specific settings - frequencies, sweeps, jumps, etc.
 
-      const isPulse = source == "pulse";
+      const isPulse = source === "pulse";
       if (!isPulse && sets.harmonics > 0) source += sets.harmonics;
       inst.oscillator.type = source;
       if (isPulse)
@@ -212,12 +212,12 @@ function FX() {
 
       // loop through scheduling one period at a time
       while (currT < end) {
-        if (currF != f0) currF = doJump(fq, f0, currT + t0);
-        if (currF != f1) currF = doRamp(fq, f1, currT + t1);
-        if (currF != f1b) currF = doJump(fq, f1b, currT + t1);
-        if (currF != f2) currF = doRamp(fq, f2, currT + t2);
-        if (currF != f2b) currF = doJump(fq, f2b, currT + t2);
-        if (currF != fn) currF = doRamp(fq, fn, currT + tn);
+        if (currF !== f0) currF = doJump(fq, f0, currT + t0);
+        if (currF !== f1) currF = doRamp(fq, f1, currT + t1);
+        if (currF !== f1b) currF = doJump(fq, f1b, currT + t1);
+        if (currF !== f2) currF = doRamp(fq, f2, currT + t2);
+        if (currF !== f2b) currF = doJump(fq, f2b, currT + t2);
+        if (currF !== fn) currF = doRamp(fq, fn, currT + tn);
         currT += period;
       }
 
