@@ -240,7 +240,7 @@ function FX() {
     }
     chain[chain.length - 1].connect(outputNode);
     chain.push(outputNode);
-    setTimeout(disconnectAudioChain, (duration + 1) * 500, chain);
+    setTimeout(disconnectAudioChain, (duration + 2) * 500, chain);
   };
 }
 

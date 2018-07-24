@@ -13,7 +13,7 @@ function shoot(originMesh: Mesh, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 34,
+        volume: 35,
         release: 0.15,
         frequency: 880 / (level * 1.5),
         sweep: -0.12,
@@ -37,7 +37,7 @@ function damage(enemy: EnemySphere) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 25,
+        volume: 26,
         release: 0.05,
         frequency: enemy.hitPoints / 220 + 200,
         highpass: 500,
@@ -52,20 +52,28 @@ function damage(enemy: EnemySphere) {
 }
 
 function damageCurrency(enemy: EnemySphere) {
-  if (mapGlobals.soundOn) {
-    FX.play({
-      volume: 32,
-      release: 0.8,
-      frequency: (enemyGlobals.baseHitPoints * 3 - enemy.hitPoints) / 100 + 100,
-      sweep: -0.5,
-      source: "sine",
-      repeat: 9,
-      highpass: 300,
-      soundX: enemy.position.x,
-      soundY: enemy.position.y,
-      soundZ: enemy.position.z,
-      rolloff: 0.5
-    } as FX.audioParams);
+  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+    setTimeout(() => {
+      mapGlobals.simultaneousSounds -= 1;
+    }, mapGlobals.soundDelay);
+
+    mapGlobals.simultaneousSounds += 1;
+    if (mapGlobals.soundOn) {
+      FX.play({
+        volume: 32,
+        release: 0.8,
+        frequency:
+          (enemyGlobals.baseHitPoints * 3 - enemy.hitPoints) / 100 + 100,
+        sweep: -0.5,
+        source: "sine",
+        repeat: 9,
+        highpass: 300,
+        soundX: enemy.position.x,
+        soundY: enemy.position.y,
+        soundZ: enemy.position.z,
+        rolloff: 0.5
+      } as FX.audioParams);
+    }
   }
 }
 
@@ -79,7 +87,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 30,
+        volume: 31,
         sustain: 0.2,
         release: 0.8,
         decay: 1,
@@ -87,7 +95,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         sweep: -0.3,
         source: "sine",
         repeat: 6,
-        highpass: 200,
+        highpass: 300,
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
@@ -98,55 +106,76 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 }
 
 function newWave() {
-  if (mapGlobals.soundOn) {
-    FX.play({
-      volume: 1,
-      decay: 0.8,
-      release: 0.9,
-      frequency: 100,
-      highpass: 200,
-      lowpass: 2000,
-      sweep: 0.5,
-      source: "sine"
-    } as FX.audioParams);
+  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+    setTimeout(() => {
+      mapGlobals.simultaneousSounds -= 1;
+    }, mapGlobals.soundDelay);
+
+    mapGlobals.simultaneousSounds += 1;
+    if (mapGlobals.soundOn) {
+      FX.play({
+        volume: 15,
+        decay: 0.8,
+        release: 0.9,
+        frequency: 100,
+        highpass: 300,
+        lowpass: 2000,
+        sweep: 0.5,
+        source: "sine"
+      } as FX.audioParams);
+    }
   }
 }
 
 function addTower(tower: Mesh, level: number) {
-  if (mapGlobals.soundOn) {
-    FX.play({
-      volume: 32,
-      sustain: 0.1,
-      frequency: 500 / level + towerGlobals.allTowers.length * 3,
-      sweep: 0.125,
-      repeat: 9,
-      highpass: 200,
-      lowpass: 4000,
-      source: "sine",
-      soundX: tower.position.x,
-      soundY: tower.position.y,
-      soundZ: tower.position.z,
-      rolloff: 0.5
-    } as FX.audioParams);
+  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+    setTimeout(() => {
+      mapGlobals.simultaneousSounds -= 1;
+    }, mapGlobals.soundDelay);
+
+    mapGlobals.simultaneousSounds += 1;
+    if (mapGlobals.soundOn) {
+      FX.play({
+        volume: 32,
+        sustain: 0.1,
+        frequency: 500 / level + towerGlobals.allTowers.length * 3,
+        sweep: 0.125,
+        repeat: 9,
+        highpass: 200,
+        lowpass: 4000,
+        source: "sine",
+        soundX: tower.position.x,
+        soundY: tower.position.y,
+        soundZ: tower.position.z,
+        rolloff: 0.5
+      } as FX.audioParams);
+    }
   }
 }
 
 function removeTower(tower: Mesh, level: number) {
-  if (mapGlobals.soundOn) {
-    FX.play({
-      volume: 32,
-      sustain: 0.1,
-      frequency: 500 / level + towerGlobals.allTowers.length * 3,
-      sweep: -0.5,
-      repeat: 9,
-      highpass: 200,
-      lowpass: 4000,
-      source: "sine",
-      soundX: tower.position.x,
-      soundY: tower.position.y,
-      soundZ: tower.position.z,
-      rolloff: 0.5
-    } as FX.audioParams);
+  if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
+    setTimeout(() => {
+      mapGlobals.simultaneousSounds -= 1;
+    }, mapGlobals.soundDelay);
+
+    mapGlobals.simultaneousSounds += 1;
+    if (mapGlobals.soundOn) {
+      FX.play({
+        volume: 34,
+        sustain: 0.1,
+        frequency: 500 / level + towerGlobals.allTowers.length * 3,
+        sweep: -0.5,
+        repeat: 9,
+        highpass: 200,
+        lowpass: 4000,
+        source: "sine",
+        soundX: tower.position.x,
+        soundY: tower.position.y,
+        soundZ: tower.position.z,
+        rolloff: 0.5
+      } as FX.audioParams);
+    }
   }
 }
 
