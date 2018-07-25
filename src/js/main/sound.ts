@@ -28,7 +28,7 @@ function shoot(originMesh: Mesh, level: number) {
         soundX: originMesh.position.x,
         soundY: originMesh.position.y,
         soundZ: originMesh.position.z,
-        rolloff: 0.5
+        rolloff: 0.3
       } as FX.audioParams);
     }
   }
@@ -54,7 +54,7 @@ function damage(enemy: EnemySphere) {
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
-        rolloff: 0.5
+        rolloff: 0.3
       } as FX.audioParams);
     }
   }
@@ -82,7 +82,7 @@ function damageCurrency(enemy: EnemySphere) {
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
-        rolloff: 0.5
+        rolloff: 0.3
       } as FX.audioParams);
     }
   }
@@ -111,7 +111,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
         soundX: enemy.position.x,
         soundY: enemy.position.y,
         soundZ: enemy.position.z,
-        rolloff: 0.5
+        rolloff: 0.3
       } as FX.audioParams);
     }
   }
@@ -159,7 +159,7 @@ function addTower(tower: Mesh, level: number) {
         soundX: tower.position.x,
         soundY: tower.position.y,
         soundZ: tower.position.z,
-        rolloff: 0.5
+        rolloff: 0.3
       } as FX.audioParams);
     }
   }
@@ -185,7 +185,7 @@ function removeTower(tower: Mesh, level: number) {
         soundX: tower.position.x,
         soundY: tower.position.y,
         soundZ: tower.position.z,
-        rolloff: 0.5
+        rolloff: 0.3
       } as FX.audioParams);
     }
   }
@@ -204,7 +204,7 @@ function defeated() {
       source: "sine",
       pulseWidth: 0.5,
       repeat: 6,
-      rolloff: 0.5
+      rolloff: 0.3
     } as FX.audioParams);
   }
 }
@@ -222,7 +222,7 @@ function victory() {
       source: "sine",
       pulseWidth: 0.5,
       repeat: 8,
-      rolloff: 0.5
+      rolloff: 0.3
     } as FX.audioParams);
   }
 }

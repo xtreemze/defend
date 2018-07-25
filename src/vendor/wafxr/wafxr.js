@@ -130,7 +130,7 @@ function FX() {
       : sets.sustainLevel;
 
     const holdTime = sustain + attack + decay;
-    const duration = holdTime * 1.5 + release * 1.5;
+    const duration = holdTime * 2 + release * 2;
     const now = Tone.now();
 
     // determine instrument and set up envelope, basic settings
@@ -240,7 +240,7 @@ function FX() {
     }
     chain[chain.length - 1].connect(outputNode);
     chain.push(outputNode);
-    setTimeout(disconnectAudioChain, (duration + 2) * 500, chain);
+    setTimeout(disconnectAudioChain, (duration + 1) * 500, chain);
   };
 }
 

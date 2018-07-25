@@ -11,7 +11,7 @@ import { waves } from "./waves";
 import { enemyGenerator } from "./Enemy";
 import { destroyEnemy } from "./destroyEnemy";
 
-const enemyWaves = (scene: Scene) => {
+const newEnemyWave = (scene: Scene) => {
   let deltaTime = Date.now() - enemyGlobals.generationRate;
 
   const checkEnemyY = setInterval(() => {
@@ -27,61 +27,63 @@ const enemyWaves = (scene: Scene) => {
       clearInterval(checkEnemyY);
     }
   }, 3000);
-
-  scene.registerAfterRender(() => {
-    if (
-      Date.now() - deltaTime > enemyGlobals.generationRate &&
-      enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-      economyGlobals.restartMessage === false &&
-      enemyGlobals.currentWave < waves.length
-    ) {
-      deltaTime = Date.now() - enemyGlobals.generationRate;
-
-      setTimeout(() => {
-        newWave(); // sound for new wave
-      }, 100);
-
-      // Color change on new wave
-
-      rampLight(scene, mapGlobals.skyLight, 1.3, mapGlobals.lightIntensity);
-      rampLight(
-        scene,
-        mapGlobals.upLight,
-        1.3 * 2,
-        mapGlobals.lightIntensity * 2
-      );
-
-      enemyGlobals.currentWave += 1;
-
-      // Generate enemies for the wave
-
-      enemyGenerator(
-        scene,
-        waves[enemyGlobals.currentWave][0],
-        1,
-        waves[enemyGlobals.currentWave][3]
-      );
-
-      enemyGenerator(
-        scene,
-        waves[enemyGlobals.currentWave][1],
-        2,
-        waves[enemyGlobals.currentWave][3]
-      );
-
-      enemyGenerator(
-        scene,
-        waves[enemyGlobals.currentWave][2],
-        3,
-        waves[enemyGlobals.currentWave][3]
-      );
-
-      enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
-      // if (economyGlobals.restartMessage === true) {
-      //   scene.unregisterAfterRender(wave(scene, deltaTime));
-      // }
-    }
-  });
+  if (economyGlobals.restartMessage === false) {
+    scene.registerAfterRender(() => enemyGeneration(deltaTime, scene));
+  }
 };
 
-export { enemyWaves };
+const enemyGeneration = (deltaTime: number, scene: Scene): void => {
+  if (
+    Date.now() - deltaTime > enemyGlobals.generationRate &&
+    enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
+    economyGlobals.restartMessage === false &&
+    enemyGlobals.currentWave < waves.length
+  ) {
+    deltaTime = Date.now() - enemyGlobals.generationRate;
+
+    setTimeout(() => {
+      newWave(); // sound for new wave
+    }, 100);
+
+    // Color change on new wave
+
+    rampLight(scene, mapGlobals.skyLight, 1.3, mapGlobals.lightIntensity);
+    rampLight(
+      scene,
+      mapGlobals.upLight,
+      1.3 * 2,
+      mapGlobals.lightIntensity * 2
+    );
+
+    // Generate enemies for the wave
+
+    enemyGenerator(
+      scene,
+      waves[enemyGlobals.currentWave][0],
+      1,
+      waves[enemyGlobals.currentWave][3]
+    );
+
+    enemyGenerator(
+      scene,
+      waves[enemyGlobals.currentWave][1],
+      2,
+      waves[enemyGlobals.currentWave][3]
+    );
+
+    enemyGenerator(
+      scene,
+      waves[enemyGlobals.currentWave][2],
+      3,
+      waves[enemyGlobals.currentWave][3]
+    );
+
+    enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+    if (enemyGlobals.currentWave >= waves.length) {
+      scene.unregisterAfterRender(() => enemyGeneration(deltaTime, scene));
+    }
+    enemyGlobals.currentWave += 1;
+  }
+};
+
+export { newEnemyWave };

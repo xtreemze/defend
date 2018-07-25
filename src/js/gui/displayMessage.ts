@@ -5,7 +5,7 @@ import {
 } from "../main/globalVariables";
 import { Scene } from "babylonjs";
 import { rampUp } from "./currency";
-import { enemyWaves } from "../enemy/enemyWaves";
+import { newEnemyWave } from "../enemy/enemyWaves";
 import {
   helpHTML,
   helpStyle,
@@ -54,7 +54,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
       enemyGlobals.currentWave = 0;
       economyGlobals.restartMessage = false;
 
-      enemyWaves(scene);
+      newEnemyWave(scene);
 
       // Button and GUI
       const titleParent = title.parentNode as Node;
@@ -101,7 +101,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
         enemyGlobals.currentWave = 0;
         economyGlobals.restartMessage = false;
 
-        enemyWaves(scene);
+        newEnemyWave(scene);
 
         // Button and GUI
         rampUp(scene);

@@ -28,6 +28,7 @@ export function updateEconomy(scene: Scene): any {
     enemyGlobals.currentWave >= waves.length &&
     economyGlobals.restartMessage === false
   ) {
+    economyGlobals.victories += 1;
     economyGlobals.restartMessage = true;
     setTimeout(() => {
       victory();
@@ -36,10 +37,8 @@ export function updateEconomy(scene: Scene): any {
       }, 100);
     }, 900);
     economyGlobals.currentBalance = economyGlobals.maxBalance;
-    economyGlobals.victories += 1;
     enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
     localStorage.setItem("victories", `${economyGlobals.victories}`);
-
   }
 
   const currentBalance = document.getElementById(
