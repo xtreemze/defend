@@ -10,13 +10,13 @@ export function updateEconomy(scene: Scene): any {
     economyGlobals.currentBalance < 0 &&
     economyGlobals.restartMessage === false
   ) {
+    economyGlobals.restartMessage = true;
     setTimeout(() => {
       defeated();
       setTimeout(() => {
         displayMessage(scene, "Defeat", "&#8635;");
       }, 100);
     }, 900);
-    economyGlobals.restartMessage = true;
     economyGlobals.currentBalance = 0;
     economyGlobals.defeats += 1;
     localStorage.setItem("defeats", `${economyGlobals.defeats}`);
@@ -28,6 +28,7 @@ export function updateEconomy(scene: Scene): any {
     enemyGlobals.currentWave >= waves.length &&
     economyGlobals.restartMessage === false
   ) {
+    economyGlobals.restartMessage = true;
     setTimeout(() => {
       victory();
       setTimeout(() => {
@@ -35,11 +36,10 @@ export function updateEconomy(scene: Scene): any {
       }, 100);
     }, 900);
     economyGlobals.currentBalance = economyGlobals.maxBalance;
-    economyGlobals.restartMessage = true;
     economyGlobals.victories += 1;
+    enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
     localStorage.setItem("victories", `${economyGlobals.victories}`);
 
-    enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
   }
 
   const currentBalance = document.getElementById(
