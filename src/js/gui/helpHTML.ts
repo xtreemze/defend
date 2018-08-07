@@ -17,7 +17,7 @@ const helpHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>T
 
 const helpStyle = `
     position: absolute;
-    background-color: #0200337d;
+    background-color: #020033;
     color: ${projectileGlobals.livingColor.toHexString()};
     padding: 10%;
     width: 70%;
