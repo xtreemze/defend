@@ -82,7 +82,8 @@ function rotateTurret(
       (projectileGlobals.mass *
         (level * level) *
         (projectileGlobals.speed * (level * level)))) *
-    (towerGlobals.lookAheadRatio * level * level);
+    (towerGlobals.lookAheadRatio * level * level +
+      level * towerGlobals.lookAheadRatio);
 
   const newPosition = nearestEnemy.position.add(
     new Vector3(
@@ -95,6 +96,8 @@ function rotateTurret(
     newPosition.y = 3;
   }
   towerTurret.lookAt(newPosition);
+
+  return towerTurret.rotation.clone();
 }
 
 function destroyTower(

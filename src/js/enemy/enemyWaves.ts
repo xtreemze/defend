@@ -43,7 +43,7 @@ const enemyGeneration = (deltaTime: number, scene: Scene): void => {
 
     setTimeout(() => {
       newWave(); // sound for new wave
-    }, 100);
+    }, 50);
 
     // Color change on new wave
 
@@ -79,6 +79,7 @@ const enemyGeneration = (deltaTime: number, scene: Scene): void => {
     );
 
     enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
+
     if (enemyGlobals.currentWave >= waves.length) {
       scene.unregisterAfterRender(() => enemyGeneration(deltaTime, scene));
     }

@@ -37,7 +37,7 @@ const projectileGlobals = {
   lifeTime: 2000, // milliseconds
   speed: 15000,
   mass: 100,
-  baseHitPoints: 100,
+  baseHitPoints: 120,
   livingColor: new Color3(1, 0.5, 0.2) as Color3,
   activeParticles: 0,
   particleLimit: 0,
@@ -49,7 +49,7 @@ const towerGlobals = {
   turretMeshL3: {} as Mesh,
   towerBaseMesh: {} as Mesh,
   indicator: {} as Mesh,
-  lookAheadRatio: 55000,
+  lookAheadRatio: 40000,
   rateOfFire: 220, // milliseconds between each shot,
   height: 3,
   mass: 0,
@@ -79,11 +79,11 @@ const enemyGlobals = {
   originHeight: 7,
   generationRate: 8000, // milliseconds
   decisionRate: 100, // milliseconds
-  speed: 35000,
+  speed: 80000,
   mass: 15000,
   restitution: 0.8,
   jumpForce: 60,
-  friction: 0.7,
+  friction: 0.8,
   decayRate: 100, // hitpoints per decision
   initialDecayRate: 100, // hitpoints per decision
   baseHitPoints: 20000,

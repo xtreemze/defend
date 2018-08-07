@@ -39,7 +39,7 @@ class Enemy {
     sphereMesh.isPickable = false;
 
     // sphereMesh.convertToUnIndexedMesh();
-    enemyGlobals.allEnemies.unshift(sphereMesh);
+    // enemyGlobals.allEnemies.unshift(sphereMesh);
 
     enemyBorn(scene, position, sphereMesh, diameter, level);
 

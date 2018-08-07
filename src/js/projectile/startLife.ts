@@ -30,11 +30,11 @@ export function startLife(
   physicsEngine: PhysicsEngine,
   clonedRotation: Vector3
 ) {
-
   projectile.rotation = clonedRotation;
-  const forwardLocal = new Vector3(0, 0, 5);
+  const forwardLocal = new Vector3(0, 0, 10);
   const space = originMesh.getDirection(forwardLocal) as Vector3;
   projectile.position = originMesh.position.subtract(space) as Vector3;
+  // projectile.position = originMesh.position as Vector3;
 
   // For Physics
   projectile.physicsImpostor = new PhysicsImpostor(
@@ -48,7 +48,7 @@ export function startLife(
     scene
   ) as PhysicsImpostor;
 
-  hitEffect(projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
+  impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 
   mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
@@ -63,14 +63,9 @@ export function startLife(
 
   projectile.registerAfterWorldMatrixUpdate(projectileExpires);
 
-  // const projectileLifetime = setTimeout(() => {
-  //   destroyProjectile(projectile, physicsEngine);
-  // }, projectileGlobals.lifeTime);
-
   projectile.setEnabled(true);
+  hitEffect(projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
   destroyOnCollide(scene, projectile, physicsEngine, projectileExpires); // Detects collissions with enemies
-
-  impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
 }
 
 export { LiveProjectile, LiveProjectileInstance };

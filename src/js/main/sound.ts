@@ -148,7 +148,7 @@ function addTower(tower: Mesh, level: number) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 8,
+        volume: 7,
         sustain: 0.03,
         frequency: 450 / level + towerGlobals.allTowers.length * 3,
         sweep: 0.125,
@@ -174,7 +174,7 @@ function removeTower(tower: Mesh, level: number) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 8,
+        volume: 7,
         sustain: 0.3,
         frequency: 730 / 2 + towerGlobals.allTowers.length + 80 * level,
         sweep: -0.5,

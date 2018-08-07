@@ -1,7 +1,7 @@
 import { Scene, Vector3, Mesh, PhysicsEngine, Ray } from "babylonjs";
 import fireProjectile from "../projectile/Projectile";
 import { towerGlobals, enemyGlobals } from "../main/globalVariables";
-import { rotateTurret, shotClearsTower } from "./Tower";
+import { rotateTurret } from "./Tower";
 import { shoot } from "../main/sound";
 import { TowerTurret } from "./towerBorn";
 import { EnemySphere } from "../enemy/enemyBorn";
@@ -16,10 +16,11 @@ function trackSpheres(
   physicsEngine: PhysicsEngine
 ) {
   let deltaTime = Date.now();
-  tower.registerAfterRender(() => {
-    if (enemyGlobals.allEnemies.length > 0) {
-      const enemyDistances = [] as any[];
-      for (let index = 0; index < enemyGlobals.allEnemies.length; index++) {
+  tower.registerBeforeRender(async () => {
+    const enemyNumber = enemyGlobals.allEnemies.length;
+    if (enemyNumber > 0) {
+      const enemyDistances = new Array() as any[];
+      for (let index = 0; index < enemyNumber; index++) {
         const enemy = enemyGlobals.allEnemies[index] as EnemySphere;
         if (
           enemy.position.y <= towerGlobals.range * level &&
@@ -34,31 +35,37 @@ function trackSpheres(
           ]);
         }
       }
+      await enemyDistances.sort();
       if (enemyDistances.length > 0) {
-        const nearestEnemy = enemyDistances.sort()[0][1] as EnemySphere;
-        const clonedRotation = towerTurret.rotation.clone();
-        rotateTurret(nearestEnemy, towerTurret, level);
+        const nearestEnemy = enemyDistances[0][1] as EnemySphere;
+        const clonedRotation = (await rotateTurret(
+          nearestEnemy,
+          towerTurret,
+          level
+        )) as Vector3; // track the enemy spheres
         if (
           Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
           towerGlobals.shoot
           //  &&           shotClearsTower(scene, ray, nearestEnemy)
         ) {
           deltaTime = Date.now();
+
+          shoot(flash, level);
+
           setTimeout(() => {
             flash.visibility = 0;
           }, 15);
           flash.visibility = 1;
-
-          shoot(flash, level);
-
-          fireProjectile(
-            scene,
-            towerTurret,
-            level,
-            nearestEnemy,
-            physicsEngine,
-            clonedRotation
-          );
+          setTimeout(() => {
+            fireProjectile(
+              scene,
+              towerTurret,
+              level,
+              nearestEnemy,
+              physicsEngine,
+              clonedRotation
+            );
+          }, 100);
         }
       }
     }
