@@ -10,7 +10,7 @@ const puppeteer = require("puppeteer");
 
   const page = await browser.newPage().catch(err => Error(err));
 
-  await page.setViewport({ width: 512, height: 512 }).catch(err => Error(err));
+  await page.setViewport({ width: 800, height: 500 }).catch(err => Error(err));
 
   await page
     .goto("http://localhost:8080/", {
@@ -39,6 +39,6 @@ const puppeteer = require("puppeteer");
           .catch(err => Error(err));
         await browser.close();
       }, 4800);
-    }, 6600);
-  }, 36400);
+    }, 6400);
+  }, 15400);
 })();
