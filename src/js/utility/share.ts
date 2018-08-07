@@ -2,12 +2,15 @@ import { economyGlobals } from "../main/globalVariables";
 import { installButtonStyle } from "../gui/startHTML";
 
 function share() {
-  var text = `Victories: ${economyGlobals.victories}/${economyGlobals.defeats}`;
+  const title = "Defend - 3D Tower Defense by @xtreemze";
+  const text = `Victories: ${economyGlobals.victories}/${
+    economyGlobals.defeats
+  }`;
 
   if ("share" in navigator) {
     //@ts-ignore
     navigator.share({
-      title: "Defend - Mobile 3D Tower Defense",
+      title: title,
       text: text,
       url: location.href
     });
@@ -15,7 +18,7 @@ function share() {
     // Here we use the WhatsApp API as fallback; remember to encode your text for URI
     location.href =
       "https://api.whatsapp.com/send?text=" +
-      encodeURIComponent(`3D Tower Defense - ` + text + " - ") +
+      encodeURIComponent(`${title} - ` + text + " - ") +
       location.href;
   }
 }
