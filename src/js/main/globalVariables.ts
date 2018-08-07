@@ -78,12 +78,12 @@ const enemyGlobals = {
   limit: 0, // wait for this enemy count before next wave
   originHeight: 7,
   generationRate: 8000, // milliseconds
-  decisionRate: 100, // milliseconds
+  decisionRate: 120, // milliseconds
   speed: 80000,
   mass: 15000,
   restitution: 0.8,
   jumpForce: 60,
-  friction: 0.8,
+  friction: 0.7,
   decayRate: 100, // hitpoints per decision
   initialDecayRate: 100, // hitpoints per decision
   baseHitPoints: 20000,
