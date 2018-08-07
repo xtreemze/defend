@@ -106,7 +106,7 @@ const economyGlobals = {
   initialBalance: 25000,
   maxBalance: 30000,
   currentBalance: 1,
-  restartMessage: false,
+  restartMessage: false as boolean,
   bankSize: 40,
   defeats: 0,
   victories: 0,

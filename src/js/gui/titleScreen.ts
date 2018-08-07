@@ -5,7 +5,7 @@ import {
 } from "../main/globalVariables";
 import { helpHTML, helpStyle, helpButtonStyle, helpButtonHTML } from "./helpHTML";
 import * as FX from "../../vendor/wafxr/wafxr";
-import { enemyWaves } from "../enemy/enemyWaves";
+import { newEnemyWave } from "../enemy/enemyWaves";
 import { newTower } from "../tower/pick";
 import { Scene, PhysicsEngine } from "babylonjs";
 import { displayEconomy } from "./currency";
@@ -159,7 +159,7 @@ function titleScreen(
     enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
     economyGlobals.restartMessage = false;
     enemyGlobals.currentWave = 0;
-    enemyWaves(scene);
+    newEnemyWave(scene);
 
     // remove GUI
     const titleParent = title.parentNode as Node;

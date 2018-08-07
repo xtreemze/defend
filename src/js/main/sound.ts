@@ -222,11 +222,7 @@ function victory() {
       source: "sine",
       pulseWidth: 0.5,
       repeat: 8,
-      rolloff: 0.05
     } as FX.audioParams);
-  }
-}
-
 export {
   shoot,
   damage,
