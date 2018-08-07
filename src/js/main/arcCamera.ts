@@ -18,6 +18,7 @@ function arcCamera(scene: Scene, canvas: HTMLCanvasElement) {
   camera.useAutoRotationBehavior = true;
   camera.useFramingBehavior = true;
   camera.useBouncingBehavior = true;
+  camera.panningSensibility = 0;
   // Attach Control
   camera.upperRadiusLimit = mapGlobals.size * 3;
   camera.lowerRadiusLimit = mapGlobals.size / 6;
