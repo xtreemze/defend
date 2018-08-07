@@ -18,7 +18,7 @@ const mapGlobals = {
   impostorLimit: 80, // keep low for mobile device limits
   lightIntensity: 1,
   simultaneousSounds: 0, // sounds currently playing for projectiles
-  soundDelay: 80,
+  soundDelay: 40,
   soundLimit: 1, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
