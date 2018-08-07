@@ -221,8 +221,11 @@ function victory() {
       highpass: 200,
       source: "sine",
       pulseWidth: 0.5,
-      repeat: 8,
+      repeat: 8
     } as FX.audioParams);
+  }
+}
+
 export {
   shoot,
   damage,
