@@ -63,7 +63,7 @@ const towerGlobals = {
   range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 24000,
+  lifeTime: 23200,
   index: 0,
   disposeTime: 6000, // chance to keep towers before dispose
   allPositions: [] as Position2D[]
@@ -84,7 +84,7 @@ const enemyGlobals = {
   restitution: 0.8,
   jumpForce: 60,
   friction: 0.6,
-  decayRate: 100, // hitpoints per decision
+  decayRate: 150, // hitpoints per decision
   initialDecayRate: 100, // hitpoints per decision
   baseHitPoints: 20000,
   deadHitPoints: 0,
@@ -102,7 +102,7 @@ const enemyGlobals = {
 
 const economyGlobals = {
   rampUpValue: 200,
-  energyRecoveryRatio: 0.28,
+  energyRecoveryRatio: 0.25,
   initialBalance: 30000,
   maxBalance: 30000,
   currentBalance: 1,
