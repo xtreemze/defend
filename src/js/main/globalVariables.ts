@@ -101,7 +101,7 @@ const enemyGlobals = {
 };
 
 const economyGlobals = {
-  rampUpValue: 200,
+  rampUpValue: 150,
   energyRecoveryRatio: 0.25,
   initialBalance: 30000,
   maxBalance: 30000,
