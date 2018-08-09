@@ -15,7 +15,7 @@ function shoot(originMesh: Mesh, level: number) {
 
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 10,
+        volume: 9,
         sustain: 0.04,
         release: 0.02,
         frequency: 920 / (level * 1.25),
@@ -148,7 +148,7 @@ function addTower(tower: Mesh, level: number) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 7,
+        volume: 6,
         sustain: 0.03,
         frequency: 450 / level + towerGlobals.allTowers.length * 3,
         sweep: 0.125,
@@ -174,7 +174,7 @@ function removeTower(tower: Mesh, level: number) {
     mapGlobals.simultaneousSounds += 1;
     if (mapGlobals.soundOn) {
       FX.play({
-        volume: 7,
+        volume: 6,
         sustain: 0.3,
         frequency: 730 / 2 + towerGlobals.allTowers.length + 80 * level,
         sweep: -0.5,

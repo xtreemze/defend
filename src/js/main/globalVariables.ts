@@ -16,13 +16,13 @@ const mapGlobals = {
   size: 200, // map radius
   allImpostors: [] as PhysicsImpostor[],
   impostorLimit: 80, // keep low for mobile device limits
-  lightIntensity: 1,
+  lightIntensity: 0.78,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 40,
   soundLimit: 1, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
   projectileSoundLimit: 1, // simultaneous sound limit for projectiles
-  ambientColor: new Color3(0.2, 0.2, 0.2) as Color3,
+  ambientColor: new Color3(0.22, 0.28, 0.22) as Color3,
   sceneAmbient: new Color3(0.01, 0.0, 0.3) as Color3,
   soundOn: false,
   groundMesh: {} as GroundMesh,
@@ -58,12 +58,12 @@ const towerGlobals = {
   baseCost: 2000,
   allTowers: [] as Mesh[],
   occupiedSpaces: [] as any[],
-  specularColor: new Color3(0.2, 0.051, 0.09),
-  livingColor: new Color3(0.1, 0.54, 0.4),
+  specularColor: new Color3(0.3, 0.071, 0.1),
+  livingColor: new Color3(0.1, 0.64, 0.4),
   range: 35,
   shoot: true,
   raysOn: false,
-  lifeTime: 22000,
+  lifeTime: 24000,
   index: 0,
   disposeTime: 6000, // chance to keep towers before dispose
   allPositions: [] as Position2D[]
@@ -83,7 +83,7 @@ const enemyGlobals = {
   mass: 15000,
   restitution: 0.8,
   jumpForce: 60,
-  friction: 0.7,
+  friction: 0.6,
   decayRate: 100, // hitpoints per decision
   initialDecayRate: 100, // hitpoints per decision
   baseHitPoints: 20000,
@@ -92,7 +92,7 @@ const enemyGlobals = {
   allEnemies: [] as Mesh[],
   occupiedSpaces: [] as any[],
   boundaryLimit: 5, // meters
-  livingColor: new Color3(0.1, 0.8, 0.95),
+  livingColor: new Color3(0.1, 0.76, 0.93),
   hitColor: new Color3(0.2, 0, 0.3),
   deadColor: new Color3(0.7, 0.1, 0.05),
   rayHelpers: false,
@@ -102,7 +102,7 @@ const enemyGlobals = {
 
 const economyGlobals = {
   rampUpValue: 200,
-  energyRecoveryRatio: 0.4,
+  energyRecoveryRatio: 0.28,
   initialBalance: 30000,
   maxBalance: 30000,
   currentBalance: 1,
