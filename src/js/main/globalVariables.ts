@@ -101,6 +101,9 @@ const enemyGlobals = {
 };
 
 const economyGlobals = {
+  bestLevel: 0,
+  startTime: Date.now(),
+  bestTime: Date.now(),
   rampUpValue: 150,
   energyRecoveryRatio: 0.25,
   initialBalance: 30000,

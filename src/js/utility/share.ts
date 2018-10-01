@@ -5,7 +5,8 @@ function share() {
   const title = "Defend - 3D Tower Defense by @xtreemze";
   const text = `Victories: ${economyGlobals.victories}/${
     economyGlobals.defeats
-  }`;
+  } - Best: Level ${economyGlobals.bestLevel}, Time: ${economyGlobals.bestTime *
+    1000} seconds`;
 
   if ("share" in navigator) {
     //@ts-ignore

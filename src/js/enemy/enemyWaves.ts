@@ -84,6 +84,12 @@ const enemyGeneration = (deltaTime: number, scene: Scene): void => {
       scene.unregisterAfterRender(() => enemyGeneration(deltaTime, scene));
     }
     enemyGlobals.currentWave += 1;
+    if (enemyGlobals.currentWave > economyGlobals.bestLevel) {
+      economyGlobals.bestTime = Date.now() - economyGlobals.startTime;
+      economyGlobals.bestLevel = enemyGlobals.currentWave;
+      localStorage.setItem("bestTime", `${economyGlobals.bestTime}`);
+      localStorage.setItem("bestLevel", `${economyGlobals.bestLevel}`);
+    }
   }
 };
 

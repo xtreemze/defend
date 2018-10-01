@@ -82,7 +82,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         removeTower(economyGlobals.currencyMesh, currentLevel + 1);
       }
     }
-  }, PointerEventTypes._POINTERTAP);
+  }, PointerEventTypes.POINTERTAP);
 }
 
 export { upgradeTower };

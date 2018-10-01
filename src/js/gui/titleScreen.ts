@@ -3,7 +3,12 @@ import {
   enemyGlobals,
   economyGlobals
 } from "../main/globalVariables";
-import { helpHTML, helpStyle, helpButtonStyle, helpButtonHTML } from "./helpHTML";
+import {
+  helpHTML,
+  helpStyle,
+  helpButtonStyle,
+  helpButtonHTML
+} from "./helpHTML";
 import * as FX from "../../vendor/wafxr/wafxr";
 import { newEnemyWave } from "../enemy/enemyWaves";
 import { newTower } from "../tower/pick";
@@ -35,6 +40,20 @@ function titleScreen(
   ) as string) as number;
   if (localStorageDefeats !== NaN && localStorageDefeats >= 0) {
     economyGlobals.defeats = localStorageDefeats;
+  }
+
+  const localStorageBestTime = parseInt(localStorage.getItem(
+    "bestTime"
+  ) as string) as number;
+  if (localStorageBestTime !== NaN && localStorageBestTime >= 0) {
+    economyGlobals.bestTime = localStorageBestTime;
+  }
+
+  const localStorageBestLevel = parseInt(localStorage.getItem(
+    "bestLevel"
+  ) as string) as number;
+  if (localStorageBestLevel !== NaN && localStorageBestLevel >= 0) {
+    economyGlobals.bestLevel = localStorageBestLevel;
   }
 
   // clear Credits

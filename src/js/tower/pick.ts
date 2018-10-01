@@ -84,7 +84,7 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
         removeTower(economyGlobals.currencyMesh, 1); // sound
       }
     }
-  }, PointerEventTypes._POINTERTAP);
+  }, PointerEventTypes.POINTERTAP);
 }
 
 export { newTower };
