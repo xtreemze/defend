@@ -1,11 +1,11 @@
-import { rampLight } from "./rampLight";
+// import { rampLight } from "./rampLight";
 
 import { Scene } from "babylonjs";
 import { newWave } from "../main/sound";
 import {
   enemyGlobals,
   economyGlobals,
-  mapGlobals
+//   mapGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
 import { enemyGenerator } from "./Enemy";
@@ -45,15 +45,16 @@ const enemyGeneration = (deltaTime: number, scene: Scene): void => {
       newWave(); // sound for new wave
     }, 50);
 
-    // Color change on new wave
+    // Color change on new wave disabled for now
 
-    rampLight(scene, mapGlobals.skyLight, 1.3, mapGlobals.lightIntensity);
-    rampLight(
-      scene,
-      mapGlobals.upLight,
-      1.3 * 2,
-      mapGlobals.lightIntensity * 2
-    );
+
+    // rampLight(scene, mapGlobals.skyLight, 1.3, mapGlobals.lightIntensity);
+    // rampLight(
+    //   scene,
+    //   mapGlobals.upLight,
+    //   1.3 * 2,
+    //   mapGlobals.lightIntensity * 2
+    // );
 
     // Generate enemies for the wave
 
