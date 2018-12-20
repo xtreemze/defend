@@ -56,7 +56,7 @@ class Game {
       // const originalTowerLifetime = towerGlobals.lifeTime;
       SceneOptimizer.OptimizeAsync(
         this.scene,
-        SceneOptimizerOptions.LowDegradationAllowed(30),
+        SceneOptimizerOptions.ModerateDegradationAllowed(55),
         function() {
           // On success
           mapGlobals.soundOn = true;
