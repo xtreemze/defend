@@ -150,14 +150,14 @@ const renderGlobals = {
 const materialGlobals = {} as any;
 
 // @ts-ignore
-window.globals = {
-  projectileGlobals,
-  towerGlobals,
-  enemyGlobals,
-  mapGlobals,
-  renderGlobals,
-  economyGlobals
-};
+// window.globals = {
+//   projectileGlobals,
+//   towerGlobals,
+//   enemyGlobals,
+//   mapGlobals,
+//   renderGlobals,
+//   economyGlobals
+// };
 
 export {
   projectileGlobals,
