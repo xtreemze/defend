@@ -10,7 +10,7 @@ import { Position2D } from "../enemy/Enemy";
 import { LiveProjectileInstance } from "../projectile/startLife";
 
 const mapGlobals = {
-  optimizerOn: false,
+  optimizerOn: true,
   diagnosticsOn: false,
   demoSphere: false,
   size: 200, // map radius

@@ -11,7 +11,7 @@ import {
 } from "babylonjs";
 
 import * as FX from "../../vendor/wafxr/wafxr";
-import { mapGlobals } from "./globalVariables";
+import { mapGlobals, enemyGlobals } from "./globalVariables";
 import { map } from "./map";
 
 import { titleScreen } from "../gui/titleScreen";
@@ -41,7 +41,7 @@ class Game {
         // stencil: true,
         // doNotHandleContextLost: true
       },
-      true
+      false
     );
     this.engine.enableOfflineSupport = false;
     this.engine.disableManifestCheck = true;
@@ -56,12 +56,16 @@ class Game {
       // const originalTowerLifetime = towerGlobals.lifeTime;
       SceneOptimizer.OptimizeAsync(
         this.scene,
-        SceneOptimizerOptions.LowDegradationAllowed(58),
+        SceneOptimizerOptions.LowDegradationAllowed(30),
         function() {
           // On success
+          mapGlobals.soundOn = true;
+          enemyGlobals.fragments = 1;
         },
         function() {
           // FPS target not reached
+          mapGlobals.soundOn = false;
+          enemyGlobals.fragments = 0;
         }
       );
     }
