@@ -36,7 +36,7 @@ function trackSpheres(
         }
       }
       await enemyDistances.sort();
-      if (enemyDistances.length > 0) {
+      if (enemyDistances.length > 0 && enemyDistances[0][1] !== null) {
         const nearestEnemy = enemyDistances[0][1] as EnemySphere;
         const clonedRotation = (await rotateTurret(
           nearestEnemy,
@@ -56,7 +56,6 @@ function trackSpheres(
             flash.visibility = 0;
           }, 15);
           flash.visibility = 1;
-          setTimeout(() => {
             fireProjectile(
               scene,
               towerTurret,
@@ -65,7 +64,6 @@ function trackSpheres(
               physicsEngine,
               clonedRotation
             );
-          }, 100);
         }
       }
     }

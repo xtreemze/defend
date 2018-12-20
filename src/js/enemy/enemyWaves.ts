@@ -15,18 +15,21 @@ const newEnemyWave = (scene: Scene) => {
   let deltaTime = Date.now() - enemyGlobals.generationRate;
 
   const checkEnemyY = setInterval(() => {
-    if (economyGlobals.restartMessage === false) {
+    if (economyGlobals.restartMessage === false && enemyGlobals.allEnemies.length > 0) {
       enemyGlobals.allEnemies.forEach((enemy: any) => {
         if (enemy.position.y < -5) {
           enemy.hitPoints = 0;
           destroyEnemy(enemy, scene);
-          enemy.dispose();
+          setTimeout(() => {
+
+              enemy.dispose();
+          }, 40);
         }
       });
     } else if (economyGlobals.restartMessage === true) {
       clearInterval(checkEnemyY);
     }
-  }, 3000);
+  }, 5000);
   if (economyGlobals.restartMessage === false) {
     scene.registerAfterRender(() => enemyGeneration(deltaTime, scene));
   }

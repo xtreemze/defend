@@ -19,9 +19,9 @@ const mapGlobals = {
   lightIntensity: 0.78,
   simultaneousSounds: 0, // sounds currently playing for projectiles
   soundDelay: 40,
-  soundLimit: 1, // simultaneous sound limit
+  soundLimit: 2, // simultaneous sound limit
   projectileSounds: 0, // sounds currently playing for projectiles
-  projectileSoundLimit: 1, // simultaneous sound limit for projectiles
+  projectileSoundLimit: 2, // simultaneous sound limit for projectiles
   ambientColor: new Color3(0.22, 0.28, 0.22) as Color3,
   sceneAmbient: new Color3(0.01, 0.0, 0.3) as Color3,
   soundOn: false,
@@ -50,7 +50,7 @@ const towerGlobals = {
   towerBaseMesh: {} as Mesh,
   indicator: {} as Mesh,
   lookAheadRatio: 30000,
-  rateOfFire: 220, // milliseconds between each shot,
+  rateOfFire: 200, // milliseconds between each shot,
   height: 3,
   mass: 0,
   restitution: 0,
@@ -151,11 +151,11 @@ const materialGlobals = {} as any;
 
 // @ts-ignore
 window.globals = {
-  // projectileGlobals,
+  projectileGlobals,
   towerGlobals,
   enemyGlobals,
-  // mapGlobals,
-  // renderGlobals,
+  mapGlobals,
+  renderGlobals,
   economyGlobals
 };
 

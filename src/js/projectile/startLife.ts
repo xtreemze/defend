@@ -30,7 +30,7 @@ export function startLife(
   physicsEngine: PhysicsEngine,
   clonedRotation: Vector3
 ) {
-  projectile.rotation = clonedRotation;
+//   projectile.rotation = clonedRotation;
   const forwardLocal = new Vector3(0, 0, 10);
   const space = originMesh.getDirection(forwardLocal) as Vector3;
   projectile.position = originMesh.position.subtract(space) as Vector3;
@@ -38,17 +38,18 @@ export function startLife(
 
   // For Physics
   projectile.physicsImpostor = new PhysicsImpostor(
-    projectile,
-    PhysicsImpostor.BoxImpostor,
-    {
-      mass: projectileGlobals.mass * (level * level),
-      restitution: 0,
-      friction: 0
-    },
-    scene
-  ) as PhysicsImpostor;
+      projectile,
+      PhysicsImpostor.BoxImpostor,
+      {
+          mass: projectileGlobals.mass * (level * level),
+          restitution: 0,
+          friction: 0
+        },
+        scene
+        ) as PhysicsImpostor;
 
-  impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
+        impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
+        projectile.rotation = clonedRotation;
 
   mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 

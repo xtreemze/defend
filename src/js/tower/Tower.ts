@@ -70,49 +70,49 @@ function rotateTurret(
 ) {
   const impostor = nearestEnemy.physicsImpostor as PhysicsImpostor;
 
-  const enemyVelocity = impostor.getLinearVelocity() as Vector3;
+    const enemyVelocity = impostor.getLinearVelocity() as Vector3;
 
-  const towerEnemyDistance = Vector3.Distance(
-    nearestEnemy.position,
-    towerTurret.position
-  );
+    const towerEnemyDistance = Vector3.Distance(
+        nearestEnemy.position,
+        towerTurret.position
+        );
 
-  const projectileTime =
-    (towerEnemyDistance /
-      (projectileGlobals.mass *
-        (level * level) *
-        (projectileGlobals.speed * (level * level)))) *
-    (towerGlobals.lookAheadRatio * level * level +
-      level * towerGlobals.lookAheadRatio);
+        const projectileTime =
+        (towerEnemyDistance /
+            (projectileGlobals.mass *
+                (level * level) *
+                (projectileGlobals.speed * (level * level)))) *
+                (towerGlobals.lookAheadRatio * level * level +
+                    level * towerGlobals.lookAheadRatio);
 
-  const newPosition = nearestEnemy.position.add(
-    new Vector3(
-      enemyVelocity.x * projectileTime,
-      enemyVelocity.y * projectileTime,
-      enemyVelocity.z * projectileTime
-    )
-  );
-  if (newPosition.y < 3) {
-    newPosition.y = 3;
-  }
-  towerTurret.lookAt(newPosition);
+                    const newPosition = nearestEnemy.position.add(
+                        new Vector3(
+                            enemyVelocity.x * projectileTime,
+                            enemyVelocity.y * projectileTime,
+                            enemyVelocity.z * projectileTime
+                            )
+                            );
+                            if (newPosition.y < 3) {
+                                newPosition.y = 3;
+                            }
+                            towerTurret.lookAt(newPosition);
 
-  return towerTurret.rotation.clone();
-}
+                            return towerTurret.rotation.clone();
+                        }
 
-function destroyTower(
-  scene: Scene,
-  baseMesh: Mesh,
-  pillarMesh?: Mesh,
-  turretMesh?: TowerTurret,
-  flashMesh?: Mesh
-): void {
-  Tags.RemoveTagsFrom(baseMesh, "towerBase");
-  baseMesh.setEnabled(false);
+                        function destroyTower(
+                            scene: Scene,
+                            baseMesh: Mesh,
+                            pillarMesh?: Mesh,
+                            turretMesh?: TowerTurret,
+                            flashMesh?: Mesh
+                            ): void {
+                                Tags.RemoveTagsFrom(baseMesh, "towerBase");
+                                baseMesh.setEnabled(false);
 
-  towerGlobals.allPositions = towerBasePositions(scene);
-  baseMesh.onDisposeObservable.clear();
-  towerGlobals.allTowers = [];
+                                towerGlobals.allPositions = towerBasePositions(scene);
+                                baseMesh.onDisposeObservable.clear();
+                                towerGlobals.allTowers = [];
   if (pillarMesh && turretMesh && flashMesh) {
     pillarMesh.setEnabled(false);
     turretMesh.setEnabled(false);

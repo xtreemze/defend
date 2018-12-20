@@ -18,6 +18,7 @@ function destroyOnCollide(
         // clearTimeout(projectileLifetime);
         projectile.unregisterAfterWorldMatrixUpdate(projectileExpires);
         destroyProjectile(projectile, physicsEngine);
+
       }
     );
   }

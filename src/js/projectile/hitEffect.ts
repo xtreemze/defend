@@ -40,7 +40,7 @@ export function hitEffect(
         }
 
         // sound
-        // damage(enemy);
+        damage(enemy);
       }
     );
   }
