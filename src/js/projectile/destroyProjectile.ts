@@ -11,12 +11,12 @@ export function destroyProjectile(
 	Tags.RemoveTagsFrom(projectile, "projectile");
 
 	delete projectile.hitPoints;
+	projectile.setEnabled(false);
 	setTimeout(() => {
 		if (projectile.physicsImpostor !== null) {
 			projectile.physicsImpostor.dispose();
 			mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
 		}
-		projectile.setEnabled(false);
 		projectile.dispose();
-	}, 10);
+	}, 5);
 }
