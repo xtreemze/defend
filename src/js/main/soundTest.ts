@@ -1,14 +1,14 @@
 import * as FX from "../../vendor/wafxr/wafxr";
 import {
-  shoot,
-  damage,
-  addTower,
-  removeTower,
-  damageCurrency,
-  defeated,
-  victory,
-  newWave,
-  enemyExplode
+	shoot,
+	damage,
+	addTower,
+	removeTower,
+	damageCurrency,
+	defeated,
+	victory,
+	newWave,
+	enemyExplode
 } from "./sound";
 import { Vector3, Mesh } from "babylonjs";
 import randomNumberRange from "../utility/randomNumberRange";
@@ -24,9 +24,9 @@ const listener = {} as Mesh;
 listener.position = new Vector3(0, 100, 100);
 
 FX.setListenerPosition(
-  listener.position.x,
-  listener.position.y,
-  listener.position.z
+	listener.position.x,
+	listener.position.y,
+	listener.position.z
 );
 
 // FX._tone.Listener.setOrientation(
@@ -44,19 +44,19 @@ FX._tone.context.resume();
 FX._tone.Master.mute = false;
 
 setInterval(() => {
-  towerGlobals.allTowers.length = randomNumberRange(1, 50);
-  testMesh.hitPoints = randomNumberRange(1, enemyGlobals.baseHitPoints * 3);
+	towerGlobals.allTowers.length = randomNumberRange(1, 50);
+	testMesh.hitPoints = randomNumberRange(1, enemyGlobals.baseHitPoints * 3);
 
-  shoot(testMesh, randomNumberRange(1, 3));
+	shoot(testMesh, randomNumberRange(1, 3));
 
-  setTimeout(() => {
-    // damage(testMesh);
-    // addTower(testMesh, randomNumberRange(1, 3));
-    // removeTower(testMesh, randomNumberRange(1, 3));
-    defeated();
-    // victory();
-    // enemyExplode(testMesh, randomNumberRange(1, 3));
-    // damageCurrency(testMesh);
-    // newWave();
-  }, 500);
+	setTimeout(() => {
+		// damage(testMesh);
+		// addTower(testMesh, randomNumberRange(1, 3));
+		// removeTower(testMesh, randomNumberRange(1, 3));
+		defeated();
+		// victory();
+		// enemyExplode(testMesh, randomNumberRange(1, 3));
+		// damageCurrency(testMesh);
+		// newWave();
+	}, 500);
 }, 2000);

@@ -52,6 +52,6 @@ const helpButtonStyle = `
     text-align: center;
     `;
 
-const helpButtonHTML = `?`;
+const helpButtonHTML = "?";
 
 export { helpHTML, helpStyle, helpButtonStyle, helpButtonHTML };

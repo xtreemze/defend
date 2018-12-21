@@ -54,6 +54,6 @@ const installButtonStyle = `
     line-height: 0;
     `;
 
-const startButtonHTML = `&#9654;`;
+const startButtonHTML = "&#9654;";
 
 export { startStyle, startButtonStyle, startButtonHTML, installButtonStyle };
