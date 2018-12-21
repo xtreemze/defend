@@ -13,17 +13,17 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
 		const node = projectilePosition;
 
-		const particleSystem = new GPUParticleSystem(
-			"particles" + projectileGlobals.particleIndex,
-			{ capacity: 20 },
-			scene
-		) as GPUParticleSystem;
+		// const particleSystem = new GPUParticleSystem(
+		// 	"particles" + projectileGlobals.particleIndex,
+		// 	{ capacity: 20 },
+		// 	scene
+		// ) as GPUParticleSystem;
 
-		// const particleSystem = new ParticleSystem(
-		//   "particles" + projectileGlobals.particleIndex,
-		//   30,
-		//   scene
-		// ) as ParticleSystem;
+		const particleSystem = new ParticleSystem(
+		  "particles" + projectileGlobals.particleIndex,
+		  30,
+		  scene
+		) as ParticleSystem;
 
 		particleSystem.renderingGroupId = 0;
 		particleSystem.emitRate = 100;
