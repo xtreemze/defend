@@ -22,8 +22,8 @@ const mapGlobals = {
 	soundLimit: 2, // simultaneous sound limit
 	projectileSounds: 0, // sounds currently playing for projectiles
 	projectileSoundLimit: 2, // simultaneous sound limit for projectiles
-	ambientColor: new Color3(0.22, 0.28, 0.22) as Color3,
-	sceneAmbient: new Color3(0.01, 0.0, 0.3) as Color3,
+	ambientColor: new Color3(0.22, 0.26, 0.2) as Color3,
+	sceneAmbient: new Color3(0.01, 0.0, 0.26) as Color3,
 	soundOn: false,
 	groundMesh: {} as GroundMesh,
 	atmosphereMesh: {} as Mesh,
