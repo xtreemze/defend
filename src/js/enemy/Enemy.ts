@@ -100,9 +100,9 @@ export function fragment(
 					if (fragment.physicsImpostor !== null) {
 						fragment.physicsImpostor.dispose();
 					}
-				}, 40);
+				}, 20);
 				// }
-			}, projectileGlobals.lifeTime * 4);
+			}, projectileGlobals.lifeTime * 5);
 		};
 		fragment.registerAfterRender(disposeFragment);
 	}
