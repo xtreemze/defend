@@ -21,8 +21,8 @@ function createProjectileInstances() {
 		"projectileInstanceLevel3",
 		{
 			size: 5,
-			height: 3.5 / 3,
-			width: 3 / 2.5,
+			height: 3.5 / 2.8,
+			width: 3 / 2.2,
 			updatable: false
 		}
 	) as Mesh;

@@ -74,8 +74,8 @@ export function fragment(
 			PhysicsImpostor.BoxImpostor,
 			{
 				mass: (enemyGlobals.mass * level) / (enemyGlobals.fragments * level),
-				restitution: 0.5,
-				friction: 0.8
+				restitution: 0.96,
+				friction: 0.6
 			}
 		) as PhysicsImpostor;
 
@@ -100,9 +100,9 @@ export function fragment(
 					if (fragment.physicsImpostor !== null) {
 						fragment.physicsImpostor.dispose();
 					}
-				}, 20);
+				}, 10);
 				// }
-			}, projectileGlobals.lifeTime * 5);
+			}, projectileGlobals.lifeTime * 6);
 		};
 		fragment.registerAfterRender(disposeFragment);
 	}

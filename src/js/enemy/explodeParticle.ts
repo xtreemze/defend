@@ -32,8 +32,8 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 		particleSystem.maxEmitPower = 18;
 		particleSystem.minLifeTime = 0.09;
 		particleSystem.maxLifeTime = 0.4;
-		particleSystem.minSize = 2;
-		particleSystem.maxSize = 3;
+		particleSystem.minSize = 0.6;
+		particleSystem.maxSize = 1.6;
 		particleSystem.blendMode = ParticleSystem.BLENDMODE_ADD;
 		particleSystem.gravity = new Vector3(0, -600, 0);
 		particleSystem.color1 = new Color4(1, 0.5, 0, 1);
@@ -59,7 +59,7 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 		setTimeout(() => {
 			particleSystem.dispose();
 			projectileGlobals.activeParticles -= 1;
-		}, 620);
+		}, 520);
 	}
 }
 export { explosion };

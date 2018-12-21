@@ -16,9 +16,9 @@ const mapGlobals = {
 	size: 200, // map radius
 	allImpostors: [] as PhysicsImpostor[],
 	impostorLimit: 80, // keep low for mobile device limits
-	lightIntensity: 0.78,
+	lightIntensity: 0.70,
 	simultaneousSounds: 0, // sounds currently playing for projectiles
-	soundDelay: 40,
+	soundDelay: 80,
 	soundLimit: 2, // simultaneous sound limit
 	projectileSounds: 0, // sounds currently playing for projectiles
 	projectileSoundLimit: 2, // simultaneous sound limit for projectiles
@@ -34,13 +34,13 @@ const mapGlobals = {
 const projectileGlobals = {
 	projectileMeshL2: {} as any | LiveProjectileInstance,
 	projectileMeshL3: {} as any | LiveProjectileInstance,
-	lifeTime: 2000, // milliseconds
+	lifeTime: 2200, // milliseconds
 	speed: 15000,
-	mass: 100,
-	baseHitPoints: 140,
+	mass: 80,
+	baseHitPoints: 150,
 	livingColor: new Color3(1, 0.5, 0.2) as Color3,
 	activeParticles: 0,
-	particleLimit: 0,
+	particleLimit: 2,
 	particleIndex: 0
 };
 
@@ -53,14 +53,14 @@ const towerGlobals = {
 	rateOfFire: 200, // milliseconds between each shot,
 	height: 3,
 	mass: 0,
-	restitution: 0,
+	restitution: 0.99,
 	baseHitPoints: 10000,
 	baseCost: 2000,
 	allTowers: [] as Mesh[],
 	occupiedSpaces: [] as any[],
 	specularColor: new Color3(0.3, 0.071, 0.1),
 	livingColor: new Color3(0.1, 0.64, 0.4),
-	range: 35,
+	range: 40,
 	shoot: true,
 	raysOn: false,
 	lifeTime: 23200,
@@ -76,14 +76,14 @@ const enemyGlobals = {
 	minNumber: 1, // for one generation
 	maxNumber: 8, // for one generation
 	limit: 0, // wait for this enemy count before next wave
-	originHeight: 7,
+	originHeight: 10,
 	generationRate: 8000, // milliseconds
-	decisionRate: 120, // milliseconds
-	speed: 80000,
-	mass: 15000,
-	restitution: 0.8,
-	jumpForce: 60,
-	friction: 0.6,
+	decisionRate: 240, // milliseconds
+	speed: 100000,
+	mass: 14000,
+	restitution: 0.9,
+	jumpForce: 80,
+	friction: 0.50,
 	decayRate: 150, // hitpoints per decision
 	initialDecayRate: 100, // hitpoints per decision
 	baseHitPoints: 20000,
@@ -91,7 +91,7 @@ const enemyGlobals = {
 	fragments: 1,
 	allEnemies: [] as Mesh[],
 	occupiedSpaces: [] as any[],
-	boundaryLimit: 5, // meters
+	boundaryLimit: 2.5, // meters
 	livingColor: new Color3(0.1, 0.76, 0.93),
 	hitColor: new Color3(0.2, 0, 0.3),
 	deadColor: new Color3(0.7, 0.1, 0.05),

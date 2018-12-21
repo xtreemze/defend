@@ -18,5 +18,5 @@ export function destroyProjectile(
 		}
 		projectile.setEnabled(false);
 		projectile.dispose();
-	}, 40);
+	}, 10);
 }
