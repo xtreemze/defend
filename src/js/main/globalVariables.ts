@@ -53,7 +53,7 @@ const towerGlobals = {
 	rateOfFire: 200, // milliseconds between each shot,
 	height: 3,
 	mass: 0,
-	restitution: 0.99,
+	restitution: 0,
 	baseHitPoints: 10000,
 	baseCost: 2000,
 	allTowers: [] as Mesh[],
@@ -78,14 +78,14 @@ const enemyGlobals = {
 	limit: 0, // wait for this enemy count before next wave
 	originHeight: 10,
 	generationRate: 8000, // milliseconds
-	decisionRate: 240, // milliseconds
-	speed: 100000,
-	mass: 14000,
-	restitution: 0.9,
+	decisionRate: 250, // milliseconds
+	speed: 90000,
+	mass: 10000,
+	restitution: 0.999,
 	jumpForce: 80,
 	friction: 0.50,
 	decayRate: 150, // hitpoints per decision
-	initialDecayRate: 100, // hitpoints per decision
+	initialDecayRate: 150, // hitpoints per decision
 	baseHitPoints: 20000,
 	deadHitPoints: 0,
 	fragments: 1,

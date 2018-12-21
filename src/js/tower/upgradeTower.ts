@@ -5,13 +5,11 @@ import {
 	PointerEventTypes,
 	PickingInfo,
 	Tags,
-	Material
 } from "babylonjs";
 import { Position2D } from "../enemy/Enemy";
 import {
 	towerGlobals,
 	economyGlobals,
-	materialGlobals
 } from "../main/globalVariables";
 import { towerBasePositions, Tower } from "./Tower";
 import { removeTower } from "../main/sound";
@@ -41,7 +39,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
 				economyGlobals.currentBalance >
         towerGlobals.baseCost * (currentLevel + 1)
 			) {
-				pickResult.pickedMesh.dispose();
+				pickResult.pickedMesh.dispose(true);
 				let newLevel = 0;
 				towerGlobals.allPositions = towerBasePositions(scene);
 				if (
@@ -75,6 +73,7 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
         towerGlobals.baseCost * (currentLevel + 1)
 			) {
 				createBaseInstance(samePosition);
+
 				// color when insufficient funds
 				currencyMeshColor();
 

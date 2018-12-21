@@ -8,7 +8,6 @@ import {
 	Scene
 } from "babylonjs";
 import { materialGlobals, towerGlobals } from "../main/globalVariables";
-import { TowerTurret } from "./towerBorn";
 
 function createTowerBaseInstance() {
 	towerGlobals.towerBaseMesh = MeshBuilder.CreateBox("towerBaseMesh", {
@@ -17,13 +16,9 @@ function createTowerBaseInstance() {
 		updatable: false
 	}) as Mesh;
 
-	towerGlobals.towerBaseMesh.convertToUnIndexedMesh();
 	towerGlobals.towerBaseMesh.material = materialGlobals.towerMaterial as Material;
-	towerGlobals.towerBaseMesh.physicsImpostor = new PhysicsImpostor(
-		towerGlobals.towerBaseMesh,
-		PhysicsImpostor.BoxImpostor,
-		{ mass: 0, restitution: towerGlobals.restitution }
-	) as PhysicsImpostor;
+
+	towerGlobals.towerBaseMesh.convertToUnIndexedMesh();
 	towerGlobals.towerBaseMesh.setEnabled(false);
 }
 

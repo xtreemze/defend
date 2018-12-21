@@ -6,6 +6,7 @@ import { economyGlobals, mapGlobals } from "../main/globalVariables";
 import { damageCurrency } from "../main/sound";
 import { EnemySphere } from "./enemyBorn";
 
+
 function currencyCollide(enemy: EnemySphere, scene: Scene) {
 	if (
 		enemy.physicsImpostor !== null &&
@@ -26,13 +27,13 @@ function currencyCollide(enemy: EnemySphere, scene: Scene) {
 					// color
 					currencyMeshColor();
 
-					rampLight(scene, mapGlobals.skyLight, 0.6, mapGlobals.lightIntensity);
-					rampLight(
-						scene,
-						mapGlobals.upLight,
-						0.6 * 2,
-						mapGlobals.lightIntensity * 2
-					);
+					// rampLight(scene, mapGlobals.skyLight, 0.6, mapGlobals.lightIntensity);
+					// rampLight(
+					// 	scene,
+					// 	mapGlobals.upLight,
+					// 	0.6 * 2,
+					// 	mapGlobals.lightIntensity * 2
+					// );
 
 					// sound
 					damageCurrency(enemy);

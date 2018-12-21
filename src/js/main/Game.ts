@@ -77,7 +77,7 @@ class Game {
 
 		this.scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());
 
-		this.scene.workerCollisions = false;
+		// this.scene.workerCollisions = true;
 
 		generateMaterials(this.scene);
 		map(this.scene);

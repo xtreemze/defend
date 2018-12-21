@@ -23,11 +23,15 @@ class Tower {
 		const name = `towerLevel${level}Index${towerGlobals.index}` as string;
 		towerGlobals.index += 1;
 		let tower = towerGlobals.towerBaseMesh.clone(
-			name,
-			undefined,
-			undefined,
-			true
+			name, undefined, true, false
 		) as Mesh;
+
+		tower.physicsImpostor = new PhysicsImpostor(
+			tower,
+			PhysicsImpostor.BoxImpostor,
+			{ mass: 0, restitution: towerGlobals.restitution }
+		) as PhysicsImpostor;
+
 
 		Tags.AddTagsTo(tower, "towerBase");
 
@@ -55,8 +59,8 @@ function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
 
 	if (
 		hit &&
-    hit.pickedMesh === intendedEnemy &&
-    !Tags.MatchesQuery(intendedEnemy, "obstacle")
+		hit.pickedMesh === intendedEnemy &&
+		!Tags.MatchesQuery(intendedEnemy, "obstacle")
 	) {
 		result = true as boolean;
 	}
@@ -78,12 +82,12 @@ function rotateTurret(
 	);
 
 	const projectileTime =
-        (towerEnemyDistance /
-            (projectileGlobals.mass *
-                (level * level) *
-                (projectileGlobals.speed * (level * level)))) *
-                (towerGlobals.lookAheadRatio * level * level +
-                    level * towerGlobals.lookAheadRatio);
+		(towerEnemyDistance /
+			(projectileGlobals.mass *
+				(level * level) *
+				(projectileGlobals.speed * (level * level)))) *
+		(towerGlobals.lookAheadRatio * level * level +
+			level * towerGlobals.lookAheadRatio);
 
 	const newPosition = nearestEnemy.position.add(
 		new Vector3(

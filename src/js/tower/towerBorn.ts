@@ -89,16 +89,10 @@ function towerBorn(
 		if (level === 2) {
 			turretMesh = towerGlobals.turretMeshL2.clone(
 				"turret" + name,
-				undefined,
-				undefined,
-				true
 			) as TowerTurret;
 		} else if (level === 3) {
 			turretMesh = towerGlobals.turretMeshL3.clone(
 				"turret" + name,
-				undefined,
-				undefined,
-				true
 			) as TowerTurret;
 		}
 
@@ -166,6 +160,12 @@ function towerBorn(
 			position.z
 		) as Vector3;
 
+		pillarMesh.physicsImpostor = new PhysicsImpostor(
+			pillarMesh,
+			PhysicsImpostor.BoxImpostor,
+			{ mass: 0, restitution: towerGlobals.restitution }
+		) as PhysicsImpostor;
+
 		pillarMesh.material = materialGlobals.towerMaterial as Material;
 		pillarMesh.isPickable = false as boolean;
 		pillarMesh.convertToUnIndexedMesh();
@@ -209,12 +209,6 @@ function towerBorn(
 			);
 		}
 
-		pillarMesh.physicsImpostor = new PhysicsImpostor(
-			pillarMesh,
-			PhysicsImpostor.BoxImpostor,
-			{ mass: 0, restitution: towerGlobals.restitution },
-			scene
-		) as PhysicsImpostor;
 
 		mapGlobals.allImpostors.unshift(pillarMesh.physicsImpostor);
 		break;
