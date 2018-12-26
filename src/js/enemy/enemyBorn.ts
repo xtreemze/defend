@@ -79,7 +79,7 @@ function enemyBorn(
 			checkHitPoints(scene, sphereMesh, level, hitPointsMeter);
 		}
 	});
-	currencyCollide(sphereMesh);
+	currencyCollide(sphereMesh, scene, level);
 }
 
 export { EnemySphere, enemyBorn };

@@ -25,7 +25,7 @@ function checkHitPoints(
 			enemyPosition,
 			enemyRotation,
 			enemyLinearVelocity,
-			enemyAngularVelocity
+			enemyAngularVelocity,
 		);
 
 		destroyEnemy(sphereMesh, scene, level);

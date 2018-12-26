@@ -39,7 +39,7 @@ export function hitEffect(
 					// color
 					setTimeout(() => {
 						enemy.material = materialGlobals.hitMaterial;
-					}, 50);
+					}, 64);
 					enemy.material = materialGlobals.damagedMaterial;
 				}
 

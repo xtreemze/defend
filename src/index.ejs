@@ -2,84 +2,84 @@
 <html lang="en">
 
 <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-122822344-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-122822344-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
 
-        gtag('config', 'UA-122822344-1');
-    </script>
+		gtag('config', 'UA-122822344-1');
+	</script>
 
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Defend</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Defend</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1, shrink-to-fit=no">
 
-    <!-- Search Engine -->
-    <meta name="description" content="Mobile 3D Procedural Tower Defense">
-    <meta name="image" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
-    <!-- Schema.org for Google -->
-    <meta itemprop="name" content="Defend">
-    <meta itemprop="description" content="Mobile 3D Procedural Tower Defense Webgame">
-    <meta itemprop="image" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Defend">
-    <meta name="twitter:description" content="Mobile 3D Procedural Tower Defense">
-    <meta name="twitter:site" content="@xtreemze">
-    <meta name="twitter:creator" content="@xtreemze">
-    <meta name="twitter:image:src" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
-    <!-- Open Graph general (Facebook, Pinterest & Google+) -->
-    <meta property="og:title" content="Defend">
-    <meta property="og:description" content="Mobile 3D Procedural Tower Defense">
-    <meta property="og:image" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
-    <meta property="og:url" content="https://xtreemze.github.io/defend/">
-    <meta property="og:site_name" content="Defend">
-    <meta property="og:type" content="website">
-    <meta name="mobile-web-app-capable" content="yes">
+	<!-- Search Engine -->
+	<meta name="description" content="Mobile 3D Procedural Tower Defense">
+	<meta name="image" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
+	<!-- Schema.org for Google -->
+	<meta itemprop="name" content="Defend">
+	<meta itemprop="description" content="Mobile 3D Procedural Tower Defense Webgame">
+	<meta itemprop="image" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
+	<!-- Twitter -->
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Defend">
+	<meta name="twitter:description" content="Mobile 3D Procedural Tower Defense">
+	<meta name="twitter:site" content="@xtreemze">
+	<meta name="twitter:creator" content="@xtreemze">
+	<meta name="twitter:image:src" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
+	<!-- Open Graph general (Facebook, Pinterest & Google+) -->
+	<meta property="og:title" content="Defend">
+	<meta property="og:description" content="Mobile 3D Procedural Tower Defense">
+	<meta property="og:image" content="https://xtreemze.github.io/defend/android-chrome-512x512.png">
+	<meta property="og:url" content="https://xtreemze.github.io/defend/">
+	<meta property="og:site_name" content="Defend">
+	<meta property="og:type" content="website">
+	<meta name="mobile-web-app-capable" content="yes">
 
-    <!-- <script src="./js/pep.js"></script>
+	<!-- <script src="./js/pep.js"></script>
     <script src="./js/inspector.js"></script> -->
 </head>
 
 <body id="body">
 
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Titillium+Web:400,600,700');
+	<style>
+		html,
+		body {
+			overflow: hidden;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			background-color: #160230
+		}
 
-        html,
-        body {
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #160230
-        }
+		#renderCanvas {
+			width: 100%;
+			height: 100%;
+			touch-action: none;
+			background-color: #160230
+		}
 
-        #renderCanvas {
-            width: 100%;
-            height: 100%;
-            touch-action: none;
-            background-color: #160230
-        }
+		#credits {
+			font-family: 'Titillium Web', Arial, Helvetica, sans-serif;
+			margin-top: 30vh;
+			padding: 10%;
+			text-align: center;
+			color: #FF7F33
+		}
 
-        #credits {
-            font-family: 'Titillium Web', Arial, Helvetica, sans-serif;
-            margin-top: 30vh;
-            padding: 10%;
-            text-align: center;
-            color: #FF7F33
-        }
+		@import url('https://fonts.googleapis.com/css?family=Titillium+Web:400,600,700');
 
-    </style>
-    <div id="credits">
-        <h1>Loading...</h1>
-        <h3>3D Procedural Tower Defense Mobile HTML5 Game by @xtreemze</h3>
-    </div>
+	</style>
+	<div id="credits">
+		<h1>Loading...</h1>
+		<h3>3D Procedural Tower Defense Mobile HTML5 Game by @xtreemze</h3>
+	</div>
 
-    <canvas id="renderCanvas" touch-action="none"></canvas>
+	<canvas id="renderCanvas" touch-action="none"></canvas>
 
 </body>
 

@@ -49,14 +49,15 @@ class Game {
 
 	createScene(): void {
 		this.scene = new Scene(this.engine);
-		this.scene.autoClear = false; // Color buffer
-		this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+		// this.scene.autoClear = false; // Color buffer
+		// this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
 		if (mapGlobals.optimizerOn) {
 			// const originalGenerationRate = enemyGlobals.generationRate;
 			// const originalTowerLifetime = towerGlobals.lifeTime;
 			SceneOptimizer.OptimizeAsync(
 				this.scene,
-				SceneOptimizerOptions.LowDegradationAllowed(59),
+				SceneOptimizerOptions.HighDegradationAllowed(60),
+				// SceneOptimizerOptions.LowDegradationAllowed(59),
 				function () {
 					// On success
 					mapGlobals.soundOn = true;
@@ -72,24 +73,22 @@ class Game {
 
 		FX.setVolume(1);
 		FX._tone.Master.mute = true;
-		FX._tone.context.latencyHint = "fastest";
+		// FX._tone.context.latencyHint = "fastest";
 		// FX._tone.Transport.start("+0.5");
 		const gravity = -9.81;
 		// const gravity = -9.81 * 2;
 		this.scene.enablePhysics(new Vector3(0, gravity, 0), new CannonJSPlugin());
 
-		this.scene.workerCollisions = true;
+		// this.scene.workerCollisions = true;
 
 		generateMaterials(this.scene);
 		map(this.scene);
 
-		setTimeout(() => {
-			createIndicatorInstance();
-			createTowerBaseInstance();
-			createTurretInstanceL2(this.scene);
-			createTurretInstanceL3(this.scene);
-			createProjectileInstances();
-		}, 3000);
+		createIndicatorInstance();
+		createTowerBaseInstance();
+		createTurretInstanceL2(this.scene);
+		createTurretInstanceL3(this.scene);
+		createProjectileInstances();
 
 		arcCamera(this.scene, this.canvas);
 
@@ -97,7 +96,7 @@ class Game {
 			this.scene.debugLayer.show({ popup: true, initialTab: 2 });
 		}
 
-		this.scene.cleanCachedTextureBuffer();
+		// this.scene.cleanCachedTextureBuffer();
 	}
 
 	doRender(): void {

@@ -1,7 +1,8 @@
 import {
 	mapGlobals,
 	enemyGlobals,
-	economyGlobals
+	economyGlobals,
+	renderGlobals
 } from "../main/globalVariables";
 import {
 	helpHTML,
@@ -27,6 +28,8 @@ function titleScreen(
 	canvas: HTMLCanvasElement,
 	physicsEngine: PhysicsEngine
 ) {
+
+	renderGlobals.gpuParticles = BABYLON.GPUParticleSystem.IsSupported;
 	// get records from localStorage
 	const localStorageVictories = parseInt(localStorage.getItem(
 		"victories"
@@ -63,7 +66,6 @@ function titleScreen(
 	if (isNaN(currentLevel)) {
 		currentLevel = 0;
 	}
-
 	if (localStorageBestLevel !== NaN && localStorageBestLevel >= 0) {
 		economyGlobals.bestLevel = localStorageBestLevel;
 	}
@@ -211,10 +213,11 @@ function titleScreen(
 		// enable interactive Tower generation and upgrade
 
 		setTimeout(() => {
+
 			newEnemyWave(scene);
 			newTower(scene, physicsEngine);
 			upgradeTower(scene, physicsEngine);
-		}, 1000);
+		}, 1600);
 	}
 }
 

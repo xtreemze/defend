@@ -31,7 +31,7 @@ export function startLife(
 	clonedRotation: Vector3
 ) {
 //   projectile.rotation = clonedRotation;
-	const forwardLocal = new Vector3(0, 0, 3);
+	const forwardLocal = new Vector3(0, 0, 5);
 	const space = originMesh.getDirection(forwardLocal) as Vector3;
 	projectile.position = originMesh.position.subtract(space) as Vector3;
 	// projectile.position = originMesh.position as Vector3;
@@ -42,8 +42,8 @@ export function startLife(
 		PhysicsImpostor.BoxImpostor,
 		{
 			mass: projectileGlobals.mass * (level * level),
-			restitution: 0,
-			friction: 0
+			restitution: 1,
+			friction: 1
 		},
 		scene
 	) as PhysicsImpostor;

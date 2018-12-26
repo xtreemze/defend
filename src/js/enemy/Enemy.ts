@@ -47,12 +47,13 @@ class Enemy {
 	}
 }
 
-export function fragment(
+function fragment(
 	level: number = 1 | 2 | 3,
 	enemyPosition: Vector3,
 	enemyRotation: Vector3,
 	enemyLinearVelocity: Vector3,
-	enemyAngularVelocity: Vector3
+	enemyAngularVelocity: Vector3,
+	isBlue?: Boolean
 ) {
 	for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
 		const fragment = MeshBuilder.CreateBox("enemyFragment" + index, {
@@ -81,7 +82,13 @@ export function fragment(
 
 		fragment.physicsImpostor.setLinearVelocity(enemyLinearVelocity);
 		fragment.physicsImpostor.setAngularVelocity(enemyAngularVelocity);
-		fragment.material = materialGlobals.damagedMaterial as Material;
+		if (!isBlue) {
+
+			fragment.material = materialGlobals.damagedMaterial as Material;
+		} else {
+			fragment.material = materialGlobals.enemyMaterial as Material;
+
+		}
 
 		fragment.isPickable = false;
 		fragment.convertToUnIndexedMesh();
@@ -146,4 +153,4 @@ function enemyGenerator(
 	}
 }
 
-export { Enemy, Position2D, enemyGenerator };
+export { Enemy, Position2D, enemyGenerator, fragment };

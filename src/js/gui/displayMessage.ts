@@ -53,8 +53,10 @@ function displayMessage(scene: Scene, message: string, icon: string) {
 			enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
 			enemyGlobals.currentWave = 0;
 			economyGlobals.restartMessage = false;
+			setTimeout(() => {
 
-			newEnemyWave(scene);
+				newEnemyWave(scene);
+			}, 600);
 
 			// Button and GUI
 			const titleParent = title.parentNode as Node;
@@ -87,7 +89,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
 			removeShareButton();
 			const okHelp = document.getElementById("okHelp") as HTMLButtonElement;
 
-			okHelp.addEventListener("click", function() {
+			okHelp.addEventListener("click", function () {
 				const help = document.getElementById("help") as HTMLDivElement;
 				const helpParent = help.parentNode as Node;
 				helpParent.removeChild(help);
@@ -100,8 +102,10 @@ function displayMessage(scene: Scene, message: string, icon: string) {
 				enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
 				enemyGlobals.currentWave = 0;
 				economyGlobals.restartMessage = false;
+				setTimeout(() => {
 
-				newEnemyWave(scene);
+					newEnemyWave(scene);
+				}, 600);
 
 				// Button and GUI
 				rampUp(scene);

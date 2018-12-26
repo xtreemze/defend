@@ -3,14 +3,13 @@ import { updateEconomy } from "./updateEconomy";
 import {
 	economyGlobals,
 	enemyGlobals,
-	materialGlobals
+	materialGlobals,
 } from "../main/globalVariables";
 import {
 	MeshBuilder,
 	Scene,
 	Mesh,
 	PhysicsImpostor,
-	Material,
 	Tags
 } from "babylonjs";
 
@@ -81,7 +80,7 @@ function displayEconomy(scene: Scene) {
 		PhysicsImpostor.BoxImpostor,
 		{
 			mass: 0,
-			restitution: 0.8,
+			restitution: 0,
 			friction: 1
 		},
 		scene
@@ -92,7 +91,7 @@ function displayEconomy(scene: Scene) {
 
 	rampUp(scene, currencyTower);
 
-	scene.registerAfterRender(() => {
+	scene.registerBeforeRender(() => {
 		updateEconomy(scene);
 	});
 
@@ -102,14 +101,14 @@ function displayEconomy(scene: Scene) {
 function rampUp(scene: Scene, currencyTower?: Mesh) {
 	economyGlobals.currentBalance = 0;
 
-	scene.registerAfterRender(function interval1() {
+	scene.registerBeforeRender(function interval1() {
 		economyGlobals.currentBalance += economyGlobals.rampUpValue;
 
 		if (
 			economyGlobals.currentBalance >= economyGlobals.initialBalance ||
       economyGlobals.currentBalance < 0
 		) {
-			scene.unregisterAfterRender(interval1);
+			scene.unregisterBeforeRender(interval1);
 		}
 	});
 }

@@ -19,11 +19,9 @@ const newEnemyWave = (scene: Scene) => {
 			enemyGlobals.allEnemies.forEach((enemy: any) => {
 				if (enemy.position.y < -5) {
 					enemy.hitPoints = 0;
-					setTimeout(() => {
 						destroyEnemy(enemy, scene);
 
 						enemy.dispose();
-					}, 100);
 				}
 			});
 		} else if (economyGlobals.restartMessage === true) {
@@ -44,9 +42,7 @@ const enemyGeneration = (deltaTime: number, scene: Scene): void => {
 	) {
 		deltaTime = Date.now() - enemyGlobals.generationRate;
 
-		setTimeout(() => {
 			newWave(); // sound for new wave
-		}, 100);
 
 		// Color change on new wave disabled for now
 
@@ -87,8 +83,8 @@ const enemyGeneration = (deltaTime: number, scene: Scene): void => {
 		if (enemyGlobals.currentWave >= waves.length) {
 			scene.unregisterAfterRender(() => enemyGeneration(deltaTime, scene));
 		}
-		enemyGlobals.currentWave += 1;
 		localStorage.setItem("currentLevel", `${enemyGlobals.currentWave}`);
+		enemyGlobals.currentWave += 1;
 
 		if (enemyGlobals.currentWave > economyGlobals.bestLevel) {
 			economyGlobals.bestTime = Date.now() - economyGlobals.startTime;

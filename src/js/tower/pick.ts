@@ -76,12 +76,12 @@ function newTower(scene: Scene, physicsEngine: PhysicsEngine) {
 			}
 
 			if (economyGlobals.currentBalance <= towerGlobals.baseCost) {
+				removeTower(economyGlobals.currencyMesh, 1); // sound
 				// When a tower is requested but balance is insuficient
 				createBaseInstance(newLocation);
 				// color
 				currencyMeshColor();
 
-				removeTower(economyGlobals.currencyMesh, 1); // sound
 			}
 		}
 	}, PointerEventTypes.POINTERTAP);
