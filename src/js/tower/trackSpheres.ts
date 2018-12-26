@@ -24,10 +24,10 @@ function trackSpheres(
 				const enemy = enemyGlobals.allEnemies[index] as EnemySphere;
 				if (
 					enemy.position.y <= towerGlobals.range * level &&
-          enemy.position.y > 0 &&
-          enemy.hitPoints >= enemyGlobals.deadHitPoints &&
-          Vector3.Distance(towerTurret.position, enemy.position) <=
-            towerGlobals.range * level
+					enemy.position.y > 0 &&
+					enemy.hitPoints >= enemyGlobals.deadHitPoints &&
+					Vector3.Distance(towerTurret.position, enemy.position) <=
+					towerGlobals.range * level
 				) {
 					enemyDistances.push([
 						Vector3.Distance(towerTurret.position, enemy.position),
@@ -45,8 +45,8 @@ function trackSpheres(
 				)) as Vector3; // track the enemy spheres
 				if (
 					Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
-          towerGlobals.shoot
-          //  &&           shotClearsTower(scene, ray, nearestEnemy)
+					towerGlobals.shoot
+					//  &&           shotClearsTower(scene, ray, nearestEnemy)
 				) {
 					deltaTime = Date.now();
 
@@ -54,16 +54,16 @@ function trackSpheres(
 
 					setTimeout(() => {
 						flash.visibility = 0;
-					}, 15);
+						fireProjectile(
+							scene,
+							towerTurret,
+							level,
+							nearestEnemy,
+							physicsEngine,
+							clonedRotation
+						);
+					}, 30);
 					flash.visibility = 1;
-					fireProjectile(
-						scene,
-						towerTurret,
-						level,
-						nearestEnemy,
-						physicsEngine,
-						clonedRotation
-					);
 				}
 			}
 		}

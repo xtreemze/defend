@@ -8,7 +8,7 @@ export function updateEconomy(scene: Scene): any {
 	// Defeat Conditions
 	if (
 		economyGlobals.currentBalance < 0 &&
-    economyGlobals.restartMessage === false
+		economyGlobals.restartMessage === false
 	) {
 		economyGlobals.restartMessage = true;
 		setTimeout(() => {
@@ -20,13 +20,14 @@ export function updateEconomy(scene: Scene): any {
 		economyGlobals.currentBalance = 0;
 		economyGlobals.defeats += 1;
 		localStorage.setItem("defeats", `${economyGlobals.defeats}`);
+		localStorage.setItem("currentLevel", `0`);
 		enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
 	}
 
 	// Victory Conditions
 	if (
 		enemyGlobals.currentWave >= waves.length &&
-    economyGlobals.restartMessage === false
+		economyGlobals.restartMessage === false
 	) {
 		economyGlobals.victories += 1;
 		economyGlobals.restartMessage = true;
@@ -39,6 +40,7 @@ export function updateEconomy(scene: Scene): any {
 		economyGlobals.currentBalance = economyGlobals.maxBalance;
 		enemyGlobals.decayRate = enemyGlobals.baseHitPoints;
 		localStorage.setItem("victories", `${economyGlobals.victories}`);
+		localStorage.setItem("currentLevel", `0`);
 	}
 
 	const currentBalance = document.getElementById(
@@ -55,19 +57,19 @@ export function updateEconomy(scene: Scene): any {
 
 	if (
 		economyGlobals.guiString !==
-    `Wave: ${level}/${waves.length}
+		`Wave: ${level}/${waves.length}
   Victories: ${economyGlobals.victories}/${economyGlobals.victories +
-      economyGlobals.defeats}`
+		economyGlobals.defeats}`
 	) {
 		economyGlobals.guiString = `Wave: ${level}/${waves.length}
   Victories: ${economyGlobals.victories}/${economyGlobals.victories +
-      economyGlobals.defeats}`;
+			economyGlobals.defeats}`;
 
 		currentBalance.innerText = economyGlobals.guiString;
 	}
 
 	const scaleRate =
-    1 / (economyGlobals.maxBalance / economyGlobals.currentBalance);
+		1 / (economyGlobals.maxBalance / economyGlobals.currentBalance);
 
 	if (economyGlobals.currencyMeter !== null) {
 		economyGlobals.currencyMeter.scaling = new Vector3(

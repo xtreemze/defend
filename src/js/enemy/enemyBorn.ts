@@ -4,16 +4,15 @@ import {
 	enemyGlobals,
 	mapGlobals,
 	materialGlobals,
-	projectileGlobals
 } from "../main/globalVariables";
 import { currencyCollide } from "./currencyCollide";
 import { Position2D } from "./Enemy";
-import { destroyEnemy } from "./destroyEnemy";
 import { decide } from "./decide";
 import { checkHitPoints } from "./checkHitPoints";
+import randomNumberRange from "../utility/randomNumberRange";
 
 interface EnemySphere extends Mesh {
-  hitPoints: number;
+	hitPoints: number;
 }
 
 function enemyBorn(
@@ -39,7 +38,7 @@ function enemyBorn(
 
 	sphereMesh.position = new Vector3(
 		position.x,
-		(diameter / 2) * enemyGlobals.originHeight,
+		(diameter / 2) * (enemyGlobals.originHeight + randomNumberRange(0,8)) ,
 		position.z
 	);
 
@@ -61,18 +60,13 @@ function enemyBorn(
 
 	let deltaTime = Date.now();
 
-	sphereMesh.registerAfterRender(() => {
+	sphereMesh.registerBeforeRender(() => {
+		const positionY = sphereMesh.position.y;
 		if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
 			deltaTime = Date.now();
 			if (
-				sphereMesh.position.y < 0 &&
-        sphereMesh.hitPoints < enemyGlobals.baseHitPoints * level
-			) {
-				destroyEnemy(sphereMesh, scene, level);
-			} else if (
-				sphereMesh.position.y > diameter / 2.5 &&
-        sphereMesh.position.y < diameter &&
-        sphereMesh.hitPoints > projectileGlobals.baseHitPoints
+				positionY > diameter / 2.5 &&
+				positionY < diameter
 			) {
 				enemyAi(sphereMesh, decide(sphereMesh), level);
 			}
@@ -80,7 +74,7 @@ function enemyBorn(
 			checkHitPoints(scene, sphereMesh, level, hitPointsMeter);
 		}
 	});
-	currencyCollide(sphereMesh, scene);
+	currencyCollide(sphereMesh);
 }
 
 export { EnemySphere, enemyBorn };

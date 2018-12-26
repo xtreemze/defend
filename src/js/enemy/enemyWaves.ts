@@ -5,7 +5,7 @@ import { newWave } from "../main/sound";
 import {
 	enemyGlobals,
 	economyGlobals,
-//   mapGlobals
+	//   mapGlobals
 } from "../main/globalVariables";
 import { waves } from "./waves";
 import { enemyGenerator } from "./Enemy";
@@ -19,11 +19,11 @@ const newEnemyWave = (scene: Scene) => {
 			enemyGlobals.allEnemies.forEach((enemy: any) => {
 				if (enemy.position.y < -5) {
 					enemy.hitPoints = 0;
-					destroyEnemy(enemy, scene);
 					setTimeout(() => {
+						destroyEnemy(enemy, scene);
 
 						enemy.dispose();
-					}, 40);
+					}, 100);
 				}
 			});
 		} else if (economyGlobals.restartMessage === true) {
@@ -38,15 +38,15 @@ const newEnemyWave = (scene: Scene) => {
 const enemyGeneration = (deltaTime: number, scene: Scene): void => {
 	if (
 		Date.now() - deltaTime > enemyGlobals.generationRate &&
-    enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
-    economyGlobals.restartMessage === false &&
-    enemyGlobals.currentWave < waves.length
+		enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
+		economyGlobals.restartMessage === false &&
+		enemyGlobals.currentWave < waves.length
 	) {
 		deltaTime = Date.now() - enemyGlobals.generationRate;
 
 		setTimeout(() => {
 			newWave(); // sound for new wave
-		}, 50);
+		}, 100);
 
 		// Color change on new wave disabled for now
 
@@ -88,6 +88,8 @@ const enemyGeneration = (deltaTime: number, scene: Scene): void => {
 			scene.unregisterAfterRender(() => enemyGeneration(deltaTime, scene));
 		}
 		enemyGlobals.currentWave += 1;
+		localStorage.setItem("currentLevel", `${enemyGlobals.currentWave}`);
+
 		if (enemyGlobals.currentWave > economyGlobals.bestLevel) {
 			economyGlobals.bestTime = Date.now() - economyGlobals.startTime;
 			economyGlobals.bestLevel = enemyGlobals.currentWave;

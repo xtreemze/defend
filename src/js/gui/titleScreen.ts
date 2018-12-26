@@ -56,6 +56,18 @@ function titleScreen(
 		economyGlobals.bestLevel = localStorageBestLevel;
 	}
 
+	let currentLevel = parseInt(localStorage.getItem(
+		"currentLevel"
+	) as string) as number;
+
+	if (isNaN(currentLevel)) {
+		currentLevel = 0;
+	}
+
+	if (localStorageBestLevel !== NaN && localStorageBestLevel >= 0) {
+		economyGlobals.bestLevel = localStorageBestLevel;
+	}
+
 	// clear Credits
 	const credits = document.getElementById("credits") as HTMLHeadingElement;
 	credits.style.display = "none";
@@ -134,6 +146,7 @@ function titleScreen(
 		FX._tone.Master.mute = false;
 		// clearTimeout(noSoundTimer);
 		// Start game
+		enemyGlobals.currentWave = currentLevel;
 		startGame();
 	});
 
@@ -158,7 +171,7 @@ function titleScreen(
 
 		const okHelp = document.getElementById("okHelp") as HTMLButtonElement;
 
-		okHelp.addEventListener("click", function() {
+		okHelp.addEventListener("click", function () {
 			const help = document.getElementById("help") as HTMLDivElement;
 			const helpParent = help.parentNode as Node;
 			helpParent.removeChild(help);
@@ -172,8 +185,7 @@ function titleScreen(
 		// start Enemy Generation and Waves
 		enemyGlobals.decayRate = enemyGlobals.initialDecayRate;
 		economyGlobals.restartMessage = false;
-		enemyGlobals.currentWave = 0;
-		newEnemyWave(scene);
+
 
 		// remove GUI
 		const titleParent = title.parentNode as Node;
@@ -197,8 +209,12 @@ function titleScreen(
 			installParent.removeChild(btnAdd);
 		}
 		// enable interactive Tower generation and upgrade
-		newTower(scene, physicsEngine);
-		upgradeTower(scene, physicsEngine);
+
+		setTimeout(() => {
+			newEnemyWave(scene);
+			newTower(scene, physicsEngine);
+			upgradeTower(scene, physicsEngine);
+		}, 3000);
 	}
 }
 
