@@ -43,8 +43,8 @@ class Game {
 			},
 			false
 		);
-		this.engine.enableOfflineSupport = false;
-		this.engine.disableManifestCheck = true;
+		// this.engine.enableOfflineSupport = false;
+		// this.engine.disableManifestCheck = true;
 	}
 
 	createScene(): void {
@@ -74,10 +74,11 @@ class Game {
 		FX._tone.Master.mute = true;
 		FX._tone.context.latencyHint = "fastest";
 		// FX._tone.Transport.start("+0.5");
+		const gravity = -9.81;
+		// const gravity = -9.81 * 2;
+		this.scene.enablePhysics(new Vector3(0, gravity, 0), new CannonJSPlugin());
 
-		this.scene.enablePhysics(new Vector3(0, -9.81, 0), new CannonJSPlugin());
-
-		// this.scene.workerCollisions = true;
+		this.scene.workerCollisions = true;
 
 		generateMaterials(this.scene);
 		map(this.scene);
@@ -88,7 +89,7 @@ class Game {
 			createTurretInstanceL2(this.scene);
 			createTurretInstanceL3(this.scene);
 			createProjectileInstances();
-		}, 500);
+		}, 3000);
 
 		arcCamera(this.scene, this.canvas);
 
@@ -118,7 +119,7 @@ window.addEventListener("DOMContentLoaded", () => {
 	game.createScene();
 
 	const physicsEngine = game.scene.getPhysicsEngine() as PhysicsEngine;
-	if (game.scene.getPhysicsEngine() !== null) {
+	if (physicsEngine !== null) {
 		titleScreen(game.scene, game.canvas, physicsEngine);
 	}
 

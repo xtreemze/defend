@@ -34,9 +34,9 @@ const mapGlobals = {
 const projectileGlobals = {
 	projectileMeshL2: {} as any | LiveProjectileInstance,
 	projectileMeshL3: {} as any | LiveProjectileInstance,
-	lifeTime: 2200, // milliseconds
-	speed: 15000,
-	mass: 80,
+	lifeTime: 2100, // milliseconds
+	speed: 12000,
+	mass: 60,
 	baseHitPoints: 150,
 	livingColor: new Color3(1, 0.5, 0.2) as Color3,
 	activeParticles: 0,
@@ -49,7 +49,7 @@ const towerGlobals = {
 	turretMeshL3: {} as Mesh,
 	towerBaseMesh: {} as Mesh,
 	indicator: {} as Mesh,
-	lookAheadRatio: 30000,
+	lookAheadRatio: 12000,
 	rateOfFire: 200, // milliseconds between each shot,
 	height: 3,
 	mass: 0,
@@ -60,7 +60,7 @@ const towerGlobals = {
 	occupiedSpaces: [] as any[],
 	specularColor: new Color3(0.3, 0.071, 0.1),
 	livingColor: new Color3(0.1, 0.64, 0.4),
-	range: 40,
+	range: 50,
 	shoot: true,
 	raysOn: false,
 	lifeTime: 23200,
@@ -76,16 +76,16 @@ const enemyGlobals = {
 	minNumber: 1, // for one generation
 	maxNumber: 8, // for one generation
 	limit: 0, // wait for this enemy count before next wave
-	originHeight: 10,
+	originHeight: 50,
 	generationRate: 8000, // milliseconds
-	decisionRate: 250, // milliseconds
-	speed: 90000,
-	mass: 10000,
-	restitution: 0.999,
+	decisionRate: 400, // milliseconds
+	speed: 50000,
+	mass: 5500,
+	restitution: 0.94,
 	jumpForce: 80,
-	friction: 0.50,
-	decayRate: 150, // hitpoints per decision
-	initialDecayRate: 150, // hitpoints per decision
+	friction: 0.4,
+	decayRate: 160, // hitpoints per decision
+	initialDecayRate: 160, // hitpoints per decision
 	baseHitPoints: 20000,
 	deadHitPoints: 0,
 	fragments: 1,
@@ -104,7 +104,7 @@ const economyGlobals = {
 	bestLevel: 0,
 	startTime: Date.now(),
 	bestTime: Date.now(),
-	rampUpValue: 150,
+	rampUpValue: 450,
 	energyRecoveryRatio: 0.25,
 	initialBalance: 30000,
 	maxBalance: 30000,

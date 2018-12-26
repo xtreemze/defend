@@ -31,7 +31,7 @@ export function startLife(
 	clonedRotation: Vector3
 ) {
 //   projectile.rotation = clonedRotation;
-	const forwardLocal = new Vector3(0, 0, 1);
+	const forwardLocal = new Vector3(0, 0, 3);
 	const space = originMesh.getDirection(forwardLocal) as Vector3;
 	projectile.position = originMesh.position.subtract(space) as Vector3;
 	// projectile.position = originMesh.position as Vector3;

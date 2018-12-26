@@ -214,7 +214,7 @@ function titleScreen(
 			newEnemyWave(scene);
 			newTower(scene, physicsEngine);
 			upgradeTower(scene, physicsEngine);
-		}, 3000);
+		}, 1000);
 	}
 }
 

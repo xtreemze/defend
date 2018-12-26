@@ -55,6 +55,11 @@ function enemyBorn(
 
 	mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
 
+	sphereMesh.physicsImpostor.applyImpulse(
+		new Vector3(0, -enemyGlobals.mass * 80 * level * level, 0),
+		sphereMesh.getAbsolutePosition()
+	);
+
 	sphereMesh.material = materialGlobals.hitMaterial;
 	hitPointsMeter.material = materialGlobals.enemyMaterial;
 
