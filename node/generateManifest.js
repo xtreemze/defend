@@ -10,7 +10,7 @@ const content = `{
   "version": "${version}",
   "lang": "en_US",
   "description":
-    "Procedural Cross-Platform 3D Tower Defense WebGame with Physics and AI and Procedural Sound",
+    "In “Defend” you’re placed in the center of a stronghold contained within a 3D world. You will be immediately faced with a constant onslaught of attacks from aggressive spherical objects who seek to destroy your energy reserves as this is the only source of life in this world. Repel the attacks and maintain your stronghold with a sustainable level of resources.",
   "orientation": "any",
   "icons": [
     {
@@ -71,9 +71,9 @@ const content = `{
 `;
 
 fsExtra.writeFile("./src/site.webmanifest", content, "utf-8", err => {
-  Error(err);
+	Error(err);
 });
 
 fsExtra.writeFile("./dist/site.webmanifest", content, "utf-8", err => {
-  Error(err);
+	Error(err);
 });
