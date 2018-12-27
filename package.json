@@ -1,7 +1,7 @@
 {
     "name": "defend",
-    "version": "1.0.1",
-    "description": "Tower Defense WebGame",
+    "version": "1.0.2",
+    "description": "In “Defend” you’re placed in the center of a stronghold contained within a 3D world. You will be immediately faced with a constant onslaught of attacks from aggressive spherical objects who seek to destroy your energy reserves as this is the only source of life in this world. Repel the attacks and maintain your stronghold with a sustainable level of resources.",
     "sideEffects": false,
     "scripts": {
         "archive": "node ./node/archive.js",

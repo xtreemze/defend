@@ -1,6 +1,6 @@
 import { mapGlobals, projectileGlobals } from "../main/globalVariables";
 
-const helpHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>Tap the grid to strategically deploy or upgrade towers.</p><p>Shoot the enemy to replenish your energy bank.</p><p>You will be defeated if your energy bank is depleted!</p> <button id="okHelp" style="
+const helpHTML = `<p>To accomplish victory: survive all the enemy waves.</p><p>Tap the grid to strategically deploy or upgrade towers.</p><p>Shoot the enemy to replenish your energy bank.</p><p>You will be defeated if your energy is depleted!</p> <button id="okHelp" style="
     background-color: ${mapGlobals.sceneAmbient.toHexString()};
     color: ${projectileGlobals.livingColor.toHexString()};
     border-color: ${projectileGlobals.livingColor.toHexString()};
