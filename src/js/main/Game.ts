@@ -11,7 +11,7 @@ import {
 } from "babylonjs";
 
 import * as FX from "../../vendor/wafxr/wafxr";
-import { mapGlobals, enemyGlobals } from "./globalVariables";
+import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals } from "./globalVariables";
 import { map } from "./map";
 
 import { titleScreen } from "../gui/titleScreen";
@@ -37,36 +37,39 @@ class Game {
 			this.canvas,
 			false,
 			{
-				// preserveDrawingBuffer: true,
-				// stencil: true,
-				// doNotHandleContextLost: true
+				preserveDrawingBuffer: true,
+				stencil: true,
+				doNotHandleContextLost: true
 			},
 			false
 		);
-		// this.engine.enableOfflineSupport = false;
-		// this.engine.disableManifestCheck = true;
+		this.engine.enableOfflineSupport = false;
+		this.engine.disableManifestCheck = true;
 	}
 
 	createScene(): void {
 		this.scene = new Scene(this.engine);
-		// this.scene.autoClear = false; // Color buffer
+		this.scene.autoClear = false; // Color buffer
 		// this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
 		if (mapGlobals.optimizerOn) {
 			// const originalGenerationRate = enemyGlobals.generationRate;
 			// const originalTowerLifetime = towerGlobals.lifeTime;
 			SceneOptimizer.OptimizeAsync(
 				this.scene,
-				SceneOptimizerOptions.HighDegradationAllowed(60),
+				// SceneOptimizerOptions.HighDegradationAllowed(62),
+				SceneOptimizerOptions.ModerateDegradationAllowed(60),
 				// SceneOptimizerOptions.LowDegradationAllowed(59),
 				function () {
 					// On success
 					mapGlobals.soundOn = true;
 					enemyGlobals.fragments = 1;
+					projectileGlobals.particleLimit = 3;
 				},
 				function () {
 					// FPS target not reached
 					mapGlobals.soundOn = false;
 					enemyGlobals.fragments = 0;
+					projectileGlobals.particleLimit = 0;
 				}
 			);
 		}
@@ -75,7 +78,8 @@ class Game {
 		FX._tone.Master.mute = true;
 		// FX._tone.context.latencyHint = "fastest";
 		// FX._tone.Transport.start("+0.5");
-		const gravity = -9.81;
+		const gravity = -10;
+		// const gravity = -9.81;
 		// const gravity = -9.81 * 2;
 		this.scene.enablePhysics(new Vector3(0, gravity, 0), new CannonJSPlugin());
 

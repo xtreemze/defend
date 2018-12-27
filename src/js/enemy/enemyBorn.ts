@@ -24,7 +24,7 @@ function enemyBorn(
 ) {
 	const enemyMass = (enemyGlobals.mass * level * level) as number;
 
-	sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints;
+	sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints + level * 440;
 
 	const hitPointsMeter = MeshBuilder.CreateIcoSphere(
 		name + "hitPointMeter",
@@ -38,7 +38,7 @@ function enemyBorn(
 
 	sphereMesh.position = new Vector3(
 		position.x,
-		(diameter / 2) * (enemyGlobals.originHeight + randomNumberRange(0,8)) ,
+		(diameter / 2) * (enemyGlobals.originHeight + randomNumberRange(0, 8)),
 		position.z
 	);
 
@@ -55,9 +55,12 @@ function enemyBorn(
 
 	mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
 
-	sphereMesh.physicsImpostor.applyImpulse(
-		new Vector3(0, -enemyGlobals.mass * 80 * level * level, 0),
-		sphereMesh.getAbsolutePosition()
+	// sphereMesh.physicsImpostor.applyImpulse(
+	// 	new Vector3(0, -enemyGlobals.mass * 50 * level * level, 0),
+	// 	sphereMesh.getAbsolutePosition()
+	// );
+	sphereMesh.physicsImpostor.setLinearVelocity(
+		new Vector3(0, -80, 0)
 	);
 
 	sphereMesh.material = materialGlobals.hitMaterial;

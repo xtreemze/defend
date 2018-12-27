@@ -4,11 +4,11 @@ import { enemyGlobals } from "../main/globalVariables";
 import { enemyExplode } from "./../main/sound";
 
 function destroyEnemy(sphereMesh: EnemySphere, scene?: Scene, level?: number) {
-	enemyGlobals.occupiedSpaces.pop();
 	// sound
 	if (level) {
 		enemyExplode(sphereMesh, level);
 	}
+	enemyGlobals.occupiedSpaces.pop();
 	sphereMesh.setEnabled(false);
 	delete sphereMesh.hitPoints;
 	setTimeout(() => {
@@ -21,7 +21,7 @@ function destroyEnemy(sphereMesh: EnemySphere, scene?: Scene, level?: number) {
 
 			enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
 		}
-	}, 10);
+	}, 100);
 }
 
 export { destroyEnemy };
