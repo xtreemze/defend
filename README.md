@@ -1,5 +1,11 @@
 # Defend [![Build Status](https://travis-ci.org/xtreemze/defend.svg?branch=master)](https://travis-ci.org/xtreemze/defend)
 
+In “Defend” you’re placed in the center of a stronghold contained within a 3D world. You will be immediately faced with a constant onslaught of attacks from aggressive spherical objects who seek to destroy your energy reserves as this is the only source of life in this world. Repel the attacks and maintain your stronghold with a sustainable level of resources.
+
+“Defend” will challenge you to constantly question and reevaluate your strategies. You could surround your energy resources with a wall, however, these have a limited life and will fall apart with time. Without turrets to extract the blue energy from the attackers, you will not proceed beyond the first waves.
+
+You’ll quickly learn that the best defense is a strategic offensive.
+
 ## A Procedurally Generated Tower Defense WebGame
 
 When loaded, three cameras rotate in an interactive orbit around a plane where towers are randomly placed. Enemies will fall from the sky in the unoccupied areas and will make their way to the center.
