@@ -42,8 +42,8 @@ export function startLife(
 		PhysicsImpostor.BoxImpostor,
 		{
 			mass: projectileGlobals.mass * (level * level),
-			restitution: 1,
-			friction: 1
+			restitution: 0,
+			friction: 0
 		},
 		scene
 	) as PhysicsImpostor;

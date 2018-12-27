@@ -78,7 +78,7 @@ class Game {
 		FX._tone.Master.mute = true;
 		// FX._tone.context.latencyHint = "fastest";
 		// FX._tone.Transport.start("+0.5");
-		const gravity = -10;
+		const gravity = -20;
 		// const gravity = -9.81;
 		// const gravity = -9.81 * 2;
 		this.scene.enablePhysics(new Vector3(0, gravity, 0), new CannonJSPlugin());
