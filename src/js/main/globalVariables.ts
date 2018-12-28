@@ -37,7 +37,7 @@ const projectileGlobals = {
 	lifeTime: 1300, // milliseconds
 	speed: 4300,
 	mass: 20,
-	baseHitPoints: 420,
+	baseHitPoints: 430,
 	livingColor: new Color3(1, 0.5, 0.2) as Color3,
 	activeParticles: 0,
 	particleLimit: 3,
