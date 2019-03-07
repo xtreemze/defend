@@ -68,8 +68,8 @@ class Game {
 				function () {
 					// FPS target not reached
 					mapGlobals.soundOn = false;
-					enemyGlobals.fragments = 0;
-					projectileGlobals.particleLimit = 0;
+					// enemyGlobals.fragments = 0;
+					// projectileGlobals.particleLimit = 1;
 				}
 			);
 		}
