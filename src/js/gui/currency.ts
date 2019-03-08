@@ -106,7 +106,7 @@ function rampUp(scene: Scene, currencyTower?: Mesh) {
 
 		if (
 			economyGlobals.currentBalance >= economyGlobals.initialBalance ||
-      economyGlobals.currentBalance < 0
+      economyGlobals.currentBalance <= 0
 		) {
 			scene.unregisterBeforeRender(interval1);
 		}

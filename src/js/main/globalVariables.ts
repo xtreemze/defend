@@ -19,7 +19,7 @@ const mapGlobals = {
 	lightIntensity: 0.70,
 	simultaneousSounds: 0, // sounds currently playing for projectiles
 	soundDelay: 80,
-	soundLimit: 2, // simultaneous sound limit
+	soundLimit: 1, // simultaneous sound limit
 	projectileSounds: 0, // sounds currently playing for projectiles
 	projectileSoundLimit: 2, // simultaneous sound limit for projectiles
 	ambientColor: new Color3(0.22, 0.26, 0.2) as Color3,
@@ -88,7 +88,7 @@ const enemyGlobals = {
 	initialDecayRate: 50, // hitpoints per decision
 	baseHitPoints: 22000,
 	deadHitPoints: 0,
-	fragments: 1,
+	fragments: 2,
 	allEnemies: [] as Mesh[],
 	occupiedSpaces: [] as any[],
 	boundaryLimit: 2.5, // meters
@@ -104,8 +104,8 @@ const economyGlobals = {
 	bestLevel: 0,
 	startTime: Date.now(),
 	bestTime: Date.now(),
-	rampUpValue: 400,
-	energyRecoveryRatio: 0.25,
+	rampUpValue: 800,
+	energyRecoveryRatio: 0.30,
 	initialBalance: 30000,
 	maxBalance: 30000,
 	currentBalance: 1,
