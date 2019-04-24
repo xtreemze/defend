@@ -69,7 +69,7 @@ function map(scene: Scene) {
 	mapGlobals.groundMesh.physicsImpostor = new PhysicsImpostor(
 		mapGlobals.groundMesh,
 		PhysicsImpostor.BoxImpostor,
-		{ mass: 0, restitution: 0.9, friction: 1 },
+		{ mass: 0, restitution: 0.5, friction: 1 },
 		scene
 	) as PhysicsImpostor;
 }

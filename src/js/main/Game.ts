@@ -57,8 +57,8 @@ class Game {
 			SceneOptimizer.OptimizeAsync(
 				this.scene,
 				// SceneOptimizerOptions.HighDegradationAllowed(62),
-				SceneOptimizerOptions.ModerateDegradationAllowed(60),
-				// SceneOptimizerOptions.LowDegradationAllowed(59),
+				// SceneOptimizerOptions.ModerateDegradationAllowed(60),
+				SceneOptimizerOptions.LowDegradationAllowed(30),
 				function () {
 					// On success
 					mapGlobals.soundOn = true;
