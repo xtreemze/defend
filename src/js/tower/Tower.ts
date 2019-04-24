@@ -92,12 +92,12 @@ function rotateTurret(
 	const newPosition = nearestEnemy.position.add(
 		new Vector3(
 			enemyVelocity.x * projectileTime,
-			enemyVelocity.y * projectileTime + 3,
+			enemyVelocity.y * projectileTime + level + level / 3,
 			enemyVelocity.z * projectileTime
 		)
 	);
-	if (newPosition.y < 3) {
-		newPosition.y = 3;
+	if (newPosition.y < level + level / 3) {
+		newPosition.y = level + level / 3;
 	}
 	towerTurret.lookAt(newPosition);
 

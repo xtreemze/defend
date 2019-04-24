@@ -16,7 +16,7 @@ function trackSpheres (
 	physicsEngine: PhysicsEngine
 ) {
 	let deltaTime = Date.now();
-	tower.registerAfterRender(() => {
+	tower.registerAfterRender(async() => {
 		const enemyNumber = enemyGlobals.allEnemies.length;
 		if (enemyNumber > 0) {
 			const enemyDistances = new Array() as any[];
@@ -36,10 +36,12 @@ function trackSpheres (
 				}
 			}
 			const now = Date.now()
-			enemyDistances.sort();
+			if (enemyNumber > 1){
+			await enemyDistances.sort();
+			}
 			if (enemyDistances.length > 0 && enemyDistances[0][1] !== null) {
 				const nearestEnemy = enemyDistances[0][1] as EnemySphere;
-				const clonedRotation = rotateTurret(
+				const clonedRotation = await rotateTurret(
 					nearestEnemy,
 					towerTurret,
 					level
@@ -61,11 +63,9 @@ function trackSpheres (
 							physicsEngine,
 							clonedRotation
 						);
+						flash.visibility = 0;
 					}, 40);
 					shoot(flash, level);
-					setTimeout(() => {
-						flash.visibility = 0;
-					}, 35);
 					flash.visibility = 1;
 				}
 			}
