@@ -37,8 +37,8 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 		particleSystem.minEmitPower = 4;
 		// @ts-ignore
 		particleSystem.maxEmitPower = 7 * level;
-		particleSystem.minLifeTime = 0.24;
-		particleSystem.maxLifeTime = 0.34;
+		particleSystem.minLifeTime = 0.2;
+		particleSystem.maxLifeTime = 0.25;
 		particleSystem.minSize = 0.5;
 		// @ts-ignore
 		particleSystem.maxSize = level;
@@ -47,7 +47,7 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 		particleSystem.color1 = new Color4(1, 0.5, 0, 1);
 		particleSystem.color2 = new Color4(0.75, 0.4, 0.1, 1);
 		particleSystem.colorDead = new Color4(0.1, 0.08, 0.3, 1);
-		particleSystem.id = 'projectileGlobals.particleIndex'
+		particleSystem.id = "particles" + projectileGlobals.particleIndex
 		particleSystem.name = "particles" + projectileGlobals.particleIndex;
 		particleSystem.particleTexture = createTexture(scene);
 		// @ts-ignore
@@ -65,10 +65,10 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 		setTimeout(() => {
 			particleSystem.stop();
 			// @ts-ignore
-		}, 92 * level);
+		}, 80 * level);
 
 		setTimeout(() => {
-			particleSystem.dispose();
+			particleSystem.dispose(false);
 			projectileGlobals.activeParticles -= 1;
 		}, 500);
 	}
