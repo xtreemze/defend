@@ -68,7 +68,10 @@ export function startLife (
 	hitEffect(projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
 	destroyOnCollide(scene, projectile, physicsEngine, projectileExpires, level); // Detects collissions with enemies
 	projectile.setEnabled(true);
+
+
 	impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
+
 
 }
 

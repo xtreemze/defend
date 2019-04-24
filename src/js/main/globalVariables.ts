@@ -49,7 +49,7 @@ const towerGlobals = {
 	turretMeshL3: {} as Mesh,
 	towerBaseMesh: {} as Mesh,
 	indicator: {} as Mesh,
-	lookAheadRatio: 1600,
+	lookAheadRatio: 1700,
 	rateOfFire: 26, // milliseconds between each shot,
 	height: 3,
 	mass: 0,

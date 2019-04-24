@@ -53,18 +53,18 @@ function trackSpheres (
 				) {
 					deltaTime = now;
 
+					fireProjectile(
+						scene,
+						towerTurret,
+						level,
+						nearestEnemy,
+						physicsEngine,
+						clonedRotation
+					);
 					setTimeout(() => {
 
-						fireProjectile(
-							scene,
-							towerTurret,
-							level,
-							nearestEnemy,
-							physicsEngine,
-							clonedRotation
-						);
 						flash.visibility = 0;
-					}, 40);
+					}, 10 * level * level);
 					shoot(flash, level);
 					flash.visibility = 1;
 				}

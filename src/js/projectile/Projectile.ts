@@ -17,20 +17,20 @@ class Projectile {
 		const name = `projectile${level}` as string;
 		let projectile;
 		switch (level) {
-		case 2:
-			projectile = projectileGlobals.projectileMeshL2.createInstance(
-				name
-			) as LiveProjectileInstance;
-			break;
-		case 3:
-			projectile = projectileGlobals.projectileMeshL3.createInstance(
-				name
-			) as LiveProjectileInstance;
+			case 2:
+				projectile = projectileGlobals.projectileMeshL2.createInstance(
+					name
+				) as LiveProjectileInstance;
+				break;
+			case 3:
+				projectile = projectileGlobals.projectileMeshL3.createInstance(
+					name
+				) as LiveProjectileInstance;
 
-			break;
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 		if (projectile !== undefined) {
 
@@ -49,26 +49,29 @@ class Projectile {
 	}
 }
 
-export function impulsePhys(
+export function impulsePhys (
 	originMesh: TowerTurret,
 	projectile: LiveProjectileInstance,
 	level: number = 1 | 2 | 3
 ) {
+	setTimeout(() => {
 	const forwardLocal = new Vector3(
 		0,
 		0,
 		projectileGlobals.speed * (level * level * level) * -1
 	) as Vector3;
 	const speed = originMesh.getDirection(forwardLocal) as Vector3;
-	if (projectile.physicsImpostor !== null) {
-		projectile.physicsImpostor.applyImpulse(
-			speed,
-			projectile.getAbsolutePosition()
-		);
-	}
+		if (projectile.physicsImpostor !== null) {
+
+			projectile.physicsImpostor.applyImpulse(
+				speed,
+				projectile.getAbsolutePosition()
+			);
+		}
+		}, 10);
 }
 
-export default function fireProjectile(
+export default function fireProjectile (
 	scene: Scene,
 	originMesh: TowerTurret,
 	level: number = 1 | 2 | 3,
