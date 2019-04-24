@@ -214,10 +214,10 @@ function titleScreen(
 
 		setTimeout(() => {
 
-			newEnemyWave(scene);
 			newTower(scene, physicsEngine);
 			upgradeTower(scene, physicsEngine);
-		}, 1000);
+			newEnemyWave(scene);
+		}, 1400);
 	}
 }
 

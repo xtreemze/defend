@@ -24,7 +24,7 @@ function currencyCollide(enemy: EnemySphere, scene: Scene, level: number) {
 				) {
 					// color
 					currencyMeshColor();
-					economyGlobals.currentBalance -= enemy.hitPoints;
+					economyGlobals.currentBalance -= enemy.hitPoints / 2;
 
 					if (
 						enemy.physicsImpostor !== null
@@ -46,16 +46,6 @@ function currencyCollide(enemy: EnemySphere, scene: Scene, level: number) {
 								// enemy.hitPoints = 0;
 								destroyEnemy(enemy, scene, level);
 
-								// rampLight(scene, mapGlobals.skyLight, 0.6, mapGlobals.lightIntensity);
-								// rampLight(
-									// 	scene,
-									// 	mapGlobals.upLight,
-									// 	0.6 * 2,
-									// 	mapGlobals.lightIntensity * 2
-									// );
-
-									// sound
-									// damageCurrency(enemy);
 
 					}
 				}

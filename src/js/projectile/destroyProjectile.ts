@@ -18,5 +18,5 @@ export function destroyProjectile(
 			mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
 		}
 		projectile.dispose();
-	}, 3);
+	}, 30);
 }

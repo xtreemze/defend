@@ -60,7 +60,7 @@ function enemyBorn(
 	// 	sphereMesh.getAbsolutePosition()
 	// );
 	sphereMesh.physicsImpostor.setLinearVelocity(
-		new Vector3(0, -80, 0)
+		new Vector3(0, -20, 0)
 	);
 
 	sphereMesh.material = materialGlobals.hitMaterial;
@@ -69,9 +69,10 @@ function enemyBorn(
 	let deltaTime = Date.now();
 
 	sphereMesh.registerBeforeRender(() => {
+		const now = Date.now()
 		const positionY = sphereMesh.position.y;
-		if (Date.now() - deltaTime > enemyGlobals.decisionRate) {
-			deltaTime = Date.now();
+		if (now - deltaTime > enemyGlobals.decisionRate) {
+			deltaTime = now;
 			if (
 				positionY > diameter / 2.5 &&
 				positionY < diameter

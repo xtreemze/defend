@@ -11,17 +11,17 @@ function destroyEnemy(sphereMesh: EnemySphere, scene?: Scene, level?: number) {
 	enemyGlobals.occupiedSpaces.pop();
 	sphereMesh.setEnabled(false);
 	delete sphereMesh.hitPoints;
-	setTimeout(() => {
+	// setTimeout(() => {
 		Tags.RemoveTagsFrom(sphereMesh, "enemy");
-		sphereMesh.dispose();
 		if (sphereMesh.physicsImpostor !== null) {
 			sphereMesh.physicsImpostor.dispose();
 		}
+		sphereMesh.dispose();
 		if (scene) {
 
 			enemyGlobals.allEnemies = scene.getMeshesByTags("enemy");
 		}
-	}, 100);
+	// }, 100);
 }
 
 export { destroyEnemy };

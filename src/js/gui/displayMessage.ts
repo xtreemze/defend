@@ -56,7 +56,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
 			setTimeout(() => {
 
 				newEnemyWave(scene);
-			}, 800);
+			}, 900);
 
 			// Button and GUI
 			const titleParent = title.parentNode as Node;
@@ -105,7 +105,7 @@ function displayMessage(scene: Scene, message: string, icon: string) {
 				setTimeout(() => {
 
 					newEnemyWave(scene);
-				}, 800);
+				}, 900);
 
 				// Button and GUI
 				rampUp(scene);

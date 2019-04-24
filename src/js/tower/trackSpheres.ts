@@ -6,7 +6,7 @@ import { shoot } from "../main/sound";
 import { TowerTurret } from "./towerBorn";
 import { EnemySphere } from "../enemy/enemyBorn";
 
-function trackSpheres(
+function trackSpheres (
 	scene: Scene,
 	tower: Mesh,
 	towerTurret: TowerTurret,
@@ -16,7 +16,7 @@ function trackSpheres(
 	physicsEngine: PhysicsEngine
 ) {
 	let deltaTime = Date.now();
-	tower.registerBeforeRender(async () => {
+	tower.registerAfterRender(() => {
 		const enemyNumber = enemyGlobals.allEnemies.length;
 		if (enemyNumber > 0) {
 			const enemyDistances = new Array() as any[];
@@ -35,25 +35,24 @@ function trackSpheres(
 					]);
 				}
 			}
-			await enemyDistances.sort();
+			const now = Date.now()
+			enemyDistances.sort();
 			if (enemyDistances.length > 0 && enemyDistances[0][1] !== null) {
 				const nearestEnemy = enemyDistances[0][1] as EnemySphere;
-				const clonedRotation = (await rotateTurret(
+				const clonedRotation = rotateTurret(
 					nearestEnemy,
 					towerTurret,
 					level
-				)) as Vector3; // track the enemy spheres
+				) as Vector3; // track the enemy spheres
 				if (
-					Date.now() - deltaTime > towerGlobals.rateOfFire * level &&
+					now - deltaTime > towerGlobals.rateOfFire * level * level * level &&
 					towerGlobals.shoot
 					//  &&           shotClearsTower(scene, ray, nearestEnemy)
 				) {
-					deltaTime = Date.now();
-
-					shoot(flash, level);
+					deltaTime = now;
 
 					setTimeout(() => {
-						flash.visibility = 0;
+
 						fireProjectile(
 							scene,
 							towerTurret,
@@ -62,7 +61,11 @@ function trackSpheres(
 							physicsEngine,
 							clonedRotation
 						);
-					}, 30);
+					}, 40);
+					shoot(flash, level);
+					setTimeout(() => {
+						flash.visibility = 0;
+					}, 35);
 					flash.visibility = 1;
 				}
 			}

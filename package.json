@@ -38,7 +38,7 @@
     ],
     "dependencies": {
         "eslint-plugin-tslint": "^3.1.0",
-        "typescript-eslint-parser": "^21.0.2"
+        "typescript-eslint-parser": "^22.0.0"
     },
     "devDependencies": {
         "@babel/core": "^7.2.2",
@@ -58,7 +58,7 @@
         "css-loader": "^2.0.2",
         "eslint": "^5.10.0",
         "eslint-config-airbnb-base": "^13.1.0",
-        "eslint-config-prettier": "^3.3.0",
+        "eslint-config-prettier": "^4.1.0",
         "eslint-plugin-import": "^2.14.0",
         "eslint-plugin-prettier": "^3.0.0",
         "extract-loader": "^3.1.0",
@@ -69,16 +69,16 @@
         "prettier": "^1.15.3",
         "puppeteer": "^1.11.0",
         "style-loader": "^0.23.1",
-        "tone": "^0.12.80",
+        "tone": "^13.4.9",
         "ts-loader": "^5.3.1",
-        "ts-node": "^7.0.1",
+        "ts-node": "^8.1.0",
         "tslint": "^5.12.0",
         "typescript": "^3.2.2",
         "url-loader": "^1.1.2",
         "webpack": "^4.28.0",
         "webpack-cli": "^3.1.2",
         "webpack-dev-server": "^3.1.10",
-        "workbox-webpack-plugin": "^3.6.3"
+        "workbox-webpack-plugin": "^4.3.0"
     },
     "main": "index.html",
     "keywords": [

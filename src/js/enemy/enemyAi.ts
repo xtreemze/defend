@@ -5,7 +5,7 @@ import { EnemySphere } from "./enemyBorn";
 
 function vector(enemy: EnemySphere, direction: string = "", level: number) {
 	if (enemy.physicsImpostor !== null) {
-		const speed = enemyGlobals.speed * level;
+		const speed = enemyGlobals.speed * level * level;
 		const radius = (level * level + 5) / 2;
 
 		switch (direction) {

@@ -7,16 +7,17 @@ import {
 } from "babylonjs";
 import { createTexture } from "./flare";
 import { projectileGlobals, renderGlobals } from "../main/globalVariables";
-function explosion(scene: Scene, projectilePosition: Vector3) {
+
+function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 	if (projectileGlobals.particleLimit > projectileGlobals.activeParticles) {
 		projectileGlobals.activeParticles += 1;
 
 		const node = projectilePosition;
 		let particleSystem: any;
-		if (renderGlobals.gpuParticles) {
+		if (!renderGlobals.gpuParticles) {
 			particleSystem = new ParticleSystem(
 				"particles" + projectileGlobals.particleIndex,
-				30,
+				12,
 				scene
 			) as ParticleSystem;
 
@@ -25,21 +26,22 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 
 			particleSystem = new GPUParticleSystem(
 				"particles" + projectileGlobals.particleIndex,
-				{ capacity: 20 },
+				{ capacity: 12 },
 				scene
 			) as GPUParticleSystem;
 		}
 
-
 		particleSystem.renderingGroupId = 0;
-		particleSystem.emitRate = 170;
+		particleSystem.emitRate = 200;
 		particleSystem.updateSpeed = 0.008;
-		particleSystem.minEmitPower = 7;
-		particleSystem.maxEmitPower = 15;
-		particleSystem.minLifeTime = 0.3;
-		particleSystem.maxLifeTime = 0.38;
-		particleSystem.minSize = 0.7;
-		particleSystem.maxSize = 1.9;
+		particleSystem.minEmitPower = 4;
+		// @ts-ignore
+		particleSystem.maxEmitPower = 7 * level;
+		particleSystem.minLifeTime = 0.24;
+		particleSystem.maxLifeTime = 0.34;
+		particleSystem.minSize = 0.5;
+		// @ts-ignore
+		particleSystem.maxSize = level;
 		particleSystem.blendMode = ParticleSystem.BLENDMODE_ADD;
 		particleSystem.gravity = new Vector3(0, -700, 0);
 		particleSystem.color1 = new Color4(1, 0.5, 0, 1);
@@ -48,8 +50,10 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 		particleSystem.id = "projectileGlobals.particleIndex";
 		particleSystem.name = "particles" + projectileGlobals.particleIndex;
 		particleSystem.particleTexture = createTexture(scene);
-		particleSystem.direction1 = new Vector3(-5, 6, 5);
-		particleSystem.direction2 = new Vector3(5, 5, -5);
+		// @ts-ignore
+		particleSystem.direction1 = new Vector3(-2.5 * level, 3 * level * level, 2.5 * level);
+		// @ts-ignore
+		particleSystem.direction2 = new Vector3(2.5 * level, 2 * level * level, -2.5 * level);
 		particleSystem.minEmitBox = new Vector3(-2, -6, -2);
 		particleSystem.maxEmitBox = new Vector3(2, 6, 2);
 
@@ -60,7 +64,8 @@ function explosion(scene: Scene, projectilePosition: Vector3) {
 		particleSystem.start();
 		setTimeout(() => {
 			particleSystem.stop();
-		}, 100);
+			// @ts-ignore
+		}, 92 * level);
 
 		setTimeout(() => {
 			particleSystem.dispose();

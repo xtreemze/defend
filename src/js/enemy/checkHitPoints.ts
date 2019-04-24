@@ -12,7 +12,7 @@ function checkHitPoints(
 ) {
 	if (
 		sphereMesh.physicsImpostor !== null &&
-    sphereMesh.hitPoints <= enemyGlobals.deadHitPoints || sphereMesh.position.y < -10 && sphereMesh.physicsImpostor !== null
+    sphereMesh.hitPoints <= enemyGlobals.deadHitPoints || sphereMesh.position.y < -12 * level && sphereMesh.physicsImpostor !== null
 	) {
 
 		const enemyPosition = sphereMesh.position.clone() as Vector3;
@@ -30,7 +30,7 @@ function checkHitPoints(
 
 		destroyEnemy(sphereMesh, scene, level);
 	} else {
-		sphereMesh.hitPoints -= enemyGlobals.decayRate * level;
+		sphereMesh.hitPoints -= enemyGlobals.decayRate;
 		const scaleRate =
       1 / ((level * enemyGlobals.baseHitPoints) / sphereMesh.hitPoints);
 

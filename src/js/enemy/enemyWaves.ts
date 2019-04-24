@@ -1,4 +1,3 @@
-// import { rampLight } from "./rampLight";
 
 import { Scene } from "babylonjs";
 import { newWave } from "../main/sound";
@@ -34,26 +33,19 @@ const newEnemyWave = (scene: Scene) => {
 };
 
 const enemyGeneration = (deltaTime: number, scene: Scene): void => {
+	const now = Date.now()
 	if (
-		Date.now() - deltaTime > enemyGlobals.generationRate &&
+		now - deltaTime > enemyGlobals.generationRate &&
 		enemyGlobals.allEnemies.length <= enemyGlobals.limit &&
 		economyGlobals.restartMessage === false &&
 		enemyGlobals.currentWave < waves.length
 	) {
-		deltaTime = Date.now() - enemyGlobals.generationRate;
+		deltaTime = now - enemyGlobals.generationRate;
 
 			newWave(); // sound for new wave
 
-		// Color change on new wave disabled for now
 
 
-		// rampLight(scene, mapGlobals.skyLight, 1.3, mapGlobals.lightIntensity);
-		// rampLight(
-		//   scene,
-		//   mapGlobals.upLight,
-		//   1.3 * 2,
-		//   mapGlobals.lightIntensity * 2
-		// );
 
 		// Generate enemies for the wave
 

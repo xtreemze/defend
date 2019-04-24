@@ -49,7 +49,7 @@ class Game {
 
 	createScene(): void {
 		this.scene = new Scene(this.engine);
-		this.scene.autoClear = false; // Color buffer
+		// this.scene.autoClear = false; // Color buffer
 		// this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
 		if (mapGlobals.optimizerOn) {
 			// const originalGenerationRate = enemyGlobals.generationRate;
@@ -62,8 +62,8 @@ class Game {
 				function () {
 					// On success
 					mapGlobals.soundOn = true;
-					enemyGlobals.fragments = 1;
-					projectileGlobals.particleLimit = 3;
+					// enemyGlobals.fragments = 1;
+					// projectileGlobals.particleLimit = 3;
 				},
 				function () {
 					// FPS target not reached
@@ -83,7 +83,7 @@ class Game {
 		// const gravity = -9.81 * 2;
 		this.scene.enablePhysics(new Vector3(0, gravity, 0), new CannonJSPlugin());
 
-		// this.scene.workerCollisions = true;
+		this.scene.workerCollisions = true;
 
 		generateMaterials(this.scene);
 		map(this.scene);

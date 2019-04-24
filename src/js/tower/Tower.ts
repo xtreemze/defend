@@ -112,31 +112,32 @@ function destroyTower(
 	flashMesh?: Mesh
 ): void {
 	Tags.RemoveTagsFrom(baseMesh, "towerBase");
-	baseMesh.setEnabled(false);
+	// baseMesh.setEnabled(false);
 
 	towerGlobals.allPositions = towerBasePositions(scene);
 	baseMesh.onDisposeObservable.clear();
 	towerGlobals.allTowers = [];
 	if (pillarMesh && turretMesh && flashMesh) {
-		pillarMesh.setEnabled(false);
-		turretMesh.setEnabled(false);
-		flashMesh.setEnabled(false);
+		if (baseMesh.physicsImpostor !== null) {
+			baseMesh.physicsImpostor.dispose();
+		}
 		if (towerGlobals.raysOn) {
 			turretMesh.turretRayHelper.dispose();
 		}
-		pillarMesh.dispose();
-
-		delete turretMesh.ray;
-		turretMesh.dispose();
-		flashMesh.dispose();
 		if (pillarMesh.physicsImpostor !== null) {
 			pillarMesh.physicsImpostor.dispose();
 		}
+		// pillarMesh.setEnabled(false);
+		pillarMesh.dispose();
+
+		// turretMesh.setEnabled(false);
+		delete turretMesh.ray;
+		turretMesh.dispose();
+
+		// flashMesh.setEnabled(false);
+		flashMesh.dispose();
 	}
 
-	if (baseMesh.physicsImpostor !== null) {
-		baseMesh.physicsImpostor.dispose();
-	}
 
 	towerGlobals.allTowers = scene.getMeshesByTags("tower" && "towerBase");
 }

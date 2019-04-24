@@ -15,13 +15,13 @@ import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
 
 interface LiveProjectile extends Mesh {
-  hitPoints: number;
+	hitPoints: number;
 }
 
 interface LiveProjectileInstance extends InstancedMesh {
-  hitPoints: number;
+	hitPoints: number;
 }
-export function startLife(
+export function startLife (
 	scene: Scene,
 	originMesh: TowerTurret,
 	level: number = 1 | 2 | 3,
@@ -30,10 +30,10 @@ export function startLife(
 	physicsEngine: PhysicsEngine,
 	clonedRotation: Vector3
 ) {
-//   projectile.rotation = clonedRotation;
-	const forwardLocal = new Vector3(0, 0, 5);
+	const forwardLocal = new Vector3(0, 0, 2 * level);
 	const space = originMesh.getDirection(forwardLocal) as Vector3;
 	projectile.position = originMesh.position.subtract(space) as Vector3;
+	projectile.rotation = clonedRotation;
 	// projectile.position = originMesh.position as Vector3;
 
 	// For Physics
@@ -42,24 +42,22 @@ export function startLife(
 		PhysicsImpostor.BoxImpostor,
 		{
 			mass: projectileGlobals.mass * (level * level),
-			restitution: 0,
-			friction: 0
+			restitution: 0.3,
+			friction: 0.4
 		},
 		scene
 	) as PhysicsImpostor;
 
-	projectile.rotation = clonedRotation;
-	setTimeout(() => {
+	// projectile.rotation = clonedRotation;
 
-		impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
-	}, 60);
 
 	mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 
 	const deltaTime = Date.now();
 
 	const projectileExpires = () => {
-		if (Date.now() - deltaTime > projectileGlobals.lifeTime) {
+		const now = Date.now()
+		if (now - deltaTime > projectileGlobals.lifeTime) {
 			projectile.unregisterAfterWorldMatrixUpdate(projectileExpires);
 			destroyProjectile(projectile, physicsEngine);
 		}
@@ -67,9 +65,11 @@ export function startLife(
 
 	projectile.registerAfterWorldMatrixUpdate(projectileExpires);
 
-	projectile.setEnabled(true);
 	hitEffect(projectile, nearestEnemy); // Detects collissions with enemies and applies hitpoint effects
-	destroyOnCollide(scene, projectile, physicsEngine, projectileExpires); // Detects collissions with enemies
+	destroyOnCollide(scene, projectile, physicsEngine, projectileExpires, level); // Detects collissions with enemies
+	projectile.setEnabled(true);
+	impulsePhys(originMesh, projectile, level); // Moves the projectile with physics
+
 }
 
 export { LiveProjectile, LiveProjectileInstance };

@@ -18,10 +18,10 @@ const mapGlobals = {
 	impostorLimit: 80, // keep low for mobile device limits
 	lightIntensity: 0.70,
 	simultaneousSounds: 0, // sounds currently playing for projectiles
-	soundDelay: 80,
+	soundDelay: 60,
 	soundLimit: 1, // simultaneous sound limit
 	projectileSounds: 0, // sounds currently playing for projectiles
-	projectileSoundLimit: 2, // simultaneous sound limit for projectiles
+	projectileSoundLimit: 1, // simultaneous sound limit for projectiles
 	ambientColor: new Color3(0.22, 0.26, 0.2) as Color3,
 	sceneAmbient: new Color3(0.01, 0.0, 0.26) as Color3,
 	soundOn: false,
@@ -34,13 +34,13 @@ const mapGlobals = {
 const projectileGlobals = {
 	projectileMeshL2: {} as any | LiveProjectileInstance,
 	projectileMeshL3: {} as any | LiveProjectileInstance,
-	lifeTime: 1300, // milliseconds
-	speed: 4300,
-	mass: 20,
-	baseHitPoints: 430,
+	lifeTime: 1100, // milliseconds
+	speed: 3320,
+	mass: 30,
+	baseHitPoints: 220,
 	livingColor: new Color3(1, 0.5, 0.2) as Color3,
 	activeParticles: 0,
-	particleLimit: 3,
+	particleLimit: 1,
 	particleIndex: 0
 };
 
@@ -49,8 +49,8 @@ const towerGlobals = {
 	turretMeshL3: {} as Mesh,
 	towerBaseMesh: {} as Mesh,
 	indicator: {} as Mesh,
-	lookAheadRatio: 1000,
-	rateOfFire: 190, // milliseconds between each shot,
+	lookAheadRatio: 1600,
+	rateOfFire: 26, // milliseconds between each shot,
 	height: 3,
 	mass: 0,
 	restitution: 0,
@@ -60,7 +60,7 @@ const towerGlobals = {
 	occupiedSpaces: [] as any[],
 	specularColor: new Color3(0.3, 0.071, 0.1),
 	livingColor: new Color3(0.1, 0.64, 0.4),
-	range: 60,
+	range: 55,
 	shoot: true,
 	raysOn: false,
 	lifeTime: 23000,
@@ -78,17 +78,17 @@ const enemyGlobals = {
 	limit: 0, // wait for this enemy count before next wave
 	originHeight: 40,
 	generationRate: 8000, // milliseconds
-	decisionRate: 180, // milliseconds
-	speed: 35800,
-	mass: 5100,
-	restitution: 0.98,
+	decisionRate: 100, // milliseconds
+	speed: 7200,
+	mass: 5400,
+	restitution: 0.5,
 	jumpForce: 80,
-	friction: 0.7,
+	friction: 0.8,
 	decayRate: 50, // hitpoints per decision
 	initialDecayRate: 50, // hitpoints per decision
 	baseHitPoints: 22000,
 	deadHitPoints: 0,
-	fragments: 2,
+	fragments: 1,
 	allEnemies: [] as Mesh[],
 	occupiedSpaces: [] as any[],
 	boundaryLimit: 2.5, // meters
@@ -105,7 +105,7 @@ const economyGlobals = {
 	startTime: Date.now(),
 	bestTime: Date.now(),
 	rampUpValue: 800,
-	energyRecoveryRatio: 0.30,
+	energyRecoveryRatio: 0.14,
 	initialBalance: 30000,
 	maxBalance: 30000,
 	currentBalance: 1,
@@ -137,10 +137,10 @@ const economyGlobals = {
 };
 
 const renderGlobals = {
-	gpuParticles: false,
+	gpuParticles: true,
 	pipelineOn: true,
 	glow: true,
-	glowIntensity: 2.8,
+	glowIntensity: 2.7,
 	sharpenning: false,
 	antialiasing: false,
 	depthOfField: false,
