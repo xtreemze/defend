@@ -137,7 +137,7 @@ const economyGlobals = {
 };
 
 const renderGlobals = {
-	gpuParticles: false,
+	gpuParticles: true,
 	pipelineOn: true,
 	glow: true,
 	glowIntensity: 2.7,
