@@ -14,7 +14,7 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 
 		const node = projectilePosition;
 		let particleSystem: ParticleSystem | GPUParticleSystem;
-		if (renderGlobals.gpuParticles === false) {
+		if (GPUParticleSystem.IsSupported === false) {
 			particleSystem = new ParticleSystem(
 				"particles" + projectileGlobals.particleIndex,
 				12,
@@ -26,7 +26,7 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 
 			particleSystem = new GPUParticleSystem(
 				"particles" + projectileGlobals.particleIndex,
-				{ capacity: 12 },
+				{ capacity: 16 },
 				scene
 			) as GPUParticleSystem;
 		}
@@ -61,16 +61,19 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 
 		projectileGlobals.particleIndex += 1;
 
-		particleSystem.start();
+		particleSystem.disposeOnStop = true;
 		setTimeout(() => {
 			particleSystem.stop();
 			// @ts-ignore
-		}, 80 * level);
+		},  80 * level);
 
 		setTimeout(() => {
+			particleSystem.reset()
 			particleSystem.dispose(false);
 			projectileGlobals.activeParticles -= 1;
 		}, 500);
+
+		particleSystem.start();
 	}
 }
 export { explosion };
