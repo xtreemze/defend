@@ -37,9 +37,9 @@ class Game {
 			this.canvas,
 			false,
 			{
-				preserveDrawingBuffer: true,
-				stencil: true,
-				doNotHandleContextLost: true
+				// preserveDrawingBuffer: true,
+				// stencil: true,
+				// doNotHandleContextLost: true
 			},
 			false
 		);
@@ -62,14 +62,14 @@ class Game {
 				function () {
 					// On success
 					mapGlobals.soundOn = true;
-					// enemyGlobals.fragments = 1;
-					// projectileGlobals.particleLimit = 3;
+					enemyGlobals.fragments = 1;
+					projectileGlobals.particleLimit = 3;
 				},
 				function () {
 					// FPS target not reached
 					mapGlobals.soundOn = false;
-					// enemyGlobals.fragments = 0;
-					// projectileGlobals.particleLimit = 1;
+					enemyGlobals.fragments = 0;
+					projectileGlobals.particleLimit = 1;
 				}
 			);
 		}

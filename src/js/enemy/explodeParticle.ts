@@ -13,8 +13,8 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 		projectileGlobals.activeParticles += 1;
 
 		const node = projectilePosition;
-		let particleSystem: any;
-		if (!renderGlobals.gpuParticles) {
+		let particleSystem: ParticleSystem | GPUParticleSystem;
+		if (renderGlobals.gpuParticles === false) {
 			particleSystem = new ParticleSystem(
 				"particles" + projectileGlobals.particleIndex,
 				12,
@@ -47,7 +47,7 @@ function explosion (scene: Scene, projectilePosition: Vector3, level: Number) {
 		particleSystem.color1 = new Color4(1, 0.5, 0, 1);
 		particleSystem.color2 = new Color4(0.75, 0.4, 0.1, 1);
 		particleSystem.colorDead = new Color4(0.1, 0.08, 0.3, 1);
-		particleSystem.id = "projectileGlobals.particleIndex";
+		particleSystem.id = 'projectileGlobals.particleIndex'
 		particleSystem.name = "particles" + projectileGlobals.particleIndex;
 		particleSystem.particleTexture = createTexture(scene);
 		// @ts-ignore
