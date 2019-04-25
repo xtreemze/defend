@@ -86,7 +86,7 @@ const enemyGlobals = {
 	friction: 0.8,
 	decayRate: 20, // hitpoints per decision
 	initialDecayRate: 20, // hitpoints per decision
-	baseHitPoints: 22000,
+	baseHitPoints: 16000,
 	deadHitPoints: 0,
 	fragments: 1,
 	allEnemies: [] as Mesh[],
