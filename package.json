@@ -7,7 +7,7 @@
         "archive": "node ./node/archive.js",
         "manifest": "node ./node/generateManifest.js",
         "queryVersion": "node ./node/queryVersion.js",
-        "pwa": "npx pwabuilder https://xtreemze.github.io/defend/ -d ./dist -f w3c -i ./release/screenshot1.png -p web",
+        "pwa": "npx pwabuilder https://xtreemze.github.io/defend/ -d ./release/pwa -f w3c -i ./release/screenshot1.png",
         "pwaWeb": "npx pwabuilder -m ./dist/site.webmanifest -d ./dist -f w3c -i ./release/screenshot1.png -p web",
         "lint": "eslint ./src/js/** --quiet --fix",
         "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
