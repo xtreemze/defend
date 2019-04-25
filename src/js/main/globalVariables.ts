@@ -63,7 +63,7 @@ const towerGlobals = {
 	range: 45,
 	shoot: true,
 	raysOn: false,
-	lifeTime: 24000,
+	lifeTime: 25000,
 	index: 0,
 	disposeTime: 4000, // chance to keep towers before dispose
 	allPositions: [] as Position2D[]
@@ -86,7 +86,7 @@ const enemyGlobals = {
 	friction: 0.8,
 	decayRate: 20, // hitpoints per decision
 	initialDecayRate: 20, // hitpoints per decision
-	baseHitPoints: 16000,
+	baseHitPoints: 15000,
 	deadHitPoints: 0,
 	fragments: 1,
 	allEnemies: [] as Mesh[],
