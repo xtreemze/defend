@@ -32,7 +32,7 @@ function checkHitPoints(
 	} else {
 		sphereMesh.hitPoints -= enemyGlobals.decayRate;
 		const scaleRate =
-      1 / ((level * enemyGlobals.baseHitPoints) / sphereMesh.hitPoints);
+      1 / ((level * level * enemyGlobals.baseHitPoints) / (sphereMesh.hitPoints));
 
 		hitPointsMeter.scaling = new BABYLON.Vector3(
 			scaleRate,

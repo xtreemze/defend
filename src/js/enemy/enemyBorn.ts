@@ -15,7 +15,7 @@ interface EnemySphere extends Mesh {
 	hitPoints: number;
 }
 
-function enemyBorn(
+function enemyBorn (
 	scene: Scene,
 	position: Position2D,
 	sphereMesh: EnemySphere,
@@ -24,7 +24,7 @@ function enemyBorn(
 ) {
 	const enemyMass = (enemyGlobals.mass * level * level) as number;
 
-	sphereMesh.hitPoints = level * enemyGlobals.baseHitPoints + level * 440;
+	sphereMesh.hitPoints = level * level * enemyGlobals.baseHitPoints + level * 440;
 
 	const hitPointsMeter = MeshBuilder.CreateIcoSphere(
 		name + "hitPointMeter",
@@ -47,7 +47,7 @@ function enemyBorn(
 		PhysicsImpostor.SphereImpostor,
 		{
 			mass: enemyMass,
-			restitution: enemyGlobals.restitution,
+			restitution: enemyGlobals.restitution - (level * level) / 10,
 			friction: enemyGlobals.friction
 		},
 		scene

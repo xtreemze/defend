@@ -93,23 +93,20 @@ function fragment(
 		fragment.isPickable = false;
 		fragment.convertToUnIndexedMesh();
 
-		// let deltaTime = Date.now();
 		const disposeFragment = () => {
-			// if (Date.now() - deltaTime > projectileGlobals.lifeTime * 2) {
 			setTimeout(() => {
 
 				fragment.unregisterAfterRender(disposeFragment);
 				fragment.setEnabled(false);
 
-				// setTimeout(() => {
+
 
 					if (fragment.physicsImpostor !== null) {
 						fragment.physicsImpostor.dispose();
 					}
 					fragment.dispose();
-				// }, 10);
-				// }
-			}, projectileGlobals.lifeTime * 6);
+
+			}, projectileGlobals.lifeTime * 3);
 		};
 		fragment.registerAfterRender(disposeFragment);
 	}

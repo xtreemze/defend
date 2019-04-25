@@ -83,7 +83,7 @@ class Game {
 		// const gravity = -9.81 * 2;
 		this.scene.enablePhysics(new Vector3(0, gravity, 0), new CannonJSPlugin());
 
-		this.scene.workerCollisions = true;
+		this.scene.workerCollisions = false;
 
 		generateMaterials(this.scene);
 		map(this.scene);

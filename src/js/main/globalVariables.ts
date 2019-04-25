@@ -13,7 +13,7 @@ const mapGlobals = {
 	optimizerOn: true,
 	diagnosticsOn: false,
 	demoSphere: false,
-	size: 200, // map radius
+	size: 260, // map radius
 	allImpostors: [] as PhysicsImpostor[],
 	impostorLimit: 80, // keep low for mobile device limits
 	lightIntensity: 0.70,
@@ -49,23 +49,23 @@ const towerGlobals = {
 	turretMeshL3: {} as Mesh,
 	towerBaseMesh: {} as Mesh,
 	indicator: {} as Mesh,
-	lookAheadRatio: 1700,
+	lookAheadRatio: 1600,
 	rateOfFire: 26, // milliseconds between each shot,
 	height: 3,
 	mass: 0,
 	restitution: 0,
 	baseHitPoints: 10000,
-	baseCost: 3400,
+	baseCost: 3000,
 	allTowers: [] as Mesh[],
 	occupiedSpaces: [] as any[],
 	specularColor: new Color3(0.3, 0.071, 0.1),
 	livingColor: new Color3(0.1, 0.64, 0.4),
-	range: 55,
+	range: 45,
 	shoot: true,
 	raysOn: false,
-	lifeTime: 23000,
+	lifeTime: 24000,
 	index: 0,
-	disposeTime: 5000, // chance to keep towers before dispose
+	disposeTime: 4000, // chance to keep towers before dispose
 	allPositions: [] as Position2D[]
 };
 
@@ -78,14 +78,14 @@ const enemyGlobals = {
 	limit: 0, // wait for this enemy count before next wave
 	originHeight: 40,
 	generationRate: 8000, // milliseconds
-	decisionRate: 100, // milliseconds
-	speed: 7200,
+	decisionRate: 110, // milliseconds
+	speed: 7400,
 	mass: 5400,
-	restitution: 0.2,
+	restitution: 0.08,
 	jumpForce: 80,
 	friction: 0.8,
-	decayRate: 25, // hitpoints per decision
-	initialDecayRate: 25, // hitpoints per decision
+	decayRate: 20, // hitpoints per decision
+	initialDecayRate: 20, // hitpoints per decision
 	baseHitPoints: 22000,
 	deadHitPoints: 0,
 	fragments: 1,
