@@ -1,0 +1,10 @@
+{
+    "generationTool": "pwabuilder",
+    "generationToolVersion": "2.0.3-rc.0",
+    "platformId": "cordova",
+    "platformPackage": "pwabuilder-cordova",
+    "platformVersion": "2.0.0-rc.3",
+    "generatedFrom": "CLI",
+    "generationDate": "2019-04-25 10:34:38 Z",
+    "generatedURL": "https://xtreemze.github.io/defend/site.webmanifest"
+}

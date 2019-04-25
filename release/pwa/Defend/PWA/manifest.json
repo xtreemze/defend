@@ -1,0 +1,132 @@
+{
+    "name": "Defend",
+    "short_name": "Defend",
+    "start_url": "https://xtreemze.github.io/defend/",
+    "display": "fullscreen",
+    "version": "1.0.2",
+    "lang": "en_US",
+    "description": "In “Defend” you’re placed in the center of a stronghold contained within a 3D world. You will be immediately faced with a constant onslaught of attacks from aggressive spherical objects who seek to destroy your energy reserves as this is the only source of life in this world. Repel the attacks and maintain your stronghold with a sustainable level of resources.",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/images/android-chrome-36x36.png",
+            "sizes": "36x36",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-48x48.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-256x256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/Square44x44Logo.scale-100.png.png",
+            "sizes": "44x44",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/SplashScreen.scale-200.png.png",
+            "sizes": "1240x600",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/Square150x150Logo.scale-200.png.png",
+            "sizes": "300x300",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/Square150x150Logo.scale-100.png.png",
+            "sizes": "150x150",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/Square44x44Logo.scale-200.png.png",
+            "sizes": "88x88",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/Square44x44Logo.targetsize-24_altform-unplated.png.png",
+            "sizes": "24x24",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/StoreLogo.png.png",
+            "sizes": "50x50",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/windows10/Wide310x150Logo.scale-200.png.png",
+            "sizes": "620x300",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/ios/ios-appicon-1024-1024.png",
+            "sizes": "1024x1024",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/ios/ios-appicon-180-180.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/ios/ios-appicon-152-152.png",
+            "sizes": "152x152",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/ios/ios-appicon-120-120.png",
+            "sizes": "120x120",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/ios/ios-appicon-76-76.png",
+            "sizes": "76x76",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#160230",
+    "background_color": "#160230",
+    "developer": {
+        "name": "Carlos Velasco @xtreemze",
+        "url": "https://github.com/xtreemze/"
+    },
+    "default_locale": "en",
+    "chrome": {
+        "navigation": true
+    }
+}
