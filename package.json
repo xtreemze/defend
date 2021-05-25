@@ -52,7 +52,7 @@
         "babel-preset-env": "^1.7.0",
         "babylonjs": "^3.3.0",
         "babylonjs-inspector": "^3.3.0",
-        "browserslist": "^4.3.6",
+        "browserslist": "^4.16.5",
         "cannon": "^0.6.2",
         "cli-real-favicon": "0.0.7",
         "css-loader": "^2.0.1",
