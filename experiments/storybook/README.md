@@ -57,7 +57,23 @@ The initial capability story intentionally creates no persistent background work
 
 ## Root-source imports
 
-Do not broadly expose the repository filesystem through Vite. When a story needs a pure root module, add the narrowest explicit Vite allow-list/alias required and document it in the PR. Modules coupled to the historical Webpack runtime should instead receive a dedicated adapter or standalone fixture.
+The lab exposes one explicit alias, `@defend/*`, mapped only to the repository's `src/js/` tree. Use it for renderer-independent modules that are already safe foundations on `master`, for example:
+
+```ts
+import { hexToWorld } from "@defend/gameplay/hexGrid";
+import { terrainImpactProfile } from "@defend/gameplay/terrainDeformation";
+import { spatialRenderHints } from "@defend/audio/spatialAudio";
+```
+
+The Vite filesystem allow-list is limited to the repository root so those explicit imports can resolve; do not turn it into an unrestricted filesystem allow-list. A story importing legacy runtime-coupled modules should receive a dedicated adapter or standalone fixture rather than pulling the historical application graph into Storybook.
+
+The current deterministic domain playgrounds deliberately consume the merged source contracts directly:
+
+- `Foundations/Topology/Hex Grid` inspects canonical cells, rings, protected core cells, and six-sector classification;
+- `Foundations/Physics/Terrain Deformation` visualizes bounded impact profiles and recovery;
+- `Audio/Spatial/Voice Budget` visualizes moving emitters, Doppler/priority hints, renderer tiers, and virtualization without creating an AudioContext.
+
+These stories certify presentation and deterministic fixture behavior only after the local Storybook package itself passes install/typecheck/build/browser tests. They do not promote the underlying calibration values to production gameplay/audio constants.
 
 ## Future workspace integration
 
