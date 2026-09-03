@@ -12,6 +12,7 @@ export default defineConfig({
       input: {
         main: "index.html",
         mothership: "mothership.html",
+        navigation: "navigation.html",
       },
     },
   },
