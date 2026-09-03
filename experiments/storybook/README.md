@@ -73,6 +73,7 @@ The current deterministic domain playgrounds deliberately consume the merged sou
 - `Foundations/Topology/Hex Grid` inspects canonical cells, rings, protected core cells, and six-sector classification;
 - `Foundations/Physics/Terrain Deformation` visualizes bounded impact profiles and recovery;
 - `Foundations/Defense/Tower Dynamics` compares acceleration-limited T2/T3 acquisition and the dry-tower geothermal retry lifecycle without starting a render loop;
+- `Foundations/Defense/Tower Deployment` scrubs the staggered T1/T2/T3 base/drill/pillar/turret/calibration timeline and verifies tier-distinct phase progression;
 - `Audio/Spatial/Voice Budget` visualizes moving emitters, Doppler/priority hints, renderer tiers, and virtualization without creating an AudioContext.
 
 These stories certify presentation and deterministic fixture behavior only after the local Storybook package itself passes install/typecheck/build/browser tests. They do not promote the underlying calibration values to production gameplay/audio constants.
