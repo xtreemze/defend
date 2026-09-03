@@ -35,15 +35,15 @@ function positive(value: number): number {
 }
 
 /**
- * Kinetic energy normal to the terrain. This is intentionally the same
- * physically meaningful scalar used by the acoustic work so terrain and sound
- * can react to one collision description without becoming coupled systems.
+ * Kinetic energy normal to the terrain. normalSpeed is treated as a magnitude
+ * so callers may pass either a signed contact-normal velocity or an absolute
+ * speed without changing the result.
  */
 export function terrainImpactEnergy(
 	effectiveMass: number,
 	normalSpeed: number
 ): number {
-	return 0.5 * positive(effectiveMass) * Math.pow(positive(normalSpeed), 2);
+	return 0.5 * positive(effectiveMass) * Math.pow(Math.abs(normalSpeed), 2);
 }
 
 /**
@@ -125,6 +125,31 @@ export function accumulateDepression(
 	const addition = positive(addedDepth);
 	const diminishingAddition = remaining * (1 - Math.exp(-addition / limit));
 	return clamp(current + diminishingAddition, 0, limit);
+}
+
+/**
+ * Limit the depth difference between two neighboring terrain samples. Applying
+ * this against every neighbor prevents a narrow pit or ridge from exceeding the
+ * configured rise/run slope while retaining a separate absolute depth cap.
+ */
+export function limitDepthBySlope(
+	currentDepth: number,
+	neighborDepth: number,
+	sampleSpacing: number,
+	maxSlope: number,
+	maxDepth: number
+): number {
+	const spacing = positive(sampleSpacing);
+	const depthLimit = positive(maxDepth);
+	if (spacing === 0 || depthLimit === 0) {
+		return clamp(currentDepth, 0, depthLimit);
+	}
+
+	const neighbor = clamp(neighborDepth, 0, depthLimit);
+	const maximumDifference = spacing * positive(maxSlope);
+	const minimumAllowed = Math.max(0, neighbor - maximumDifference);
+	const maximumAllowed = Math.min(depthLimit, neighbor + maximumDifference);
+	return clamp(currentDepth, minimumAllowed, maximumAllowed);
 }
 
 /**
