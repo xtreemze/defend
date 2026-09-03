@@ -18,6 +18,17 @@ export interface AcousticMaterial {
 	modeRatios: number[];
 }
 
+interface AcousticMaterialBlend {
+	density: number;
+	stiffness: number;
+	damping: number;
+	roughness: number;
+	brightness: number;
+	noise: number;
+	saturation: number;
+	modeRatios: number[];
+}
+
 export interface AcousticVector3 {
 	x: number;
 	y: number;
@@ -27,6 +38,7 @@ export interface AcousticVector3 {
 export interface AcousticContact {
 	position: AcousticVector3;
 	normal: AcousticVector3;
+	/** Signed or absolute relative speed along the contact normal. */
 	normalSpeed: number;
 	tangentialSpeed: number;
 	angularSpeed: number;
@@ -50,6 +62,8 @@ export interface AcousticExcitation {
 	position: AcousticVector3;
 	impactEnergy: number;
 	normalizedEnergy: number;
+	damageEnergy: number;
+	normalizedDamageEnergy: number;
 	fundamentalHz: number;
 	decaySeconds: number;
 	brightness: number;
@@ -129,36 +143,83 @@ export const acousticMaterials: { [key: string]: AcousticMaterial } = {
 	}
 };
 
+const MAX_ACOUSTIC_SCALAR = 1e100;
+
+function finiteScalar(value: number, fallback = 0): number {
+	if (value !== value) {
+		return fallback;
+	}
+	if (value > MAX_ACOUSTIC_SCALAR) {
+		return MAX_ACOUSTIC_SCALAR;
+	}
+	if (value < -MAX_ACOUSTIC_SCALAR) {
+		return -MAX_ACOUSTIC_SCALAR;
+	}
+	return value;
+}
+
+function positive(value: number): number {
+	return Math.max(0, finiteScalar(value));
+}
+
 function clamp01(value: number): number {
-	return Math.max(0, Math.min(1, value));
+	return Math.max(0, Math.min(1, finiteScalar(value)));
 }
 
 function average(a: number, b: number): number {
-	return (a + b) / 2;
+	return finiteScalar((finiteScalar(a) + finiteScalar(b)) / 2);
 }
 
-function materialPair(
-	materialA: AcousticMaterialId,
-	materialB: AcousticMaterialId
-): AcousticMaterial {
-	const a = acousticMaterials[materialA];
-	const b = acousticMaterials[materialB];
+function finitePosition(position: AcousticVector3): AcousticVector3 {
 	return {
-		id: a.id,
-		density: average(a.density, b.density),
-		stiffness: average(a.stiffness, b.stiffness),
-		damping: average(a.damping, b.damping),
-		roughness: average(a.roughness, b.roughness),
-		brightness: average(a.brightness, b.brightness),
-		noise: average(a.noise, b.noise),
-		saturation: average(a.saturation, b.saturation),
-		modeRatios: a.modeRatios.concat(b.modeRatios)
+		x: finiteScalar(position.x),
+		y: finiteScalar(position.y),
+		z: finiteScalar(position.z)
 	};
 }
 
+/**
+ * Blend two semantic materials without inventing a third material identity.
+ *
+ * Material A/B ordering is physics-engine bookkeeping and must not change the
+ * resulting timbre. The pair is therefore canonicalized by material id before
+ * mode lists are combined. Equal-material contacts keep one mode list instead
+ * of duplicating identical resonators.
+ */
+function materialPair(
+	materialA: AcousticMaterialId,
+	materialB: AcousticMaterialId
+): AcousticMaterialBlend {
+	const firstId = materialA <= materialB ? materialA : materialB;
+	const secondId = materialA <= materialB ? materialB : materialA;
+	const first = acousticMaterials[firstId];
+	const second = acousticMaterials[secondId];
+	const modeRatios =
+		firstId === secondId
+			? first.modeRatios.slice()
+			: first.modeRatios.concat(second.modeRatios);
+
+	return {
+		density: average(first.density, second.density),
+		stiffness: average(first.stiffness, second.stiffness),
+		damping: average(first.damping, second.damping),
+		roughness: average(first.roughness, second.roughness),
+		brightness: average(first.brightness, second.brightness),
+		noise: average(first.noise, second.noise),
+		saturation: average(first.saturation, second.saturation),
+		modeRatios
+	};
+}
+
+/**
+ * Kinetic energy normal to the contact. `normalSpeed` may be signed or already
+ * absolute; using its magnitude keeps this scalar aligned with #59 terrain
+ * impact energy so both systems can consume one physical collision description.
+ */
 export function impactEnergy(contact: AcousticContact): number {
-	return 0.5 * Math.max(0, contact.effectiveMass) *
-		Math.pow(Math.max(0, contact.normalSpeed), 2);
+	const mass = positive(contact.effectiveMass);
+	const speed = Math.abs(finiteScalar(contact.normalSpeed));
+	return positive(finiteScalar(0.5 * mass * Math.pow(speed, 2)));
 }
 
 export function deriveAcousticExcitation(
@@ -167,40 +228,66 @@ export function deriveAcousticExcitation(
 ): AcousticExcitation {
 	const pair = materialPair(contact.materialA, contact.materialB);
 	const energy = impactEnergy(contact);
-	const normalizedEnergy = clamp01(
-		energy / Math.max(calibration.referenceImpactEnergy, 0.000001)
+	const damageEnergy = positive(contact.damageEnergy);
+	const referenceImpactEnergy = Math.max(
+		positive(calibration.referenceImpactEnergy),
+		0.000001
 	);
+	const referenceSpeed = Math.max(
+		positive(calibration.referenceSpeed),
+		0.000001
+	);
+	const referenceBodyScale = Math.max(
+		positive(calibration.referenceBodyScale),
+		0.000001
+	);
+	const normalizedEnergy = clamp01(energy / referenceImpactEnergy);
+	const normalizedDamageEnergy = clamp01(damageEnergy / referenceImpactEnergy);
 	const speedRatio = clamp01(
-		contact.normalSpeed / Math.max(calibration.referenceSpeed, 0.000001)
+		Math.abs(finiteScalar(contact.normalSpeed)) / referenceSpeed
 	);
 	const scaleRatio = Math.max(
-		contact.bodyScale / Math.max(calibration.referenceBodyScale, 0.000001),
+		positive(contact.bodyScale) / referenceBodyScale,
 		0.1
 	);
 	const materialPitch = Math.sqrt(
 		Math.max(pair.stiffness, 0.000001) / Math.max(pair.density, 0.000001)
 	);
 	const tangentialRatio = clamp01(
-		contact.tangentialSpeed / Math.max(calibration.referenceSpeed, 0.000001)
+		Math.abs(finiteScalar(contact.tangentialSpeed)) / referenceSpeed
 	);
 	const angularRatio = clamp01(
-		contact.angularSpeed * contact.bodyScale /
-		Math.max(calibration.referenceSpeed, 0.000001)
+		Math.abs(finiteScalar(contact.angularSpeed)) * positive(contact.bodyScale) /
+			referenceSpeed
+	);
+	const fundamentalHz = positive(
+		finiteScalar(
+			positive(calibration.referenceFrequencyHz) * materialPitch / scaleRatio
+		)
+	);
+	const decaySeconds = positive(
+		finiteScalar(
+			positive(calibration.referenceDecaySeconds) * (0.15 + 1 - pair.damping)
+		)
 	);
 
 	return {
-		position: contact.position,
+		position: finitePosition(contact.position),
 		impactEnergy: energy,
 		normalizedEnergy,
-		fundamentalHz:
-			calibration.referenceFrequencyHz * materialPitch / scaleRatio,
-		decaySeconds:
-			calibration.referenceDecaySeconds * (0.15 + 1 - pair.damping),
+		damageEnergy,
+		normalizedDamageEnergy,
+		fundamentalHz,
+		decaySeconds,
 		brightness: clamp01(pair.brightness * (0.5 + speedRatio * 0.5)),
-		noiseMix: clamp01(pair.noise * normalizedEnergy + pair.roughness * tangentialRatio),
-		scrapeMix: clamp01(pair.roughness * Math.max(tangentialRatio, angularRatio)),
+		noiseMix: clamp01(
+			pair.noise * normalizedEnergy + pair.roughness * tangentialRatio
+		),
+		scrapeMix: clamp01(
+			pair.roughness * Math.max(tangentialRatio, angularRatio)
+		),
 		saturation: clamp01(pair.saturation * normalizedEnergy),
-		modeRatios: pair.modeRatios,
-		seed: contact.seed
+		modeRatios: pair.modeRatios.slice(),
+		seed: finiteScalar(contact.seed)
 	};
 }
