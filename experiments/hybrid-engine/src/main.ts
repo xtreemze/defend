@@ -12,6 +12,8 @@ import initRuntime, { DefendRuntime } from "../pkg/defend_hybrid_runtime.js";
 
 const BODY_COUNT = 128;
 const ARENA_RADIUS = 72;
+const MAX_CATCH_UP_STEPS = 8;
+const MAX_FRAME_DELTA_SECONDS = 0.25;
 
 async function main(): Promise<void> {
   await initRuntime();
@@ -66,7 +68,9 @@ async function main(): Promise<void> {
   bodyTemplate.isVisible = false;
 
   const runtime = new DefendRuntime();
-  const bodies = Array.from({ length: BODY_COUNT }, (_, index) => {
+  const bodyInstances = new Map<number, ReturnType<typeof bodyTemplate.createInstance>>();
+
+  for (let index = 0; index < BODY_COUNT; index += 1) {
     const angle = (index / BODY_COUNT) * Math.PI * 2;
     const radius = ARENA_RADIUS * (0.72 + (index % 11) / 40);
     const x = Math.cos(angle) * radius;
@@ -77,7 +81,7 @@ async function main(): Promise<void> {
     const inwardZ = -Math.sin(angle);
     const speed = 2.2 + (index % 7) * 0.35;
 
-    runtime.spawn_body(
+    const bodyId = runtime.spawn_body(
       x,
       1.5 + (index % 3) * 0.4,
       z,
@@ -86,31 +90,63 @@ async function main(): Promise<void> {
       tangentZ * speed + inwardZ * 0.45,
     );
 
-    const instance = bodyTemplate.createInstance(`enemy-${index}`);
+    const instance = bodyTemplate.createInstance(`enemy-${bodyId}`);
     instance.isVisible = true;
-    return instance;
-  });
-
-  if (new URLSearchParams(location.search).has("inspect")) {
-    const { StartInspectable } = await import("@babylonjs/inspector");
-    StartInspectable(scene);
+    bodyInstances.set(bodyId, instance);
   }
 
+  const snapshotIds = Array.from(runtime.body_ids());
+  if (snapshotIds.length !== BODY_COUNT || snapshotIds.some((id) => !bodyInstances.has(id))) {
+    throw new Error("Hybrid runtime body identity contract is inconsistent");
+  }
+
+  let inspectable: { dispose(): void } | undefined;
+  if (new URLSearchParams(location.search).has("inspect")) {
+    const { StartInspectable } = await import("@babylonjs/inspector");
+    inspectable = StartInspectable(scene);
+  }
+
+  const fixedDeltaSeconds = runtime.fixed_delta_seconds();
+  const maxAccumulatorSeconds = fixedDeltaSeconds * MAX_CATCH_UP_STEPS;
+  let accumulatorSeconds = 0;
+  let droppedSimulationSeconds = 0;
   let frame = 0;
   let snapshotBytes = 0;
+  let stepsThisFrame = 0;
+
   engine.runRenderLoop(() => {
-    const deltaSeconds = engine.getDeltaTime() / 1000;
-    runtime.step(deltaSeconds);
+    const frameDeltaSeconds = Math.min(
+      Math.max(engine.getDeltaTime() / 1000, 0),
+      MAX_FRAME_DELTA_SECONDS,
+    );
+    const requestedAccumulator = accumulatorSeconds + frameDeltaSeconds;
+    if (requestedAccumulator > maxAccumulatorSeconds) {
+      droppedSimulationSeconds += requestedAccumulator - maxAccumulatorSeconds;
+    }
+    accumulatorSeconds = Math.min(requestedAccumulator, maxAccumulatorSeconds);
+
+    stepsThisFrame = Math.min(
+      Math.floor(accumulatorSeconds / fixedDeltaSeconds),
+      MAX_CATCH_UP_STEPS,
+    );
+    if (stepsThisFrame > 0) {
+      runtime.step_fixed(stepsThisFrame);
+      accumulatorSeconds -= stepsThisFrame * fixedDeltaSeconds;
+    }
 
     const positions = runtime.positions();
+    if (positions.length !== snapshotIds.length * 3) {
+      throw new Error("Hybrid runtime position snapshot changed without a lifecycle event");
+    }
+
     snapshotBytes = positions.length * Float32Array.BYTES_PER_ELEMENT;
-    for (let index = 0; index < bodies.length; index += 1) {
+    for (let index = 0; index < snapshotIds.length; index += 1) {
+      const body = bodyInstances.get(snapshotIds[index]);
+      if (!body) {
+        throw new Error(`Missing Babylon instance for body ${snapshotIds[index]}`);
+      }
       const offset = index * 3;
-      bodies[index].position.set(
-        positions[offset],
-        positions[offset + 1],
-        positions[offset + 2],
-      );
+      body.position.set(positions[offset], positions[offset + 1], positions[offset + 2]);
     }
 
     scene.render();
@@ -120,7 +156,11 @@ async function main(): Promise<void> {
         "Babylon 9.23 renderer + Bevy 0.19 ECS/WASM",
         `bodies: ${BODY_COUNT}`,
         `fps: ${engine.getFps().toFixed(1)}`,
-        `snapshot: ${snapshotBytes} B/frame`,
+        `simulation: ${(1 / fixedDeltaSeconds).toFixed(0)} Hz fixed tick`,
+        `tick: ${runtime.tick()} (${stepsThisFrame} step(s) this frame)`,
+        `render alpha: ${(accumulatorSeconds / fixedDeltaSeconds).toFixed(2)}`,
+        `snapshot: ${snapshotBytes} B/frame + ${snapshotIds.length * Uint32Array.BYTES_PER_ELEMENT} B identity table`,
+        `dropped catch-up time: ${(droppedSimulationSeconds * 1000).toFixed(1)} ms`,
         `WebGPU available: ${"gpu" in navigator}`,
         `crossOriginIsolated: ${String(crossOriginIsolated)}`,
         "?inspect=1 enables Babylon Inspector CLI bridge",
@@ -128,7 +168,20 @@ async function main(): Promise<void> {
     }
   });
 
-  window.addEventListener("resize", () => engine.resize());
+  const resize = () => engine.resize();
+  window.addEventListener("resize", resize);
+  window.addEventListener(
+    "beforeunload",
+    () => {
+      window.removeEventListener("resize", resize);
+      inspectable?.dispose();
+      engine.stopRenderLoop();
+      scene.dispose();
+      engine.dispose();
+      runtime.free();
+    },
+    { once: true },
+  );
 }
 
 void main();
