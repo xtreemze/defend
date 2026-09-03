@@ -20,6 +20,7 @@ The initial runtime intentionally uses only `bevy_app`, `bevy_ecs` and `bevy_mat
 - Vite 8.2.2
 - TypeScript 7.0.2
 - Biome 2.5.11
+- Vitest 4.1.11
 - Babylon.js 9.23.0
 - Rust 1.98.0 / edition 2024
 - Bevy modular crates 0.19.1
@@ -36,16 +37,45 @@ Install `wasm-pack` 0.15.0 and use Node 24 LTS, then from this directory:
 
 ```sh
 pnpm install
+pnpm test
+pnpm check
+pnpm build
 pnpm dev
 ```
 
-`pnpm dev` first compiles `rust/` to `pkg/`, then starts Vite.
+`pnpm build` and `pnpm dev` first compile `rust/` to `pkg/`.
 
 Use `?inspect=1` to start Babylon's headless Inspector bridge for agent-driven scene inspection.
 
 ## Current fixture
 
-The first fixture creates 128 semantic bodies in the Rust/Bevy ECS runtime and returns flat xyz triples every frame. Babylon creates lightweight instances and renders those positions.
+The fixture creates 128 semantic bodies in the Rust/Bevy ECS runtime. Babylon creates lightweight instances and renders a copied xyz snapshot from the authoritative runtime.
+
+Two protocol rules are explicit even in this first lab:
+
+1. **Stable external identity.** The runtime assigns monotonic public body ids and keeps a registry mapping them to Bevy `Entity` handles. Babylon never treats ECS query/archetype iteration order as object identity.
+2. **Fixed authoritative time.** The runtime advances only through exact 120 Hz `step_fixed(n)` calls. The browser converts render-frame time into fixed ticks using a pure bounded accumulator. Render cadence and catch-up policy therefore do not become simulation state.
+
+The browser fetches the stable id table once for this no-lifecycle fixture, then receives flat xyz triples in the same registry order each frame. Future spawn/despawn behavior must become explicit lifecycle protocol events rather than relying on array positions.
+
+## Deterministic tests
+
+Rust tests currently cover:
+
+- monotonic public body ids and stable snapshot order;
+- fixed-step partition invariance: advancing 240 ticks in one batch equals advancing 60 then 180 ticks.
+
+Vitest tests cover the browser-side fixed-step accumulator:
+
+- 60 Hz and 120 Hz render cadences produce the same authoritative tick count;
+- fractional render frames accumulate correctly;
+- long frames use bounded catch-up and record discarded backlog;
+- a zero catch-up budget has explicit behavior;
+- non-finite timing input is sanitized.
+
+These tests are committed as executable contracts but remain uncertified until run locally.
+
+## Baseline measurements
 
 The deliberately simple copy boundary gives us a measurable baseline for:
 
@@ -54,9 +84,10 @@ The deliberately simple copy boundary gives us a measurable baseline for:
 - per-frame snapshot size;
 - Babylon frame time;
 - Bevy ECS fixed-step/update cost;
-- bundle size and cold-start behavior.
+- bundle size and cold-start behavior;
+- catch-up behavior under artificial long frames.
 
-Do not introduce shared memory or binary protocol complexity until this baseline shows that the copy is material.
+Do not introduce shared memory, raw WASM memory views or binary protocol complexity until this baseline shows that the copy is material.
 
 ## Next backend comparisons
 
@@ -78,9 +109,11 @@ For physics variants, compare contact/knockback behavior against Defend's charac
 - `cargo fmt --check`, `cargo clippy`, and `cargo test` succeed for the runtime crate.
 - `pnpm check`, `pnpm test`, and `pnpm build` succeed.
 - Browser fixture renders all 128 bodies with no console errors.
-- Babylon Inspector bridge works when requested.
-- Record raw/compressed JS+WASM sizes, initialization time, first interactive frame, steady FPS and transform-copy cost.
-- Confirm no Bevy renderer/window dependencies appear in `cargo tree`.
+- 60/120/144 Hz display cadences preserve the expected fixed simulation rate.
+- an artificial long frame cannot trigger an unbounded catch-up spiral and reports dropped backlog.
+- Babylon Inspector bridge works when requested and disconnects on teardown.
+- record raw/compressed JS+WASM sizes, initialization time, first interactive frame, steady FPS, simulation-step time and transform-copy cost.
+- confirm no Bevy renderer/window dependencies appear in `cargo tree`.
 
 ## Scope boundary
 
