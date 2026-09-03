@@ -44,14 +44,14 @@ function normalizedDirection(direction: number): number {
 	return ((integerDirection % 6) + 6) % 6;
 }
 
-const HEX_DIRECTIONS: HexCell[] = Object.freeze([
+const HEX_DIRECTIONS: ReadonlyArray<Readonly<HexCell>> = Object.freeze([
 	Object.freeze({ q: 1, r: 0 }),
 	Object.freeze({ q: 1, r: -1 }),
 	Object.freeze({ q: 0, r: -1 }),
 	Object.freeze({ q: -1, r: 0 }),
 	Object.freeze({ q: -1, r: 1 }),
 	Object.freeze({ q: 0, r: 1 })
-]) as HexCell[];
+]);
 
 function hexToCube(cell: HexCell): HexCube {
 	const q = finiteScalar(cell.q);
