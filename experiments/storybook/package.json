@@ -1,15 +1,20 @@
 {
-  "name": "defend-storybook-lab",
+  "name": "@defend/storybook-lab",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.25.0",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=24.20.0 <25"
   },
   "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "test-storybook": "vitest --project=storybook"
+    "dev": "storybook dev -p 6006",
+    "build": "storybook build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --project=storybook",
+    "storybook": "pnpm dev",
+    "build-storybook": "pnpm build",
+    "test-storybook": "pnpm test"
   },
   "devDependencies": {
     "@storybook/addon-vitest": "10.6.0",
