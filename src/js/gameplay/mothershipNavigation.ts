@@ -24,7 +24,6 @@ export interface MothershipNavigationConfig {
 	captureInwardSpeed: number;
 	capturedAccelerationMultiplier: number;
 	overspeedFactor: number;
-	hoverDrainPerSecond: number;
 	movementDrainPerAcceleration: number;
 }
 
@@ -33,7 +32,6 @@ export interface MothershipNavigationState {
 	velocity: NavigationVector2;
 	desiredPosition: NavigationVector2;
 	raidSector: NavigationVector2;
-	reserve: number;
 	phase: MothershipNavigationPhase;
 	totalMovementEnergy: number;
 	projectedTargetCount: number;
@@ -49,8 +47,8 @@ export interface MothershipNavigationStep {
 	steeringAcceleration: NavigationVector2;
 	attractionAcceleration: NavigationVector2;
 	appliedAcceleration: NavigationVector2;
+	/** Propulsion-energy demand for this step. A separate reserve authority applies it. */
 	movementEnergy: number;
-	hoverEnergy: number;
 	captureStarted: boolean;
 }
 
@@ -136,7 +134,6 @@ function safeConfig(config: MothershipNavigationConfig): MothershipNavigationCon
 		captureInwardSpeed: positive(config.captureInwardSpeed),
 		capturedAccelerationMultiplier: positive(config.capturedAccelerationMultiplier),
 		overspeedFactor: Math.max(1, positive(config.overspeedFactor)),
-		hoverDrainPerSecond: positive(config.hoverDrainPerSecond),
 		movementDrainPerAcceleration: positive(config.movementDrainPerAcceleration)
 	};
 }
@@ -175,7 +172,6 @@ export function projectMothershipTargetForSector(
 
 export function createMothershipNavigationState(
 	position: NavigationVector2,
-	reserve: number,
 	sector: NavigationVector2,
 	config: MothershipNavigationConfig
 ): MothershipNavigationState {
@@ -185,7 +181,6 @@ export function createMothershipNavigationState(
 		velocity: { x: 0, z: 0 },
 		desiredPosition: projection.desiredPosition,
 		raidSector: vector(sector.x, sector.z),
-		reserve: clamp(reserve, 0, 1),
 		phase: mothershipNavigationPhase(position, config),
 		totalMovementEnergy: 0,
 		projectedTargetCount: projection.projected ? 1 : 0
@@ -203,7 +198,6 @@ export function setMothershipRaidSector(
 		velocity: vector(state.velocity.x, state.velocity.z),
 		desiredPosition: projection.desiredPosition,
 		raidSector: vector(sector.x, sector.z),
-		reserve: clamp(state.reserve, 0, 1),
 		phase: state.phase,
 		totalMovementEnergy: positive(state.totalMovementEnergy),
 		projectedTargetCount:
@@ -299,13 +293,12 @@ export function stepMothershipNavigation(
 	velocity = limitMagnitude(velocity, safe.maxSpeed * safe.overspeedFactor);
 	const position = add(state.position, scale(velocity, dt));
 
-	// Only engine steering consumes movement reserve. Silo attraction is an
-	// external field; charging it as propulsion would make being pulled inward
-	// consume energy even after control authority is lost.
+	// Only engine steering produces propulsion demand. Silo attraction is an
+	// external field; a separate mothership energy authority decides whether the
+	// requested movement energy can actually be paid together with hover/launch
+	// costs and what low reserve does to lift.
 	const movementEnergy =
 		navigationVectorLength(steering) * safe.movementDrainPerAcceleration * dt;
-	const hoverEnergy = safe.hoverDrainPerSecond * dt;
-	const reserve = Math.max(0, finite(state.reserve) - movementEnergy - hoverEnergy);
 
 	return {
 		state: {
@@ -313,7 +306,6 @@ export function stepMothershipNavigation(
 			velocity,
 			desiredPosition: vector(state.desiredPosition.x, state.desiredPosition.z),
 			raidSector: vector(state.raidSector.x, state.raidSector.z),
-			reserve,
 			phase,
 			totalMovementEnergy: positive(state.totalMovementEnergy) + movementEnergy,
 			projectedTargetCount: positive(state.projectedTargetCount)
@@ -322,7 +314,6 @@ export function stepMothershipNavigation(
 		attractionAcceleration: attraction,
 		appliedAcceleration: acceleration,
 		movementEnergy,
-		hoverEnergy,
 		captureStarted
 	};
 }
