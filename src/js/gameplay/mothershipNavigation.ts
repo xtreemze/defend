@@ -219,7 +219,10 @@ function steeringAcceleration(
 	const error = subtract(state.desiredPosition, state.position);
 	const distance = navigationVectorLength(error);
 	if (distance < safe.arrivalRadius) {
-		return scale(state.velocity, -safe.arrivalBrakeGain);
+		return limitMagnitude(
+			scale(state.velocity, -safe.arrivalBrakeGain),
+			safe.maxAcceleration
+		);
 	}
 	const desiredDirection = normalize(error);
 	const desiredSpeed = Math.min(
@@ -295,8 +298,12 @@ export function stepMothershipNavigation(
 	velocity = scale(velocity, damping);
 	velocity = limitMagnitude(velocity, safe.maxSpeed * safe.overspeedFactor);
 	const position = add(state.position, scale(velocity, dt));
+
+	// Only engine steering consumes movement reserve. Silo attraction is an
+	// external field; charging it as propulsion would make being pulled inward
+	// consume energy even after control authority is lost.
 	const movementEnergy =
-		navigationVectorLength(acceleration) * safe.movementDrainPerAcceleration * dt;
+		navigationVectorLength(steering) * safe.movementDrainPerAcceleration * dt;
 	const hoverEnergy = safe.hoverDrainPerSecond * dt;
 	const reserve = Math.max(0, finite(state.reserve) - movementEnergy - hoverEnergy);
 
