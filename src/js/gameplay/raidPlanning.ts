@@ -19,6 +19,7 @@ export interface RaidCommitmentWeights {
 }
 
 const RAID_HORIZON = 3;
+const MAX_COUNT_FOR_SUMMARY = 2147483647;
 
 function finite(value: number, fallback = 0): number {
 	if (value !== value || value === Infinity || value === -Infinity) {
@@ -174,9 +175,9 @@ export function raidSetIsHold(plan: RaidSetPlan): boolean {
 
 export function raidSetBodyCount(plan: RaidSetPlan): number {
 	return (
-		nonNegativeInteger(plan.r1, Number.MAX_SAFE_INTEGER) +
-		nonNegativeInteger(plan.r2, Number.MAX_SAFE_INTEGER) +
-		nonNegativeInteger(plan.r3, Number.MAX_SAFE_INTEGER)
+		nonNegativeInteger(plan.r1, MAX_COUNT_FOR_SUMMARY) +
+		nonNegativeInteger(plan.r2, MAX_COUNT_FOR_SUMMARY) +
+		nonNegativeInteger(plan.r3, MAX_COUNT_FOR_SUMMARY)
 	);
 }
 
