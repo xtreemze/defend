@@ -4,6 +4,8 @@ use bevy_math::Vec3;
 use wasm_bindgen::prelude::*;
 
 const FIXED_DELTA_SECONDS: f32 = 1.0 / 120.0;
+const FNV1A_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
+const FNV1A_PRIME: u64 = 0x00000100000001b3;
 
 #[derive(Component)]
 struct Position(Vec3);
@@ -24,6 +26,23 @@ fn integrate(mut bodies: Query<(&mut Position, &Velocity)>, delta: Res<StepDelta
     for (mut position, velocity) in &mut bodies {
         position.0 += velocity.0 * delta.0;
     }
+}
+
+fn hash_bytes(hash: &mut u64, bytes: &[u8]) {
+    for byte in bytes {
+        *hash ^= u64::from(*byte);
+        *hash = hash.wrapping_mul(FNV1A_PRIME);
+    }
+}
+
+fn hash_u32(hash: &mut u64, value: u32) {
+    hash_bytes(hash, &value.to_le_bytes());
+}
+
+fn hash_vec3(hash: &mut u64, value: Vec3) {
+    hash_u32(hash, value.x.to_bits());
+    hash_u32(hash, value.y.to_bits());
+    hash_u32(hash, value.z.to_bits());
 }
 
 /// Headless Bevy ECS runtime used only by the Babylon/Bevy comparative lab.
@@ -136,6 +155,38 @@ impl DefendRuntime {
 
         positions
     }
+
+    /// Return a deterministic fingerprint of public semantic state.
+    ///
+    /// The hash deliberately excludes Bevy `Entity` ids and storage layout.
+    /// Stable public body ids, tick, positions, and velocities are hashed by
+    /// their exact little-endian IEEE-754 bit patterns. The hexadecimal string
+    /// avoids exposing a WASM `u64`/BigInt ABI solely for diagnostics.
+    ///
+    /// FNV-1a is used as a lightweight divergence detector, not as a security or
+    /// collision-proof content identifier. Full serialized fixtures remain the
+    /// authority when a hash mismatch needs diagnosis.
+    pub fn state_fingerprint(&self) -> String {
+        let world = self.app.world();
+        let mut hash = FNV1A_OFFSET_BASIS;
+        hash_u32(&mut hash, self.tick);
+        hash_u32(&mut hash, self.bodies.len() as u32);
+
+        for body in &self.bodies {
+            let position = world
+                .get::<Position>(body.entity)
+                .expect("registered hybrid body missing Position");
+            let velocity = world
+                .get::<Velocity>(body.entity)
+                .expect("registered hybrid body missing Velocity");
+
+            hash_u32(&mut hash, body.id);
+            hash_vec3(&mut hash, position.0);
+            hash_vec3(&mut hash, velocity.0);
+        }
+
+        format!("{hash:016x}")
+    }
 }
 
 impl Default for DefendRuntime {
@@ -170,7 +221,7 @@ mod tests {
     }
 
     #[test]
-    fn fixed_step_partitioning_produces_the_same_state() {
+    fn fixed_step_partitioning_produces_the_same_state_and_fingerprint() {
         let mut one_batch = DefendRuntime::new();
         let mut split_batches = DefendRuntime::new();
         spawn_linear(&mut one_batch, -4.0, 3.25);
@@ -183,5 +234,17 @@ mod tests {
         assert_eq!(one_batch.tick(), 240);
         assert_eq!(split_batches.tick(), 240);
         assert_eq!(one_batch.positions(), split_batches.positions());
+        assert_eq!(one_batch.state_fingerprint(), split_batches.state_fingerprint());
+    }
+
+    #[test]
+    fn fingerprint_changes_when_authoritative_state_changes() {
+        let mut runtime = DefendRuntime::new();
+        spawn_linear(&mut runtime, 0.0, 1.0);
+        let before = runtime.state_fingerprint();
+
+        runtime.step_fixed(1);
+
+        assert_ne!(before, runtime.state_fingerprint());
     }
 }
