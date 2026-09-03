@@ -149,7 +149,7 @@ export const StaggeredAssembly: Story = {
 		await expect(t3).not.toBeNull();
 		if (!t1 || !t2 || !t3) return;
 		await expect(t1.dataset.stage).toBe("ready");
-		await expect(t2.dataset.stage).toBe("drilling");
+		await expect(t2.dataset.stage).toBe("assembly");
 		await expect(t3.dataset.stage).toBe("drilling");
 	}
 };
