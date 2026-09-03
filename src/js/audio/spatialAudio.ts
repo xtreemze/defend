@@ -67,39 +67,79 @@ export interface SpatialRenderHints {
 	priority: number;
 }
 
+/**
+ * Defensive numeric ceiling for this pure boundary. Real Defend world-space
+ * values are many orders of magnitude smaller; the ceiling only prevents
+ * malformed Infinity/NaN or absurd external state from poisoning an audio
+ * planning pass with non-finite output.
+ */
+const MAX_SPATIAL_SCALAR = 1e150;
+
+function finiteScalar(value: number, fallback = 0): number {
+	if (value !== value) {
+		return fallback;
+	}
+	if (value > MAX_SPATIAL_SCALAR) {
+		return MAX_SPATIAL_SCALAR;
+	}
+	if (value < -MAX_SPATIAL_SCALAR) {
+		return -MAX_SPATIAL_SCALAR;
+	}
+	return value;
+}
+
 function clamp(value: number, minimum: number, maximum: number): number {
-	return Math.max(minimum, Math.min(maximum, value));
+	const safeValue = finiteScalar(value, minimum);
+	return Math.max(minimum, Math.min(maximum, safeValue));
 }
 
 function positive(value: number): number {
-	return Math.max(0, value);
+	return Math.max(0, finiteScalar(value, 0));
 }
 
 function subtract(a: SpatialVector3, b: SpatialVector3): SpatialVector3 {
 	return {
-		x: a.x - b.x,
-		y: a.y - b.y,
-		z: a.z - b.z
+		x: finiteScalar(finiteScalar(a.x) - finiteScalar(b.x)),
+		y: finiteScalar(finiteScalar(a.y) - finiteScalar(b.y)),
+		z: finiteScalar(finiteScalar(a.z) - finiteScalar(b.z))
 	};
 }
 
 function dot(a: SpatialVector3, b: SpatialVector3): number {
-	return a.x * b.x + a.y * b.y + a.z * b.z;
+	return finiteScalar(
+		finiteScalar(a.x) * finiteScalar(b.x) +
+			finiteScalar(a.y) * finiteScalar(b.y) +
+			finiteScalar(a.z) * finiteScalar(b.z)
+	);
 }
 
 function magnitudeSquared(vector: SpatialVector3): number {
-	return dot(vector, vector);
+	return positive(dot(vector, vector));
 }
 
 function magnitude(vector: SpatialVector3): number {
-	return Math.sqrt(magnitudeSquared(vector));
+	return finiteScalar(Math.sqrt(magnitudeSquared(vector)), MAX_SPATIAL_SCALAR);
 }
 
 function scale(vector: SpatialVector3, amount: number): SpatialVector3 {
+	const safeAmount = finiteScalar(amount);
 	return {
-		x: vector.x * amount,
-		y: vector.y * amount,
-		z: vector.z * amount
+		x: finiteScalar(finiteScalar(vector.x) * safeAmount),
+		y: finiteScalar(finiteScalar(vector.y) * safeAmount),
+		z: finiteScalar(finiteScalar(vector.z) * safeAmount)
+	};
+}
+
+function addScaled(
+	position: SpatialVector3,
+	velocity: SpatialVector3,
+	timeSeconds: number
+): SpatialVector3 {
+	const time = finiteScalar(timeSeconds);
+	return {
+		x: finiteScalar(finiteScalar(position.x) + finiteScalar(velocity.x) * time),
+		y: finiteScalar(finiteScalar(position.y) + finiteScalar(velocity.y) * time),
+		z: finiteScalar(finiteScalar(position.z) + finiteScalar(velocity.z) * time)
 	};
 }
 
@@ -135,17 +175,17 @@ export function closestApproach(
 
 	if (velocitySquared > 0.000001) {
 		timeSeconds = clamp(
-			-dot(relativePosition, relativeVelocity) / velocitySquared,
+			finiteScalar(-dot(relativePosition, relativeVelocity) / velocitySquared),
 			0,
 			horizon
 		);
 	}
 
-	const positionAtClosest = {
-		x: relativePosition.x + relativeVelocity.x * timeSeconds,
-		y: relativePosition.y + relativeVelocity.y * timeSeconds,
-		z: relativePosition.z + relativeVelocity.z * timeSeconds
-	};
+	const positionAtClosest = addScaled(
+		relativePosition,
+		relativeVelocity,
+		timeSeconds
+	);
 
 	return {
 		timeSeconds,
@@ -180,9 +220,10 @@ export function dopplerState(
 	}
 
 	const speedOfSound = Math.max(0.0001, positive(calibration.speedOfSound));
-	const radialLimit =
+	const radialLimit = finiteScalar(
 		speedOfSound *
-		clamp(calibration.maxRadialFractionOfSoundSpeed, 0, 0.95);
+			clamp(calibration.maxRadialFractionOfSoundSpeed, 0, 0.95)
+	);
 	const listenerTowardSource = clamp(
 		dot(listenerVelocity, direction),
 		-radialLimit,
@@ -193,13 +234,16 @@ export function dopplerState(
 		-radialLimit,
 		radialLimit
 	);
-	const numerator = speedOfSound + listenerTowardSource;
+	const numerator = finiteScalar(speedOfSound + listenerTowardSource);
 	const denominator = Math.max(
 		speedOfSound * 0.05,
-		speedOfSound + sourceAwayFromListener
+		finiteScalar(speedOfSound + sourceAwayFromListener)
 	);
-	const minimumRatio = Math.max(0.01, calibration.minDopplerRatio);
-	const maximumRatio = Math.max(minimumRatio, calibration.maxDopplerRatio);
+	const minimumRatio = Math.max(0.01, positive(calibration.minDopplerRatio));
+	const maximumRatio = Math.max(
+		minimumRatio,
+		positive(calibration.maxDopplerRatio)
+	);
 
 	return {
 		ratio: clamp(numerator / denominator, minimumRatio, maximumRatio),
@@ -225,7 +269,7 @@ export function distanceGain(
 		positive(distance) / reference - 1
 	);
 	const exponent = Math.max(0.0001, positive(rolloffExponent));
-	return 1 / (1 + Math.pow(normalizedBeyondReference, exponent));
+	return clamp(1 / (1 + Math.pow(normalizedBeyondReference, exponent)), 0, 1);
 }
 
 /**
@@ -241,7 +285,11 @@ export function highFrequencyRetention(
 		0,
 		positive(distance) - positive(referenceDistance)
 	);
-	return Math.exp(-positive(absorptionPerUnit) * beyondReference);
+	return clamp(
+		Math.exp(-positive(absorptionPerUnit) * beyondReference),
+		0,
+		1
+	);
 }
 
 /**
@@ -278,7 +326,7 @@ export function spatialPriority(
 	const closestApproachScore = closestProximity * (0.5 + 0.5 * imminence);
 	const energyReference = Math.max(0.0001, positive(calibration.energyReference));
 	const energy = positive(source.excitationEnergy);
-	const energyScore = energy / (energy + energyReference);
+	const energyScore = clamp(energy / finiteScalar(energy + energyReference), 0, 1);
 	const threat = clamp(source.threat, 0, 1);
 	const continuity = clamp(source.continuity, 0, 1);
 	const proximityWeight = positive(calibration.proximityWeight);
@@ -286,27 +334,27 @@ export function spatialPriority(
 	const energyWeight = positive(calibration.energyWeight);
 	const threatWeight = positive(calibration.threatWeight);
 	const continuityWeight = positive(calibration.continuityWeight);
-	const totalWeight =
+	const totalWeight = finiteScalar(
 		proximityWeight +
-		closestWeight +
-		energyWeight +
-		threatWeight +
-		continuityWeight;
+			closestWeight +
+			energyWeight +
+			threatWeight +
+			continuityWeight
+	);
 
 	if (totalWeight <= 0.000001) {
 		return 0;
 	}
 
-	return clamp(
-		(proximity * proximityWeight +
+	const weightedPriority = finiteScalar(
+		proximity * proximityWeight +
 			closestApproachScore * closestWeight +
 			energyScore * energyWeight +
 			threat * threatWeight +
-			continuity * continuityWeight) /
-			totalWeight,
-		0,
-		1
+			continuity * continuityWeight
 	);
+
+	return clamp(weightedPriority / totalWeight, 0, 1);
 }
 
 export function spatialRenderHints(
