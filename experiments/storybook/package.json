@@ -1,0 +1,30 @@
+{
+  "name": "@defend/storybook-lab",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24.20.0 <25"
+  },
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "storybook build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --project=storybook",
+    "storybook": "pnpm dev",
+    "build-storybook": "pnpm build",
+    "test-storybook": "pnpm test"
+  },
+  "devDependencies": {
+    "@storybook/addon-vitest": "10.6.0",
+    "@storybook/html-vite": "10.6.0",
+    "@types/node": "24.10.0",
+    "@vitest/browser-playwright": "4.1.11",
+    "playwright": "1.62.1",
+    "storybook": "10.6.0",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  }
+}

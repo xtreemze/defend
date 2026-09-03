@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Defend Tower Deployment + Terrain Lab</title>
+    <style>
+      html, body, #app, canvas { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+      body { background: #08050d; color: #eadcc8; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      canvas { display: block; touch-action: none; }
+      #metrics { position: fixed; top: 12px; left: 12px; z-index: 4; min-width: 300px; padding: 9px 11px; border: 1px solid rgba(75, 218, 211, .36); background: rgba(8, 5, 13, .84); font-size: 12px; line-height: 1.45; white-space: pre; pointer-events: none; }
+      #controls { position: fixed; right: 12px; top: 12px; z-index: 5; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 520px; }
+      button { border: 1px solid rgba(215, 148, 80, .5); background: rgba(19, 10, 29, .92); color: #eadcc8; padding: 7px 9px; font: inherit; cursor: pointer; }
+      button:hover, button:focus-visible { border-color: rgba(75, 218, 211, .9); outline: none; }
+      #hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 4; max-width: min(900px, 92vw); padding: 7px 10px; background: rgba(8, 5, 13, .76); border: 1px solid rgba(215, 148, 80, .26); font-size: 12px; text-align: center; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="app"><canvas id="renderCanvas"></canvas></div>
+    <div id="metrics">initializing…</div>
+    <div id="controls">
+      <button id="reset" type="button">Rebuild towers [R]</button>
+      <button id="maintain" type="button">Renovate dry T3 [M]</button>
+      <button id="migrate" type="button">Move magma near T3 [G]</button>
+      <button id="miss2" type="button">Force T2 miss [2]</button>
+      <button id="miss3" type="button">Force T3 miss [3]</button>
+      <button id="drop" type="button">R3 drop impact [D]</button>
+      <button id="bulge" type="button">Volcanic bulge [V]</button>
+    </div>
+    <div id="hint">Towers deploy in stages, drill after construction, and slew with finite angular acceleration. T3 begins dry; move magma nearby, then renovate it to retry drilling. Forced misses deform the same shared terrain surface.</div>
+    <script type="module" src="/src/towerTerrainPrototype.ts"></script>
+  </body>
+</html>
