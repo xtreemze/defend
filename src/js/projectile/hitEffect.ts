@@ -1,7 +1,14 @@
 import { economyGlobals, materialGlobals } from "../main/globalVariables";
 import { damage } from "../main/sound";
 import { EnemySphere } from "../enemy/enemyBorn";
-import { applyProjectileEnergyRecovery } from "../gameplay/economy";
+import {
+	applyProjectileEnergyRecovery,
+	projectileEnergyRecovery
+} from "../gameplay/economy";
+import {
+	energyFlowPrototypeEnabled,
+	spawnRecoveredEnergy
+} from "../experiments/energyFlowPrototype";
 import { LiveProjectileInstance } from "./startLife";
 
 export function hitEffect(
@@ -29,12 +36,24 @@ export function hitEffect(
 				) {
 					// hitpoints
 					enemy.hitPoints -= projectile.hitPoints;
-					economyGlobals.currentBalance = applyProjectileEnergyRecovery(
-						economyGlobals.currentBalance,
-						projectile.hitPoints,
-						economyGlobals.energyRecoveryRatio,
-						economyGlobals.maxBalance
-					);
+
+					if (energyFlowPrototypeEnabled()) {
+						spawnRecoveredEnergy(
+							projectile.getScene(),
+							enemy.getAbsolutePosition(),
+							projectileEnergyRecovery(
+								projectile.hitPoints,
+								economyGlobals.energyRecoveryRatio
+							)
+						);
+					} else {
+						economyGlobals.currentBalance = applyProjectileEnergyRecovery(
+							economyGlobals.currentBalance,
+							projectile.hitPoints,
+							economyGlobals.energyRecoveryRatio,
+							economyGlobals.maxBalance
+						);
+					}
 				}
 				if (enemy.material === materialGlobals.hitMaterial) {
 					// color
