@@ -23,7 +23,6 @@ type NavigationArgs = {
 interface TracePoint {
 	time: number;
 	position: NavigationVector2;
-	reserve: number;
 	phase: string;
 }
 
@@ -54,7 +53,6 @@ function config(args: NavigationArgs): MothershipNavigationConfig {
 		captureInwardSpeed: args.captureInwardSpeed,
 		capturedAccelerationMultiplier: 1.35,
 		overspeedFactor: 1.35,
-		hoverDrainPerSecond: 0.0025,
 		movementDrainPerAcceleration: 0.00028
 	};
 }
@@ -74,7 +72,6 @@ function simulate(
 		points.push({
 			time: elapsed,
 			position: { x: state.position.x, z: state.position.z },
-			reserve: state.reserve,
 			phase: state.phase
 		});
 		const step = stepMothershipNavigation(state, deltaSeconds, calibration);
@@ -130,13 +127,12 @@ const meta = {
 		);
 		const safeTargetDistance = navigationVectorLength(projection.desiredPosition);
 
-		let farState = createMothershipNavigationState(start, 1, nearSector, calibration);
+		let farState = createMothershipNavigationState(start, nearSector, calibration);
 		farState = setMothershipRaidSector(farState, farSector, calibration);
 		const farTrace = simulate(farState, args.simulationSeconds, 1 / 60, calibration);
 
 		const captureBase = createMothershipNavigationState(
 			{ x: 13, z: 0 },
-			1,
 			nearSector,
 			calibration
 		);
@@ -163,7 +159,7 @@ const meta = {
 		const shell = createLabShell(
 			"Foundations / physics",
 			"Mothership inertia and silo attraction",
-			"Ground input chooses intent, not position. A near-silo raid sector is projected to a safe ship target, but persistent inward momentum can still carry the vessel into the attraction field and eventually remove steering authority. Propulsion energy follows engine steering effort; the silo field itself is external."
+			"Ground input chooses intent, not position. A near-silo raid sector is projected to a safe ship target, but persistent inward momentum can still carry the vessel into the attraction field and eventually remove steering authority. Navigation reports propulsion demand; the mothership energy/lift authority decides whether that demand can be paid."
 		);
 
 		shell.frame.innerHTML = `
@@ -203,10 +199,10 @@ const meta = {
 						<div class="lab__metric"><dt>Safe target radius</dt><dd data-target-distance="${safeTargetDistance}">${safeTargetDistance.toFixed(2)}</dd></div>
 						<div class="lab__metric"><dt>Max engine acceleration</dt><dd data-max-steering="${farTrace.maximumSteeringAcceleration}">${farTrace.maximumSteeringAcceleration.toFixed(2)}</dd></div>
 						<div class="lab__metric"><dt>Far final speed</dt><dd>${navigationVectorLength(farTrace.finalState.velocity).toFixed(2)}</dd></div>
-						<div class="lab__metric"><dt>Far reserve</dt><dd>${(farTrace.finalState.reserve * 100).toFixed(2)}%</dd></div>
+						<div class="lab__metric"><dt>Far propulsion demand</dt><dd>${(farTrace.finalState.totalMovementEnergy * 100).toFixed(3)}%</dd></div>
 						<div class="lab__metric"><dt>Capture @ 60 Hz</dt><dd data-capture60="${capture60.captureAt ?? -1}">${capture60.captureAt === null ? "—" : `${capture60.captureAt.toFixed(3)} s`}</dd></div>
 						<div class="lab__metric"><dt>Capture @ 30 Hz</dt><dd data-capture30="${capture30.captureAt ?? -1}">${capture30.captureAt === null ? "—" : `${capture30.captureAt.toFixed(3)} s`}</dd></div>
-						<div class="lab__metric"><dt>Captured movement cost</dt><dd>${(captureTrace.finalState.totalMovementEnergy * 100).toFixed(3)}%</dd></div>
+						<div class="lab__metric"><dt>Captured propulsion demand</dt><dd>${(captureTrace.finalState.totalMovementEnergy * 100).toFixed(3)}%</dd></div>
 					</dl>
 				</aside>
 			</div>
