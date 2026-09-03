@@ -80,6 +80,10 @@ function tierForRank(rank: number, budget: SpatialVoiceBudget): SpatialVoiceTier
  * planning pass so objects near a tier boundary do not chatter rapidly between
  * rendered and virtual states.
  *
+ * `activeVoiceRetention` is intentionally capped at 0.25. Hysteresis is useful,
+ * but a previously audible low-value voice must never receive enough history
+ * bonus to indefinitely starve a newly important fly-by or core threat.
+ *
  * This function only chooses semantic quality tiers. A concrete backend decides
  * whether those tiers map to HRTF/equal-power panning, modal count, update rate,
  * filter complexity, or another rendering strategy after profiling.
@@ -91,7 +95,7 @@ export function planSpatialVoiceBudget(
 	budget: SpatialVoiceBudget,
 	history?: SpatialVoiceHistory
 ): SpatialVoicePlan[] {
-	const retention = clamp(budget.activeVoiceRetention, 0, 1);
+	const retention = clamp(budget.activeVoiceRetention, 0, 0.25);
 	const ranked: RankedVoice[] = sources.map(source => {
 		const hints = spatialRenderHints(source, listener, calibration);
 		const retainedPriority = wasRendered(source.id, history)
@@ -137,7 +141,7 @@ export function planSpatialVoiceBudget(
 export function spatialVoiceHistory(
 	plans: SpatialVoicePlan[]
 ): SpatialVoiceHistory {
-	const history: SpatialVoiceHistory = {};
+	const history = Object.create(null) as SpatialVoiceHistory;
 	plans.forEach(plan => {
 		history[plan.id] = plan.tier;
 	});
