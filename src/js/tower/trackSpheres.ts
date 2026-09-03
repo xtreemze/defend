@@ -5,6 +5,7 @@ import { rotateTurret } from "./Tower";
 import { shoot } from "../main/sound";
 import { TowerTurret } from "./towerBorn";
 import { EnemySphere } from "../enemy/enemyBorn";
+import { towerShotInterval } from "../gameplay/tierScaling";
 
 function trackSpheres (
 	scene: Scene,
@@ -47,7 +48,7 @@ function trackSpheres (
 					level
 				) as Vector3; // track the enemy spheres
 				if (
-					now - deltaTime > towerGlobals.rateOfFire * level * level * level &&
+					now - deltaTime > towerShotInterval(towerGlobals.rateOfFire, level) &&
 					towerGlobals.shoot
 					//  &&           shotClearsTower(scene, ray, nearestEnemy)
 				) {
