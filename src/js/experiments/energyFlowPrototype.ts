@@ -8,7 +8,7 @@ import {
 } from "babylonjs";
 import { economyGlobals } from "../main/globalVariables";
 
-type EnergyFlowPhase = "falling" | "streaming";
+type EnergyFlowPhase = "falling" | "streaming" | "pooling";
 
 interface EnergyFlowPacket {
 	value: number;
@@ -17,6 +17,14 @@ interface EnergyFlowPacket {
 	verticalVelocity: number;
 	age: number;
 	wobble: number;
+	blockedSeconds: number;
+	routeChanges: number;
+}
+
+interface FlowObstacle {
+	x: number;
+	z: number;
+	halfExtent: number;
 }
 
 const MAX_ACTIVE_PACKETS = 64;
@@ -26,6 +34,11 @@ const GROUND_Y = 0.42;
 const INTAKE_RADIUS = 3.2;
 const FALL_GRAVITY = 17;
 const BASE_STREAM_SPEED = 8;
+const TOWER_HALF_EXTENT = 5.35;
+const FLOW_CLEARANCE = 0.45;
+const FLOW_PROBE_DISTANCE = 1.4;
+const POOL_AFTER_BLOCKED_SECONDS = 0.35;
+const POOL_RETRY_SECONDS = 0.18;
 
 const SPILL_OFFSETS = [
 	new Vector3(-0.8, 0.4, -0.4),
@@ -58,6 +71,11 @@ function resizePacket(packet: EnergyFlowPacket): void {
 	packet.mesh.scaling = new Vector3(scale, scale * 0.72, scale);
 }
 
+function setPoolingScale(packet: EnergyFlowPacket): void {
+	const scale = packetScale(packet.value);
+	packet.mesh.scaling = new Vector3(scale * 1.35, scale * 0.34, scale * 1.35);
+}
+
 function getFlowMaterial(scene: Scene): StandardMaterial {
 	if (flowMaterial === undefined) {
 		flowMaterial = new StandardMaterial("energyFlowPrototypeMaterial", scene);
@@ -85,9 +103,23 @@ function inTransitEnergy(): number {
 }
 
 function prototypeStats() {
+	let poolingPackets = 0;
+	let blockedEnergy = 0;
+	let routeChanges = 0;
+	packets.forEach(packet => {
+		if (packet.phase === "pooling") {
+			poolingPackets += 1;
+			blockedEnergy += packet.value;
+		}
+		routeChanges += packet.routeChanges;
+	});
+
 	return {
 		activePackets: packets.length,
-		inTransitEnergy: inTransitEnergy()
+		inTransitEnergy: inTransitEnergy(),
+		poolingPackets,
+		blockedEnergy,
+		routeChanges
 	};
 }
 
@@ -135,7 +167,11 @@ function mergeIntoExistingPacket(position: Vector3, value: number): void {
 	const packet = nearestPacket(position);
 	if (packet !== undefined) {
 		packet.value += value;
-		resizePacket(packet);
+		if (packet.phase === "pooling") {
+			setPoolingScale(packet);
+		} else {
+			resizePacket(packet);
+		}
 	}
 }
 
@@ -170,7 +206,9 @@ function createPacket(
 		phase: "falling",
 		verticalVelocity: 2.5 + (index % 3) * 0.8,
 		age: 0,
-		wobble: index * 1.7
+		wobble: index * 1.7,
+		blockedSeconds: 0,
+		routeChanges: 0
 	};
 	resizePacket(packet);
 	packets.push(packet);
@@ -242,9 +280,148 @@ function updateFallingPacket(packet: EnergyFlowPacket, deltaSeconds: number): vo
 	}
 }
 
-function updateStreamingPacket(
+function flowObstacles(scene: Scene): FlowObstacle[] {
+	const obstacles: FlowObstacle[] = [];
+	scene.getMeshesByTags("towerBase", towerBaseMesh => {
+		obstacles.push({
+			x: towerBaseMesh.position.x,
+			z: towerBaseMesh.position.z,
+			halfExtent: TOWER_HALF_EXTENT + FLOW_CLEARANCE
+		});
+	});
+	return obstacles;
+}
+
+function containingObstacle(
+	x: number,
+	z: number,
+	obstacles: FlowObstacle[]
+): FlowObstacle | undefined {
+	for (let index = 0; index < obstacles.length; index += 1) {
+		const obstacle = obstacles[index];
+		if (
+			Math.abs(x - obstacle.x) <= obstacle.halfExtent &&
+			Math.abs(z - obstacle.z) <= obstacle.halfExtent
+		) {
+			return obstacle;
+		}
+	}
+	return undefined;
+}
+
+function pointIsBlocked(x: number, z: number, obstacles: FlowObstacle[]): boolean {
+	return containingObstacle(x, z, obstacles) !== undefined;
+}
+
+function normalizedDirection(dx: number, dz: number): { x: number; z: number } {
+	const length = Math.sqrt(dx * dx + dz * dz);
+	if (length <= 0.0001) {
+		return { x: 0, z: 0 };
+	}
+	return { x: dx / length, z: dz / length };
+}
+
+function rotateDirection(
+	direction: { x: number; z: number },
+	cosine: number,
+	sine: number
+): { x: number; z: number } {
+	return {
+		x: direction.x * cosine - direction.z * sine,
+		z: direction.x * sine + direction.z * cosine
+	};
+}
+
+function candidateIsOpen(
 	packet: EnergyFlowPacket,
-	deltaSeconds: number
+	direction: { x: number; z: number },
+	obstacles: FlowObstacle[]
+): boolean {
+	return !pointIsBlocked(
+		packet.mesh.position.x + direction.x * FLOW_PROBE_DISTANCE,
+		packet.mesh.position.z + direction.z * FLOW_PROBE_DISTANCE,
+		obstacles
+	);
+}
+
+function escapeObstacleDirection(
+	packet: EnergyFlowPacket,
+	obstacles: FlowObstacle[]
+): { x: number; z: number } | undefined {
+	const obstacle = containingObstacle(
+		packet.mesh.position.x,
+		packet.mesh.position.z,
+		obstacles
+	);
+	if (obstacle === undefined) {
+		return undefined;
+	}
+
+	let direction = normalizedDirection(
+		packet.mesh.position.x - obstacle.x,
+		packet.mesh.position.z - obstacle.z
+	);
+	if (direction.x === 0 && direction.z === 0) {
+		direction = {
+			x: Math.cos(packet.wobble),
+			z: Math.sin(packet.wobble)
+		};
+	}
+	return direction;
+}
+
+function surfaceFlowDirection(
+	packet: EnergyFlowPacket,
+	target: Vector3,
+	obstacles: FlowObstacle[]
+): { x: number; z: number } | undefined {
+	const escapeDirection = escapeObstacleDirection(packet, obstacles);
+	if (escapeDirection !== undefined) {
+		return escapeDirection;
+	}
+
+	const direct = normalizedDirection(
+		target.x - packet.mesh.position.x,
+		target.z - packet.mesh.position.z
+	);
+	if (direct.x === 0 && direct.z === 0) {
+		return direct;
+	}
+
+	const candidates = [
+		direct,
+		rotateDirection(direct, 0.70710678, 0.70710678),
+		rotateDirection(direct, 0.70710678, -0.70710678),
+		rotateDirection(direct, 0, 1),
+		rotateDirection(direct, 0, -1)
+	];
+
+	const preferLeft = Math.sin(packet.wobble) >= 0;
+	if (!preferLeft) {
+		const swap = candidates[1];
+		candidates[1] = candidates[2];
+		candidates[2] = swap;
+		const sideSwap = candidates[3];
+		candidates[3] = candidates[4];
+		candidates[4] = sideSwap;
+	}
+
+	for (let index = 0; index < candidates.length; index += 1) {
+		if (candidateIsOpen(packet, candidates[index], obstacles)) {
+			if (index > 0) {
+				packet.routeChanges += 1;
+			}
+			return candidates[index];
+		}
+	}
+
+	return undefined;
+}
+
+function updateSurfacePacket(
+	packet: EnergyFlowPacket,
+	deltaSeconds: number,
+	obstacles: FlowObstacle[]
 ): boolean {
 	const target = economyGlobals.currencyMesh.position;
 	const dx = target.x - packet.mesh.position.x;
@@ -256,10 +433,41 @@ function updateStreamingPacket(
 		return true;
 	}
 
+	if (
+		packet.phase === "pooling" &&
+		packet.blockedSeconds < POOL_RETRY_SECONDS
+	) {
+		packet.blockedSeconds += deltaSeconds;
+		packet.mesh.position.y = GROUND_Y + Math.sin(packet.age * 2 + packet.wobble) * 0.025;
+		return false;
+	}
+
+	const direction = surfaceFlowDirection(packet, target, obstacles);
+	if (direction === undefined) {
+		packet.blockedSeconds += deltaSeconds;
+		if (packet.blockedSeconds >= POOL_AFTER_BLOCKED_SECONDS) {
+			packet.phase = "pooling";
+			setPoolingScale(packet);
+			packet.blockedSeconds = 0;
+		}
+		return false;
+	}
+
+	if (packet.phase === "pooling") {
+		packet.phase = "streaming";
+		resizePacket(packet);
+	}
+	packet.blockedSeconds = 0;
+
 	const speed = BASE_STREAM_SPEED + Math.min(14, distance * 0.1);
 	const step = Math.min(distance, speed * deltaSeconds);
-	packet.mesh.position.x += (dx / distance) * step;
-	packet.mesh.position.z += (dz / distance) * step;
+	const nextX = packet.mesh.position.x + direction.x * step;
+	const nextZ = packet.mesh.position.z + direction.z * step;
+
+	if (!pointIsBlocked(nextX, nextZ, obstacles)) {
+		packet.mesh.position.x = nextX;
+		packet.mesh.position.z = nextZ;
+	}
 	packet.mesh.position.y =
 		GROUND_Y + Math.sin(packet.age * 5 + packet.wobble) * 0.07;
 
@@ -277,6 +485,7 @@ function updateEnergyFlow(): void {
 		0.05,
 		activeScene.getEngine().getDeltaTime() / 1000
 	);
+	const obstacles = flowObstacles(activeScene);
 
 	for (let index = packets.length - 1; index >= 0; index -= 1) {
 		const packet = packets[index];
@@ -284,7 +493,7 @@ function updateEnergyFlow(): void {
 
 		if (packet.phase === "falling") {
 			updateFallingPacket(packet, deltaSeconds);
-		} else if (updateStreamingPacket(packet, deltaSeconds)) {
+		} else if (updateSurfacePacket(packet, deltaSeconds, obstacles)) {
 			packets.splice(index, 1);
 		}
 	}
