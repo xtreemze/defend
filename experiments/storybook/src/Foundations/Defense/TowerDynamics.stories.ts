@@ -32,13 +32,15 @@ interface SlewTrace {
 const T2_LIMITS: TurretSlewLimits = {
 	maxAngularSpeed: 2.45,
 	angularAcceleration: 6.8,
-	aimTolerance: yawRadians(3.5)
+	aimTolerance: yawRadians(3.5),
+	fireAngularSpeedTolerance: 0.24
 };
 
 const T3_LIMITS: TurretSlewLimits = {
 	maxAngularSpeed: 1.15,
 	angularAcceleration: 2.2,
-	aimTolerance: yawRadians(2.5)
+	aimTolerance: yawRadians(2.5),
+	fireAngularSpeedTolerance: 0.12
 };
 
 function simulateSlew(
@@ -179,6 +181,8 @@ const meta = {
 						<div class="lab__metric"><dt>T3 ready</dt><dd data-t3-ready="${t3.readyAt ?? -1}">${t3.readyAt === null ? "not yet" : `${t3.readyAt.toFixed(2)} s`}</dd></div>
 						<div class="lab__metric"><dt>T2 peak slew</dt><dd data-t2-speed="${t2.maximumSpeed}">${t2.maximumSpeed.toFixed(2)} rad/s</dd></div>
 						<div class="lab__metric"><dt>T3 peak slew</dt><dd data-t3-speed="${t3.maximumSpeed}">${t3.maximumSpeed.toFixed(2)} rad/s</dd></div>
+						<div class="lab__metric"><dt>T2 fire-speed gate</dt><dd>≤ ${T2_LIMITS.fireAngularSpeedTolerance.toFixed(2)} rad/s</dd></div>
+						<div class="lab__metric"><dt>T3 fire-speed gate</dt><dd>≤ ${T3_LIMITS.fireAngularSpeedTolerance.toFixed(2)} rad/s</dd></div>
 					</dl>
 				</aside>
 				<section class="lab__panel lab__panel--padded">
