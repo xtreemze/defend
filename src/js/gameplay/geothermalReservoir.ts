@@ -135,20 +135,21 @@ export function stepGeothermalReservoir(
 			0,
 			next.accessibleEnergy - safe.eruptionEnergyLossPerSecond * dt
 		);
-		const eruptionProgress =
-			safe.eruptionDurationSeconds === 0
-				? 1
-				: Math.min(1, next.eruptionSeconds / safe.eruptionDurationSeconds);
-		next.pressure = Math.max(
-			safe.pressureAfterEruption,
-			next.pressure -
-				(next.pressure - safe.pressureAfterEruption) * eruptionProgress
-		);
+		if (safe.eruptionDurationSeconds === 0) {
+			next.pressure = safe.pressureAfterEruption;
+		} else {
+			const relaxationRate = 5 / safe.eruptionDurationSeconds;
+			const decay = Math.exp(-relaxationRate * dt);
+			next.pressure =
+				safe.pressureAfterEruption +
+				(next.pressure - safe.pressureAfterEruption) * decay;
+		}
 		if (next.eruptionSeconds >= safe.eruptionDurationSeconds) {
 			next.phase = "retreating";
 			next.retreatSeconds = 0;
 			next.depletedSeconds = safe.retreatDelaySeconds;
 			next.eruptionSeconds = safe.eruptionDurationSeconds;
+			next.pressure = safe.pressureAfterEruption;
 			retreatStarted = true;
 		}
 	} else if (next.phase === "retreating") {
