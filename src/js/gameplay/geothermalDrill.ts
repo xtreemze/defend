@@ -16,7 +16,10 @@ export interface GeothermalDrillResult {
 }
 
 function finite(value: number, fallback = 0): number {
-	return Number.isFinite(value) ? value : fallback;
+	if (value !== value || value === Infinity || value === -Infinity) {
+		return fallback;
+	}
+	return value;
 }
 
 function positive(value: number): number {
@@ -44,7 +47,7 @@ export function findReachableGeothermalSource(
 ): GeothermalDrillResult {
 	const reach = positive(maxReach);
 	let bestId: string | null = null;
-	let bestDistance = Number.POSITIVE_INFINITY;
+	let bestDistance = Infinity;
 
 	sources.forEach(source => {
 		if (!source.active || finite(source.y) > finite(origin.y)) {
