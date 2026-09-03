@@ -14,6 +14,7 @@ export default defineConfig({
         mothership: "mothership.html",
         navigation: "navigation.html",
         geothermal: "geothermal.html",
+        routing: "routing.html",
       },
     },
   },
