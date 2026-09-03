@@ -7,6 +7,7 @@ These documents extend `../GAME_DESIGN_MANUAL.md` with focused, implementation-f
 - [`PLANETARY_GEOTHERMAL_ENERGY.md`](./PLANETARY_GEOTHERMAL_ENERGY.md) — spherical planet structure, subsurface teal geothermal reservoirs, finite-length tower siphons, local depletion/migration, pressure and faction-neutral eruptions.
 - [`RAID_PLANNING_AND_MOTHERSHIP_NAVIGATION.md`](./RAID_PLANNING_AND_MOTHERSHIP_NAVIGATION.md) — three-set raid planning, optional holds, inertial mothership/camera movement, silo attraction/exclusion, target-sector selection and dynamic raid cadence.
 - [`SURFACE_FLOW_AND_RAIDER_LOCOMOTION.md`](./SURFACE_FLOW_AND_RAIDER_LOCOMOTION.md) — wall/tower obstruction of recovered-energy flow, defender drainage corridors, terrain gradients, and distinct R1 navigator / R2 breaker / R3 titan locomotion rules.
+- [`TOWER_DEPLOYMENT_AND_DEFORMABLE_TERRAIN.md`](./TOWER_DEPLOYMENT_AND_DEFORMABLE_TERRAIN.md) — anywhere-placement with post-build geothermal drilling, maintenance retries, staggered T1/T2/T3 assembly, outward rest headings, finite turret slew, foundation stabilization, and persistent bounded terrain deformation from eruptions, raider impacts and missed shots.
 
 Focused chapters use the same semantics as the main manual:
 
