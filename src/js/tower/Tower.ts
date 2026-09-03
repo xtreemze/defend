@@ -90,7 +90,7 @@ function shotClearsTower(scene: Scene, ray: Ray, intendedEnemy: Mesh) {
 	) {
 		result = true as boolean;
 	}
-	return true as boolean;
+	return result;
 }
 
 function rotateTurret(
