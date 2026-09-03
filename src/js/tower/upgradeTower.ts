@@ -11,7 +11,7 @@ import {
 	towerGlobals,
 	economyGlobals,
 } from "../main/globalVariables";
-import { towerBasePositions, Tower } from "./Tower";
+import { towerBasePositions, Tower, towerLevel } from "./Tower";
 import { removeTower } from "../main/sound";
 import { currencyMeshColor } from "../enemy/currencyMeshColor";
 import { createBaseInstance } from "./indicatorInstance";
@@ -22,13 +22,14 @@ function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
 		let currentLevel = 0;
 		const pickResult = evt.pickInfo as PickingInfo;
 		if (pickResult.pickedMesh !== null) {
-			currentLevel = parseInt(pickResult.pickedMesh.name[10]);
+			currentLevel = towerLevel(pickResult.pickedMesh);
 		}
 		if (
 			pickResult.hit &&
 			pickResult.pickedMesh !== null &&
 			Tags.MatchesQuery(pickResult.pickedMesh, "towerBase") &&
-			pickResult.pickedMesh.name !== "ground"
+			pickResult.pickedMesh.name !== "ground" &&
+			currentLevel > 0
 		) {
 			const samePosition = {
 				x: pickResult.pickedMesh.position.x,
