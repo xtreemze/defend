@@ -147,7 +147,9 @@ export function updateSpatialMotionEstimate(
 	const timeSeconds = finiteScalar(sample.timeSeconds, previousTime);
 	const deltaSeconds = finiteScalar(timeSeconds - previousTime);
 	const minDelta = positive(calibration.minSampleDeltaSeconds);
-	const maxDelta = Math.max(minDelta, positive(calibration.maxSampleDeltaSeconds));
+	const configuredMaxDelta = positive(calibration.maxSampleDeltaSeconds);
+	const maxDelta =
+		configuredMaxDelta > 0 ? Math.max(minDelta, configuredMaxDelta) : 0;
 	const displacement = subtract(position, previousPosition);
 	const distance = magnitude(displacement);
 	const teleportDistance = positive(calibration.teleportDistance);
