@@ -63,9 +63,15 @@ pub fn bank_damage(enemy_hit_points: f64) -> f64 {
     enemy_hit_points / 2.0
 }
 
+/// Kinetic energy normal to a contact.
+///
+/// `normal_speed` may be signed or already absolute. Using its magnitude keeps
+/// this shared scalar aligned with the TypeScript acoustic and terrain models,
+/// so physics backends can forward one signed contact-normal velocity without
+/// each downstream subsystem silently inventing a different convention.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 pub fn impact_energy(effective_mass: f64, normal_speed: f64) -> f64 {
-    0.5 * effective_mass.max(0.0) * normal_speed.max(0.0).powi(2)
+    0.5 * effective_mass.max(0.0) * normal_speed.abs().powi(2)
 }
 
 #[cfg(test)]
@@ -123,9 +129,9 @@ mod tests {
     }
 
     #[test]
-    fn acoustic_impact_energy_is_physics_derived() {
+    fn acoustic_impact_energy_is_physics_derived_and_sign_invariant() {
         assert_eq!(impact_energy(120.0, 10.0), 6000.0);
+        assert_eq!(impact_energy(120.0, -10.0), 6000.0);
         assert_eq!(impact_energy(-1.0, 10.0), 0.0);
-        assert_eq!(impact_energy(120.0, -10.0), 0.0);
     }
 }
