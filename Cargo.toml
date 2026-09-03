@@ -1,0 +1,3 @@
+[workspace]
+members = ["crates/defend-core"]
+resolver = "2"
