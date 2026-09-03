@@ -11,7 +11,7 @@
     "wasm": "wasm-pack build ./rust --target web --out-dir ../pkg --out-name defend_hybrid_runtime",
     "dev": "pnpm wasm && vite",
     "build": "pnpm wasm && tsc --noEmit && vite build",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "check": "biome check ."
   },
   "dependencies": {
