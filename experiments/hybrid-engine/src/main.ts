@@ -154,12 +154,14 @@ async function main(): Promise<void> {
     scene.render();
     frame += 1;
     if (frame % 15 === 0) {
+      const fingerprint = runtime.state_fingerprint();
       metrics.textContent = [
         "Babylon 9.23 renderer + Bevy 0.19 ECS/WASM",
         `bodies: ${BODY_COUNT}`,
         `fps: ${engine.getFps().toFixed(1)}`,
         `simulation: ${(1 / fixedStepPolicy.fixedDeltaSeconds).toFixed(0)} Hz fixed tick`,
         `tick: ${runtime.tick()} (${stepsThisFrame} step(s) this frame)`,
+        `state: ${fingerprint}`,
         `render alpha: ${renderAlpha.toFixed(2)}`,
         `snapshot: ${snapshotBytes} B/frame + ${snapshotIds.length * Uint32Array.BYTES_PER_ELEMENT} B identity table`,
         `dropped catch-up time: ${(fixedStepState.droppedSeconds * 1000).toFixed(1)} ms`,
