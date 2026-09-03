@@ -45,6 +45,8 @@ Issue #30 owns the behavioral certification contract. When a refactor and legacy
 
 The local executor is the authority for actions that require a real checkout/runtime: dependency installation, builds, browser execution, physics interaction, profiling, screenshots, PWA/offline checks, audio checks, and local certification.
 
+Local sessions are expected to be infrequent. Follow `docs/LOCAL_CERTIFICATION.md` and the live campaign queue in issue #92 so one session certifies several related surfaces. Prefer a separate persistent certification clone over branch-switching or installing dependencies in the shared development checkout.
+
 When working in a checkout that may contain concurrent work:
 
 - do not `reset --hard`, `clean`, stash, or overwrite unrelated changes;

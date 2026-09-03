@@ -12,6 +12,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: "index.html",
+        mothership: "mothership.html",
+        navigation: "navigation.html",
+        geothermal: "geothermal.html",
+        routing: "routing.html",
         towerTerrain: "tower-terrain.html",
       },
     },
