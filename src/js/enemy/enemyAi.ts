@@ -2,11 +2,15 @@ import { Vector3 } from "babylonjs";
 import randomNumberRange from "../utility/randomNumberRange";
 import { enemyGlobals } from "../main/globalVariables";
 import { EnemySphere } from "./enemyBorn";
+import {
+	enemyDiameter,
+	enemyMoveImpulse
+} from "../gameplay/enemyScaling";
 
 function vector(enemy: EnemySphere, direction: string = "", level: number) {
 	if (enemy.physicsImpostor !== null) {
-		const speed = enemyGlobals.speed * level * level;
-		const radius = (level * level + 5) / 2;
+		const speed = enemyMoveImpulse(enemyGlobals.speed, level);
+		const radius = enemyDiameter(level) / 2;
 
 		switch (direction) {
 			case "down":
