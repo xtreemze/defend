@@ -7,9 +7,9 @@ import type {
 } from "@defend/audio/spatialAudio";
 import {
   planSpatialVoiceBudget,
+  spatialVoiceHistory,
   type SpatialVoiceBudget,
-  type SpatialVoicePlan,
-  spatialVoiceHistory
+  type SpatialVoicePlan
 } from "@defend/audio/spatialVoiceBudget";
 import { createLabShell } from "../../labTheme";
 
@@ -91,7 +91,7 @@ function sources(count: number, timeSeconds: number): SpatialAudioObjectState[] 
     const radialSpeed = index % 4 === 0 ? -5 : 1.5;
     const radial = { x: Math.cos(angle), z: Math.sin(angle) };
     const tangent = { x: -radial.z, z: radial.x };
-    const base: SpatialAudioObjectState = {
+    const source: SpatialAudioObjectState = {
       id: `emitter-${String(index).padStart(3, "0")}`,
       kind: index % 3 === 0 ? "enemy" : index % 3 === 1 ? "impact" : "fragment",
       acousticProfile: index % 3 === 0 ? "enemy" : index % 3 === 1 ? "ground" : "fragment",
@@ -111,28 +111,10 @@ function sources(count: number, timeSeconds: number): SpatialAudioObjectState[] 
       seed: 100 + index,
       sustained: index % 4 === 0
     };
-    generated.push(movingSource(base, timeSeconds));
+    generated.push(movingSource(source, timeSeconds));
   }
 
   return generated;
-}
-
-function tierClass(plan: SpatialVoicePlan): string {
-  return `voice voice--${plan.tier}`;
-}
-
-function stageMarkup(plans: SpatialVoicePlan[]): string {
-  const scale = 1.65;
-  return plans
-    .map(plan => {
-      const source = plan.id === "flyby-projectile"
-        ? null
-        : undefined;
-      void source;
-      const hints = plan.hints;
-      return `<g data-plan-id="${plan.id}" data-tier="${plan.tier}" data-priority="${plan.priority}"></g>`;
-    })
-    .join("");
 }
 
 function sourceMarkup(source: SpatialAudioObjectState, plan: SpatialVoicePlan): string {
@@ -148,14 +130,19 @@ function sourceMarkup(source: SpatialAudioObjectState, plan: SpatialVoicePlan): 
     : "";
 
   return `
-    <g class="${tierClass(plan)}" data-plan-id="${plan.id}" data-tier="${plan.tier}" data-priority="${plan.priority}">
+    <g class="voice voice--${plan.tier}" data-plan-id="${plan.id}" data-tier="${plan.tier}" data-priority="${plan.priority}">
       ${velocityLine}
       <circle cx="${x}" cy="${y}" r="${radius}" />
     </g>
   `;
 }
 
-function renderPlans(root: HTMLElement, args: SpatialArgs, timeSeconds: number, previous?: SpatialVoicePlan[]): SpatialVoicePlan[] {
+function renderPlans(
+  root: HTMLElement,
+  args: SpatialArgs,
+  timeSeconds: number,
+  previous?: SpatialVoicePlan[]
+): SpatialVoicePlan[] {
   const currentSources = sources(args.emitterCount, timeSeconds);
   const budget: SpatialVoiceBudget = {
     fullVoices: args.fullVoices,
@@ -165,35 +152,32 @@ function renderPlans(root: HTMLElement, args: SpatialArgs, timeSeconds: number, 
   };
   const history = previous ? spatialVoiceHistory(previous) : undefined;
   const plans = planSpatialVoiceBudget(currentSources, listener, calibration, budget, history);
-  const byId = new Map(currentSources.map(source => [source.id, source]));
+  const byId = new Map<string, SpatialAudioObjectState>(
+    currentSources.map(source => [source.id, source] as const)
+  );
   const hero = plans.find(plan => plan.id === "flyby-projectile");
   const stage = root.querySelector<SVGElement>("[data-spatial-stage]");
   const table = root.querySelector<HTMLElement>("[data-voice-table]");
   const heroDoppler = root.querySelector<HTMLElement>("[data-hero-doppler]");
   const heroPriority = root.querySelector<HTMLElement>("[data-hero-priority]");
-  const rendered = plans.filter(plan => plan.tier !== "virtual").length;
   const renderedMetric = root.querySelector<HTMLElement>("[data-rendered-count]");
+  const rendered = plans.filter(plan => plan.tier !== "virtual").length;
 
   if (stage) {
     stage.innerHTML = `
       <circle class="listener-range" cx="0" cy="0" r="${calibration.referenceDistance * 1.65}" />
       <circle class="listener" cx="0" cy="0" r="6" />
-      ${plans
-        .map(plan => {
-          const source = byId.get(plan.id);
-          return source ? sourceMarkup(source, plan) : "";
-        })
-        .join("")}
+      ${plans.map(plan => {
+        const source = byId.get(plan.id);
+        return source ? sourceMarkup(source, plan) : "";
+      }).join("")}
     `;
   }
 
   if (table) {
-    table.innerHTML = plans
-      .slice(0, 10)
-      .map(
-        plan => `<tr><td>${plan.rank + 1}</td><td>${plan.id}</td><td>${plan.tier}</td><td>${plan.priority.toFixed(3)}</td><td>${plan.hints.distance.toFixed(1)}</td></tr>`
-      )
-      .join("");
+    table.innerHTML = plans.slice(0, 10).map(plan =>
+      `<tr><td>${plan.rank + 1}</td><td>${plan.id}</td><td>${plan.tier}</td><td>${plan.priority.toFixed(3)}</td><td>${plan.hints.distance.toFixed(1)}</td></tr>`
+    ).join("");
   }
 
   if (hero && heroDoppler) heroDoppler.textContent = hero.hints.doppler.ratio.toFixed(3);
@@ -267,8 +251,7 @@ const meta = {
     let plans = renderPlans(shell.root, args, 0);
     const advance = shell.root.querySelector<HTMLButtonElement>("[data-advance]");
     advance?.addEventListener("click", () => {
-      const current = Number(advance.dataset.time || "0");
-      const next = current + 0.25;
+      const next = Number(advance.dataset.time || "0") + 0.25;
       plans = renderPlans(shell.root, args, next, plans);
       advance.dataset.time = String(next);
     });
@@ -284,10 +267,13 @@ export const MovingEmitterBudget: Story = {
   play: async ({ canvasElement }) => {
     const advance = canvasElement.querySelector<HTMLButtonElement>("[data-advance]");
     const hero = canvasElement.querySelector<SVGGElement>("[data-plan-id='flyby-projectile']");
+    const rendered = canvasElement.querySelector<HTMLElement>("[data-rendered-count]");
     await expect(advance).not.toBeNull();
     await expect(hero).not.toBeNull();
-    if (!advance || !hero) return;
+    await expect(rendered).not.toBeNull();
+    if (!advance || !hero || !rendered) return;
     await expect(hero.getAttribute("data-tier")).not.toBe("virtual");
+    await expect(rendered).toHaveTextContent("44");
     await userEvent.click(advance);
     await expect(advance).toHaveAttribute("data-time", "0.25");
   }
