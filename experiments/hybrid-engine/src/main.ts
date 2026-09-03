@@ -9,6 +9,11 @@ import {
   Vector3,
 } from "@babylonjs/core/pure";
 import initRuntime, { DefendRuntime } from "../pkg/defend_hybrid_runtime.js";
+import {
+  INITIAL_FIXED_STEP_STATE,
+  advanceFixedStep,
+  type FixedStepPolicy,
+} from "./fixedStep";
 
 const BODY_COUNT = 128;
 const ARENA_RADIUS = 72;
@@ -106,32 +111,29 @@ async function main(): Promise<void> {
     inspectable = StartInspectable(scene);
   }
 
-  const fixedDeltaSeconds = runtime.fixed_delta_seconds();
-  const maxAccumulatorSeconds = fixedDeltaSeconds * MAX_CATCH_UP_STEPS;
-  let accumulatorSeconds = 0;
-  let droppedSimulationSeconds = 0;
+  const fixedStepPolicy: FixedStepPolicy = {
+    fixedDeltaSeconds: runtime.fixed_delta_seconds(),
+    maxCatchUpSteps: MAX_CATCH_UP_STEPS,
+    maxFrameDeltaSeconds: MAX_FRAME_DELTA_SECONDS,
+  };
+  let fixedStepState = INITIAL_FIXED_STEP_STATE;
   let frame = 0;
   let snapshotBytes = 0;
   let stepsThisFrame = 0;
+  let renderAlpha = 0;
 
   engine.runRenderLoop(() => {
-    const frameDeltaSeconds = Math.min(
-      Math.max(engine.getDeltaTime() / 1000, 0),
-      MAX_FRAME_DELTA_SECONDS,
+    const advance = advanceFixedStep(
+      fixedStepState,
+      engine.getDeltaTime() / 1000,
+      fixedStepPolicy,
     );
-    const requestedAccumulator = accumulatorSeconds + frameDeltaSeconds;
-    if (requestedAccumulator > maxAccumulatorSeconds) {
-      droppedSimulationSeconds += requestedAccumulator - maxAccumulatorSeconds;
-    }
-    accumulatorSeconds = Math.min(requestedAccumulator, maxAccumulatorSeconds);
+    fixedStepState = advance.state;
+    stepsThisFrame = advance.steps;
+    renderAlpha = advance.alpha;
 
-    stepsThisFrame = Math.min(
-      Math.floor(accumulatorSeconds / fixedDeltaSeconds),
-      MAX_CATCH_UP_STEPS,
-    );
     if (stepsThisFrame > 0) {
       runtime.step_fixed(stepsThisFrame);
-      accumulatorSeconds -= stepsThisFrame * fixedDeltaSeconds;
     }
 
     const positions = runtime.positions();
@@ -156,11 +158,11 @@ async function main(): Promise<void> {
         "Babylon 9.23 renderer + Bevy 0.19 ECS/WASM",
         `bodies: ${BODY_COUNT}`,
         `fps: ${engine.getFps().toFixed(1)}`,
-        `simulation: ${(1 / fixedDeltaSeconds).toFixed(0)} Hz fixed tick`,
+        `simulation: ${(1 / fixedStepPolicy.fixedDeltaSeconds).toFixed(0)} Hz fixed tick`,
         `tick: ${runtime.tick()} (${stepsThisFrame} step(s) this frame)`,
-        `render alpha: ${(accumulatorSeconds / fixedDeltaSeconds).toFixed(2)}`,
+        `render alpha: ${renderAlpha.toFixed(2)}`,
         `snapshot: ${snapshotBytes} B/frame + ${snapshotIds.length * Uint32Array.BYTES_PER_ELEMENT} B identity table`,
-        `dropped catch-up time: ${(droppedSimulationSeconds * 1000).toFixed(1)} ms`,
+        `dropped catch-up time: ${(fixedStepState.droppedSeconds * 1000).toFixed(1)} ms`,
         `WebGPU available: ${"gpu" in navigator}`,
         `crossOriginIsolated: ${String(crossOriginIsolated)}`,
         "?inspect=1 enables Babylon Inspector CLI bridge",
