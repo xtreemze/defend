@@ -76,14 +76,18 @@ function clearPackets(): void {
 	}
 }
 
-function prototypeStats() {
-	let inTransitEnergy = 0;
+function inTransitEnergy(): number {
+	let value = 0;
 	packets.forEach(packet => {
-		inTransitEnergy += packet.value;
+		value += packet.value;
 	});
+	return value;
+}
+
+function prototypeStats() {
 	return {
 		activePackets: packets.length,
-		inTransitEnergy
+		inTransitEnergy: inTransitEnergy()
 	};
 }
 
@@ -183,19 +187,30 @@ function spawnRecoveredEnergy(
 
 	ensureScene(scene);
 
+	const availableCapacity = Math.max(
+		0,
+		economyGlobals.maxBalance -
+			economyGlobals.currentBalance -
+			inTransitEnergy()
+	);
+	const acceptedValue = Math.min(value, availableCapacity);
+	if (acceptedValue <= 0) {
+		return;
+	}
+
 	const availableSlots = MAX_ACTIVE_PACKETS - packets.length;
 	if (availableSlots <= 0) {
-		mergeIntoExistingPacket(origin, value);
+		mergeIntoExistingPacket(origin, acceptedValue);
 		return;
 	}
 
 	const desiredPackets = Math.max(
 		MIN_PACKETS_PER_HIT,
-		Math.min(MAX_PACKETS_PER_HIT, Math.ceil(value / 150))
+		Math.min(MAX_PACKETS_PER_HIT, Math.ceil(acceptedValue / 150))
 	);
 	const packetCount = Math.min(desiredPackets, availableSlots);
-	const valuePerPacket = value / packetCount;
-	let remainingValue = value;
+	const valuePerPacket = acceptedValue / packetCount;
+	let remainingValue = acceptedValue;
 
 	for (let index = 0; index < packetCount; index += 1) {
 		const packetValue =
