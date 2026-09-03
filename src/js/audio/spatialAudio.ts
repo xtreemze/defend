@@ -7,10 +7,12 @@ export interface SpatialVector3 {
 export interface SpatialAudioObjectState {
 	id: string;
 	kind: string;
+	acousticProfile: string;
 	position: SpatialVector3;
 	velocity: SpatialVector3;
 	orientation: SpatialVector3;
 	angularVelocity?: SpatialVector3;
+	directivity: number;
 	radius: number;
 	baseGain: number;
 	excitationEnergy: number;
@@ -207,9 +209,10 @@ export function dopplerState(
 }
 
 /**
- * A renderer-independent distance gain hint. A Web Audio backend may use its
- * native PannerNode distance model instead; this scalar remains useful for
- * prioritization, alternate/native backends and deterministic fixtures.
+ * A renderer-independent distance gain hint. Full gain is retained inside the
+ * reference distance, matching the semantic expectation of a spatial near
+ * field. A Web Audio backend may use its native PannerNode distance model
+ * instead; this scalar remains useful for prioritization and native backends.
  */
 export function distanceGain(
 	distance: number,
@@ -217,9 +220,12 @@ export function distanceGain(
 	rolloffExponent: number
 ): number {
 	const reference = Math.max(0.0001, positive(referenceDistance));
-	const normalizedDistance = positive(distance) / reference;
+	const normalizedBeyondReference = Math.max(
+		0,
+		positive(distance) / reference - 1
+	);
 	const exponent = Math.max(0.0001, positive(rolloffExponent));
-	return 1 / (1 + Math.pow(normalizedDistance, exponent));
+	return 1 / (1 + Math.pow(normalizedBeyondReference, exponent));
 }
 
 /**
