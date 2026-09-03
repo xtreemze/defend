@@ -2,6 +2,7 @@ export interface TurretSlewLimits {
 	maxAngularSpeed: number;
 	angularAcceleration: number;
 	aimTolerance: number;
+	fireAngularSpeedTolerance: number;
 }
 
 export interface TurretSlewState {
@@ -71,9 +72,14 @@ export function outwardRestYaw(
 export function turretReadyToFire(
 	currentYaw: number,
 	targetYaw: number,
-	aimTolerance: number
+	angularVelocity: number,
+	aimTolerance: number,
+	fireAngularSpeedTolerance: number
 ): boolean {
-	return Math.abs(shortestYawDelta(currentYaw, targetYaw)) <= positive(aimTolerance);
+	return (
+		Math.abs(shortestYawDelta(currentYaw, targetYaw)) <= positive(aimTolerance) &&
+		Math.abs(finite(angularVelocity)) <= positive(fireAngularSpeedTolerance)
+	);
 }
 
 /**
@@ -91,6 +97,7 @@ export function stepTurretSlew(
 	const maxSpeed = positive(limits.maxAngularSpeed);
 	const acceleration = positive(limits.angularAcceleration);
 	const tolerance = positive(limits.aimTolerance);
+	const fireSpeedTolerance = positive(limits.fireAngularSpeedTolerance);
 	let yaw = normalizeYaw(state.yaw);
 	let velocity = clamp(state.angularVelocity, -maxSpeed, maxSpeed);
 	let error = shortestYawDelta(yaw, targetYaw);
@@ -122,7 +129,7 @@ export function stepTurretSlew(
 	error = shortestYawDelta(yaw, targetYaw);
 	if (
 		Math.abs(error) <= tolerance &&
-		Math.abs(velocity) <= acceleration * Math.max(dt, 1 / 120)
+		Math.abs(velocity) <= fireSpeedTolerance
 	) {
 		velocity = 0;
 	}
@@ -131,7 +138,13 @@ export function stepTurretSlew(
 		yaw,
 		angularVelocity: velocity,
 		aimError: error,
-		ready: Math.abs(error) <= tolerance
+		ready: turretReadyToFire(
+			yaw,
+			targetYaw,
+			velocity,
+			tolerance,
+			fireSpeedTolerance
+		)
 	};
 }
 
