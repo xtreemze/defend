@@ -4,6 +4,7 @@ export default defineConfig({
   server: {
     fs: {
       strict: true,
+      allow: ["../.."],
     },
   },
   build: {
@@ -15,6 +16,7 @@ export default defineConfig({
         navigation: "navigation.html",
         geothermal: "geothermal.html",
         routing: "routing.html",
+        towerTerrain: "tower-terrain.html",
       },
     },
   },
