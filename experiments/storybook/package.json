@@ -1,0 +1,24 @@
+{
+  "name": "defend-storybook-lab",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test-storybook": "vitest --project=storybook"
+  },
+  "devDependencies": {
+    "@storybook/addon-vitest": "10.6.0",
+    "@storybook/html-vite": "10.6.0",
+    "@vitest/browser-playwright": "4.1.11",
+    "playwright": "1.62.1",
+    "storybook": "10.6.0",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  }
+}
