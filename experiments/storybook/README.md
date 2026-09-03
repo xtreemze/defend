@@ -4,22 +4,26 @@ This package is an isolated modern browser workshop for Defend experiments. It i
 
 ## Requirements
 
-- Node.js 20.19 or newer.
-- Install dependencies from this directory only.
+- Node.js 24.20.x LTS.
+- pnpm 11.25.0, matching the package's pinned `packageManager` field.
+- Install dependencies from this directory only until the repository-wide modern workspace is introduced.
 - Install Playwright Chromium before browser tests when it is not already present.
 
 ## Commands
 
 ```sh
 cd experiments/storybook
-npm install
-npx playwright install chromium
-npm run storybook
-npm run build-storybook
-npm run test-storybook
+pnpm install
+pnpm exec playwright install chromium
+pnpm typecheck
+pnpm dev
+pnpm build
+pnpm test
 ```
 
-Commit the generated lockfile only after local installation confirms the pinned dependency set is coherent.
+The compatibility aliases `pnpm storybook`, `pnpm build-storybook`, and `pnpm test-storybook` remain available for Storybook-oriented workflows.
+
+Commit the generated `pnpm-lock.yaml` only after local installation confirms the pinned dependency set is coherent. Installation/build/test must not mutate the legacy root dependency graph.
 
 ## Story taxonomy
 
@@ -54,3 +58,7 @@ The initial capability story intentionally creates no persistent background work
 ## Root-source imports
 
 Do not broadly expose the repository filesystem through Vite. When a story needs a pure root module, add the narrowest explicit Vite allow-list/alias required and document it in the PR. Modules coupled to the historical Webpack runtime should instead receive a dedicated adapter or standalone fixture.
+
+## Future workspace integration
+
+When #66 introduces the repository-wide modern workspace, this package should become the canonical `apps/storybook`/Storybook package rather than creating a second lab. Preserve the story taxonomy and browser-test lifecycle while relocating only after the workspace layout is locally certified.
