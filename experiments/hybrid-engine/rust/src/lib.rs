@@ -64,7 +64,7 @@ impl DefendRuntime {
     pub fn positions(&mut self) -> Vec<f32> {
         let world = self.app.world_mut();
         let mut query = world.query::<&Position>();
-        let mut positions = Vec::with_capacity(query.iter(world).len() * 3);
+        let mut positions = Vec::new();
 
         for position in query.iter(world) {
             positions.push(position.0.x);
