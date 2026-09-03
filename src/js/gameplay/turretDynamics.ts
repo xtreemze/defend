@@ -17,7 +17,20 @@ export interface TurretSlewStep extends TurretSlewState {
 const TWO_PI = Math.PI * 2;
 
 function finite(value: number, fallback = 0): number {
-	return Number.isFinite(value) ? value : fallback;
+	if (value !== value || value === Infinity || value === -Infinity) {
+		return fallback;
+	}
+	return value;
+}
+
+function sign(value: number): number {
+	if (value > 0) {
+		return 1;
+	}
+	if (value < 0) {
+		return -1;
+	}
+	return 0;
 }
 
 function positive(value: number): number {
@@ -85,7 +98,7 @@ export function stepTurretSlew(
 	if (dt > 0 && acceleration > 0 && maxSpeed > 0 && Math.abs(error) > 1e-9) {
 		const brakingSpeed = Math.sqrt(2 * acceleration * Math.abs(error));
 		const desiredSpeed = Math.min(maxSpeed, brakingSpeed);
-		const desiredVelocity = Math.sign(error) * desiredSpeed;
+		const desiredVelocity = sign(error) * desiredSpeed;
 		const maxVelocityChange = acceleration * dt;
 		velocity += clamp(
 			desiredVelocity - velocity,
@@ -96,7 +109,7 @@ export function stepTurretSlew(
 
 		const proposedStep = velocity * dt;
 		if (
-			Math.sign(proposedStep) === Math.sign(error) &&
+			sign(proposedStep) === sign(error) &&
 			Math.abs(proposedStep) >= Math.abs(error)
 		) {
 			yaw = normalizeYaw(targetYaw);
