@@ -4,6 +4,10 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@defend/*": ["../../src/js/*"]
+    },
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true
