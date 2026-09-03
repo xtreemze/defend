@@ -3,8 +3,10 @@
 **Status:** Living design source of truth  
 **Last major synthesis:** 2026-09-03  
 **Baseline code reference:** `master` at `f429d68de64d53bf05bc48014fdc29435a467853`  
-**Primary design threads:** #29, #72, #73, #74  
+**Primary design threads:** #29, #72, #73, #74, #76, #79  
 **Behavioral certification:** #30
+
+> Focused implementation-facing chapters extend this manual under `docs/design/`, including physical energy flow/world ecology and the raider mothership perspective. They use the same Canonical / Current baseline / Experimental semantics as this manual.
 
 ---
 
@@ -314,6 +316,16 @@ The player now uses Raider 1/2/3 against AI-controlled Tower 1/2/3 defenses.
 
 The same physical rules should apply to both sides.
 
+### Mothership identity
+
+The raider mothership is a large spherical/faceted relative of the raiders, not a flying tower. Its centrally located teal energy reservoir remains visibly exposed through a simple cage/ring/strut structure. It does not shoot. Its reserve pays for suspension, meaningful movement, raider construction/deployment and survival.
+
+Raiders likewise do not shoot: their shells, mass, inertia, collision and remaining viability are their weapons.
+
+A raid cannot remain open indefinitely. Hover consumes a small amount of the same teal reserve. If the mothership fails to replenish itself and can no longer sustain lift, it physically falls under gravity and remains as a recognizable hulk that may be visible to a defending survivor.
+
+The detailed visual, camera, energy, crash and PoC contract is maintained in `docs/design/MOTHERSHIP_AND_RAIDER_PERSPECTIVE.md` and issue #79.
+
 ## 4.6 Act VI — Break, accept, or reshape the cycle
 
 **Open design space, not yet canonical.**
@@ -405,6 +417,8 @@ Purpose:
 - mirror the fortress’s dependence on continued interaction.
 
 The drain must be slow enough to preserve observation and planning. It should not become an arcade timer.
+
+The mothership perspective chapter further requires this operating pressure to be physically legible through the exposed central reserve and suspension stability. The operating drain, movement, raider deployment and survival remain one teal-energy economy rather than separate fuel/ammunition resources.
 
 ## 5.4 No dominant farming exploit
 
@@ -588,7 +602,8 @@ All raiders:
 - can be damaged, blocked, redirected, delayed, or ejected;
 - have extraction value tied to surviving viability;
 - should interact with tower geometry through ordinary collision rules;
-- should remain useful in late game for distinct tactical reasons.
+- should remain useful in late game for distinct tactical reasons;
+- do not carry ranged weapons; their shell/body, mass, momentum and survival are their offensive capability.
 
 ## 7.2 Raider 1 — Scout / Swarm Raider
 
@@ -759,1315 +774,417 @@ Avoid invisible exceptions that cause projectiles to pass through objects the pl
 
 ## 9.1 Damage and momentum are co-equal
 
-A projectile has at least two important effects:
+A projectile interaction has at least two important outputs:
 
-1. reduces viability/HP;
-2. transfers physical momentum.
+- loss of enemy viability / HP;
+- physical change in momentum.
 
-Balance changes should measure both.
+Balance work must inspect both. A projectile can be strategically valuable even when its raw damage contribution is not exceptional.
 
-A weapon that kills slowly but repeatedly alters trajectory can be strategically strong. A weapon that does high damage but transfers little useful momentum may be inappropriate for the game’s identity.
+## 9.2 Packet size matters
 
-## 9.2 Damage should affect economics
+T2 and T3 intentionally have similar nominal damage/impulse throughput but different packet sizes and cadence.
 
-Defender perspective:
+This should produce differences in:
 
-- hits restore some energy;
-- reducing enemy HP lowers damage if it reaches the silo.
+- overkill;
+- miss cost;
+- target switching;
+- displacement per event;
+- obstruction risk;
+- timing windows;
+- edge-ejection potential.
 
-Raider perspective:
+## 9.3 No hidden anti-type bonuses by default
 
-- damage reduces eventual extraction value;
-- a raid can physically succeed but economically fail.
+Do not introduce rules such as:
 
-This symmetry is important. Damage is not merely a binary route to death.
+- +50% damage against Titans;
+- R1 immunity to T3;
+- armor categories;
+- elemental weaknesses.
 
-## 9.3 Overkill matters
-
-Large packets create overkill risk.
-
-This is one of T3’s intended trade-offs. A heavy shot spent on a nearly dead R1 should be less efficient than T2 granular fire, even if both towers have similar nominal throughput.
-
-## 9.4 Misses matter
-
-Projectile travel and collision should remain meaningful enough that a miss can create tactical exposure.
-
-T3 misses should generally be more consequential because of its slower cadence.
-
-Do not make all shots effectively hitscan unless a future engine requires it for accessibility/performance and an equivalent physical trade-off is preserved.
+If a matchup is weak, first adjust physical/economic properties that the player can perceive.
 
 ---
 
-# 10. Raid deterrence system
+# 10. Finite life and delay
 
-## 10.1 Purpose
+Enemy/raider health naturally decays over time.
 
-The campaign should not escalate enemy numbers forever. Rational attackers should stop committing resources to a target that consistently produces losses.
+This mechanic should remain strategically central.
 
-Deterrence connects gameplay mastery to the story inversion.
+Delay can come from:
 
-## 10.2 Hidden raid confidence
+- barriers;
+- collision congestion;
+- long routing;
+- poor insertion;
+- knockback;
+- getting trapped against geometry;
+- recovering from high-energy impacts.
 
-**Experimental model.** Track a rolling expected-value/confidence state based on recent raid outcomes.
-
-Possible inputs:
-
-- fraction of raiders reaching the silo;
-- energy extracted per raid;
-- attacker energy invested versus extracted;
-- average remaining HP of successful raiders;
-- kill rate;
-- ejection rate;
-- expiry/decay rate;
-- average time to silo;
-- observed defensive investment;
-- current silo reward potential.
-
-Use this value diagnostically during development. The final player-facing experience should rely mainly on behavior rather than a visible “raid confidence: 17%” stat.
-
-## 10.3 Behavioral response
-
-As confidence declines, attackers should change strategy before quitting:
-
-1. reduce expensive commitments;
-2. increase cheap probes;
-3. vary insertion/origin;
-4. lengthen intervals;
-5. attempt isolated scouting raids;
-6. stop when repeated probes remain unprofitable.
-
-This creates foreshadowing for the later player-controlled raider economy.
-
-## 10.4 Deterrence is not a punishment for good play
-
-The player should initially perceive fewer raids as success. The later resource consequence should feel like a systemic truth, not an arbitrary “you defended too well” penalty.
-
-The fortress should survive for a meaningful quiet period before crisis becomes unavoidable.
+After the inversion, finite life directly reduces raid extraction value, making delay economically visible from both sides.
 
 ---
 
-# 11. Mothership design
+# 11. Energy as physical matter
 
-## 11.1 Function
+The detailed physical-energy contract is maintained in `docs/design/ENERGY_FLOW_AND_WORLD_ECOLOGY.md` and issue #76.
 
-The mothership is:
+Canonical direction:
 
-- the transformed energy silo;
-- the player’s health/energy reserve;
-- the camera/observation platform;
-- the dropship origin for raiders;
-- a visual explanation for the original enemies’ aerial origin.
+- recovered teal energy spills at the actual hit location;
+- it pools/coalesces/streams toward the defending silo;
+- ownership changes when energy physically arrives rather than by hidden teleportation;
+- a successful raid reverses the flow from silo to mothership;
+- surviving raiders use the same upward stream to evacuate;
+- distant teal signatures represent the same energy ecology at strategic scale.
 
-## 11.2 It must remain the same object conceptually
-
-Do not replace the silo with an unrelated spaceship asset.
-
-The mothership should retain recognizable:
-
-- proportions or sub-volumes;
-- energy core language;
-- materials;
-- damage/depletion states;
-- procedural construction vocabulary.
-
-## 11.3 Camera
-
-The raider-phase camera should feel attached to or associated with the mothership rather than becoming an omniscient RTS sky camera.
-
-The camera establishes:
-
-- where raiders come from;
-- which insertion areas are physically plausible;
-- the mothership’s vulnerability and position;
-- continuity with the transformation scene.
-
-Camera motion should preserve spatial comprehension and avoid excessive cinematic movement.
+The implementation may use aggregate authoritative packets plus procedural/GPU visual fluid. Rendered particle count must never determine conserved economic value.
 
 ---
 
-# 12. Raider control model
+# 12. Mothership physical lifecycle
 
-## 12.1 Pre-deployment decisions
+The detailed contract is maintained in `docs/design/MOTHERSHIP_AND_RAIDER_PERSPECTIVE.md` and issue #79.
 
-The player should control:
+Canonical direction:
 
-- raider tier;
-- number committed where multi-body deployment is allowed;
-- insertion point within valid airspace;
-- drop timing;
-- formation spacing;
-- initial drop/approach vector.
+- spherical/mobile raider-family geometry contrasts with rectilinear/rooted defense;
+- central teal reserve is exposed and readable;
+- mothership has no direct weapon;
+- raiders use their bodies/shells as weapons;
+- same reserve pays for hover, movement, launches and survival;
+- hover drain prevents infinite raids;
+- reserve depletion physically weakens suspension;
+- loss of lift transitions continuously into gravity-driven failure;
+- the crashed vessel remains a recognizable hulk;
+- a defending survivor may witness that hulk as evidence that the attacking faction itself had finite resources.
 
-These are high-leverage physical decisions.
-
-## 12.2 Post-deployment influence
-
-Avoid frame-by-frame RTS micromanagement.
-
-Possible limited interventions:
-
-- choose one of a small set of objectives;
-- issue a directional impulse/order with cooldown or energy cost;
-- redirect toward a breach;
-- stop reinforcing a failing raid;
-- deploy a second body to exploit a newly created path.
-
-Once deployed, physics should remain authoritative.
-
-## 12.3 Desired feeling
-
-The player should feel like they are **committing bodies into a physical system**, not puppeteering units around hazards.
-
-A good insertion can be more valuable than many later corrections.
+This makes time pressure symmetric: delaying deployed raiders also consumes the mothership's operating reserve.
 
 ---
 
-# 13. AI defenders
+# 13. Strategic world ecology
 
-AI-controlled defenders appear primarily after the role inversion but can also support simulation, tutorials, and sandbox testing.
+Distant silos/mothership targets should be represented as teal energy signatures rather than mission cards.
 
-## 13.1 Fairness rule
+Broad reading:
 
-AI uses the same:
+- brighter signatures tend to mean more energy/activity and therefore greater reward and stronger maintained defenses;
+- dimmer signatures tend to mean less energy/activity and more deterioration, therefore easier but less rewarding raids;
+- these relationships should emerge from energy throughput, raid frequency and maintenance rather than arbitrary difficulty tags;
+- signatures may brighten, dim, flare, disappear on conversion, or reappear on settlement.
+
+The strategic sky should be a live readout of the same scarcity ecology the player experiences locally.
+
+---
+
+# 14. AI defender fairness
+
+Ground defenders in the raider phase should obey the same core constraints as player defenses:
 
 - energy budget;
 - tower costs;
-- tower lifetimes;
-- ranges;
+- tower aging;
+- range;
 - cadence;
-- projectile damage;
-- projectile mass;
-- physics;
-- placement rules;
-- degradation rules.
+- projectile physics;
+- obstruction;
+- finite maintenance consequences.
 
-No hidden stat bonuses.
+The AI may be tactically competent, but it should not receive hidden damage/mass/range/cooldown bonuses.
 
-Difficulty should come from decision quality, planning horizon, composition, geometry, and constrained reaction time.
-
-## 13.2 Tower policy
-
-### T1 AI
-
-Use barriers to:
-
-- lengthen routes;
-- create chokepoints;
-- protect the silo;
-- separate likely approach lanes;
-- create edge redirection opportunities;
-- support firing lanes.
-
-### T2 AI
-
-Prioritize:
-
-- nearby changing threats;
-- light raiders;
-- exposed low-HP targets where granular fire avoids overkill;
-- targets that are about to escape a firing window.
-
-### T3 AI
-
-Prioritize situations where a heavy packet matters:
-
-- R3 or heavy R2 threats;
-- distant high-value targets;
-- targets approaching the silo with high remaining viability;
-- edge-ejection opportunities;
-- clear long-range firing lanes.
-
-## 13.3 AI readability
-
-The player should be able to infer why an AI fortress is effective from its layout and behavior.
-
-Avoid apparently psychic rebuilds or instantaneous perfect counter-placement.
+The goal is for the player to recognize the same tower system from the other side.
 
 ---
 
-# 14. Progression and difficulty
+# 15. Input and direct control
 
-## 14.1 No conventional power ladder
+Defender play should remain world-first:
 
-The player should not simply unlock stronger numerical versions of existing tools.
+- point/tap to place or upgrade;
+- camera movement should not require mode-heavy UI;
+- important tower states should be visible in-world.
 
-Progression should mostly come from:
+Raider play should likewise focus on physical commitments:
 
-- harder physical problems;
-- more complex mixed compositions;
-- more demanding resource margins;
-- new arena geometry;
-- new drop/origin directions;
-- intelligent defensive layouts;
-- altered raid confidence behavior;
-- increased need to combine all six roles.
+- choose raider tier;
+- choose insertion position;
+- choose timing;
+- choose initial vector/impulse;
+- optionally make sparse high-level interventions after launch.
 
-## 14.2 Knowledge is progression
-
-A significant part of mastery should be the player learning:
-
-- how far bodies travel after impacts;
-- which gaps admit which raiders;
-- when a barrier is worth more than a gun;
-- when T2 cadence is preferable to T3 packet size;
-- when an apparently successful raid is economically bad;
-- when preserving energy is more important than spending it;
-- how to use edges;
-- how finite life changes route value.
-
-## 14.3 Difficulty knobs
-
-Prefer adjusting:
-
-- composition;
-- timing;
-- insertion origin;
-- defender layout quality;
-- operating pressure;
-- available reserve;
-- arena geometry;
-- AI planning sophistication;
-- confidence persistence;
-- simultaneous-body count.
-
-Be cautious with simply multiplying HP/damage.
+Avoid continuous RTS-style unit steering, attack commands, selection boxes, or ability bars.
 
 ---
 
-# 15. Wave and encounter design
+# 16. Camera
 
-The historical wave table already demonstrates useful variety among pure and mixed compositions. Future encounter design should become more intentional about tactical purpose.
+The defender camera should frame the arena as a physical tabletop/stronghold while preserving depth and edge awareness.
 
-## 15.1 Encounter archetypes
+The raider camera belongs to the mothership but should not become a cockpit. Preferred direction:
 
-### Probe
-
-Mostly R1. Tests coverage, target switching, and small gaps.
-
-### Breaker push
-
-R2-heavy. Tests sustained control and route integrity.
-
-### Titan commitment
-
-R3-centered. Tests long-range engagement and large-body routing.
-
-### Screen and hammer
-
-R1 swarm protects or distracts from R2/R3.
-
-### Mixed geometry
-
-Different sizes make one route attractive to R1 while larger bodies require another.
-
-### Edge threat
-
-Insertion emphasizes ejection opportunities and risks.
-
-### Resource trap
-
-A wave that is easy to kill but expensive to overbuild against, testing restraint.
-
-## 15.2 Encounter goals
-
-Every encounter should be able to answer:
-
-- Which existing player habit is being tested?
-- Which tower/raider role gets an opportunity to matter?
-- What physical interaction is likely to be memorable?
-- What resource decision does the encounter create?
-
-Avoid waves that differ only by larger counts.
+- elevated/offset orbit anchored to the ship;
+- enough hull/core remains visible to preserve physical ownership;
+- battlefield below remains readable;
+- camera look can remain largely free while actual mothership translation has economic/physical meaning;
+- defender-view experiments should show the same mothership overhead and its possible crash.
 
 ---
 
-# 16. Level and arena design
+# 17. Visual language
 
-## 16.1 Arena readability
-
-The battlefield should remain geometrically simple enough that the player can visually parse:
-
-- the silo;
-- tower footprints;
-- major routes;
-- edge hazards;
-- incoming bodies;
-- projectile lines;
-- energy state.
-
-## 16.2 Procedural/parametric geometry
-
-Prefer generated or parameterized environments over bespoke decorative meshes where practical.
-
-Variation can come from:
-
-- platform shape;
-- holes/gaps;
-- slopes;
-- raised or lowered sectors;
-- friction zones if clearly communicated;
-- obstacles;
-- spawn/dropship orientation;
-- silo position;
-- usable tower-grid coverage.
-
-## 16.3 Avoid decorative collision ambiguity
-
-If an object appears solid, its collision behavior should be predictable. Keep decorative geometry from obscuring tactical boundaries.
-
----
-
-# 17. Failure, success, and recovery
-
-## 17.1 Defender failure
-
-Primary failure occurs when the energy reserve is exhausted or the silo can no longer survive.
-
-The player should understand whether loss resulted from:
-
-- direct high-HP silo impact;
-- overspending;
-- poor routing;
-- tower decay at a bad moment;
-- inadequate target coverage;
-- repeated resource inefficiency.
-
-## 17.2 Raider failure
-
-The mothership fails when it cannot sustain operating costs or finance viable raids.
-
-A raid itself can fail in several ways:
-
-- all bodies destroyed;
-- bodies ejected;
-- bodies expire through decay;
-- bodies reach the silo with too little viability to repay cost;
-- player invests too many reinforcements into a bad attempt.
-
-## 17.3 Soft failure and recovery
-
-Where possible, let poor decisions create deteriorating positions rather than immediate binary game-over states.
-
-Examples:
-
-- losing a T3 leaves a weaker T2 rather than nothing;
-- a damaged raider can still extract some energy;
-- an expensive failed raid reduces future options rather than instantly ending the run.
-
-This supports strategic tension and learning.
-
----
-
-# 18. Onboarding
-
-## 18.1 Start from a working system
-
-The player begins with a fortress that already functions. This allows learning by observation before construction.
-
-## 18.2 Teach through need
-
-Suggested onboarding sequence:
-
-1. observe T2 engaging incoming R1s;
-2. see T1 physically alter an approach;
-3. witness T3 produce a large displacement;
-4. receive enough energy from engagement to make the combat-resource link noticeable;
-5. have one tower age/degrade visibly;
-6. invite the player to replace or reshape one part of the fortress;
-7. introduce mixed raider sizes so corridor geometry becomes obvious.
-
-## 18.3 Minimal textual guidance
-
-Use concise context prompts only where the world cannot clearly communicate the rule.
-
-Avoid long tutorial modal sequences.
-
----
-
-# 19. Interaction and input
-
-## 19.1 Direct world manipulation
-
-The default interaction model should remain grounded in the 3D battlefield.
-
-Defender actions:
-
-- point/tap/click ground to place T1;
-- select/tap an existing tower to upgrade where allowed;
-- inspect energy and lifecycle states from the world itself;
-- manipulate camera without entering a separate build screen.
-
-Raider actions:
-
-- select body tier;
-- point/tap/click valid insertion space;
-- drag/aim or otherwise specify initial vector where appropriate;
-- make sparse later interventions.
-
-## 19.2 Input parity
-
-Support should be designed for:
-
-- mouse;
-- touch;
-- keyboard;
-- gamepad/controller;
-
-The exact gesture can differ, but strategic capability should not.
-
-## 19.3 Avoid precision traps
-
-Physics strategy benefits from precision, but mobile/touch interaction must not require tiny targets or pixel-perfect selection.
-
-Use generous hit regions, snapping, previews, and clear invalid-placement feedback.
-
----
-
-# 20. Camera design
-
-## 20.1 Defender camera
-
-The camera should provide enough overview to reason spatially while preserving the feeling of a physical arena rather than an abstract board.
-
-Requirements:
-
-- clear silo visibility;
-- readable edges;
-- enough depth cues to judge projectile travel and vertical motion;
-- controllable without constant adjustment.
-
-## 20.2 Mothership camera
-
-After transformation, camera ownership migrates upward with the mothership.
-
-This is both narrative and mechanical.
-
-The player should immediately understand that:
-
-- they are now occupying the attackers’ former perspective;
-- the mothership is the deployment origin;
-- drop position is spatially grounded.
-
-## 20.3 Motion comfort
-
-Avoid unnecessary camera shake or forced sweeping motions. Heavy impacts can be communicated through world motion, sound, and subtle camera response without compromising readability or accessibility.
-
----
-
-# 21. Visual design language
-
-## 21.1 Core aesthetic
-
-**Canonical principle.** Preserve a procedural, abstract, geometric science-fiction identity.
+## 17.1 Geometry
 
 Prefer:
 
-- primitive/generated geometry;
-- low-poly forms;
-- wireframes where useful;
-- simple strong silhouettes;
-- emissive energy;
-- material transitions;
-- fragments and physical breakup;
-- meaningful scale differences.
+- primitive/generated forms;
+- low-poly faceting;
+- visible structure;
+- scale and motion over surface detail.
 
-Avoid turning the game into asset-heavy military realism or character-centric sci-fi.
+### Defense
 
-## 21.2 Current color language
+- boxes;
+- pillars;
+- rectilinear bases;
+- ground anchoring.
 
-Current baseline broadly establishes:
+### Raiders / mothership
 
-- towers: green living/construction language;
-- raider energy/health: cyan/blue;
-- projectile energy: orange emissive;
-- damaged/dead states: red/orange family;
-- hit/structural/wireframe states: darker purple/magenta language.
+- spheres;
+- faceted cages;
+- toroidal/radial rings;
+- exposed internals;
+- mobile/rolling/falling bodies.
 
-Exact colors may evolve, but semantic consistency matters more than specific RGB values.
+## 17.2 Color/material semantics
 
-## 21.3 Silhouette hierarchy
+Color should carry state and family information but not be the only cue.
 
-Players should identify type at a glance through shape and scale before relying on color.
+Current direction:
 
-- T1: broad, low barrier block;
-- T2: moderate pillar/turret;
-- T3: taller/larger artillery silhouette;
-- R1: small coarse sphere;
-- R2: medium sphere;
-- R3: unmistakably large body.
+- teal/cyan — energy/resource/viability;
+- green — defensive constructed infrastructure;
+- purple/magenta — raider shells/living hostile physical bodies;
+- orange — high-energy tower projectile/impulse events;
+- damaged/depleted states — reduced emission, fragmentation, altered material response.
 
-## 21.4 Degradation
-
-Tower aging should become visually legible before disappearance.
-
-Use combinations of:
-
-- material state changes;
-- emissive reduction;
-- wireframe exposure;
-- fragmentation;
-- structural collapse/reconfiguration;
-- subtle motion or sound.
-
-Do not rely only on a hidden timer.
-
-## 21.5 Mothership transformation
-
-The transformation should be a climax of the procedural visual language:
-
-- existing volumes detach and reorganize;
-- energy channels activate;
-- static mass becomes suspended structure;
-- the same materials acquire new function;
-- no visual discontinuity suggesting a completely different asset set.
+Use volume, motion, shape and audio redundantly for accessibility.
 
 ---
 
-# 22. Effects
+# 18. Audio
 
-## 22.1 Effects communicate state
+Object-based spatial/procedural audio is part of the intended product identity.
 
-VFX should prioritize tactical readability:
+Important emitters include:
 
-- firing origin;
-- projectile travel;
-- impact location;
-- damage state;
-- ejection/fall;
-- energy transfer;
-- tower degradation;
-- mothership energy expenditure/extraction.
+- projectiles in flight;
+- projectile impacts;
+- raider rolling/collisions;
+- tower mechanisms;
+- energy pooling/streaming;
+- mothership suspension;
+- raider assembly/launch;
+- upward extraction;
+- mothership loss of lift/crash;
+- large fragments.
 
-## 22.2 Performance hierarchy
-
-When performance pressure rises, reduce in this order where practical:
-
-1. decorative particles;
-2. glow/bloom complexity;
-3. secondary fragments;
-4. nonessential trails;
-5. distant visual detail.
-
-Preserve:
-
-- body positions;
-- physics fidelity;
-- collision readability;
-- projectile timing;
-- tactical silhouettes.
-
----
-
-# 23. Audio design
-
-## 23.1 Audio is spatial simulation feedback
-
-Sound should communicate physical events and distance rather than merely play UI samples.
-
-The long-term target is **object-based spatial audio** in which relevant emitters have:
+Each important moving emitter should expose:
 
 - 3D position;
-- velocity vector;
-- event/type metadata;
-- importance/priority;
-- distance from the listener/camera;
-- lifecycle state.
+- velocity/vector;
+- magnitude/intensity parameters;
+- lifetime;
+- listener-relative distance/importance.
 
-## 23.2 Motion-aware sound
-
-Projectile and body motion should support effects such as:
-
-- Doppler shift;
-- approach/recede cues;
-- projectile fly-by / whoosh;
-- impact localization;
-- rolling/sliding motion where meaningful.
-
-A projectile passing close to the camera should sound materially different from one crossing the far side of the arena.
-
-## 23.3 Procedural audio
-
-Prefer procedural or parameterized sound where it strengthens the abstract identity.
-
-Parameters can include:
-
-- tier;
-- mass;
-- velocity;
-- impact energy;
-- material type;
-- distance;
-- remaining energy;
-- degradation stage.
-
-## 23.4 Prioritization
-
-Performance and clarity require sound prioritization.
-
-Nearby, dangerous, or player-relevant emitters should take precedence over distant low-value events.
-
-Potential priority inputs:
-
-- distance to listener;
-- threat to silo/mothership;
-- event energy;
-- whether event is currently visible;
-- whether sound class is already saturated.
-
-## 23.5 Threading/workers
-
-Where platform capabilities allow, procedural sound generation and event processing should be isolated from the main gameplay/render loop using audio worklets/workers or equivalent independent execution.
-
-The simulation should publish compact sound events rather than blocking on audio synthesis.
-
-## 23.6 Dynamic mix across campaign
-
-The deterrence act should use silence intentionally.
-
-As raids cease:
-
-- combat density drops;
-- environmental/structural hum becomes more apparent;
-- tower aging and energy depletion become audible;
-- absence of threat becomes unsettling.
-
-The mothership transformation should recontextualize familiar energy and tower sounds rather than replacing them with a completely unrelated soundtrack vocabulary.
+Use Doppler/fly-by effects where relative motion justifies them. Prioritize nearby/tactically important sounds under load. Prefer worker/worklet separation where it improves main-loop stability.
 
 ---
 
-# 24. Music
+# 19. Performance
 
-Music should support state without overwhelming the simulation.
+Performance is a gameplay constraint.
 
-Potential model:
+Priorities:
 
-- sparse ambient bed during observation;
-- procedural/intensity layers during active raids;
-- reduced or absent combat layer during deterrence;
-- transformation motif assembled from existing tonal/material sounds;
-- raider phase reuses earlier musical material from the opposing perspective.
+1. simulation fidelity;
+2. input responsiveness;
+3. camera/visual stability;
+4. tactical readability;
+5. rich fluid/fragment effects.
 
-Avoid constant high-intensity scoring that flattens tactical pacing.
+Visual effects should degrade before core physical outcomes.
 
----
+For energy fluid and mothership effects:
 
-# 25. UI and information design
-
-## 25.1 World first
-
-Whenever possible, critical information should be visible in or near the world:
-
-- silo energy;
-- tower state;
-- health/viability;
-- valid placement;
-- selected raider tier;
-- insertion preview.
-
-## 25.2 Minimal persistent HUD
-
-Persistent HUD should focus on decisions the world cannot express clearly:
-
-- current energy;
-- selected construction/raider action;
-- essential campaign state;
-- optional diagnostic information in development builds.
-
-Avoid a wall of cooldowns, upgrade trees, and unit stat panels.
-
-## 25.3 Explain costs before commitment
-
-Before spending energy, the player should be able to see:
-
-- cost;
-- resulting remaining reserve;
-- invalid placement state;
-- selected tier.
-
-Raider deployment should similarly expose launch cost and resulting reserve.
-
-## 25.4 Diagnostics are not player UI
-
-Development may expose:
-
-- raid confidence;
-- actual HP;
-- physical mass;
-- impulse vectors;
-- target selection;
-- line-of-fire rays;
-- frame/physics cost;
-- sound emitter counts.
-
-Do not assume these should become permanent player-facing metrics.
+- authoritative aggregate simulation should be small;
+- particle/mesh density may LOD aggressively;
+- distant motherships/wrecks should simplify;
+- crash fragment counts must be bounded;
+- audio emitters should aggregate/prioritize.
 
 ---
 
-# 26. Accessibility
+# 20. Accessibility
 
-Accessibility should preserve strategic equivalence across presentation modes.
-
-## 26.1 Color independence
-
-Do not encode tower/raider identity or damage state through color alone. Shape, scale, motion, outline, material pattern, or iconography should provide redundant cues.
-
-## 26.2 Motion
-
-Provide reduced camera response and reduced nonessential motion without disabling the underlying physics simulation.
-
-## 26.3 Audio alternatives
-
-Important spatial audio events should have visual equivalents where practical:
-
-- incoming heavy projectile;
-- silo impact;
-- tower degradation;
-- mothership critical energy;
-- successful extraction.
-
-## 26.4 Input remapping
-
-Keyboard/gamepad actions should be remappable where supported. Touch gestures should have accessible alternatives rather than being the sole way to perform a critical action.
-
-## 26.5 Readability scaling
-
-HUD text and essential indicators should scale independently from world resolution.
-
----
-
-# 27. Performance and scalability
-
-## 27.1 Performance is a gameplay requirement
-
-The game’s identity depends on physical simulation remaining responsive. Visual fidelity should degrade before core simulation correctness.
-
-## 27.2 Priority order under load
-
-Preserve first:
-
-1. input responsiveness;
-2. simulation step integrity;
-3. collision/event correctness;
-4. projectile timing;
-5. camera stability;
-6. essential spatial audio cues.
-
-Degrade first:
-
-- particles;
-- post-processing;
-- secondary fragments;
-- distant decorative audio;
-- cosmetic animation.
-
-## 27.3 Entity/sound budgets
-
-Use explicit budgets and prioritization for:
-
-- physics bodies;
-- fragments;
-- projectiles;
-- audio emitters;
-- expensive lights/post-processing.
-
-Budgets should favor objects near the camera/listener and objects with current tactical relevance.
-
-## 27.4 Constrained/mobile support
-
-The abstract vector/simple-geometry visual style should be treated as an optimization advantage.
-
-Avoid adding presentation systems that require high-end hardware to preserve gameplay legibility.
-
----
-
-# 28. Technical simulation constraints
-
-This manual is not an engine specification, but some implementation constraints protect game design.
-
-## 28.1 Simulation authority
-
-Gameplay state should increasingly be separable from rendering objects so behavior can be certified and modernized without rewriting design rules.
-
-## 28.2 Engine modernization
-
-Babylon/Cannon implementation details are not sacred. The project may adopt modern Babylon, Bevy/WASM, Rust simulation cores, or other appropriate architecture where measured evidence supports it.
-
-However, engine changes must preserve:
-
-- physical outcomes;
-- direct input latency;
-- body scale/mass relationships;
-- timing;
-- collision semantics;
-- deterministic seams where useful;
-- broad device support.
-
-## 28.3 Do not fake physics for testability
-
-Pure calculation seams and deterministic fixtures are encouraged, but production outcomes should not be replaced with scripted pseudo-physics solely because they are easier to snapshot-test.
-
----
-
-# 29. Balance philosophy
-
-## 29.1 Balance means choices remain contextual
-
-A balanced game is not one in which every unit has equal DPS or identical efficiency.
-
-A balanced game is one in which:
-
-- all six core types remain meaningful;
-- different situations produce different optimal responses;
-- no strategy dominates across geometry, composition, and resource state;
-- failure can be traced to understandable trade-offs;
-- physical skill/understanding produces advantage without making numbers irrelevant.
-
-## 29.2 Prefer soft counters
-
-Good counters emerge naturally:
-
-- R1 swarms stress T3 cadence;
-- T2 handles frequent light targets;
-- T3 high impulse matters against R3 inertia;
-- T1 delay weakens all finite-lived raiders;
-- R1 can exploit narrow channels inaccessible to R3;
-- R3 can challenge geometry that small bodies cannot physically pressure in the same way.
-
-Avoid hidden “T3 does +50% to R3” rules unless exhaustive testing proves physical differentiation is insufficient.
-
-## 29.3 Equal throughput can be desirable
-
-The current T2/T3 relationship—similar nominal damage and impulse throughput but different packet size/cadence—is a useful example of contextual balance.
-
-Do not automatically “fix” equal DPS by making T3 universally stronger.
-
-## 29.4 Risk concentration
-
-Higher tiers should often concentrate risk rather than simply improve value.
+The game should remain playable/readable without relying on one sensory channel.
 
 Examples:
 
-- a T3 upgrade ties more of the reserve to one location;
-- a Titan raid puts much more launch energy into one body;
-- a T3 miss creates a longer exposure window;
-- a Titan trapped behind geometry is a larger financial disaster than losing an R1.
+- energy reserve shown via shape/volume and optional number, not only teal brightness;
+- critical mothership lift shown through sag/motion/audio as well as color;
+- tower roles readable by geometry and cadence;
+- focus/selection states use shape/outline/motion where appropriate;
+- reduced camera shake/motion options;
+- keyboard/controller/touch parity where feasible;
+- sound should reinforce but not be required to perceive critical state changes.
 
 ---
 
-# 30. Required balance measurements
+# 21. Balance philosophy
 
-Before significant numeric rebalance, measure at minimum:
+A good balance state is not one where every unit has equal efficiency everywhere.
 
-## 30.1 Tower-versus-raider matrix
+It is one where:
 
-For every T1/T2/T3 × R1/R2/R3 pairing:
+- every tower can be the right choice in some plausible context;
+- every raider can be the right investment in some plausible context;
+- physical geometry explains much of the matchup;
+- expensive choices concentrate risk;
+- delay, displacement and ejection can substitute for raw damage;
+- the same systems remain meaningful from both perspectives.
+
+Avoid balancing solely around aggregate DPS.
+
+---
+
+# 22. Required matchup measurement
+
+For the T1/T2/T3 × R1/R2/R3 matrix, measure where applicable:
 
 - time to kill;
-- time to ejection;
-- displacement per hit;
-- hit/miss rate;
+- time to eject;
+- displacement per shot/second;
 - overkill;
+- missed-shot cost;
+- corridor access;
+- time added by T1 barriers;
 - energy recovered by defender;
-- remaining HP if raider reaches silo;
-- economic outcome from both perspectives.
+- energy/viability remaining at silo;
+- attacker launch cost;
+- extraction return;
+- mothership hover cost during the engagement;
+- total attacker ROI.
 
-## 30.2 Spatial fixtures
-
-Test:
-
-- central field;
-- near edge;
-- one-cell corridor;
-- two-cell corridor;
-- staggered barriers;
-- dense fortress;
-- open fortress;
-- mixed-body congestion.
-
-## 30.3 Lifecycle fixtures
-
-Measure:
-
-- tower active lifetime;
-- degradation transitions;
-- no-damage raider lifetime;
-- delay contribution to loss of extraction value;
-- quiet-period fortress survival.
-
-## 30.4 Economy fixtures
-
-Measure:
-
-- energy spent vs recovered;
-- full-HP and partial-HP silo contact;
-- launch-cost break-even;
-- mothership operating drain;
-- under-defense farming attempts;
-- repeated failed raid recovery possibilities.
+Run center-field, choke and edge scenarios.
 
 ---
 
-# 31. Current baseline matchup reference
+# 23. Campaign pacing experiments
 
-Ignoring travel, misses, obstruction, decay, and momentum effects, current baseline values imply approximately:
+Required experiments include:
 
-| Raider | T2 hits / cadence time | T3 hits / cadence time |
-| --- | ---: | ---: |
-| R1 | 9 / ~1.87 s | 3 / ~2.11 s |
-| R2 | 35 / ~7.28 s | 11 / ~7.72 s |
-| R3 | 78 / ~16.22 s | 23 / ~16.15 s |
-
-This reinforces the design intent that T2 and T3 should differentiate through packet size, target switching, range, geometry, momentum, and reliability rather than nominal DPS.
-
-These numbers are reference points, not final targets.
-
----
-
-# 32. Resource-pressure narrative logic
-
-The story depends on the player understanding three truths in sequence.
-
-## Truth 1: Raiders are dangerous
-
-They threaten the energy reserve and must be stopped.
-
-## Truth 2: Raiders are useful
-
-Fighting them replenishes energy and sustains the fortress.
-
-## Truth 3: Raiders may be necessary
-
-When deterrence becomes complete, the system loses its resource flow and begins to fail.
-
-The role inversion then reveals a fourth truth:
-
-## Truth 4: The raiders were solving the same survival problem
-
-The player’s enemies may have been former defenders whose fortresses entered the same starvation state.
-
-The game should reveal these through mechanics before explicit exposition.
+- minimal prebuilt fortress viability;
+- one-of-each tower replacement economics;
+- raid confidence/deterrence progression;
+- prolonged peace/defensive degradation;
+- physical energy-flow collection delay;
+- mothership hover drain timing;
+- raider launch ROI;
+- AI defense competence without cheats;
+- successful extraction/evacuation duration;
+- mothership critical reserve/crash readability;
+- strategic bright/dim target selection.
 
 ---
 
-# 33. Worldbuilding rules
+# 24. Certification principles
 
-## 33.1 Avoid simplistic factions
+Do not accept a balance or engine change based only on source-level equivalence when the behavior is physical.
 
-Do not immediately define one side as inherently noble and the other inherently evil.
+Use:
 
-The strongest interpretation is systemic scarcity:
+- pure calculation tests for arithmetic;
+- deterministic seams for clocks/RNG;
+- browser/runtime fixtures for physics;
+- visual/browser certification for geometry/readability;
+- profiling for constrained-device impact;
+- before/after evidence linked to exact commits.
 
-- defended energy is valuable;
-- raiding is dangerous but economically necessary;
-- deterrence can produce isolation;
-- successful defenders can become future raiders.
-
-## 33.2 Environmental storytelling
-
-Use repeated geometry to imply history:
-
-- abandoned fortresses resembling the player’s first base;
-- dormant towers in degradation states;
-- mothership forms visibly derived from silo architecture;
-- familiar barrier and turret placements under AI control;
-- damaged platforms showing previous raids.
-
-## 33.3 Minimal exposition
-
-Text, logs, or brief transmissions can add context, but should not carry the core reveal alone.
+Issue #30 remains the baseline behavioral contract.
 
 ---
 
-# 34. Replayability and sandbox
+# 25. Open design questions
 
-## 34.1 Simulation sandbox
+Keep these experimental until evidence exists:
 
-A sandbox mode is valuable for both players and development.
-
-Useful controls may include:
-
-- spawn specific raider tier;
-- place specific tower tier;
-- select arena geometry;
-- toggle edge conditions;
-- inspect mass/velocity/HP;
-- freeze/step simulation;
-- alter energy;
-- test deterrence transitions.
-
-Development diagnostics can be richer than player sandbox controls.
-
-## 34.2 Scenario challenges
-
-Potential challenge types:
-
-- survive with barriers only;
-- eject all enemies without killing them;
-- defend with a capped reserve;
-- complete a profitable raid using only R1;
-- breach a fortress without losing more than a specified energy amount;
-- survive prolonged peace with minimal spending.
-
-These reinforce systemic mastery rather than arbitrary achievements.
+- exact final tower lifetimes;
+- exact enemy decay timing model;
+- final line-of-fire/friendly obstruction behavior;
+- final R1/R2/R3 movement differentiation;
+- exact deterrence confidence formula;
+- final raider launch costs/extraction caps;
+- exact mothership hover/movement drain;
+- exact lift reserve threshold;
+- whether withdrawal is always possible;
+- whether defenders can exceptionally interact with low motherships;
+- whether mothership wrecks become gameplay terrain;
+- whether residual wreck energy is salvageable;
+- final target travel costs;
+- final campaign ending.
 
 ---
 
-# 35. Storybook / experimental playground strategy
+# 26. Non-goals / drift guardrails
 
-Where the modernized UI/toolchain supports Storybook or equivalent isolated playgrounds, use them for visual/system experimentation rather than only static UI components.
+Avoid turning Defend into:
 
-Potential playgrounds:
-
-- tower silhouettes and degradation states;
-- raider scale comparisons;
-- silo-to-mothership transformation states;
-- energy meters;
-- insertion previews;
-- accessibility contrast/state variants;
-- spatial audio emitter visualization;
-- performance-budget visualizations.
-
-Physics-heavy behavior still requires real runtime/browser fixtures; Storybook should complement rather than replace them.
-
----
-
-# 36. Certification and design QA
-
-## 36.1 Design changes require evidence
-
-When changing balance or mechanics, record:
-
-- hypothesis;
-- expected player decision change;
-- affected archetypes;
-- before/after measurements;
-- unintended side effects;
-- browser/physics evidence where applicable.
-
-## 36.2 Do not certify only kill time
-
-A change can preserve TTK while radically changing the game through momentum or economy.
-
-Certification should inspect:
-
-- damage;
-- displacement;
-- ejection;
-- route length;
-- target selection;
-- resource return;
-- obstruction;
-- lifecycle;
-- performance.
-
-## 36.3 Behavioral invariants
-
-At minimum preserve unless explicitly changed:
-
-- energy links health and spending;
-- hits can replenish energy;
-- silo damage depends on surviving threat;
-- tower aging/degradation;
-- finite raider life;
-- physics-based mitigation;
-- direct world interaction;
-- meaningful all-tier roles.
+- permanent tech-tree accumulation;
+- dozens of stat-based unit variants;
+- elemental damage typing;
+- RPG/loot progression;
+- conventional RTS micromanagement;
+- a flying gunship game after the inversion;
+- an invulnerable mothership spectator camera;
+- separate fuel/ammo/energy currencies;
+- infinite passive energy generation;
+- AI stat cheats;
+- authored cinematic spacecraft replacing the procedural visual language;
+- a game where effects overwhelm simulation performance.
 
 ---
 
-# 37. Open design questions
+# 27. Development roadmap
 
-These questions should remain visible rather than being silently decided in code.
+A practical sequence is:
 
-1. Exact final tower lifetimes and degradation timing.
-2. Whether Tower 1 should have any active non-damage behavior beyond physical obstruction.
-3. Final line-of-fire/occlusion behavior through friendly structures.
-4. Exact mobility differentiation for R1/R2/R3.
-5. Final raider launch-cost function.
-6. Whether `remaining HP / 2` is the final extraction rule or requires bounded scaling.
-7. Mothership operating drain model.
-8. How much post-deployment control raiders receive.
-9. Whether the mothership itself can reposition over an arena and at what cost.
-10. How raid confidence estimates fortress value and defense quality.
-11. How strongly the player can intentionally influence deterrence without gaming it.
-12. How AI decides when to build, upgrade, or conserve energy.
-13. Final campaign ending / cycle-breaking mechanic.
-14. Whether multiple silos/motherships eventually coexist in one scenario.
-15. How persistent campaign progression should be across failures.
-16. Whether enemy/raider collisions with one another should be exploited more deliberately.
-17. How much destructible environment, if any, should exist beyond towers/bodies.
-18. Whether tower targeting policy should be player-selectable or remain emergent/automatic.
+1. certify the legacy/current baseline (#30);
+2. preserve/extract deterministic economy and scaling seams;
+3. validate visible defender-side teal energy transfer (#77/#78);
+4. validate mothership silhouette, exposed reserve, finite hover and crash (#79/#80/#81);
+5. add R1 assembly/deployment from the mothership core;
+6. extend to R2/R3 and validate physical differentiation;
+7. implement upward silo extraction and shared raider evacuation;
+8. implement AI-defended raider fixtures;
+9. test deterrence and mothership operating economics together;
+10. connect strategic teal-signature target ecology;
+11. only then tune campaign pacing/end-state.
 
-Each should be resolved through focused issues and experiments rather than opportunistic implementation.
+Each stage should remain independently inspectable and reversible.
 
 ---
 
-# 38. Non-goals / guardrails
+# 28. Central design statement
 
-Do not allow modernization or content expansion to drift into these defaults without deliberate design approval:
+**Defend is about survival through physical understanding under scarcity.**
 
-- permanent tower tech trees;
-- dozens of tower types that dilute the three-role clarity;
-- dozens of enemy classes distinguished mainly by stats;
-- hard elemental damage typing;
-- inventory/equipment systems unrelated to the energy loop;
-- hero characters with RPG abilities;
-- loot rarity;
-- opaque randomized combat outcomes;
-- cutscene-heavy narrative delivery;
-- high-poly realism that obscures geometry;
-- AI cheats that bypass shared physics/economy;
-- infinite passive energy generation that removes scarcity;
-- a second-half RTS that discards the direct physical interaction model.
+The player first learns to protect a finite system from spherical raiders using temporary rectilinear defenses. Successful defense reveals that conflict itself was sustaining the economy. When deterrence becomes isolation, the silo transforms into a spherical mobile mothership whose visible reserve is spent to remain aloft and turn energy into raider bodies.
 
-Expansion should deepen the six-role physical system before broadening it.
+The player then confronts the same defenses from above. Raiders do not shoot; their own shells, mass, momentum and survival are their weapons. If the mothership cannot extract enough energy before its reserve is exhausted, its suspension fails and the ship itself falls into the world as a large inert hulk.
 
----
-
-# 39. Design success criteria
-
-The game is succeeding when all of the following are true:
-
-## Tactical
-
-- A player can explain why they chose T1, T2, or T3 in a specific situation.
-- Seeing R1, R2, or R3 changes how the player evaluates geometry and risk.
-- Ejection, delay, and redirection are real alternatives to pure damage.
-- Different arena positions change the value of the same tower.
-
-## Strategic
-
-- Spending energy feels consequential.
-- A full reserve does not automatically mean “build everything.”
-- The player sometimes wins by conserving rather than escalating.
-- A physically successful raid can still be an economic failure.
-
-## Narrative
-
-- Reduced raid frequency initially feels like success.
-- The later energy crisis follows logically from systems the player already understands.
-- The silo-to-mothership transformation is visually legible.
-- The player recognizes the new raider perspective as the origin of earlier enemies.
-- The moral inversion emerges from play, not only text.
-
-## Presentation
-
-- The battlefield remains readable on modest hardware.
-- Type silhouettes are distinct without relying on color.
-- Spatial audio adds physical information.
-- effects enrich rather than obscure simulation.
-
-## Technical
-
-- balance-critical formulas are inspectable/testable;
-- engine changes can be compared against behavioral baselines;
-- simulation remains responsive under representative entity counts;
-- diagnostics make physical/economic outcomes measurable.
-
----
-
-# 40. Glossary
-
-**Energy** — shared survival reserve, build budget, defended resource, and later mothership operating/launch currency.
-
-**Silo** — the central defended energy structure in the fortress phase; later transforms into the mothership.
-
-**Mothership** — mobile form of the silo, camera platform and raider deployment origin.
-
-**Tower 1 / Barrier / Deflector** — static non-firing spatial-control defense.
-
-**Tower 2 / Interceptor** — rapid granular-fire tower optimized for responsive control and light/mixed targets.
-
-**Tower 3 / Siege / Impulse Cannon** — long-range slow-cadence heavy-packet tower optimized for high-consequence displacement.
-
-**Raider 1 / Scout / Swarm Raider** — small, cheap, flexible body.
-
-**Raider 2 / Breaker** — medium, reliable pressure body.
-
-**Raider 3 / Titan / Siege Boulder** — large, expensive, persistent high-risk body.
-
-**Finite life / decay** — continuous or decision-based loss of raider viability over time.
-
-**Deterrence** — reduction in raid willingness because expected raid return has become poor.
-
-**Raid confidence** — development term for the hidden expected-value state used to shape attacker behavior.
-
-**Extraction** — energy transferred from a target silo to the mothership when a raider reaches it.
-
-**Ejection** — removal of a raider from the viable battlefield through physics rather than HP depletion.
-
-**Packet size** — damage and momentum delivered by one projectile event; distinguishes T2 and T3 even when throughput is similar.
-
-**Soft counter** — an advantage that emerges from physical/economic characteristics rather than explicit immunity or damage-type rules.
-
----
-
-# 41. Immediate design-development roadmap
-
-The manual establishes direction, but the next work should remain evidence-driven.
-
-## Phase A — certify the six-role baseline
-
-- deterministic T2/T3 projectile scaling;
-- enemy size/mass/HP scaling;
-- finite-life decay timing;
-- tower degradation;
-- line-of-fire behavior;
-- spawn/occupancy correctness;
-- 3×3 matchup arena.
-
-## Phase B — build design playgrounds
-
-- one-of-each starting fortress;
-- barrier-only delay/ejection experiment;
-- one-cell/two-cell corridor fixture;
-- edge impulse fixture;
-- mixed wave fixture;
-- energy return dashboard;
-- raider launch/extraction curve.
-
-## Phase C — prototype deterrence
-
-- raid confidence diagnostic;
-- composition adaptation;
-- interval tapering;
-- scouting behavior;
-- cessation threshold;
-- under-defense farming test.
-
-## Phase D — prototype inversion
-
-- silo transformation state machine;
-- mothership camera transition;
-- raider selection/insertion control;
-- AI-controlled tower defense;
-- symmetric extraction economy.
-
-## Phase E — campaign pacing
-
-Only after both perspectives are demonstrably enjoyable:
-
-- tune act duration;
-- tune resource pressure;
-- design environmental storytelling;
-- develop late-cycle resolution choices;
-- polish audio/visual transformation language.
-
----
-
-# 42. Final design statement
-
-Defend should remain a game about **survival through physical understanding under scarcity**.
-
-The player begins believing that the objective is simply to keep enemies away from a valuable energy silo. Through play, they learn that attackers are also a source of the energy that keeps the fortress alive. As they become better at defense, they accidentally eliminate the interaction their system depends on. The fortress decays, the reserve runs out, and the thing they protected transforms into the same kind of mothership that once launched their enemies.
-
-The player then learns the other side of every lesson:
-
-- the barrier that once bought survival now destroys raid profitability through delay;
-- the interceptor that once protected the silo now strips value from the player’s cheap raiders;
-- the siege cannon that once saved the fortress now threatens a catastrophic loss of invested energy;
-- the Titan that once seemed monstrous is now a dangerous financial commitment the player chose to make.
-
-The strongest version of the game does not ask the player to memorize more systems after the twist. It asks them to **reinterpret the systems they already mastered**.
-
-That symmetry—mechanical, economic, visual, and moral—is the central design promise of Defend / Return Fire.
+The role reversal therefore does not introduce a second game. It reveals that both sides have always been finite physical systems trying to survive the same scarcity cycle.
