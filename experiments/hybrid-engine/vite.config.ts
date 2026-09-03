@@ -13,6 +13,7 @@ export default defineConfig({
         main: "index.html",
         mothership: "mothership.html",
         navigation: "navigation.html",
+        geothermal: "geothermal.html",
       },
     },
   },
