@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from "@storybook/html-vite";
 import { expect, userEvent } from "storybook/test";
 import {
   resolveDefenseInteraction,
+  type DefenseInteractionAction,
+  type DefenseInteractionRejection,
   type DefenseInteractionRequest,
   type DefenseInteractionResolution
 } from "@defend/gameplay/defenseInteraction";
@@ -12,6 +14,8 @@ type Scenario = {
   title: string;
   note: string;
   request: DefenseInteractionRequest;
+  expectedAction: DefenseInteractionAction;
+  expectedRejection: DefenseInteractionRejection;
 };
 
 const scenarios: Scenario[] = [
@@ -27,7 +31,41 @@ const scenarios: Scenario[] = [
       terrainValid: true,
       protectedTarget: false,
       occupied: false
-    }
+    },
+    expectedAction: "place",
+    expectedRejection: "none"
+  },
+  {
+    id: "place-invalid-terrain",
+    title: "Invalid terrain",
+    note: "A world target exists, but the surface is outside the buildable terrain contract.",
+    request: {
+      kind: "placement",
+      gestureOwner: "world",
+      targetAvailable: true,
+      affordable: true,
+      terrainValid: false,
+      protectedTarget: false,
+      occupied: false
+    },
+    expectedAction: "none",
+    expectedRejection: "invalid-terrain"
+  },
+  {
+    id: "place-protected",
+    title: "Protected core",
+    note: "The target is buildable terrain but belongs to protected/core space.",
+    request: {
+      kind: "placement",
+      gestureOwner: "world",
+      targetAvailable: true,
+      affordable: true,
+      terrainValid: true,
+      protectedTarget: true,
+      occupied: false
+    },
+    expectedAction: "none",
+    expectedRejection: "protected-target"
   },
   {
     id: "place-occupied",
@@ -41,21 +79,9 @@ const scenarios: Scenario[] = [
       terrainValid: true,
       protectedTarget: false,
       occupied: true
-    }
-  },
-  {
-    id: "place-protected",
-    title: "Protected core",
-    note: "The target exists but belongs to protected/core space.",
-    request: {
-      kind: "placement",
-      gestureOwner: "world",
-      targetAvailable: true,
-      affordable: true,
-      terrainValid: true,
-      protectedTarget: true,
-      occupied: false
-    }
+    },
+    expectedAction: "none",
+    expectedRejection: "occupied"
   },
   {
     id: "place-unaffordable",
@@ -69,7 +95,9 @@ const scenarios: Scenario[] = [
       terrainValid: true,
       protectedTarget: false,
       occupied: false
-    }
+    },
+    expectedAction: "none",
+    expectedRejection: "unaffordable"
   },
   {
     id: "camera-gesture",
@@ -83,7 +111,25 @@ const scenarios: Scenario[] = [
       terrainValid: true,
       protectedTarget: false,
       occupied: false
-    }
+    },
+    expectedAction: "none",
+    expectedRejection: "camera-gesture"
+  },
+  {
+    id: "stale-target",
+    title: "Stale target",
+    note: "The selected world object disappeared or became unavailable before commitment.",
+    request: {
+      kind: "tower",
+      gestureOwner: "world",
+      targetAvailable: false,
+      affordable: true,
+      currentTowerLevel: 2,
+      maxTowerLevel: 3,
+      maxTowerAction: "reject"
+    },
+    expectedAction: "none",
+    expectedRejection: "stale-target"
   },
   {
     id: "tower-upgrade",
@@ -97,7 +143,25 @@ const scenarios: Scenario[] = [
       currentTowerLevel: 1,
       maxTowerLevel: 3,
       maxTowerAction: "reject"
-    }
+    },
+    expectedAction: "upgrade",
+    expectedRejection: "none"
+  },
+  {
+    id: "tower-unaffordable",
+    title: "Upgrade lacks energy",
+    note: "A valid tower remains unchanged when the requested upgrade is unaffordable.",
+    request: {
+      kind: "tower",
+      gestureOwner: "world",
+      targetAvailable: true,
+      affordable: false,
+      currentTowerLevel: 2,
+      maxTowerLevel: 3,
+      maxTowerAction: "reject"
+    },
+    expectedAction: "none",
+    expectedRejection: "unaffordable"
   },
   {
     id: "tower-max",
@@ -111,12 +175,14 @@ const scenarios: Scenario[] = [
       currentTowerLevel: 3,
       maxTowerLevel: 3,
       maxTowerAction: "reject"
-    }
+    },
+    expectedAction: "none",
+    expectedRejection: "max-state"
   },
   {
     id: "tower-refresh",
     title: "Explicit refresh policy",
-    note: "If a future design intentionally refreshes a max-level tower, it must be represented as a distinct action.",
+    note: "If a future design intentionally refreshes a max-level tower, it is represented as a distinct action.",
     request: {
       kind: "tower",
       gestureOwner: "world",
@@ -125,7 +191,25 @@ const scenarios: Scenario[] = [
       currentTowerLevel: 3,
       maxTowerLevel: 3,
       maxTowerAction: "refresh"
-    }
+    },
+    expectedAction: "refresh",
+    expectedRejection: "none"
+  },
+  {
+    id: "tower-invalid-state",
+    title: "Invalid tower state",
+    note: "Malformed or stale semantic tower levels are rejected instead of being guessed from presentation data.",
+    request: {
+      kind: "tower",
+      gestureOwner: "world",
+      targetAvailable: true,
+      affordable: true,
+      currentTowerLevel: 4,
+      maxTowerLevel: 3,
+      maxTowerAction: "reject"
+    },
+    expectedAction: "none",
+    expectedRejection: "invalid-tower-state"
   }
 ];
 
@@ -141,6 +225,7 @@ function describeResolution(resolution: DefenseInteractionResolution): string {
 function scenarioMarkup(scenario: Scenario): string {
   const resolution = resolveDefenseInteraction(scenario.request);
   const outcomeClass = resolution.accepted ? "interaction-card--accepted" : "interaction-card--rejected";
+  const outcomeWord = resolution.accepted ? "Accepted" : "Rejected";
   return `
     <button
       class="interaction-card ${outcomeClass}"
@@ -149,6 +234,7 @@ function scenarioMarkup(scenario: Scenario): string {
       data-action="${resolution.action}"
       data-rejection="${resolution.rejection}"
     >
+      <span class="interaction-card__outcome">${outcomeWord}</span>
       <span class="interaction-card__title">${scenario.title}</span>
       <span class="interaction-card__note">${scenario.note}</span>
       <span class="interaction-card__result">${describeResolution(resolution)}</span>
@@ -170,12 +256,13 @@ const meta = {
       <style>
         .interaction-layout { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr); gap:16px; }
         .interaction-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
-        .interaction-card { text-align:left; border:1px solid rgba(228,185,128,.26); background:rgba(17,13,20,.8); color:inherit; border-radius:10px; padding:14px; cursor:pointer; min-height:132px; }
+        .interaction-card { text-align:left; border:1px solid rgba(228,185,128,.26); background:rgba(17,13,20,.8); color:inherit; border-radius:10px; padding:14px; cursor:pointer; min-height:148px; }
         .interaction-card:hover,.interaction-card:focus-visible { border-color:rgba(244,237,247,.85); outline:none; }
         .interaction-card--accepted { box-shadow:inset 3px 0 0 rgba(133,220,194,.7); }
         .interaction-card--rejected { box-shadow:inset 3px 0 0 rgba(228,185,128,.62); }
         .interaction-card--selected { border-color:#f4edf7; background:rgba(228,185,128,.1); }
-        .interaction-card__title,.interaction-card__note,.interaction-card__result { display:block; }
+        .interaction-card__outcome,.interaction-card__title,.interaction-card__note,.interaction-card__result { display:block; }
+        .interaction-card__outcome { text-transform:uppercase; letter-spacing:.12em; font-size:.68rem; opacity:.62; margin-bottom:5px; }
         .interaction-card__title { font-weight:700; margin-bottom:7px; }
         .interaction-card__note { opacity:.72; font-size:.88rem; line-height:1.35; }
         .interaction-card__result { margin-top:12px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.8rem; }
@@ -228,34 +315,19 @@ type Story = StoryObj<typeof meta>;
 export const RejectionAndActionMatrix: Story = {
   play: async ({ canvasElement }) => {
     const reason = canvasElement.querySelector<HTMLElement>("[data-selected-reason]");
-    const occupied = canvasElement.querySelector<HTMLButtonElement>("[data-scenario='place-occupied']");
-    const unaffordable = canvasElement.querySelector<HTMLButtonElement>("[data-scenario='place-unaffordable']");
-    const camera = canvasElement.querySelector<HTMLButtonElement>("[data-scenario='camera-gesture']");
-    const maxTower = canvasElement.querySelector<HTMLButtonElement>("[data-scenario='tower-max']");
-    const refresh = canvasElement.querySelector<HTMLButtonElement>("[data-scenario='tower-refresh']");
-
     await expect(reason).not.toBeNull();
-    await expect(occupied).not.toBeNull();
-    await expect(unaffordable).not.toBeNull();
-    await expect(camera).not.toBeNull();
-    await expect(maxTower).not.toBeNull();
-    await expect(refresh).not.toBeNull();
-    if (!reason || !occupied || !unaffordable || !camera || !maxTower || !refresh) return;
+    if (!reason) return;
 
-    await userEvent.click(occupied);
-    await expect(reason).toHaveTextContent("rejection=occupied");
+    for (const scenario of scenarios) {
+      const card = canvasElement.querySelector<HTMLButtonElement>(`[data-scenario='${scenario.id}']`);
+      await expect(card).not.toBeNull();
+      if (!card) return;
 
-    await userEvent.click(unaffordable);
-    await expect(reason).toHaveTextContent("rejection=unaffordable");
-
-    await userEvent.click(camera);
-    await expect(reason).toHaveTextContent("rejection=camera-gesture");
-
-    await userEvent.click(maxTower);
-    await expect(reason).toHaveTextContent("rejection=max-state");
-
-    await userEvent.click(refresh);
-    await expect(reason).toHaveTextContent("action=refresh");
-    await expect(reason).toHaveTextContent("rejection=none");
+      await expect(card).toHaveAttribute("data-action", scenario.expectedAction);
+      await expect(card).toHaveAttribute("data-rejection", scenario.expectedRejection);
+      await userEvent.click(card);
+      await expect(reason).toHaveTextContent(`action=${scenario.expectedAction}`);
+      await expect(reason).toHaveTextContent(`rejection=${scenario.expectedRejection}`);
+    }
   }
 };
