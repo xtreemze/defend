@@ -1,10 +1,23 @@
-export interface RaidBeliefState {
+export interface RaidOpportunityBelief {
 	perceivedTargetEnergy: number;
+}
+
+export interface RaidApproachBelief {
 	expectedBreachProbability: number;
 	expectedArrivalViability: number;
 	uncertainty: number;
 	directObservations: number;
 	secondsSinceDirectObservation: number;
+}
+
+/**
+ * Convenience composite for one target + one approach context. Callers should
+ * share `opportunity` across a target while keeping separate `approach` beliefs
+ * for materially different sector/tier/insertion contexts.
+ */
+export interface RaidBeliefState {
+	opportunity: RaidOpportunityBelief;
+	approach: RaidApproachBelief;
 }
 
 export interface RaidBeliefCalibration {
@@ -74,17 +87,24 @@ function timeAlpha(deltaSeconds: number, halfLifeSeconds: number): number {
 	return 1 - Math.pow(0.5, delta / halfLifeSeconds);
 }
 
-export function createRaidBelief(
-	prior: RaidBeliefPrior,
+export function createRaidOpportunityBelief(
+	perceivedTargetEnergy: number,
 	calibrationInput: RaidBeliefCalibration
-): RaidBeliefState {
+): RaidOpportunityBelief {
 	const calibration = normalizeCalibration(calibrationInput);
 	return {
 		perceivedTargetEnergy: clamp(
-			prior.perceivedTargetEnergy,
+			perceivedTargetEnergy,
 			0,
 			calibration.targetEnergyCapacity
-		),
+		)
+	};
+}
+
+export function createRaidApproachBelief(
+	prior: RaidBeliefPrior
+): RaidApproachBelief {
+	return {
 		expectedBreachProbability: clamp01(prior.expectedBreachProbability),
 		expectedArrivalViability: clamp01(prior.expectedArrivalViability),
 		uncertainty: clamp01(prior.uncertainty),
@@ -93,56 +113,85 @@ export function createRaidBelief(
 	};
 }
 
-/**
- * Age information without changing the mean physical belief. A quiet target may
- * have changed because towers degrade, geometry changes and reserves move, so
- * certainty erodes even though the attacker has not received evidence that the
- * target became easier or harder.
- */
-export function ageRaidBelief(
-	state: RaidBeliefState,
-	deltaSeconds: number,
+export function createRaidBelief(
+	prior: RaidBeliefPrior,
 	calibrationInput: RaidBeliefCalibration
 ): RaidBeliefState {
+	return {
+		opportunity: createRaidOpportunityBelief(
+			prior.perceivedTargetEnergy,
+			calibrationInput
+		),
+		approach: createRaidApproachBelief(prior)
+	};
+}
+
+/**
+ * Age one approach context without changing its mean physical belief. Callers
+ * may age many approach beliefs independently while sharing one target-level
+ * opportunity belief.
+ */
+export function ageRaidApproachBelief(
+	approach: RaidApproachBelief,
+	deltaSeconds: number,
+	calibrationInput: RaidBeliefCalibration
+): RaidApproachBelief {
 	const calibration = normalizeCalibration(calibrationInput);
 	const delta = positive(deltaSeconds);
 	const staleAlpha = timeAlpha(
 		delta,
 		calibration.uncertaintyStaleHalfLifeSeconds
 	);
+	const uncertainty = clamp01(approach.uncertainty);
 	return {
-		perceivedTargetEnergy: clamp(
-			state.perceivedTargetEnergy,
-			0,
-			calibration.targetEnergyCapacity
-		),
-		expectedBreachProbability: clamp01(state.expectedBreachProbability),
-		expectedArrivalViability: clamp01(state.expectedArrivalViability),
+		expectedBreachProbability: clamp01(approach.expectedBreachProbability),
+		expectedArrivalViability: clamp01(approach.expectedArrivalViability),
 		uncertainty: clamp01(
-			state.uncertainty + (1 - state.uncertainty) * staleAlpha
+			uncertainty + (1 - uncertainty) * staleAlpha
 		),
 		directObservations: Math.max(
 			0,
-			Math.floor(positive(state.directObservations))
+			Math.floor(positive(approach.directObservations))
 		),
 		secondsSinceDirectObservation:
-			positive(state.secondsSinceDirectObservation) + delta
+			positive(approach.secondsSinceDirectObservation) + delta
+	};
+}
+
+export function ageRaidBelief(
+	state: RaidBeliefState,
+	deltaSeconds: number,
+	calibrationInput: RaidBeliefCalibration
+): RaidBeliefState {
+	return {
+		opportunity: createRaidOpportunityBelief(
+			state.opportunity.perceivedTargetEnergy,
+			calibrationInput
+		),
+		approach: ageRaidApproachBelief(
+			state.approach,
+			deltaSeconds,
+			calibrationInput
+		)
 	};
 }
 
 /**
- * A passive teal signature updates perceived opportunity but not hidden defense
- * quality. The time-domain half-life keeps a constant observation equivalent
- * across different sampling cadences.
+ * Update target-global opportunity from a lossy teal signature. This function
+ * knows nothing about a route, raider tier or defense quality.
  */
-export function observeRaidSignature(
-	stateInput: RaidBeliefState,
+export function observeRaidOpportunitySignature(
+	opportunity: RaidOpportunityBelief,
 	observedTargetEnergy: number,
 	deltaSeconds: number,
 	calibrationInput: RaidBeliefCalibration
-): RaidBeliefState {
+): RaidOpportunityBelief {
 	const calibration = normalizeCalibration(calibrationInput);
-	const state = ageRaidBelief(stateInput, deltaSeconds, calibration);
+	const current = clamp(
+		opportunity.perceivedTargetEnergy,
+		0,
+		calibration.targetEnergyCapacity
+	);
 	const target = clamp(
 		observedTargetEnergy,
 		0,
@@ -150,64 +199,92 @@ export function observeRaidSignature(
 	);
 	const alpha = timeAlpha(deltaSeconds, calibration.signatureHalfLifeSeconds);
 	return {
-		perceivedTargetEnergy:
-			state.perceivedTargetEnergy +
-			(target - state.perceivedTargetEnergy) * alpha,
-		expectedBreachProbability: state.expectedBreachProbability,
-		expectedArrivalViability: state.expectedArrivalViability,
-		uncertainty: state.uncertainty,
-		directObservations: state.directObservations,
-		secondsSinceDirectObservation: state.secondsSinceDirectObservation
+		perceivedTargetEnergy: current + (target - current) * alpha
+	};
+}
+
+/** Convenience composite: time passes for this approach while the target-wide
+ * passive signature updates opportunity only. */
+export function observeRaidSignature(
+	state: RaidBeliefState,
+	observedTargetEnergy: number,
+	deltaSeconds: number,
+	calibrationInput: RaidBeliefCalibration
+): RaidBeliefState {
+	return {
+		opportunity: observeRaidOpportunitySignature(
+			state.opportunity,
+			observedTargetEnergy,
+			deltaSeconds,
+			calibrationInput
+		),
+		approach: ageRaidApproachBelief(
+			state.approach,
+			deltaSeconds,
+			calibrationInput
+		)
 	};
 }
 
 /**
- * Direct raid evidence updates breach and viability expectations gradually. A
- * single success after repeated failure cannot reset the model to perfect
- * optimism; repeated evidence is required. Direct evidence also makes current
- * information less uncertain and resets its staleness clock.
+ * Direct raid evidence updates one contextual approach belief only. A failed R1
+ * path therefore need not change the belief for a different R3 insertion unless
+ * the caller intentionally shares that context.
  */
-export function observeRaidOutcome(
-	stateInput: RaidBeliefState,
+export function observeRaidApproachOutcome(
+	approach: RaidApproachBelief,
 	observation: RaidOutcomeObservation,
 	calibrationInput: RaidBeliefCalibration
-): RaidBeliefState {
+): RaidApproachBelief {
 	const calibration = normalizeCalibration(calibrationInput);
 	const reliability = clamp01(observation.reliability);
 	const breachAlpha = calibration.breachObservationWeight * reliability;
 	const viabilityAlpha = calibration.viabilityObservationWeight * reliability;
 	const breachEvidence = observation.breached ? 1 : 0;
 	const viabilityEvidence = clamp01(observation.remainingViability);
-	const breach = clamp01(
-		stateInput.expectedBreachProbability +
-			(breachEvidence - stateInput.expectedBreachProbability) * breachAlpha
-	);
-	const viability = clamp01(
-		stateInput.expectedArrivalViability +
-			(viabilityEvidence - stateInput.expectedArrivalViability) * viabilityAlpha
-	);
+	const currentBreach = clamp01(approach.expectedBreachProbability);
+	const currentViability = clamp01(approach.expectedArrivalViability);
+	const uncertainty = clamp01(approach.uncertainty);
 	const uncertaintyRetention =
 		1 - calibration.directUncertaintyReduction * reliability;
 
 	return {
-		perceivedTargetEnergy: clamp(
-			stateInput.perceivedTargetEnergy,
-			0,
-			calibration.targetEnergyCapacity
+		expectedBreachProbability: clamp01(
+			currentBreach + (breachEvidence - currentBreach) * breachAlpha
 		),
-		expectedBreachProbability: breach,
-		expectedArrivalViability: viability,
-		uncertainty: clamp01(stateInput.uncertainty * uncertaintyRetention),
+		expectedArrivalViability: clamp01(
+			currentViability +
+				(viabilityEvidence - currentViability) * viabilityAlpha
+		),
+		uncertainty: clamp01(uncertainty * uncertaintyRetention),
 		directObservations:
-			Math.max(0, Math.floor(positive(stateInput.directObservations))) + 1,
+			Math.max(0, Math.floor(positive(approach.directObservations))) + 1,
 		secondsSinceDirectObservation: 0
 	};
 }
 
+export function observeRaidOutcome(
+	state: RaidBeliefState,
+	observation: RaidOutcomeObservation,
+	calibrationInput: RaidBeliefCalibration
+): RaidBeliefState {
+	return {
+		opportunity: createRaidOpportunityBelief(
+			state.opportunity.perceivedTargetEnergy,
+			calibrationInput
+		),
+		approach: observeRaidApproachOutcome(
+			state.approach,
+			observation,
+			calibrationInput
+		)
+	};
+}
+
 /**
- * Bounded information-need signal for downstream probe experiments. It does not
- * choose a raid or grant an economic bonus. A stale belief matters more when the
- * target still appears valuable; a dim target has little reason to re-check.
+ * Bounded information-need signal for one approach context. It does not choose
+ * a raid or grant economic return. A stale route belief matters more when the
+ * shared target still appears valuable.
  */
 export function raidBeliefInformationNeed(
 	state: RaidBeliefState,
@@ -215,11 +292,14 @@ export function raidBeliefInformationNeed(
 ): number {
 	const calibration = normalizeCalibration(calibrationInput);
 	const richness = clamp(
-		positive(state.perceivedTargetEnergy) / calibration.targetEnergyCapacity,
+		positive(state.opportunity.perceivedTargetEnergy) /
+			calibration.targetEnergyCapacity,
 		0,
 		1
 	);
-	return clamp01(clamp01(state.uncertainty) * Math.sqrt(richness));
+	return clamp01(
+		clamp01(state.approach.uncertainty) * Math.sqrt(richness)
+	);
 }
 
 export function raidBeliefExpectedValueInputs(
@@ -229,12 +309,16 @@ export function raidBeliefExpectedValueInputs(
 	const calibration = normalizeCalibration(calibrationInput);
 	return {
 		perceivedTargetEnergy: clamp(
-			state.perceivedTargetEnergy,
+			state.opportunity.perceivedTargetEnergy,
 			0,
 			calibration.targetEnergyCapacity
 		),
-		expectedBreachProbability: clamp01(state.expectedBreachProbability),
-		expectedArrivalViability: clamp01(state.expectedArrivalViability)
+		expectedBreachProbability: clamp01(
+			state.approach.expectedBreachProbability
+		),
+		expectedArrivalViability: clamp01(
+			state.approach.expectedArrivalViability
+		)
 	};
 }
 
