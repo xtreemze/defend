@@ -3,51 +3,65 @@ import { expect } from "storybook/test";
 import {
 	classifyTowerInteraction,
 	towerInteractionCanAfford,
+	type TowerAffordabilityRule,
 	type TowerInteractionRequest
 } from "@defend/gameplay/towerInteraction";
 import { createLabShell } from "../../labTheme";
 
-interface CostCase {
+interface EconomyCase {
 	id: string;
 	label: string;
+	balance: number;
 	cost: number;
-	valid: boolean;
+	rule: TowerAffordabilityRule;
+	expectedReason: "invalid-cost" | "unaffordable" | "none";
 }
 
-const COST_CASES: CostCase[] = [
-	{ id: "negative", label: "negative", cost: -1, valid: false },
-	{ id: "nan", label: "NaN", cost: NaN, valid: false },
-	{ id: "positive-infinity", label: "+Infinity", cost: Infinity, valid: false },
-	{ id: "negative-infinity", label: "-Infinity", cost: -Infinity, valid: false },
-	{ id: "explicit-zero", label: "explicit zero", cost: 0, valid: true }
+const COST_CASES: EconomyCase[] = [
+	{ id: "cost-negative", label: "negative cost", balance: 15000, cost: -1, rule: "legacy-strict", expectedReason: "invalid-cost" },
+	{ id: "cost-nan", label: "NaN cost", balance: 15000, cost: NaN, rule: "legacy-strict", expectedReason: "invalid-cost" },
+	{ id: "cost-positive-infinity", label: "+Infinity cost", balance: 15000, cost: Infinity, rule: "legacy-strict", expectedReason: "invalid-cost" },
+	{ id: "cost-negative-infinity", label: "-Infinity cost", balance: 15000, cost: -Infinity, rule: "legacy-strict", expectedReason: "invalid-cost" },
+	{ id: "cost-undefined", label: "undefined cost", balance: 15000, cost: undefined as unknown as number, rule: "legacy-strict", expectedReason: "invalid-cost" },
+	{ id: "explicit-zero", label: "explicit zero cost", balance: 15000, cost: 0, rule: "legacy-strict", expectedReason: "none" }
 ];
 
-function request(cost: number): TowerInteractionRequest {
+const BALANCE_CASES: EconomyCase[] = [
+	{ id: "balance-negative", label: "negative reserve", balance: -1, cost: 0, rule: "inclusive", expectedReason: "unaffordable" },
+	{ id: "balance-nan", label: "NaN reserve", balance: NaN, cost: 0, rule: "inclusive", expectedReason: "unaffordable" },
+	{ id: "balance-positive-infinity", label: "+Infinity reserve", balance: Infinity, cost: 0, rule: "inclusive", expectedReason: "unaffordable" },
+	{ id: "balance-negative-infinity", label: "-Infinity reserve", balance: -Infinity, cost: 0, rule: "inclusive", expectedReason: "unaffordable" },
+	{ id: "balance-undefined", label: "undefined reserve", balance: undefined as unknown as number, cost: 0, rule: "inclusive", expectedReason: "unaffordable" }
+];
+
+const ECONOMY_CASES = COST_CASES.concat(BALANCE_CASES);
+
+function request(testCase: EconomyCase): TowerInteractionRequest {
 	return {
 		inputOwner: "world",
 		targetKind: "ground",
 		occupied: false,
-		balance: 15000,
-		requestedCost: cost,
+		balance: testCase.balance,
+		requestedCost: testCase.cost,
 		currentLevel: 0,
 		maximumLevel: 3,
-		affordabilityRule: "legacy-strict",
+		affordabilityRule: testCase.rule,
 		maxLevelBehavior: "legacy-rebuild"
 	};
 }
 
 const meta = {
-	title: "Arena/Interaction/Tower Invalid Cost",
+	title: "Arena/Interaction/Tower Invalid Economy",
 	tags: ["test", "visual"],
 	render: () => {
-		const cases = COST_CASES.map(testCase => ({
+		const cases = ECONOMY_CASES.map(testCase => ({
 			...testCase,
-			result: classifyTowerInteraction(request(testCase.cost))
+			result: classifyTowerInteraction(request(testCase))
 		}));
 		const shell = createLabShell(
 			"Arena / interaction",
-			"Malformed cost rejection",
-			"Economic authority fails closed. Negative and non-finite action costs remain finite in diagnostics but can never become free placement permission. A literal zero cost remains distinguishable as an explicit caller value."
+			"Malformed economy authority fails closed",
+			"Negative, non-finite and runtime non-number authority inputs cannot become free placement permission. Invalid costs remain explicit diagnostic failures. Invalid reserve state fails the affordability boundary without mutating finite preview diagnostics. A literal zero cost remains a valid explicit caller value when reserve state itself is valid."
 		);
 
 		shell.frame.innerHTML = `
@@ -65,13 +79,14 @@ const meta = {
 				${cases
 					.map(
 						entry => `
-						<article class="cost-card" data-case="${entry.id}" data-valid="${entry.valid}" data-disposition="${entry.result.disposition}" data-reason="${entry.result.reason}" data-cost="${entry.result.requestedCost}" data-balance-after="${entry.result.balanceAfter}">
+						<article class="cost-card" data-case="${entry.id}" data-disposition="${entry.result.disposition}" data-reason="${entry.result.reason}" data-cost="${entry.result.requestedCost}" data-balance-before="${entry.result.balanceBefore}" data-balance-after="${entry.result.balanceAfter}">
 							<h3>${entry.label}</h3>
 							<dl>
-								<dt>input</dt><dd>${entry.label}</dd>
+								<dt>policy</dt><dd>${entry.rule}</dd>
 								<dt>disposition</dt><dd>${entry.result.disposition}</dd>
 								<dt>reason</dt><dd>${entry.result.reason}</dd>
 								<dt>diagnostic cost</dt><dd>${entry.result.requestedCost}</dd>
+								<dt>diagnostic reserve</dt><dd>${entry.result.balanceBefore}</dd>
 								<dt>reserve after</dt><dd>${entry.result.balanceAfter}</dd>
 							</dl>
 						</article>`
@@ -88,33 +103,36 @@ type Story = StoryObj<typeof meta>;
 
 export const FailClosed: Story = {
 	play: async ({ canvasElement }) => {
-		for (let index = 0; index < COST_CASES.length; index += 1) {
-			const testCase = COST_CASES[index];
+		for (let index = 0; index < ECONOMY_CASES.length; index += 1) {
+			const testCase = ECONOMY_CASES[index];
 			const card = canvasElement.querySelector<HTMLElement>(
 				`[data-case='${testCase.id}']`
 			);
 			await expect(card).not.toBeNull();
 			if (!card) continue;
 
-			const classified = classifyTowerInteraction(request(testCase.cost));
-			if (!testCase.valid) {
-				await expect(
-					towerInteractionCanAfford(15000, testCase.cost, "legacy-strict")
-				).toBe(false);
-				await expect(
-					towerInteractionCanAfford(15000, testCase.cost, "inclusive")
-				).toBe(false);
-				await expect(classified.disposition).toBe("rejected");
-				await expect(classified.reason).toBe("invalid-cost");
-				await expect(classified.balanceAfter).toBe(15000);
-				await expect(Number.isFinite(classified.requestedCost)).toBe(true);
-				await expect(Number.isFinite(classified.balanceAfter)).toBe(true);
-				await expect(card.dataset.reason).toBe("invalid-cost");
-			} else {
+			const classified = classifyTowerInteraction(request(testCase));
+			const canAfford = towerInteractionCanAfford(
+				testCase.balance,
+				testCase.cost,
+				testCase.rule
+			);
+
+			if (testCase.expectedReason === "none") {
+				await expect(canAfford).toBe(true);
 				await expect(classified.disposition).toBe("allowed");
 				await expect(classified.reason).toBe("none");
 				await expect(classified.requestedCost).toBe(0);
+			} else {
+				await expect(canAfford).toBe(false);
+				await expect(classified.disposition).toBe("rejected");
+				await expect(classified.reason).toBe(testCase.expectedReason);
+				await expect(card.dataset.reason).toBe(testCase.expectedReason);
 			}
+
+			await expect(Number.isFinite(classified.requestedCost)).toBe(true);
+			await expect(Number.isFinite(classified.balanceBefore)).toBe(true);
+			await expect(Number.isFinite(classified.balanceAfter)).toBe(true);
 		}
 	}
 };
