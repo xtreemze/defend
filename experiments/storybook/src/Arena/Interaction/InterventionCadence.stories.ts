@@ -245,6 +245,7 @@ export const DecisionDensityNotInputDensity: Story = {
 				opportunity("valid", 10, 20),
 				opportunity("valid", 30, 40),
 				opportunity("reversed", 50, 45),
+				opportunity("zero-width", 55, 55),
 				opportunity("nonfinite", NaN, 60)
 			],
 			actions: [
@@ -255,7 +256,7 @@ export const DecisionDensityNotInputDensity: Story = {
 		});
 		await expect(malformed.opportunities).toBe(1);
 		await expect(malformed.duplicateOpportunityIds).toBe(1);
-		await expect(malformed.invalidOpportunities).toBe(2);
+		await expect(malformed.invalidOpportunities).toBe(3);
 		await expect(malformed.respondedOpportunities).toBe(1);
 		await expect(malformed.actions).toBe(1);
 		await expect(malformed.invalidActions).toBe(2);
