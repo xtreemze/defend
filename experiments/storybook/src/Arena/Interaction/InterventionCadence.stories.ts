@@ -237,5 +237,27 @@ export const DecisionDensityNotInputDensity: Story = {
 		await expect(busyworkGap).toBeCloseTo(spectatorGap, 8);
 		await expect(busyworkApm).toBeGreaterThan(engagedApm);
 		await expect(busyworkUnlinked).toBeGreaterThan(0.5);
+
+		const malformed = summarizeInterventionCadence({
+			sessionStartSeconds: 0,
+			sessionEndSeconds: 90,
+			opportunities: [
+				opportunity("valid", 10, 20),
+				opportunity("valid", 30, 40),
+				opportunity("reversed", 50, 45),
+				opportunity("nonfinite", NaN, 60)
+			],
+			actions: [
+				linkedAction(12, "valid"),
+				linkedAction(NaN, "valid"),
+				linkedAction(120, "valid")
+			]
+		});
+		await expect(malformed.opportunities).toBe(1);
+		await expect(malformed.duplicateOpportunityIds).toBe(1);
+		await expect(malformed.invalidOpportunities).toBe(2);
+		await expect(malformed.respondedOpportunities).toBe(1);
+		await expect(malformed.actions).toBe(1);
+		await expect(malformed.invalidActions).toBe(2);
 	}
 };
