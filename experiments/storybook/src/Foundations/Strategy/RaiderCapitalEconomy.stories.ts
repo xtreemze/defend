@@ -13,8 +13,10 @@ import { createLabShell } from "../../labTheme";
 type CapitalEconomyArgs = {
 	expectedBreachProbability: number;
 	expectedBreachViability: number;
+	expectedSuccessReturnViability: number;
 	expectedFailureReturnViability: number;
-	realizedViability: number;
+	realizedBreachViability: number;
+	realizedReturnViability: number;
 	travelAndOperatingCost: number;
 	defenderCaptureFraction: number;
 };
@@ -35,6 +37,7 @@ const MODES: RaiderCapitalMode[] = ["fully-sunk", "embodied-return"];
 const FIXED_WITNESS = {
 	expectedBreachProbability: 0.55,
 	expectedBreachViability: 0.55,
+	expectedSuccessReturnViability: 0.55,
 	expectedFailureReturnViability: 0.3,
 	travelAndOperatingCost: 500
 };
@@ -64,6 +67,7 @@ function estimateCell(
 		perceivedTargetEnergy: target.reserve,
 		expectedBreachProbability: args.expectedBreachProbability,
 		expectedArrivalViabilityOnBreach: args.expectedBreachViability,
+		expectedReturnViabilityAfterBreach: args.expectedSuccessReturnViability,
 		expectedReturnViabilityOnFailure: args.expectedFailureReturnViability,
 		travelAndOperatingCost: args.travelAndOperatingCost
 	});
@@ -72,7 +76,7 @@ function estimateCell(
 		<div class="capital-cell" data-mode="${mode}" data-target="${target.reserve}" data-tier="${profile.tier}" data-positive="${positive}">
 			<header><strong>R${profile.tier}</strong><span>${positive ? "positive EV" : "negative EV"}</span></header>
 			<div class="capital-net">${signed(estimate.expectedNetReturn)}</div>
-			<small>extract ${fixed(estimate.expectedExtractedEnergy)} · return ${fixed(estimate.expectedReturnedCapital)} · capital loss ${fixed(estimate.expectedCapitalLoss)}</small>
+			<small>extract ${fixed(estimate.expectedExtractedEnergy)} · return ${fixed(estimate.expectedReturnedCapital)} · post-breach loss ${fixed(estimate.expectedPostBreachCapitalLoss)}</small>
 		</div>
 	`;
 }
@@ -85,7 +89,7 @@ function modePanel(mode: RaiderCapitalMode, args: CapitalEconomyArgs): string {
 				<p>${
 					mode === "fully-sunk"
 						? "Launch commitment is consumed immediately; surviving body state cannot return that commitment."
-						: "Launch commitment moves into the raider; surviving viability returns capital and damaged capital becomes capture/loss exposure."
+						: "Launch commitment remains physical capital. Breach viability limits extraction; later evacuation viability independently determines how much capital actually returns."
 				}</p>
 			</div>
 			<div class="capital-targets">
@@ -110,6 +114,8 @@ function fixedWitnessPositive(tierIndex: number, targetEnergy: number): boolean 
 			perceivedTargetEnergy: targetEnergy,
 			expectedBreachProbability: FIXED_WITNESS.expectedBreachProbability,
 			expectedArrivalViabilityOnBreach: FIXED_WITNESS.expectedBreachViability,
+			expectedReturnViabilityAfterBreach:
+				FIXED_WITNESS.expectedSuccessReturnViability,
 			expectedReturnViabilityOnFailure:
 				FIXED_WITNESS.expectedFailureReturnViability,
 			travelAndOperatingCost: FIXED_WITNESS.travelAndOperatingCost
@@ -123,16 +129,20 @@ const meta = {
 	args: {
 		expectedBreachProbability: 0.55,
 		expectedBreachViability: 0.55,
+		expectedSuccessReturnViability: 0.55,
 		expectedFailureReturnViability: 0.3,
-		realizedViability: 0.55,
+		realizedBreachViability: 0.7,
+		realizedReturnViability: 0.7,
 		travelAndOperatingCost: 500,
 		defenderCaptureFraction: 0.72
 	},
 	argTypes: {
 		expectedBreachProbability: { control: { type: "range", min: 0.05, max: 1, step: 0.05 } },
 		expectedBreachViability: { control: { type: "range", min: 0.05, max: 1, step: 0.05 } },
+		expectedSuccessReturnViability: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
 		expectedFailureReturnViability: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
-		realizedViability: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
+		realizedBreachViability: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
+		realizedReturnViability: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
 		travelAndOperatingCost: { control: { type: "range", min: 0, max: 3000, step: 100 } },
 		defenderCaptureFraction: { control: { type: "range", min: 0, max: 1, step: 0.05 } }
 	},
@@ -140,7 +150,7 @@ const meta = {
 		const shell = createLabShell(
 			"Foundations / strategy",
 			"Raider launch capital at risk",
-			"Compare fully sunk launch cost with a conservation-first hypothesis where launch energy remains embodied in the raider and returns only in proportion to physical survival. Controls are exploratory; the automated witness stays fixed."
+			"Compare fully sunk launch cost with embodied capital whose extraction-time integrity and later evacuation survival are independent. This keeps post-breach interception economically meaningful."
 		);
 		shell.frame.innerHTML = `
 			<style>
@@ -156,7 +166,6 @@ const meta = {
 				.capital-tier-grid { display:grid; gap:7px; }
 				.capital-cell { padding:9px; border:1px solid rgba(228,185,128,.16); background:rgba(10,3,17,.36); }
 				.capital-cell header { display:flex; justify-content:space-between; gap:8px; font-size:10px; }
-				.capital-cell[data-positive="true"] { border-style:solid; }
 				.capital-cell[data-positive="false"] { border-style:dashed; opacity:.68; }
 				.capital-net { margin:7px 0 4px; font-size:17px; font-variant-numeric:tabular-nums; }
 				.capital-cell small { display:block; font-size:9px; line-height:1.45; }
@@ -164,7 +173,7 @@ const meta = {
 				@media (max-width:900px) { .capital-targets { grid-template-columns:1fr; } .capital-mode__heading { grid-template-columns:1fr; } }
 			</style>
 			<div class="capital-layout">${MODES.map(mode => modePanel(mode, args)).join("")}</div>
-			<div class="capital-note">Expected value includes target-bounded extraction, launch-capital loss/return and travel/operating drain. Changing controls is meant to reveal regimes where the default contextual role pattern fails; those exploratory states do not invalidate the fixed automated witness.</div>
+			<div class="capital-note">The automated witness additionally compares clean evacuation, post-extraction interception, and failed-breach retreat. Extraction capability and return survival are deliberately non-identical quantities.</div>
 		`;
 		return shell.root;
 	}
@@ -202,23 +211,21 @@ export const CapitalAtRiskMatrix: Story = {
 						defenderReserve: target.reserve,
 						defenderCapacity: 30000,
 						breached: true,
-						remainingViability: args.realizedViability,
+						breachViability: args.realizedBreachViability,
+						returnViability: args.realizedReturnViability,
 						travelAndOperatingCost: args.travelAndOperatingCost,
 						defenderCaptureFraction: args.defenderCaptureFraction,
 						collateralDissipationRatio: 0
 					});
-					await expect(settlement.extractedEnergy).toBeLessThanOrEqual(
-						target.reserve
-					);
+					await expect(settlement.extractedEnergy).toBeLessThanOrEqual(target.reserve);
+					await expect(settlement.returnedCapital).toBeLessThanOrEqual(profile.committedEnergy);
 					await expect(settlement.returnedCapital).toBeLessThanOrEqual(
-						profile.committedEnergy
+						settlement.capitalPresentAtBreach || profile.committedEnergy
 					);
 					await expect(settlement.capturedCapital).toBeLessThanOrEqual(
 						settlement.capitalAtRiskLost
 					);
-					await expect(Math.abs(settlement.conservationResidual)).toBeLessThan(
-						0.000001
-					);
+					await expect(Math.abs(settlement.conservationResidual)).toBeLessThan(0.000001);
 					if (mode === "fully-sunk") {
 						await expect(settlement.returnedCapital).toBe(0);
 						await expect(settlement.capturedCapital).toBe(0);
@@ -226,5 +233,52 @@ export const CapitalAtRiskMatrix: Story = {
 				}
 			}
 		}
+
+		const profile = DEFAULT_RAIDER_CAPITAL_PROFILES[1];
+		const cleanReturn = settleRaiderCapitalEconomy({
+			mode: "embodied-return",
+			profile,
+			defenderReserve: 30000,
+			defenderCapacity: 30000,
+			breached: true,
+			breachViability: 0.8,
+			returnViability: 0.8,
+			travelAndOperatingCost: 500,
+			defenderCaptureFraction: 0.72,
+			collateralDissipationRatio: 0
+		});
+		const interceptedReturn = settleRaiderCapitalEconomy({
+			mode: "embodied-return",
+			profile,
+			defenderReserve: 30000,
+			defenderCapacity: 30000,
+			breached: true,
+			breachViability: 0.8,
+			returnViability: 0.2,
+			travelAndOperatingCost: 500,
+			defenderCaptureFraction: 0.72,
+			collateralDissipationRatio: 0
+		});
+		await expect(interceptedReturn.extractedEnergy).toBe(cleanReturn.extractedEnergy);
+		await expect(interceptedReturn.returnedCapital).toBeLessThan(cleanReturn.returnedCapital);
+		await expect(interceptedReturn.postBreachCapitalLoss).toBeGreaterThan(0);
+		await expect(interceptedReturn.attackerNetReturn).toBeLessThan(cleanReturn.attackerNetReturn);
+
+		const failedRetreat = settleRaiderCapitalEconomy({
+			mode: "embodied-return",
+			profile,
+			defenderReserve: 30000,
+			defenderCapacity: 30000,
+			breached: false,
+			breachViability: 0.8,
+			returnViability: 0.3,
+			travelAndOperatingCost: 500,
+			defenderCaptureFraction: 0.72,
+			collateralDissipationRatio: 0
+		});
+		await expect(failedRetreat.extractedEnergy).toBe(0);
+		await expect(failedRetreat.returnedCapital).toBeCloseTo(profile.committedEnergy * 0.3);
+		await expect(failedRetreat.postBreachCapitalLoss).toBe(0);
+		await expect(Math.abs(failedRetreat.conservationResidual)).toBeLessThan(0.000001);
 	}
 };
