@@ -70,15 +70,12 @@ export function settleConservedRaidExchange(
 	const reserveBefore = clamp(input.defenderReserve, 0, capacity);
 
 	const requestedExtractionEnergy = positive(input.requestedExtractionEnergy);
-	const extractedEnergy = Math.min(
-		reserveBefore,
-		requestedExtractionEnergy
-	);
+	const extractedEnergy = Math.min(reserveBefore, requestedExtractionEnergy);
 	const unmetExtractionEnergy = Math.max(
 		0,
 		requestedExtractionEnergy - extractedEnergy
 	);
-	const reserveAfterExtraction = reserveBefore - extractedEnergy;
+	const reserveAfterExtraction = reserveBefore - defenderEnergySafe(extractedEnergy);
 
 	const requestedCollateralDissipation =
 		extractedEnergy * positive(input.collateralDissipationRatio);
@@ -93,7 +90,7 @@ export function settleConservedRaidExchange(
 	const reserveAfterLoss = reserveAfterExtraction - collateralDissipation;
 
 	const requestedRecoveryEnergy = positive(input.requestedRecoveryEnergy);
-	const attackerEmbodiedEnergy = positive(input.attackerEnergy ?? input.attackerEmbodiedEnergy);
+	const attackerEmbodiedEnergy = positive(input.attackerEmbodiedEnergy);
 	const sourceAvailableRecoveryEnergy = Math.min(
 		requestedRecoveryEnergy,
 		attackerEmbodiedEnergy
@@ -133,6 +130,10 @@ export function settleConservedRaidExchange(
 	};
 }
 
+function defenderEnergySafe(value: number): number {
+	return positive(value);
+}
+
 /**
  * Actual attacker return must use energy that was physically extracted rather
  * than the raider's theoretical extraction potential.
@@ -145,7 +146,8 @@ export function raidAttackerNetReturn(
 	return (
 		positive(extractedEnergy) -
 		positive(committedEnergy) -
-		positive(travelCost)
+		positive
+		(travelCost)
 	);
 }
 
