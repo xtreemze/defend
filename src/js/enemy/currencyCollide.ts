@@ -2,6 +2,7 @@ import { currencyMeshColor } from "./currencyMeshColor";
 
 import { economyGlobals } from "../main/globalVariables";
 import { damageCurrency } from "../main/sound";
+import { applyEnemyBankDamage } from "../gameplay/economy";
 import { EnemySphere } from "./enemyBorn";
 import { Vector3, Scene } from "babylonjs";
 import { fragment } from "./Enemy";
@@ -24,7 +25,10 @@ function currencyCollide(enemy: EnemySphere, scene: Scene, level: number) {
 				) {
 					// color
 					currencyMeshColor();
-					economyGlobals.currentBalance -= enemy.hitPoints / 2;
+					economyGlobals.currentBalance = applyEnemyBankDamage(
+						economyGlobals.currentBalance,
+						enemy.hitPoints
+					);
 
 					if (
 						enemy.physicsImpostor !== null
