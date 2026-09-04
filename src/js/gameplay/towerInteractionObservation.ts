@@ -1,4 +1,4 @@
-import type {
+import {
 	TowerInteractionPreview,
 	TowerInteractionReason
 } from "./towerInteraction";
@@ -46,6 +46,8 @@ export interface TowerInteractionObservationState {
 	allowedActions: number;
 	rejectedActions: number;
 	ignoredActions: number;
+	invalidObservations: number;
+	nonMonotonicObservations: number;
 	cameraConflicts: number;
 	rejectedBeforeFirstBuild: number;
 	ignoredBeforeFirstBuild: number;
@@ -62,6 +64,8 @@ export interface TowerInteractionObservationSummary {
 	allowedActions: number;
 	rejectedActions: number;
 	ignoredActions: number;
+	invalidObservations: number;
+	nonMonotonicObservations: number;
 	allowanceRate: number;
 	cameraConflicts: number;
 	rejectedBeforeFirstBuild: number;
@@ -74,15 +78,30 @@ export interface TowerInteractionObservationSummary {
 	reasonCounts: TowerInteractionReasonCounts;
 }
 
+function isFiniteNumber(value: number): boolean {
+	return value === value && value !== Infinity && value !== -Infinity;
+}
+
 function finite(value: number, fallback = 0): number {
-	if (value !== value || value === Infinity || value === -Infinity) {
-		return fallback;
-	}
-	return value;
+	return isFiniteNumber(value) ? value : fallback;
 }
 
 function nonNegative(value: number): number {
 	return Math.max(0, finite(value));
+}
+
+function count(value: number): number {
+	return Math.floor(nonNegative(value));
+}
+
+function validHistoricalTime(
+	value: number | null,
+	start: number,
+	last: number
+): number | null {
+	if (value === null || !isFiniteNumber(value)) return null;
+	if (value < start || value > last) return null;
+	return value;
 }
 
 function emptyReasonCounts(): TowerInteractionReasonCounts {
@@ -101,30 +120,45 @@ function emptyReasonCounts(): TowerInteractionReasonCounts {
 }
 
 function copyReasonCounts(
-	counts: TowerInteractionReasonCounts
+	counts: TowerInteractionReasonCounts | null | undefined
 ): TowerInteractionReasonCounts {
+	if (!counts) return emptyReasonCounts();
 	return {
-		occupied: counts.occupied,
-		unaffordable: counts.unaffordable,
-		invalidCost: counts.invalidCost,
-		protectedCore: counts.protectedCore,
-		invalidTerrain: counts.invalidTerrain,
-		outsideArena: counts.outsideArena,
-		staleTarget: counts.staleTarget,
-		maxLevel: counts.maxLevel,
-		invalidTowerLevel: counts.invalidTowerLevel,
-		cameraGesture: counts.cameraGesture
+		occupied: count(counts.occupied),
+		unaffordable: count(counts.unaffordable),
+		invalidCost: count(counts.invalidCost),
+		protectedCore: count(counts.protectedCore),
+		invalidTerrain: count(counts.invalidTerrain),
+		outsideArena: count(counts.outsideArena),
+		staleTarget: count(counts.staleTarget),
+		maxLevel: count(counts.maxLevel),
+		invalidTowerLevel: count(counts.invalidTowerLevel),
+		cameraGesture: count(counts.cameraGesture)
 	};
 }
 
 function copyContexts(
-	contexts: TowerInteractionAcceptedContext[]
+	contexts: TowerInteractionAcceptedContext[] | null | undefined
 ): TowerInteractionAcceptedContext[] {
-	return contexts.map(context => ({
-		cellKey: context.cellKey,
-		roleKey: context.roleKey,
-		tacticalContextKey: context.tacticalContextKey
-	}));
+	if (!Array.isArray(contexts)) return [];
+	const copied: TowerInteractionAcceptedContext[] = [];
+	for (let index = 0; index < contexts.length; index += 1) {
+		const context = contexts[index];
+		if (
+			!context ||
+			typeof context.cellKey !== "string" ||
+			typeof context.roleKey !== "string" ||
+			typeof context.tacticalContextKey !== "string"
+		) {
+			continue;
+		}
+		copied.push({
+			cellKey: context.cellKey,
+			roleKey: context.roleKey,
+			tacticalContextKey: context.tacticalContextKey
+		});
+	}
+	return copied;
 }
 
 function incrementReason(
@@ -159,6 +193,54 @@ function contextIndex(
 	return -1;
 }
 
+function normalizeState(
+	state: TowerInteractionObservationState
+): TowerInteractionObservationState {
+	const start = nonNegative(state.startedAtSeconds);
+	const last = Math.max(start, nonNegative(state.lastObservedAtSeconds));
+	const attempts = count(state.attempts);
+	const acceptedReplacements = Math.min(
+		attempts,
+		count(state.acceptedReplacements)
+	);
+	return {
+		startedAtSeconds: start,
+		lastObservedAtSeconds: last,
+		attempts,
+		allowedActions: Math.min(attempts, count(state.allowedActions)),
+		rejectedActions: Math.min(attempts, count(state.rejectedActions)),
+		ignoredActions: Math.min(attempts, count(state.ignoredActions)),
+		invalidObservations: count(state.invalidObservations),
+		nonMonotonicObservations: count(state.nonMonotonicObservations),
+		cameraConflicts: Math.min(attempts, count(state.cameraConflicts)),
+		rejectedBeforeFirstBuild: Math.min(
+			attempts,
+			count(state.rejectedBeforeFirstBuild)
+		),
+		ignoredBeforeFirstBuild: Math.min(
+			attempts,
+			count(state.ignoredBeforeFirstBuild)
+		),
+		firstAllowedAtSeconds: validHistoricalTime(
+			state.firstAllowedAtSeconds,
+			start,
+			last
+		),
+		firstBuildAtSeconds: validHistoricalTime(
+			state.firstBuildAtSeconds,
+			start,
+			last
+		),
+		acceptedReplacements,
+		repeatedSameContextReplacements: Math.min(
+			acceptedReplacements,
+			count(state.repeatedSameContextReplacements)
+		),
+		reasonCounts: copyReasonCounts(state.reasonCounts),
+		lastAcceptedContexts: copyContexts(state.lastAcceptedContexts)
+	};
+}
+
 export function createTowerInteractionObservationState(
 	startedAtSeconds = 0
 ): TowerInteractionObservationState {
@@ -170,6 +252,8 @@ export function createTowerInteractionObservationState(
 		allowedActions: 0,
 		rejectedActions: 0,
 		ignoredActions: 0,
+		invalidObservations: 0,
+		nonMonotonicObservations: 0,
 		cameraConflicts: 0,
 		rejectedBeforeFirstBuild: 0,
 		ignoredBeforeFirstBuild: 0,
@@ -185,34 +269,31 @@ export function createTowerInteractionObservationState(
 /**
  * Append one passive observation downstream of #117's authoritative preview.
  * This function never changes whether an action is allowed or how much it costs.
+ *
+ * Invalid/non-monotonic timestamps fail closed. They are counted diagnostically
+ * but do not become attempts and cannot change first-build/repetition timing.
  */
 export function recordTowerInteractionObservation(
 	state: TowerInteractionObservationState,
 	observation: TowerInteractionObservation
 ): TowerInteractionObservationState {
-	const next: TowerInteractionObservationState = {
-		startedAtSeconds: nonNegative(state.startedAtSeconds),
-		lastObservedAtSeconds: Math.max(
-			nonNegative(state.lastObservedAtSeconds),
-			nonNegative(observation.atSeconds)
-		),
-		attempts: nonNegative(state.attempts) + 1,
-		allowedActions: nonNegative(state.allowedActions),
-		rejectedActions: nonNegative(state.rejectedActions),
-		ignoredActions: nonNegative(state.ignoredActions),
-		cameraConflicts: nonNegative(state.cameraConflicts),
-		rejectedBeforeFirstBuild: nonNegative(state.rejectedBeforeFirstBuild),
-		ignoredBeforeFirstBuild: nonNegative(state.ignoredBeforeFirstBuild),
-		firstAllowedAtSeconds: state.firstAllowedAtSeconds,
-		firstBuildAtSeconds: state.firstBuildAtSeconds,
-		acceptedReplacements: nonNegative(state.acceptedReplacements),
-		repeatedSameContextReplacements: nonNegative(
-			state.repeatedSameContextReplacements
-		),
-		reasonCounts: copyReasonCounts(state.reasonCounts),
-		lastAcceptedContexts: copyContexts(state.lastAcceptedContexts)
-	};
-	const atSeconds = next.lastObservedAtSeconds;
+	const next = normalizeState(state);
+	if (!isFiniteNumber(observation.atSeconds)) {
+		next.invalidObservations += 1;
+		return next;
+	}
+	if (
+		observation.atSeconds < next.startedAtSeconds ||
+		observation.atSeconds < next.lastObservedAtSeconds
+	) {
+		next.invalidObservations += 1;
+		next.nonMonotonicObservations += 1;
+		return next;
+	}
+
+	const atSeconds = observation.atSeconds;
+	next.lastObservedAtSeconds = atSeconds;
+	next.attempts += 1;
 	incrementReason(next.reasonCounts, observation.preview.reason);
 
 	if (observation.preview.disposition === "ignored") {
@@ -246,7 +327,13 @@ export function recordTowerInteractionObservation(
 		next.firstBuildAtSeconds = atSeconds;
 	}
 
-	if (observation.cellKey !== null && observation.roleKey !== null) {
+	if (
+		observation.cellKey !== null &&
+		observation.roleKey !== null &&
+		typeof observation.cellKey === "string" &&
+		typeof observation.roleKey === "string" &&
+		typeof observation.tacticalContextKey === "string"
+	) {
 		const index = contextIndex(
 			next.lastAcceptedContexts,
 			observation.cellKey,
@@ -278,43 +365,40 @@ export function recordTowerInteractionObservation(
 export function summarizeTowerInteractionObservations(
 	state: TowerInteractionObservationState
 ): TowerInteractionObservationSummary {
-	const attempts = nonNegative(state.attempts);
-	const allowedActions = nonNegative(state.allowedActions);
-	const acceptedReplacements = nonNegative(state.acceptedReplacements);
-	const repeatedSameContextReplacements = nonNegative(
-		state.repeatedSameContextReplacements
-	);
+	const safe = normalizeState(state);
+	const attempts = safe.attempts;
+	const allowedActions = safe.allowedActions;
+	const acceptedReplacements = safe.acceptedReplacements;
+	const repeatedSameContextReplacements = safe.repeatedSameContextReplacements;
 	return {
 		attempts,
 		allowedActions,
-		rejectedActions: nonNegative(state.rejectedActions),
-		ignoredActions: nonNegative(state.ignoredActions),
-		allowanceRate: attempts <= 0 ? 0 : allowedActions / attempts,
-		cameraConflicts: nonNegative(state.cameraConflicts),
-		rejectedBeforeFirstBuild: nonNegative(state.rejectedBeforeFirstBuild),
-		ignoredBeforeFirstBuild: nonNegative(state.ignoredBeforeFirstBuild),
+		rejectedActions: safe.rejectedActions,
+		ignoredActions: safe.ignoredActions,
+		invalidObservations: safe.invalidObservations,
+		nonMonotonicObservations: safe.nonMonotonicObservations,
+		allowanceRate:
+			attempts <= 0 ? 0 : Math.min(1, allowedActions / attempts),
+		cameraConflicts: safe.cameraConflicts,
+		rejectedBeforeFirstBuild: safe.rejectedBeforeFirstBuild,
+		ignoredBeforeFirstBuild: safe.ignoredBeforeFirstBuild,
 		timeToFirstAllowedSeconds:
-			state.firstAllowedAtSeconds === null
+			safe.firstAllowedAtSeconds === null
 				? null
-				: Math.max(
-					0,
-					finite(state.firstAllowedAtSeconds) -
-						nonNegative(state.startedAtSeconds)
-				),
+				: Math.max(0, safe.firstAllowedAtSeconds - safe.startedAtSeconds),
 		timeToFirstBuildSeconds:
-			state.firstBuildAtSeconds === null
+			safe.firstBuildAtSeconds === null
 				? null
-				: Math.max(
-					0,
-					finite(state.firstBuildAtSeconds) -
-						nonNegative(state.startedAtSeconds)
-				),
+				: Math.max(0, safe.firstBuildAtSeconds - safe.startedAtSeconds),
 		acceptedReplacements,
 		repeatedSameContextReplacements,
 		repetitionRate:
 			acceptedReplacements <= 0
 				? 0
-				: repeatedSameContextReplacements / acceptedReplacements,
-		reasonCounts: copyReasonCounts(state.reasonCounts)
+				: Math.min(
+					1,
+					repeatedSameContextReplacements / acceptedReplacements
+				),
+		reasonCounts: copyReasonCounts(safe.reasonCounts)
 	};
 }
