@@ -17,6 +17,7 @@ export type InterventionActionKind =
 	| "other";
 
 export interface InterventionOpportunity {
+	/** Stable unique id within one observation session. */
 	id: string;
 	kind: InterventionOpportunityKind;
 	startSeconds: number;
@@ -44,10 +45,13 @@ export interface InterventionCadenceInput {
 export interface InterventionCadenceSummary {
 	durationSeconds: number;
 	opportunities: number;
+	invalidOpportunities: number;
+	duplicateOpportunityIds: number;
 	respondedOpportunities: number;
 	missedOpportunities: number;
 	responseRate: number;
 	actions: number;
+	invalidActions: number;
 	linkedActions: number;
 	lateLinkedActions: number;
 	unlinkedActions: number;
@@ -72,11 +76,12 @@ interface Interval {
 	end: number;
 }
 
+function isFiniteNumber(value: number): boolean {
+	return value === value && value !== Infinity && value !== -Infinity;
+}
+
 function finite(value: number, fallback = 0): number {
-	if (value !== value || value === Infinity || value === -Infinity) {
-		return fallback;
-	}
-	return value;
+	return isFiniteNumber(value) ? value : fallback;
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {
@@ -92,16 +97,31 @@ function normalizeBounds(startSeconds: number, endSeconds: number): Interval {
 function normalizeOpportunity(
 	opportunity: InterventionOpportunity,
 	bounds: Interval
-): NormalizedOpportunity {
-	const rawStart = finite(opportunity.startSeconds, bounds.start);
-	const rawEnd = finite(opportunity.endSeconds, rawStart);
-	const start = clamp(rawStart, bounds.start, bounds.end);
-	const end = clamp(Math.max(rawStart, rawEnd), start, bounds.end);
+): NormalizedOpportunity | null {
+	if (
+		!isFiniteNumber(opportunity.startSeconds) ||
+		!isFiniteNumber(opportunity.endSeconds) ||
+		opportunity.endSeconds < opportunity.startSeconds
+	) {
+		return null;
+	}
+	const start = clamp(opportunity.startSeconds, bounds.start, bounds.end);
+	const end = clamp(opportunity.endSeconds, start, bounds.end);
 	return {
 		id: opportunity.id,
 		startSeconds: start,
 		endSeconds: end
 	};
+}
+
+function containsOpportunityId(
+	opportunities: NormalizedOpportunity[],
+	id: string
+): boolean {
+	for (let index = 0; index < opportunities.length; index += 1) {
+		if (opportunities[index].id === id) return true;
+	}
+	return false;
 }
 
 function mergeIntervals(intervals: Interval[]): Interval[] {
@@ -158,15 +178,32 @@ function firstOpportunityById(
  * a click is meaningful, reward action-per-minute, or feed metrics back into
  * simulation authority. It only measures supplied decision windows and whether
  * actions were attributed to them while they were still open.
+ *
+ * Malformed evidence fails closed: invalid opportunity windows do not contribute
+ * decision coverage, duplicate ids do not double-count opportunities, and
+ * non-finite action timestamps cannot become successful responses.
  */
 export function summarizeInterventionCadence(
 	input: InterventionCadenceInput
 ): InterventionCadenceSummary {
 	const bounds = normalizeBounds(input.sessionStartSeconds, input.sessionEndSeconds);
 	const durationSeconds = Math.max(0, bounds.end - bounds.start);
-	const opportunities = input.opportunities.map(opportunity =>
-		normalizeOpportunity(opportunity, bounds)
-	);
+	const opportunities: NormalizedOpportunity[] = [];
+	let invalidOpportunities = 0;
+	let duplicateOpportunityIds = 0;
+	for (let index = 0; index < input.opportunities.length; index += 1) {
+		const normalized = normalizeOpportunity(input.opportunities[index], bounds);
+		if (normalized === null) {
+			invalidOpportunities += 1;
+			continue;
+		}
+		if (containsOpportunityId(opportunities, normalized.id)) {
+			duplicateOpportunityIds += 1;
+			continue;
+		}
+		opportunities.push(normalized);
+	}
+
 	const mergedWindows = mergeIntervals(
 		opportunities.map(opportunity => ({
 			start: opportunity.startSeconds,
@@ -175,6 +212,7 @@ export function summarizeInterventionCadence(
 	);
 	const opportunityCoverageSeconds = coverageSeconds(mergedWindows);
 
+	let invalidActions = 0;
 	let linkedActions = 0;
 	let lateLinkedActions = 0;
 	let unlinkedActions = 0;
@@ -182,7 +220,11 @@ export function summarizeInterventionCadence(
 
 	for (let index = 0; index < input.actions.length; index += 1) {
 		const action = input.actions[index];
-		const atSeconds = clamp(finite(action.atSeconds, bounds.start), bounds.start, bounds.end);
+		if (!isFiniteNumber(action.atSeconds)) {
+			invalidActions += 1;
+			continue;
+		}
+		const atSeconds = clamp(action.atSeconds, bounds.start, bounds.end);
 		if (action.opportunityId === null) {
 			unlinkedActions += 1;
 			continue;
@@ -223,11 +265,14 @@ export function summarizeInterventionCadence(
 	return {
 		durationSeconds,
 		opportunities: opportunityCount,
+		invalidOpportunities,
+		duplicateOpportunityIds,
 		respondedOpportunities,
 		missedOpportunities: Math.max(0, opportunityCount - respondedOpportunities),
 		responseRate:
 			opportunityCount <= 0 ? 0 : respondedOpportunities / opportunityCount,
 		actions: actionCount,
+		invalidActions,
 		linkedActions,
 		lateLinkedActions,
 		unlinkedActions,
