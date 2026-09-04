@@ -4,6 +4,10 @@ import { Scene, Vector3, PhysicsEngine } from "babylonjs";
 import { projectileGlobals } from "../main/globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
+import {
+	projectileHitPoints,
+	projectileImpulse
+} from "../gameplay/tierScaling";
 
 class Projectile {
 	constructor(
@@ -34,7 +38,10 @@ class Projectile {
 		}
 		if (projectile !== undefined) {
 
-			projectile.hitPoints = level * level * level * projectileGlobals.baseHitPoints;
+			projectile.hitPoints = projectileHitPoints(
+				projectileGlobals.baseHitPoints,
+				level
+			);
 
 			startLife(
 				scene,
@@ -58,7 +65,7 @@ export function impulsePhys (
 	const forwardLocal = new Vector3(
 		0,
 		0,
-		projectileGlobals.speed * (level * level * level) * -1
+		projectileImpulse(projectileGlobals.speed, level) * -1
 	) as Vector3;
 	const speed = originMesh.getDirection(forwardLocal) as Vector3;
 		if (projectile.physicsImpostor !== null) {
