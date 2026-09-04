@@ -83,16 +83,10 @@ function ratio(numerator: number, denominator: number): number {
 	return Math.max(0, Math.min(1, numerator / denominator));
 }
 
-function firstPhaseTime(
-	events: CausalEvidenceEvent[],
-	phase: CausalEvidencePhase
-): number | null {
-	for (let index = 0; index < events.length; index += 1) {
-		if (events[index].phase === phase) {
-			return nonnegative(events[index].timeSeconds);
-		}
-	}
-	return null;
+function phaseRank(phase: CausalEvidencePhase): number {
+	if (phase === "anticipation") return 0;
+	if (phase === "causation") return 1;
+	return 2;
 }
 
 function uniqueStringCount(values: string[]): number {
@@ -128,25 +122,28 @@ export function validateCausalTrace(
 	events: CausalEvidenceEvent[]
 ): CausalTraceValidation {
 	let monotonicTime = true;
+	let orderedPhases = true;
 	let previousTime = 0;
+	let previousPhaseRank = 0;
+	let hasAnticipation = false;
+	let hasCausation = false;
+	let hasResidue = false;
+
 	for (let index = 0; index < events.length; index += 1) {
-		const time = nonnegative(events[index].timeSeconds);
+		const event = events[index];
+		const time = nonnegative(event.timeSeconds);
+		const rank = phaseRank(event.phase);
 		if (index > 0 && time < previousTime) monotonicTime = false;
+		if (index > 0 && rank < previousPhaseRank) orderedPhases = false;
 		previousTime = time;
+		previousPhaseRank = rank;
+		if (event.phase === "anticipation") hasAnticipation = true;
+		if (event.phase === "causation") hasCausation = true;
+		if (event.phase === "residue") hasResidue = true;
 	}
 
-	const anticipationTime = firstPhaseTime(events, "anticipation");
-	const causationTime = firstPhaseTime(events, "causation");
-	const residueTime = firstPhaseTime(events, "residue");
-	const hasAnticipation = anticipationTime !== null;
-	const hasCausation = causationTime !== null;
-	const hasResidue = residueTime !== null;
-	const orderedPhases =
-		hasAnticipation &&
-		hasCausation &&
-		hasResidue &&
-		(anticipationTime as number) <= (causationTime as number) &&
-		(causationTime as number) <= (residueTime as number);
+	orderedPhases =
+		orderedPhases && hasAnticipation && hasCausation && hasResidue;
 
 	return {
 		monotonicTime,
