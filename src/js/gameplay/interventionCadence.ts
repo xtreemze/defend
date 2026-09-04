@@ -101,14 +101,15 @@ function normalizeOpportunity(
 	if (
 		!isFiniteNumber(opportunity.startSeconds) ||
 		!isFiniteNumber(opportunity.endSeconds) ||
-		opportunity.endSeconds < opportunity.startSeconds ||
-		opportunity.endSeconds < bounds.start ||
-		opportunity.startSeconds > bounds.end
+		opportunity.endSeconds <= opportunity.startSeconds ||
+		opportunity.endSeconds <= bounds.start ||
+		opportunity.startSeconds >= bounds.end
 	) {
 		return null;
 	}
 	const start = clamp(opportunity.startSeconds, bounds.start, bounds.end);
 	const end = clamp(opportunity.endSeconds, start, bounds.end);
+	if (end <= start) return null;
 	return {
 		id: opportunity.id,
 		startSeconds: start,
@@ -181,9 +182,9 @@ function firstOpportunityById(
  * simulation authority. It only measures supplied decision windows and whether
  * actions were attributed to them while they were still open.
  *
- * Malformed evidence fails closed: invalid/out-of-session opportunity windows do
- * not contribute decision coverage, duplicate ids do not double-count, and
- * invalid/out-of-session action timestamps cannot inflate response or APM data.
+ * Malformed evidence fails closed: invalid/out-of-session/zero-width opportunity
+ * windows do not contribute decision coverage, duplicate ids do not double-count,
+ * and invalid/out-of-session action timestamps cannot inflate response or APM.
  */
 export function summarizeInterventionCadence(
 	input: InterventionCadenceInput
