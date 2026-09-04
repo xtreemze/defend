@@ -260,5 +260,28 @@ export const DecisionDensityNotInputDensity: Story = {
 		await expect(malformed.respondedOpportunities).toBe(1);
 		await expect(malformed.actions).toBe(1);
 		await expect(malformed.invalidActions).toBe(2);
+
+		const runtimeMalformed = summarizeInterventionCadence({
+			sessionStartSeconds: undefined as unknown as number,
+			sessionEndSeconds: 90,
+			opportunities: [
+				opportunity(
+					"runtime-invalid",
+					undefined as unknown as number,
+					20
+				)
+			],
+			actions: [
+				linkedAction(undefined as unknown as number, "runtime-invalid")
+			]
+		});
+		await expect(runtimeMalformed.durationSeconds).toBe(90);
+		await expect(runtimeMalformed.opportunities).toBe(0);
+		await expect(runtimeMalformed.invalidOpportunities).toBe(1);
+		await expect(runtimeMalformed.actions).toBe(0);
+		await expect(runtimeMalformed.invalidActions).toBe(1);
+		await expect(Number.isFinite(runtimeMalformed.responseRate)).toBe(true);
+		await expect(Number.isFinite(runtimeMalformed.actionsPerMinute)).toBe(true);
+		await expect(Number.isFinite(runtimeMalformed.opportunityCoverageShare)).toBe(true);
 	}
 };
