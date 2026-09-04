@@ -16,17 +16,6 @@ export interface MothershipContinuousSpendFunding {
 	unmetEnergy: number;
 }
 
-function finite(value: number, fallback = 0): number {
-	if (value !== value || value === Infinity || value === -Infinity) {
-		return fallback;
-	}
-	return value;
-}
-
-function positive(value: number): number {
-	return Math.max(0, finite(value));
-}
-
 function isFiniteNonnegative(value: number): boolean {
 	return (
 		value === value &&
