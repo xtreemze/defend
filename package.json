@@ -8,7 +8,6 @@
         "queryVersion": "node ./node/queryVersion.js",
         "lint": "eslint ./src/js/** --quiet",
         "lint:fix": "eslint ./src/js/** --quiet --fix",
-        "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
         "dev": "webpack-dev-server --config webpack.configDev.js --mode development --hot",
         "soundTest": "webpack-dev-server --config webpack.configSoundTest.js --mode development --hot",
         "preexportp": "npm run queryVersion && node ./node/rmDir.js && node ./node/cpDir.js",
