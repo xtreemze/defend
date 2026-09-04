@@ -4,7 +4,8 @@
   "private": true,
   "packageManager": "pnpm@11.25.0",
   "engines": {
-    "node": "24.20.x"
+    "node": "24.20.x",
+    "pnpm": "11.25.0"
   },
   "scripts": {
     "typecheck": "pnpm -r --workspace-concurrency=1 run typecheck",
