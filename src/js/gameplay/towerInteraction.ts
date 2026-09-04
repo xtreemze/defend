@@ -84,6 +84,7 @@ function nonnegative(value: number): number {
 
 function isFiniteNonnegative(value: number): boolean {
 	return (
+		typeof value === "number" &&
 		value === value &&
 		value !== Infinity &&
 		value !== -Infinity &&
@@ -100,9 +101,8 @@ export function towerInteractionCanAfford(
 	cost: number,
 	rule: TowerAffordabilityRule
 ): boolean {
-	if (!isFiniteNonnegative(cost)) return false;
-	const available = nonnegative(balance);
-	return rule === "inclusive" ? available >= cost : available > cost;
+	if (!isFiniteNonnegative(balance) || !isFiniteNonnegative(cost)) return false;
+	return rule === "inclusive" ? balance >= cost : balance > cost;
 }
 
 function preview(
