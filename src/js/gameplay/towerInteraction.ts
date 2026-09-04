@@ -40,6 +40,7 @@ export type TowerInteractionReason =
 	| "camera-gesture"
 	| "occupied"
 	| "unaffordable"
+	| "invalid-cost"
 	| "protected-core"
 	| "invalid-terrain"
 	| "outside-arena"
@@ -81,6 +82,15 @@ function nonnegative(value: number): number {
 	return Math.max(0, finite(value));
 }
 
+function isFiniteNonnegative(value: number): boolean {
+	return (
+		value === value &&
+		value !== Infinity &&
+		value !== -Infinity &&
+		value >= 0
+	);
+}
+
 function towerLevel(value: number): number {
 	return Math.max(0, Math.floor(nonnegative(value)));
 }
@@ -90,11 +100,9 @@ export function towerInteractionCanAfford(
 	cost: number,
 	rule: TowerAffordabilityRule
 ): boolean {
+	if (!isFiniteNonnegative(cost)) return false;
 	const available = nonnegative(balance);
-	const requested = nonnegative(cost);
-	return rule === "inclusive"
-		? available >= requested
-		: available > requested;
+	return rule === "inclusive" ? available >= cost : available > cost;
 }
 
 function preview(
@@ -136,6 +144,9 @@ function permitted(
 	fromLevel: number,
 	toLevel: number
 ): TowerInteractionPreview {
+	if (!isFiniteNonnegative(request.requestedCost)) {
+		return rejected(request, "invalid-cost", intent, fromLevel, toLevel);
+	}
 	if (
 		!towerInteractionCanAfford(
 			request.balance,
