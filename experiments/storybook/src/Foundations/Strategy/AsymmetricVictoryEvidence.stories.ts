@@ -10,6 +10,7 @@ import { createLabShell } from "../../labTheme";
 type EvidenceArgs = {
   minimumCommitmentDisadvantage: number;
   minimumEconomicLeverage: number;
+  minimumEjectionShare: number;
   minimumNonDestructiveResolutionShare: number;
   minimumRouteDistanceAdded: number;
   minimumDelaySeconds: number;
@@ -130,6 +131,7 @@ function thresholdsFromArgs(args: EvidenceArgs): AsymmetricVictoryThresholds {
   return {
     minimumCommitmentDisadvantage: args.minimumCommitmentDisadvantage,
     minimumEconomicLeverage: args.minimumEconomicLeverage,
+    minimumEjectionShare: args.minimumEjectionShare,
     minimumNonDestructiveResolutionShare: args.minimumNonDestructiveResolutionShare,
     minimumRouteDistanceAdded: args.minimumRouteDistanceAdded,
     minimumDelaySeconds: args.minimumDelaySeconds,
@@ -170,6 +172,7 @@ function caseMarkup(testCase: EvidenceCase, thresholds: AsymmetricVictoryThresho
         <div><dt>Economic leverage</dt><dd>${formatRatio(result.economicLeverage)}</dd></div>
         <div><dt>Player net cost</dt><dd>${formatEnergy(result.playerNetCost)}</dd></div>
         <div><dt>Opponent net cost</dt><dd>${formatEnergy(result.opponentNetCost)}</dd></div>
+        <div><dt>Ejection share</dt><dd>${Math.round(result.ejectionShare * 100)}%</dd></div>
         <div><dt>Non-destructive share</dt><dd>${Math.round(result.nonDestructiveResolutionShare * 100)}%</dd></div>
         <div><dt>Breach rate</dt><dd>${Math.round(result.breachRate * 100)}%</dd></div>
         <div><dt>Route distance added</dt><dd>${Math.round(testCase.evidence.routeDistanceAdded)}</dd></div>
@@ -186,6 +189,7 @@ const meta = {
   args: {
     minimumCommitmentDisadvantage: 2,
     minimumEconomicLeverage: 2,
+    minimumEjectionShare: 0.3,
     minimumNonDestructiveResolutionShare: 0.5,
     minimumRouteDistanceAdded: 40,
     minimumDelaySeconds: 8,
@@ -197,6 +201,9 @@ const meta = {
     },
     minimumEconomicLeverage: {
       control: { type: "range", min: 1, max: 10, step: 0.25 }
+    },
+    minimumEjectionShare: {
+      control: { type: "range", min: 0, max: 1, step: 0.05 }
     },
     minimumNonDestructiveResolutionShare: {
       control: { type: "range", min: 0, max: 1, step: 0.05 }
@@ -314,6 +321,7 @@ const meta = {
       <dl class="evidence-thresholds" aria-label="Diagnostic thresholds">
         <div><dt>Commitment disadvantage</dt><dd>${args.minimumCommitmentDisadvantage.toFixed(2)}×</dd></div>
         <div><dt>Economic leverage</dt><dd>${args.minimumEconomicLeverage.toFixed(2)}×</dd></div>
+        <div><dt>Ejection share</dt><dd>${Math.round(args.minimumEjectionShare * 100)}%</dd></div>
         <div><dt>Non-destructive share</dt><dd>${Math.round(args.minimumNonDestructiveResolutionShare * 100)}%</dd></div>
         <div><dt>Route distance</dt><dd>${Math.round(args.minimumRouteDistanceAdded)}</dd></div>
         <div><dt>Delay</dt><dd>${Math.round(args.minimumDelaySeconds)} s</dd></div>
