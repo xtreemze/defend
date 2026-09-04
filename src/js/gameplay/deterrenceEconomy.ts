@@ -38,11 +38,12 @@ export interface DeterrenceModelConfig {
 	initialAttackerConfidence: number;
 	collectionEfficiency: number;
 	confidenceSmoothing: number;
-	idleConfidenceDecay: number;
+	idleConfidenceSmoothing: number;
 	travelCost: number;
 	breachLossMultiplier: number;
 	starvationThreshold: number;
 	confidenceHysteresis: number;
+	targetSignalFloor: number;
 }
 
 export interface DeterrenceStep {
@@ -50,7 +51,10 @@ export interface DeterrenceStep {
 	stateBefore: DeterrenceState;
 	stateAfter: DeterrenceState;
 	defenderEnergyBefore: number;
+	defenderEnergyAfterUpkeep: number;
 	defenderEnergyAfter: number;
+	targetSignal: number;
+	raidChance: number;
 	attackerConfidenceBefore: number;
 	attackerConfidenceAfter: number;
 	raidOccurred: boolean;
@@ -58,6 +62,7 @@ export interface DeterrenceStep {
 	breached: boolean;
 	remainingViability: number;
 	committedEnergy: number;
+	requestedExtraction: number;
 	extractedEnergy: number;
 	defenderRecoveredEnergy: number;
 	defenderBreachLoss: number;
@@ -85,6 +90,7 @@ export interface DeterrenceSummary {
 	totalDefenderRecoveredEnergy: number;
 	totalDefenderBreachLoss: number;
 	attackerReturnOnCommitment: number;
+	meanTargetSignal: number;
 	stateCounts: DeterrenceStateCounts;
 }
 
@@ -120,25 +126,20 @@ function normalizedConfig(config: DeterrenceModelConfig): DeterrenceModelConfig 
 	return {
 		horizon: Math.max(1, Math.floor(nonNegative(config.horizon, 120))),
 		maxDefenderEnergy: maximum,
-		initialDefenderEnergy: clamp(
-			config.initialDefenderEnergy,
-			0,
-			maximum
-		),
+		initialDefenderEnergy: clamp(config.initialDefenderEnergy, 0, maximum),
 		initialAttackerConfidence: clamp01(config.initialAttackerConfidence),
 		collectionEfficiency: clamp01(config.collectionEfficiency),
 		confidenceSmoothing: clamp01(config.confidenceSmoothing),
-		idleConfidenceDecay: clamp01(config.idleConfidenceDecay),
+		idleConfidenceSmoothing: clamp01(config.idleConfidenceSmoothing),
 		travelCost: nonNegative(config.travelCost),
-		breachLossMultiplier: nonNegative(config.breachLossMultiplier, 1),
+		breachLossMultiplier: clamp(config.breachLossMultiplier, 1, 3),
 		starvationThreshold: clamp(config.starvationThreshold, 0, maximum),
-		confidenceHysteresis: clamp(config.confidenceHysteresis, 0, 0.2)
+		confidenceHysteresis: clamp(config.confidenceHysteresis, 0, 0.2),
+		targetSignalFloor: clamp(config.targetSignalFloor, 0.01, 0.5)
 	};
 }
 
-function normalizedPolicy(
-	policy: DeterrencePolicyProfile
-): DeterrencePolicyProfile {
+function normalizedPolicy(policy: DeterrencePolicyProfile): DeterrencePolicyProfile {
 	return {
 		id: policy.id,
 		label: policy.label,
@@ -148,9 +149,7 @@ function normalizedPolicy(
 	};
 }
 
-function normalizedRaider(
-	profile: RaiderEconomyProfile
-): RaiderEconomyProfile {
+function normalizedRaider(profile: RaiderEconomyProfile): RaiderEconomyProfile {
 	return {
 		tier: profile.tier,
 		committedEnergy: nonNegative(profile.committedEnergy),
@@ -161,10 +160,7 @@ function normalizedRaider(
 	};
 }
 
-/**
- * Deterministic 32-bit LCG. This is an experiment repeatability tool, not a
- * gameplay-randomness recommendation.
- */
+/** Deterministic repeatability tool, not a gameplay-RNG recommendation. */
 export function createDeterrenceRandom(seed: number): () => number {
 	let state = Math.floor(finite(seed, 1)) >>> 0;
 	return () => {
@@ -187,10 +183,6 @@ function candidateState(
 	return "DETERRENT_QUIET";
 }
 
-/**
- * Small confidence hysteresis prevents one marginal result from bouncing the
- * conceptual world state across a threshold every opportunity.
- */
 export function resolveDeterrenceState(
 	previous: DeterrenceState,
 	confidenceInput: number,
@@ -212,7 +204,6 @@ export function resolveDeterrenceState(
 	if (energy <= config.starvationThreshold && confidence < 0.18) {
 		return "STRATEGIC_STARVATION";
 	}
-
 	if (previous === "CONTESTED" && confidence >= 0.62 - hysteresis) {
 		return "CONTESTED";
 	}
@@ -236,11 +227,23 @@ export function resolveDeterrenceState(
 	) {
 		return "DETERRENT_QUIET";
 	}
-
 	return candidateState(confidence, energy, config);
 }
 
-export function deterrenceRaidChance(state: DeterrenceState): number {
+/**
+ * Lossy strategic signature: stored energy is informative but not an exact
+ * meter. The floor preserves occasional cheap probing of dim targets.
+ */
+export function deterrenceTargetSignal(
+	energyInput: number,
+	configInput: DeterrenceModelConfig
+): number {
+	const config = normalizedConfig(configInput);
+	const richness = clamp(energyInput, 0, config.maxDefenderEnergy) / config.maxDefenderEnergy;
+	return Math.max(config.targetSignalFloor, Math.sqrt(richness));
+}
+
+function baseRaidChance(state: DeterrenceState): number {
 	if (state === "CONTESTED") return 0.94;
 	if (state === "ADAPTING") return 0.72;
 	if (state === "PROBING") return 0.42;
@@ -248,22 +251,42 @@ export function deterrenceRaidChance(state: DeterrenceState): number {
 	return 0.06;
 }
 
+export function deterrenceRaidChance(
+	state: DeterrenceState,
+	targetSignal = 1
+): number {
+	const signal = clamp01(targetSignal);
+	return baseRaidChance(state) * (0.2 + 0.8 * signal);
+}
+
+/**
+ * State controls behavioral caution while target signal suppresses expensive
+ * commitment against poor targets. Quiet/starving systems receive probes only.
+ */
 export function selectDeterrenceRaidTier(
 	state: DeterrenceState,
-	randomValue: number
+	randomValue: number,
+	targetSignal = 1
 ): RaiderTier {
 	const value = clamp01(randomValue);
+	const signal = clamp01(targetSignal);
+	if (signal < 0.25) return 1;
+	if (state === "DETERRENT_QUIET" || state === "STRATEGIC_STARVATION") {
+		return 1;
+	}
+	if (state === "PROBING") {
+		return signal >= 0.6 && value >= 0.9 ? 2 : 1;
+	}
 	if (state === "CONTESTED") {
+		if (signal < 0.5) return value < 0.8 ? 1 : 2;
 		if (value < 0.25) return 1;
 		if (value < 0.7) return 2;
 		return 3;
 	}
-	if (state === "ADAPTING") {
-		if (value < 0.45) return 1;
-		if (value < 0.85) return 2;
-		return 3;
-	}
-	return value < 0.9 ? 1 : 2;
+	if (signal < 0.5) return value < 0.85 ? 1 : 2;
+	if (value < 0.45) return 1;
+	if (value < 0.85) return 2;
+	return 3;
 }
 
 function raiderForTier(
@@ -271,32 +294,77 @@ function raiderForTier(
 	profiles: RaiderEconomyProfile[]
 ): RaiderEconomyProfile {
 	for (let index = 0; index < profiles.length; index += 1) {
-		if (profiles[index].tier === tier) {
-			return normalizedRaider(profiles[index]);
-		}
+		if (profiles[index].tier === tier) return normalizedRaider(profiles[index]);
 	}
 	throw new Error(`Missing Raider ${tier} economy profile`);
 }
 
-function stateCounts(): DeterrenceStateCounts {
-	return {
-		contested: 0,
-		adapting: 0,
-		probing: 0,
-		quiet: 0,
-		starvation: 0
-	};
+/**
+ * High-tier investment should not be made when even perfect extraction from the
+ * currently visible reserve cannot plausibly repay commitment plus travel.
+ * R1 remains available as the cheap probe even when its own expected ROI is poor.
+ */
+function economicallyPlausibleTier(
+	requestedTier: RaiderTier,
+	availableEnergy: number,
+	profiles: RaiderEconomyProfile[],
+	travelCost: number
+): RaiderEconomyProfile {
+	let tier = requestedTier;
+	while (tier > 1) {
+		const profile = raiderForTier(tier, profiles);
+		const grossCeiling = Math.min(profile.extractionPotential, availableEnergy);
+		if (grossCeiling >= profile.committedEnergy + travelCost) return profile;
+		tier = (tier - 1) as RaiderTier;
+	}
+	return raiderForTier(1, profiles);
 }
 
-function countState(
-	counts: DeterrenceStateCounts,
-	state: DeterrenceState
-): void {
+function emptyCounts(): DeterrenceStateCounts {
+	return { contested: 0, adapting: 0, probing: 0, quiet: 0, starvation: 0 };
+}
+
+function countState(counts: DeterrenceStateCounts, state: DeterrenceState): void {
 	if (state === "CONTESTED") counts.contested += 1;
 	else if (state === "ADAPTING") counts.adapting += 1;
 	else if (state === "PROBING") counts.probing += 1;
 	else if (state === "DETERRENT_QUIET") counts.quiet += 1;
 	else counts.starvation += 1;
+}
+
+function noRaidStep(
+	opportunity: number,
+	stateBefore: DeterrenceState,
+	stateAfter: DeterrenceState,
+	energyBefore: number,
+	energyAfterUpkeep: number,
+	targetSignal: number,
+	raidChance: number,
+	confidenceBefore: number,
+	confidenceAfter: number
+): DeterrenceStep {
+	return {
+		opportunity,
+		stateBefore,
+		stateAfter,
+		defenderEnergyBefore: energyBefore,
+		defenderEnergyAfterUpkeep: energyAfterUpkeep,
+		defenderEnergyAfter: energyAfterUpkeep,
+		targetSignal,
+		raidChance,
+		attackerConfidenceBefore: confidenceBefore,
+		attackerConfidenceAfter: confidenceAfter,
+		raidOccurred: false,
+		tier: null,
+		breached: false,
+		remainingViability: 0,
+		committedEnergy: 0,
+		requestedExtraction: 0,
+		extractedEnergy: 0,
+		defenderRecoveredEnergy: 0,
+		defenderBreachLoss: 0,
+		attackerNetReturn: 0
+	};
 }
 
 export function runDeterrenceScenario(
@@ -309,7 +377,6 @@ export function runDeterrenceScenario(
 	const config = normalizedConfig(configInput);
 	const random = createDeterrenceRandom(seed);
 	const steps: DeterrenceStep[] = [];
-
 	let defenderEnergy = config.initialDefenderEnergy;
 	let attackerConfidence = config.initialAttackerConfidence;
 	let state = candidateState(attackerConfidence, defenderEnergy, config);
@@ -318,75 +385,59 @@ export function runDeterrenceScenario(
 		const energyBefore = defenderEnergy;
 		const confidenceBefore = attackerConfidence;
 		const stateBefore = state;
-
-		defenderEnergy = Math.max(
-			0,
-			defenderEnergy - policy.upkeepPerOpportunity
-		);
-
-		state = resolveDeterrenceState(
-			state,
-			attackerConfidence,
-			defenderEnergy,
-			config
-		);
+		defenderEnergy = Math.max(0, defenderEnergy - policy.upkeepPerOpportunity);
+		const energyAfterUpkeep = defenderEnergy;
+		state = resolveDeterrenceState(state, attackerConfidence, defenderEnergy, config);
+		const targetSignal = deterrenceTargetSignal(defenderEnergy, config);
+		const raidChance = deterrenceRaidChance(state, targetSignal);
 
 		if (defenderEnergy <= 0) {
-			steps.push({
-				opportunity,
-				stateBefore,
-				stateAfter: state,
-				defenderEnergyBefore: energyBefore,
-				defenderEnergyAfter: 0,
-				attackerConfidenceBefore: confidenceBefore,
-				attackerConfidenceAfter: attackerConfidence,
-				raidOccurred: false,
-				tier: null,
-				breached: false,
-				remainingViability: 0,
-				committedEnergy: 0,
-				extractedEnergy: 0,
-				defenderRecoveredEnergy: 0,
-				defenderBreachLoss: 0,
-				attackerNetReturn: 0
-			});
+			steps.push(
+				noRaidStep(
+					opportunity,
+					stateBefore,
+					state,
+					energyBefore,
+					0,
+					targetSignal,
+					raidChance,
+					confidenceBefore,
+					attackerConfidence
+				)
+			);
 			break;
 		}
 
-		const raidOccurred = random() < deterrenceRaidChance(state);
-		if (!raidOccurred) {
+		if (random() >= raidChance) {
+			const idlePrior = clamp01(0.12 + 0.58 * targetSignal);
 			attackerConfidence = clamp01(
-				attackerConfidence - config.idleConfidenceDecay
+				attackerConfidence +
+					config.idleConfidenceSmoothing * (idlePrior - attackerConfidence)
 			);
-			state = resolveDeterrenceState(
-				state,
-				attackerConfidence,
-				defenderEnergy,
-				config
+			state = resolveDeterrenceState(state, attackerConfidence, defenderEnergy, config);
+			steps.push(
+				noRaidStep(
+					opportunity,
+					stateBefore,
+					state,
+					energyBefore,
+					energyAfterUpkeep,
+					targetSignal,
+					raidChance,
+					confidenceBefore,
+					attackerConfidence
+				)
 			);
-			steps.push({
-				opportunity,
-				stateBefore,
-				stateAfter: state,
-				defenderEnergyBefore: energyBefore,
-				defenderEnergyAfter: defenderEnergy,
-				attackerConfidenceBefore: confidenceBefore,
-				attackerConfidenceAfter: attackerConfidence,
-				raidOccurred: false,
-				tier: null,
-				breached: false,
-				remainingViability: 0,
-				committedEnergy: 0,
-				extractedEnergy: 0,
-				defenderRecoveredEnergy: 0,
-				defenderBreachLoss: 0,
-				attackerNetReturn: 0
-			});
 			continue;
 		}
 
-		const tier = selectDeterrenceRaidTier(state, random());
-		const raider = raiderForTier(tier, raiderProfiles);
+		const requestedTier = selectDeterrenceRaidTier(state, random(), targetSignal);
+		const raider = economicallyPlausibleTier(
+			requestedTier,
+			defenderEnergy,
+			raiderProfiles,
+			config.travelCost
+		);
 		const breachChance = clamp01(
 			raider.baseBreachChance +
 				policy.deliberateLeakBias -
@@ -397,81 +448,73 @@ export function runDeterrenceScenario(
 		if (breached) {
 			const jitter = (random() - 0.5) * 0.08;
 			remainingViability = clamp(
-				0.86 -
-					policy.defenseStrength *
-						(0.78 - raider.resistance * 0.2) +
-					jitter,
+				0.86 - policy.defenseStrength * (0.78 - raider.resistance * 0.2) + jitter,
 				0.08,
 				0.95
 			);
 		}
 
-		const extractedEnergy = breached
+		const requestedExtraction = breached
 			? raider.extractionPotential * remainingViability
 			: 0;
-		const defenderBreachLoss =
-			extractedEnergy * config.breachLossMultiplier;
-
-		const liberatedFraction = clamp01(
-			0.35 +
-				policy.defenseStrength * 0.55 -
-				remainingViability * 0.25
-		);
+		const extractedEnergy = Math.min(requestedExtraction, defenderEnergy);
+		const defenderBreachLoss = breached
+			? Math.min(
+					defenderEnergy,
+					extractedEnergy * config.breachLossMultiplier
+				)
+			: 0;
+		const damagedFraction = breached ? 1 - remainingViability : 1;
 		const defenderRecoveredEnergy = Math.min(
 			raider.committedEnergy,
 			raider.committedEnergy *
 				raider.recoverableFraction *
-				liberatedFraction *
+				damagedFraction *
 				config.collectionEfficiency
 		);
 
 		defenderEnergy = clamp(
-			defenderEnergy + defenderRecoveredEnergy - defenderBreachLoss,
+			defenderEnergy - defenderBreachLoss + defenderRecoveredEnergy,
 			0,
 			config.maxDefenderEnergy
 		);
-
 		const attackerNetReturn =
 			extractedEnergy - raider.committedEnergy - config.travelCost;
 		const normalizedOutcome = clamp01(
-			0.5 +
-				attackerNetReturn /
-					(2 * Math.max(1, raider.committedEnergy))
+			0.5 + attackerNetReturn / (2 * Math.max(1, raider.committedEnergy))
 		);
 		attackerConfidence = clamp01(
 			(1 - config.confidenceSmoothing) * attackerConfidence +
 				config.confidenceSmoothing * normalizedOutcome
 		);
-		state = resolveDeterrenceState(
-			state,
-			attackerConfidence,
-			defenderEnergy,
-			config
-		);
+		state = resolveDeterrenceState(state, attackerConfidence, defenderEnergy, config);
 
 		steps.push({
 			opportunity,
 			stateBefore,
 			stateAfter: state,
 			defenderEnergyBefore: energyBefore,
+			defenderEnergyAfterUpkeep: energyAfterUpkeep,
 			defenderEnergyAfter: defenderEnergy,
+			targetSignal,
+			raidChance,
 			attackerConfidenceBefore: confidenceBefore,
 			attackerConfidenceAfter: attackerConfidence,
 			raidOccurred: true,
-			tier,
+			tier: raider.tier,
 			breached,
 			remainingViability,
 			committedEnergy: raider.committedEnergy,
+			requestedExtraction,
 			extractedEnergy,
 			defenderRecoveredEnergy,
 			defenderBreachLoss,
 			attackerNetReturn
 		});
-
 		if (defenderEnergy <= 0) break;
 	}
 
-	const counts = stateCounts();
+	const counts = emptyCounts();
 	let raids = 0;
 	let breaches = 0;
 	let committed = 0;
@@ -479,6 +522,7 @@ export function runDeterrenceScenario(
 	let recovered = 0;
 	let breachLoss = 0;
 	let attackerNet = 0;
+	let targetSignalTotal = 0;
 
 	for (let index = 0; index < steps.length; index += 1) {
 		const step = steps[index];
@@ -490,6 +534,7 @@ export function runDeterrenceScenario(
 		recovered += step.defenderRecoveredEnergy;
 		breachLoss += step.defenderBreachLoss;
 		attackerNet += step.attackerNetReturn;
+		targetSignalTotal += step.targetSignal;
 	}
 
 	return {
@@ -507,8 +552,9 @@ export function runDeterrenceScenario(
 			totalAttackerExtractedEnergy: extracted,
 			totalDefenderRecoveredEnergy: recovered,
 			totalDefenderBreachLoss: breachLoss,
-			attackerReturnOnCommitment:
-				committed <= 0 ? 0 : attackerNet / committed,
+			attackerReturnOnCommitment: committed <= 0 ? 0 : attackerNet / committed,
+			meanTargetSignal:
+				steps.length <= 0 ? 0 : targetSignalTotal / steps.length,
 			stateCounts: counts
 		}
 	};
@@ -522,19 +568,12 @@ export function compareDeterrencePolicies(
 ): DeterrenceScenarioResult[] {
 	const results: DeterrenceScenarioResult[] = [];
 	for (let index = 0; index < policies.length; index += 1) {
-		results.push(
-			runDeterrenceScenario(policies[index], config, raiderProfiles, seed)
-		);
+		results.push(runDeterrenceScenario(policies[index], config, raiderProfiles, seed));
 	}
 	return results;
 }
 
-/**
- * Normalized lab defaults only. These values are deliberately injectable and
- * must not be treated as production balance. The raider commitment/extraction
- * scale mirrors current design hypotheses so the experiment can reason about
- * anti-farming and deterrence before live tuning.
- */
+/** Normalized lab hypotheses only; none of these are production balance. */
 export const DEFAULT_DETERRENCE_CONFIG: DeterrenceModelConfig = {
 	horizon: 120,
 	maxDefenderEnergy: 30000,
@@ -542,11 +581,12 @@ export const DEFAULT_DETERRENCE_CONFIG: DeterrenceModelConfig = {
 	initialAttackerConfidence: 0.72,
 	collectionEfficiency: 0.78,
 	confidenceSmoothing: 0.14,
-	idleConfidenceDecay: 0.008,
+	idleConfidenceSmoothing: 0.03,
 	travelCost: 500,
 	breachLossMultiplier: 1,
 	starvationThreshold: 6500,
-	confidenceHysteresis: 0.05
+	confidenceHysteresis: 0.05,
+	targetSignalFloor: 0.08
 };
 
 export const DEFAULT_DETERRENCE_RAIDERS: RaiderEconomyProfile[] = [
