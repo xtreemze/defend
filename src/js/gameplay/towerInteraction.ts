@@ -72,7 +72,12 @@ export interface TowerInteractionPreview {
 }
 
 function finite(value: number, fallback = 0): number {
-	if (value !== value || value === Infinity || value === -Infinity) {
+	if (
+		typeof value !== "number" ||
+		value !== value ||
+		value === Infinity ||
+		value === -Infinity
+	) {
 		return fallback;
 	}
 	return value;
