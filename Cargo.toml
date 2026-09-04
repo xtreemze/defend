@@ -1,3 +1,15 @@
 [workspace]
-members = ["crates/defend-core"]
+members = [
+  "crates/defend-core",
+  "experiments/hybrid-engine/rust",
+]
+default-members = ["crates/defend-core"]
 resolver = "2"
+
+[profile.hybrid-wasm]
+inherits = "release"
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = "symbols"
