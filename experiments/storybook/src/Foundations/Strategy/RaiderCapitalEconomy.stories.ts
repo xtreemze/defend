@@ -32,6 +32,13 @@ const TARGETS: TargetWitness[] = [
 
 const MODES: RaiderCapitalMode[] = ["fully-sunk", "embodied-return"];
 
+const FIXED_WITNESS = {
+	expectedBreachProbability: 0.55,
+	expectedBreachViability: 0.55,
+	expectedFailureReturnViability: 0.3,
+	travelAndOperatingCost: 500
+};
+
 function fixed(value: number, digits = 0): string {
 	if (value !== value || value === Infinity || value === -Infinity) return "0";
 	return value.toFixed(digits);
@@ -94,6 +101,22 @@ function modePanel(mode: RaiderCapitalMode, args: CapitalEconomyArgs): string {
 	`;
 }
 
+function fixedWitnessPositive(tierIndex: number, targetEnergy: number): boolean {
+	const profile = DEFAULT_RAIDER_CAPITAL_PROFILES[tierIndex];
+	return raiderCapitalExpectedValueIsPositive(
+		estimateRaiderCapitalExpectedValue({
+			mode: "embodied-return",
+			profile,
+			perceivedTargetEnergy: targetEnergy,
+			expectedBreachProbability: FIXED_WITNESS.expectedBreachProbability,
+			expectedArrivalViabilityOnBreach: FIXED_WITNESS.expectedBreachViability,
+			expectedReturnViabilityOnFailure:
+				FIXED_WITNESS.expectedFailureReturnViability,
+			travelAndOperatingCost: FIXED_WITNESS.travelAndOperatingCost
+		})
+	);
+}
+
 const meta = {
 	title: "Foundations/Strategy/Raider Capital Economy",
 	tags: ["test", "visual"],
@@ -117,7 +140,7 @@ const meta = {
 		const shell = createLabShell(
 			"Foundations / strategy",
 			"Raider launch capital at risk",
-			"Compare fully sunk launch cost with a conservation-first hypothesis where launch energy remains embodied in the raider and returns only in proportion to physical survival. The witness is diagnostic, not production balance."
+			"Compare fully sunk launch cost with a conservation-first hypothesis where launch energy remains embodied in the raider and returns only in proportion to physical survival. Controls are exploratory; the automated witness stays fixed."
 		);
 		shell.frame.innerHTML = `
 			<style>
@@ -141,7 +164,7 @@ const meta = {
 				@media (max-width:900px) { .capital-targets { grid-template-columns:1fr; } .capital-mode__heading { grid-template-columns:1fr; } }
 			</style>
 			<div class="capital-layout">${MODES.map(mode => modePanel(mode, args)).join("")}</div>
-			<div class="capital-note">Expected value includes target-bounded extraction, launch-capital loss/return and travel/operating drain. Defender capture is tested separately through the realized conserved settlement and never exceeds damaged embodied capital.</div>
+			<div class="capital-note">Expected value includes target-bounded extraction, launch-capital loss/return and travel/operating drain. Changing controls is meant to reveal regimes where the default contextual role pattern fails; those exploratory states do not invalidate the fixed automated witness.</div>
 		`;
 		return shell.root;
 	}
@@ -153,32 +176,23 @@ type Story = StoryObj<typeof meta>;
 export const CapitalAtRiskMatrix: Story = {
 	play: async ({ canvasElement, args }) => {
 		const cells = canvasElement.querySelectorAll<HTMLElement>("[data-mode][data-target][data-tier]");
-		await expect(cells.length).toBe(MODES.length * TARGETS.length * DEFAULT_RAIDER_CAPITAL_PROFILES.length);
+		await expect(cells.length).toBe(
+			MODES.length * TARGETS.length * DEFAULT_RAIDER_CAPITAL_PROFILES.length
+		);
 
-		const embodiedPoorR1 = canvasElement.querySelector<HTMLElement>(
-			'[data-mode="embodied-return"][data-target="5000"][data-tier="1"]'
-		);
-		const embodiedPoorR2 = canvasElement.querySelector<HTMLElement>(
-			'[data-mode="embodied-return"][data-target="5000"][data-tier="2"]'
-		);
-		const embodiedMediumR2 = canvasElement.querySelector<HTMLElement>(
-			'[data-mode="embodied-return"][data-target="15000"][data-tier="2"]'
-		);
-		const embodiedMediumR3 = canvasElement.querySelector<HTMLElement>(
-			'[data-mode="embodied-return"][data-target="15000"][data-tier="3"]'
-		);
-		const embodiedRichR3 = canvasElement.querySelector<HTMLElement>(
-			'[data-mode="embodied-return"][data-target="30000"][data-tier="3"]'
-		);
-		await expect(embodiedPoorR1?.dataset.positive).toBe("true");
-		await expect(embodiedPoorR2?.dataset.positive).toBe("false");
-		await expect(embodiedMediumR2?.dataset.positive).toBe("true");
-		await expect(embodiedMediumR3?.dataset.positive).toBe("false");
-		await expect(embodiedRichR3?.dataset.positive).toBe("true");
+		await expect(fixedWitnessPositive(0, 5000)).toBe(true);
+		await expect(fixedWitnessPositive(1, 5000)).toBe(false);
+		await expect(fixedWitnessPositive(1, 15000)).toBe(true);
+		await expect(fixedWitnessPositive(2, 15000)).toBe(false);
+		await expect(fixedWitnessPositive(2, 30000)).toBe(true);
 
 		for (let modeIndex = 0; modeIndex < MODES.length; modeIndex += 1) {
 			for (let targetIndex = 0; targetIndex < TARGETS.length; targetIndex += 1) {
-				for (let tierIndex = 0; tierIndex < DEFAULT_RAIDER_CAPITAL_PROFILES.length; tierIndex += 1) {
+				for (
+					let tierIndex = 0;
+					tierIndex < DEFAULT_RAIDER_CAPITAL_PROFILES.length;
+					tierIndex += 1
+				) {
 					const mode = MODES[modeIndex];
 					const target = TARGETS[targetIndex];
 					const profile = DEFAULT_RAIDER_CAPITAL_PROFILES[tierIndex];
@@ -193,10 +207,18 @@ export const CapitalAtRiskMatrix: Story = {
 						defenderCaptureFraction: args.defenderCaptureFraction,
 						collateralDissipationRatio: 0
 					});
-					await expect(settlement.extractedEnergy).toBeLessThanOrEqual(target.reserve);
-					await expect(settlement.returnedCapital).toBeLessThanOrEqual(profile.committedEnergy);
-					await expect(settlement.capturedCapital).toBeLessThanOrEqual(settlement.capitalAtRiskLost);
-					await expect(Math.abs(settlement.conservationResidual)).toBeLessThan(0.000001);
+					await expect(settlement.extractedEnergy).toBeLessThanOrEqual(
+						target.reserve
+					);
+					await expect(settlement.returnedCapital).toBeLessThanOrEqual(
+						profile.committedEnergy
+					);
+					await expect(settlement.capturedCapital).toBeLessThanOrEqual(
+						settlement.capitalAtRiskLost
+					);
+					await expect(Math.abs(settlement.conservationResidual)).toBeLessThan(
+						0.000001
+					);
 					if (mode === "fully-sunk") {
 						await expect(settlement.returnedCapital).toBe(0);
 						await expect(settlement.capturedCapital).toBe(0);
