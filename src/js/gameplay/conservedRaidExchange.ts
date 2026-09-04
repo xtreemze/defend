@@ -66,7 +66,7 @@ function clamp(value: number, minimum: number, maximum: number): number {
 export function settleConservedRaidExchange(
 	input: ConservedRaidExchangeInput
 ): ConservedRaidExchangeResult {
-	const capacity = Math.max(0, positive(input.defenderCapacity));
+	const capacity = positive(input.defenderCapacity);
 	const reserveBefore = clamp(input.defenderReserve, 0, capacity);
 
 	const requestedExtractionEnergy = positive(input.requestedExtractionEnergy);
@@ -75,7 +75,7 @@ export function settleConservedRaidExchange(
 		0,
 		requestedExtractionEnergy - extractedEnergy
 	);
-	const reserveAfterExtraction = reserveBefore - defenderEnergySafe(extractedEnergy);
+	const reserveAfterExtraction = reserveBefore - extractedEnergy;
 
 	const requestedCollateralDissipation =
 		extractedEnergy * positive(input.collateralDissipationRatio);
@@ -90,19 +90,17 @@ export function settleConservedRaidExchange(
 	const reserveAfterLoss = reserveAfterExtraction - collateralDissipation;
 
 	const requestedRecoveryEnergy = positive(input.requestedRecoveryEnergy);
-	const attackerEmbodiedEnergy = positive(input.attackerEmbodiedEnergy);
 	const sourceAvailableRecoveryEnergy = Math.min(
 		requestedRecoveryEnergy,
-		attackerEmbodiedEnergy
+		positive(input.attackerEmbodiedEnergy)
 	);
 	const recoverySourceShortfall = Math.max(
 		0,
 		requestedRecoveryEnergy - sourceAvailableRecoveryEnergy
 	);
-	const storageHeadroom = Math.max(0, capacity - reserveAfterLoss);
 	const recoveredEnergy = Math.min(
 		sourceAvailableRecoveryEnergy,
-		storageHeadroom
+		Math.max(0, capacity - reserveAfterLoss)
 	);
 	const uncollectedRecoveryEnergy = Math.max(
 		0,
@@ -130,10 +128,6 @@ export function settleConservedRaidExchange(
 	};
 }
 
-function defenderEnergySafe(value: number): number {
-	return positive(value);
-}
-
 /**
  * Actual attacker return must use energy that was physically extracted rather
  * than the raider's theoretical extraction potential.
@@ -146,8 +140,7 @@ export function raidAttackerNetReturn(
 	return (
 		positive(extractedEnergy) -
 		positive(committedEnergy) -
-		positive
-		(travelCost)
+		positive(travelCost)
 	);
 }
 
