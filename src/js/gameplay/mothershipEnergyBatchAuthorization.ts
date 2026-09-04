@@ -1,4 +1,7 @@
-import type { MothershipEnergyLiftState } from "./mothershipEnergyLift";
+import type {
+	MothershipEnergyLiftState,
+	MothershipLiftPhase
+} from "./mothershipEnergyLift";
 
 export type MothershipEnergyDemandKind = "discrete" | "continuous";
 
@@ -39,6 +42,16 @@ function isFiniteNonnegative(value: number): boolean {
 
 function isDemandKind(value: string): value is MothershipEnergyDemandKind {
 	return value === "discrete" || value === "continuous";
+}
+
+function isLiftPhase(value: string): value is MothershipLiftPhase {
+	return (
+		value === "stable" ||
+		value === "low-reserve" ||
+		value === "critical" ||
+		value === "falling" ||
+		value === "hulk"
+	);
 }
 
 function zeroAllocation(
@@ -85,6 +98,7 @@ export function authorizeMothershipEnergyBatch(
 ): MothershipEnergyBatchAuthorization {
 	const reserveValid = isFiniteNonnegative(state.reserve);
 	const protectedValid = isFiniteNonnegative(protectedReserve);
+	const phaseValid = isLiftPhase(state.phase);
 	let demandsValid = true;
 	for (let index = 0; index < demands.length; index += 1) {
 		if (
@@ -95,12 +109,14 @@ export function authorizeMothershipEnergyBatch(
 			break;
 		}
 	}
-	const inputValid = reserveValid && protectedValid && demandsValid;
+	const inputValid =
+		reserveValid && protectedValid && phaseValid && demandsValid;
 	const reserveSnapshot = reserveValid ? state.reserve : 0;
 	const protectedAmount = protectedValid
 		? Math.min(reserveSnapshot, protectedReserve)
 		: reserveSnapshot;
-	const authorityAvailable = inputValid && state.phase !== "hulk";
+	const authorityAvailable =
+		inputValid && phaseValid && state.phase !== "hulk";
 	const spendableEnergy = authorityAvailable
 		? Math.max(0, reserveSnapshot - protectedAmount)
 		: 0;
