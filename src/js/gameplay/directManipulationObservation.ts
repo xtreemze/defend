@@ -207,7 +207,7 @@ export function recordDirectManipulationObservation(
 		rejectionCounts: copyRejectionCounts(state.rejectionCounts),
 		lastAcceptedContexts: copyContexts(state.lastAcceptedContexts)
 	};
-	const atSeconds = Math.max(next.startedAtSeconds, nonNegative(observation.atSeconds));
+	const atSeconds = next.lastObservedAtSeconds;
 
 	if (!observation.outcome.accepted) {
 		next.rejectedActions += 1;
