@@ -5,3 +5,6 @@ packages:
 saveExact: true
 sharedWorkspaceLockfile: true
 engineStrict: true
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+minimumReleaseAgeIgnoreMissingTime: false
