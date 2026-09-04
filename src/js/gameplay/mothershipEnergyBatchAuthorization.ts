@@ -37,13 +37,17 @@ function isFiniteNonnegative(value: number): boolean {
 	);
 }
 
+function isDemandKind(value: string): value is MothershipEnergyDemandKind {
+	return value === "discrete" || value === "continuous";
+}
+
 function zeroAllocation(
 	index: number,
 	demand: MothershipEnergyDemand
 ): MothershipEnergyDemandAllocation {
 	return {
 		index,
-		kind: demand.kind,
+		kind: isDemandKind(demand.kind) ? demand.kind : "continuous",
 		requestedEnergy: isFiniteNonnegative(demand.requestedEnergy)
 			? demand.requestedEnergy
 			: 0,
@@ -83,7 +87,10 @@ export function authorizeMothershipEnergyBatch(
 	const protectedValid = isFiniteNonnegative(protectedReserve);
 	let demandsValid = true;
 	for (let index = 0; index < demands.length; index += 1) {
-		if (!isFiniteNonnegative(demands[index].requestedEnergy)) {
+		if (
+			!isDemandKind(demands[index].kind) ||
+			!isFiniteNonnegative(demands[index].requestedEnergy)
+		) {
 			demandsValid = false;
 			break;
 		}
