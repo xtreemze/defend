@@ -54,8 +54,10 @@ const meta = {
 		travelCost: { control: { type: "range", min: 0, max: 5000, step: 100 } }
 	},
 	render: (args: ExchangeArgs) => {
+		const richReserve = Math.max(args.richReserve, args.poorReserve);
+		const poorReserve = Math.min(args.richReserve, args.poorReserve);
 		const rich = settleConservedRaidExchange({
-			defenderReserve: args.richReserve,
+			defenderReserve: richReserve,
 			defenderCapacity: args.capacity,
 			requestedExtractionEnergy: args.requestedExtraction,
 			attackerEmbodiedEnergy: args.attackerEmbodiedEnergy,
@@ -63,7 +65,7 @@ const meta = {
 			collateralDissipationRatio: args.collateralDissipationRatio
 		});
 		const poor = settleConservedRaidExchange({
-			defenderReserve: args.poorReserve,
+			defenderReserve: poorReserve,
 			defenderCapacity: args.capacity,
 			requestedExtractionEnergy: args.requestedExtraction,
 			attackerEmbodiedEnergy: args.attackerEmbodiedEnergy,
@@ -138,8 +140,8 @@ const meta = {
 				.exchange-note { margin-top:14px; padding:12px; border:1px solid rgba(73,215,209,.18); font-size:11px; line-height:1.55; opacity:.76; }
 			</style>
 			<div class="exchange-grid">
-				${card("rich target", args.richReserve, rich.extractedEnergy, rich.unmetExtractionEnergy, rich.recoveredEnergy, rich.reserveAfter, richReturn)}
-				${card("poor target", args.poorReserve, poor.extractedEnergy, poor.unmetExtractionEnergy, poor.recoveredEnergy, poor.reserveAfter, poorReturn)}
+				${card("rich target", richReserve, rich.extractedEnergy, rich.unmetExtractionEnergy, rich.recoveredEnergy, rich.reserveAfter, richReturn)}
+				${card("poor target", poorReserve, poor.extractedEnergy, poor.unmetExtractionEnergy, poor.recoveredEnergy, poor.reserveAfter, poorReturn)}
 			</div>
 			<div class="exchange-note"
 				data-rich-extracted="${rich.extractedEnergy}"
