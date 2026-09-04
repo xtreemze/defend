@@ -162,6 +162,12 @@ export const PreventSameStepOvercommit: Story = {
 		await expect(launchFirst.allocations[0].fundedEnergy).toBe(6);
 		await expect(launchFirst.allocations[1].fundedEnergy).toBe(2);
 		await expect(launchFirst.allocations[1].fundingFraction).toBeCloseTo(1 / 3);
+		await expect(
+			launchFirst.allocations.reduce(
+				(sum, allocation) => sum + allocation.fundedEnergy,
+				0
+			)
+		).toBe(launchFirst.allocatedEnergy);
 
 		const propulsionFirst = authorizeMothershipEnergyBatch(
 			healthy,
@@ -201,6 +207,18 @@ export const PreventSameStepOvercommit: Story = {
 		);
 		await expect(malformedKind.inputValid).toBe(false);
 		await expect(malformedKind.allocatedEnergy).toBe(0);
+
+		const malformedPhase = authorizeMothershipEnergyBatch(
+			{
+				...healthy,
+				phase: "unknown" as unknown as MothershipLiftPhase
+			},
+			[{ kind: "discrete", requestedEnergy: 1 }],
+			protectedReserve
+		);
+		await expect(malformedPhase.inputValid).toBe(false);
+		await expect(malformedPhase.authorityAvailable).toBe(false);
+		await expect(malformedPhase.allocatedEnergy).toBe(0);
 
 		const hulk = authorizeMothershipEnergyBatch(
 			state(10, "hulk"),
