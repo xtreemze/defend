@@ -13,10 +13,3 @@ bevy_app = { version = "0.19.1", default-features = false, features = ["std"] }
 bevy_ecs = { version = "0.19.1", default-features = false, features = ["std"] }
 bevy_math = { version = "0.19.1", default-features = false, features = ["std"] }
 wasm-bindgen = "0.2.127"
-
-[profile.release]
-codegen-units = 1
-lto = true
-opt-level = "s"
-panic = "abort"
-strip = "symbols"
