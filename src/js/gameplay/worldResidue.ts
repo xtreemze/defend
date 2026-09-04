@@ -49,6 +49,8 @@ export interface CompactedWorldResidue {
 export interface WorldResidueState {
 	records: WorldResidueRecord[];
 	compacted: CompactedWorldResidue;
+	/** Monotonic newest world-event time observed by this bounded state. */
+	latestOccurredAtSeconds: number;
 }
 
 export interface WorldResidueConfig {
@@ -72,9 +74,17 @@ export const DEFAULT_WORLD_RESIDUE_CONFIG: WorldResidueConfig = {
 	maxRecords: 16
 };
 
+function isFiniteNumber(value: number): boolean {
+	return (
+		typeof value === "number" &&
+		value === value &&
+		value !== Infinity &&
+		value !== -Infinity
+	);
+}
+
 function finite(value: number, fallback: number): number {
-	if (value !== value || value === Infinity || value === -Infinity) return fallback;
-	return value;
+	return isFiniteNumber(value) ? value : fallback;
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {
@@ -108,6 +118,31 @@ function normalizedEvent(event: WorldResidueEvent): WorldResidueEvent {
 	};
 }
 
+function compareText(left: string, right: string): number {
+	if (left < right) return -1;
+	if (left > right) return 1;
+	return 0;
+}
+
+/**
+ * Deterministic replay ordering. Timestamp is primary; semantic identity breaks
+ * ties so reconstruction does not depend on source-array order for equal-time
+ * events.
+ */
+function compareWorldResidueEvents(
+	left: WorldResidueEvent,
+	right: WorldResidueEvent
+): number {
+	if (left.occurredAtSeconds !== right.occurredAtSeconds) {
+		return left.occurredAtSeconds - right.occurredAtSeconds;
+	}
+	const regionOrder = compareText(left.regionId, right.regionId);
+	if (regionOrder !== 0) return regionOrder;
+	const kindOrder = compareText(left.kind, right.kind);
+	if (kindOrder !== 0) return kindOrder;
+	return compareText(left.id, right.id);
+}
+
 export function worldResidueFamily(kind: WorldResidueKind): WorldResidueFamily {
 	if (kind === "minor-impact" || kind === "heavy-impact") return "impact";
 	if (kind === "mothership-hulk") return "wreck";
@@ -137,7 +172,11 @@ function emptyCompacted(): CompactedWorldResidue {
 }
 
 export function createWorldResidueState(): WorldResidueState {
-	return { records: [], compacted: emptyCompacted() };
+	return {
+		records: [],
+		compacted: emptyCompacted(),
+		latestOccurredAtSeconds: 0
+	};
 }
 
 function copyCompacted(source: CompactedWorldResidue): CompactedWorldResidue {
@@ -224,6 +263,17 @@ function foldRecord(compacted: CompactedWorldResidue, record: WorldResidueRecord
 	}
 }
 
+function recordNewestTime(records: WorldResidueRecord[]): number {
+	let newest = 0;
+	for (let index = 0; index < records.length; index += 1) {
+		newest = Math.max(
+			newest,
+			Math.max(0, finite(records[index].lastOccurredAtSeconds, 0))
+		);
+	}
+	return newest;
+}
+
 function retentionScore(record: WorldResidueRecord, newestTime: number): number {
 	const age = Math.max(0, newestTime - record.lastOccurredAtSeconds);
 	const recency = 1 / (1 + age / 60);
@@ -248,6 +298,14 @@ function lowestRetentionIndex(records: WorldResidueRecord[], newestTime: number)
 	return selected;
 }
 
+/**
+ * Append one already-occurring/live event to bounded residue state.
+ *
+ * Backfilled older events may be represented, but they never move the retention
+ * clock backward. A bounded state cannot retroactively undo information already
+ * compacted before a late historical event arrives; deterministic full replay is
+ * therefore owned by `buildWorldResidueState()`, which orders the event set first.
+ */
 export function appendWorldResidueEvent(
 	state: WorldResidueState,
 	eventInput: WorldResidueEvent,
@@ -257,6 +315,12 @@ export function appendWorldResidueEvent(
 	const event = normalizedEvent(eventInput);
 	const records = state.records.slice();
 	const compacted = copyCompacted(state.compacted);
+	const latestOccurredAtSeconds = Math.max(
+		0,
+		finite(state.latestOccurredAtSeconds, 0),
+		recordNewestTime(records),
+		event.occurredAtSeconds
+	);
 	const key = recordKey(event);
 	let found = -1;
 	for (let index = 0; index < records.length; index += 1) {
@@ -269,21 +333,28 @@ export function appendWorldResidueEvent(
 	else records.push(recordFromEvent(event));
 
 	while (records.length > config.maxRecords) {
-		const victim = lowestRetentionIndex(records, event.occurredAtSeconds);
+		const victim = lowestRetentionIndex(records, latestOccurredAtSeconds);
 		foldRecord(compacted, records[victim]);
 		records.splice(victim, 1);
 	}
 
-	return { records, compacted };
+	return { records, compacted, latestOccurredAtSeconds };
 }
 
+/**
+ * Deterministic reconstruction/replay path. The same normalized semantic event
+ * set yields the same compaction history regardless of source-array order.
+ */
 export function buildWorldResidueState(
 	events: WorldResidueEvent[],
 	config: WorldResidueConfig = DEFAULT_WORLD_RESIDUE_CONFIG
 ): WorldResidueState {
+	const ordered = events
+		.map(event => normalizedEvent(event))
+		.sort(compareWorldResidueEvents);
 	let state = createWorldResidueState();
-	for (let index = 0; index < events.length; index += 1) {
-		state = appendWorldResidueEvent(state, events[index], config);
+	for (let index = 0; index < ordered.length; index += 1) {
+		state = appendWorldResidueEvent(state, ordered[index], config);
 	}
 	return state;
 }
