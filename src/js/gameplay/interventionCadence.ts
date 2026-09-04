@@ -101,7 +101,9 @@ function normalizeOpportunity(
 	if (
 		!isFiniteNumber(opportunity.startSeconds) ||
 		!isFiniteNumber(opportunity.endSeconds) ||
-		opportunity.endSeconds < opportunity.startSeconds
+		opportunity.endSeconds < opportunity.startSeconds ||
+		opportunity.endSeconds < bounds.start ||
+		opportunity.startSeconds > bounds.end
 	) {
 		return null;
 	}
@@ -179,9 +181,9 @@ function firstOpportunityById(
  * simulation authority. It only measures supplied decision windows and whether
  * actions were attributed to them while they were still open.
  *
- * Malformed evidence fails closed: invalid opportunity windows do not contribute
- * decision coverage, duplicate ids do not double-count opportunities, and
- * non-finite action timestamps cannot become successful responses.
+ * Malformed evidence fails closed: invalid/out-of-session opportunity windows do
+ * not contribute decision coverage, duplicate ids do not double-count, and
+ * invalid/out-of-session action timestamps cannot inflate response or APM data.
  */
 export function summarizeInterventionCadence(
 	input: InterventionCadenceInput
@@ -220,11 +222,15 @@ export function summarizeInterventionCadence(
 
 	for (let index = 0; index < input.actions.length; index += 1) {
 		const action = input.actions[index];
-		if (!isFiniteNumber(action.atSeconds)) {
+		if (
+			!isFiniteNumber(action.atSeconds) ||
+			action.atSeconds < bounds.start ||
+			action.atSeconds > bounds.end
+		) {
 			invalidActions += 1;
 			continue;
 		}
-		const atSeconds = clamp(action.atSeconds, bounds.start, bounds.end);
+		const atSeconds = action.atSeconds;
 		if (action.opportunityId === null) {
 			unlinkedActions += 1;
 			continue;
@@ -261,7 +267,7 @@ export function summarizeInterventionCadence(
 	}
 
 	const opportunityCount = opportunities.length;
-	const actionCount = input.actions.length;
+	const validActionCount = Math.max(0, input.actions.length - invalidActions);
 	return {
 		durationSeconds,
 		opportunities: opportunityCount,
@@ -271,14 +277,15 @@ export function summarizeInterventionCadence(
 		missedOpportunities: Math.max(0, opportunityCount - respondedOpportunities),
 		responseRate:
 			opportunityCount <= 0 ? 0 : respondedOpportunities / opportunityCount,
-		actions: actionCount,
+		actions: validActionCount,
 		invalidActions,
 		linkedActions,
 		lateLinkedActions,
 		unlinkedActions,
-		unlinkedActionShare: actionCount <= 0 ? 0 : unlinkedActions / actionCount,
+		unlinkedActionShare:
+			validActionCount <= 0 ? 0 : unlinkedActions / validActionCount,
 		actionsPerMinute:
-			durationSeconds <= 0 ? 0 : actionCount / (durationSeconds / 60),
+			durationSeconds <= 0 ? 0 : validActionCount / (durationSeconds / 60),
 		opportunitiesPerMinute:
 			durationSeconds <= 0 ? 0 : opportunityCount / (durationSeconds / 60),
 		meanResponseSeconds:
