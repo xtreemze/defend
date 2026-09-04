@@ -20,6 +20,7 @@ type DeterrenceArgs = {
 	confidenceSmoothing: number;
 	breachLossMultiplier: number;
 	starvationThreshold: number;
+	targetSignalFloor: number;
 };
 
 type PolicyAggregate = {
@@ -31,6 +32,7 @@ type PolicyAggregate = {
 	meanRaids: number;
 	meanBreaches: number;
 	meanAttackerRoi: number;
+	meanTargetSignal: number;
 	stateCounts: DeterrenceStateCounts;
 	representative: DeterrenceScenarioResult;
 };
@@ -48,10 +50,7 @@ function copyCounts(): DeterrenceStateCounts {
 	return { contested: 0, adapting: 0, probing: 0, quiet: 0, starvation: 0 };
 }
 
-function addCounts(
-	target: DeterrenceStateCounts,
-	source: DeterrenceStateCounts
-): void {
+function addCounts(target: DeterrenceStateCounts, source: DeterrenceStateCounts): void {
 	target.contested += source.contested;
 	target.adapting += source.adapting;
 	target.probing += source.probing;
@@ -66,7 +65,8 @@ function aggregatePolicies(args: DeterrenceArgs): PolicyAggregate[] {
 		collectionEfficiency: args.collectionEfficiency,
 		confidenceSmoothing: args.confidenceSmoothing,
 		breachLossMultiplier: args.breachLossMultiplier,
-		starvationThreshold: args.starvationThreshold
+		starvationThreshold: args.starvationThreshold,
+		targetSignalFloor: args.targetSignalFloor
 	};
 	const seedCount = Math.max(1, Math.floor(args.seedCount));
 	const accumulators = DEFAULT_DETERRENCE_POLICIES.map(policy => ({
@@ -78,6 +78,7 @@ function aggregatePolicies(args: DeterrenceArgs): PolicyAggregate[] {
 		raids: 0,
 		breaches: 0,
 		attackerRoi: 0,
+		targetSignal: 0,
 		stateCounts: copyCounts(),
 		representative: compareDeterrencePolicies(
 			[policy],
@@ -103,6 +104,7 @@ function aggregatePolicies(args: DeterrenceArgs): PolicyAggregate[] {
 			acc.raids += result.summary.raids;
 			acc.breaches += result.summary.breaches;
 			acc.attackerRoi += result.summary.attackerReturnOnCommitment;
+			acc.targetSignal += result.summary.meanTargetSignal;
 			addCounts(acc.stateCounts, result.summary.stateCounts);
 		}
 	}
@@ -116,6 +118,7 @@ function aggregatePolicies(args: DeterrenceArgs): PolicyAggregate[] {
 		meanRaids: acc.raids / seedCount,
 		meanBreaches: acc.breaches / seedCount,
 		meanAttackerRoi: acc.attackerRoi / seedCount,
+		meanTargetSignal: acc.targetSignal / seedCount,
 		stateCounts: {
 			contested: acc.stateCounts.contested / seedCount,
 			adapting: acc.stateCounts.adapting / seedCount,
@@ -128,7 +131,6 @@ function aggregatePolicies(args: DeterrenceArgs): PolicyAggregate[] {
 }
 
 function energyTrace(result: DeterrenceScenarioResult): string {
-	const maxEnergy = DEFAULT_DETERRENCE_CONFIG.maxDefenderEnergy;
 	const width = 320;
 	const height = 64;
 	if (result.steps.length === 0) return "";
@@ -136,12 +138,10 @@ function energyTrace(result: DeterrenceScenarioResult): string {
 	for (let index = 0; index < result.steps.length; index += 1) {
 		const step = result.steps[index];
 		const x =
-			result.steps.length <= 1
-				? 0
-				: (index / (result.steps.length - 1)) * width;
+			result.steps.length <= 1 ? 0 : (index / (result.steps.length - 1)) * width;
 		const y =
 			height -
-			(step.defenderEnergyAfter / Math.max(1, maxEnergy)) * height;
+			(step.defenderEnergyAfter / DEFAULT_DETERRENCE_CONFIG.maxDefenderEnergy) * height;
 		points.push(`${fixed(x, 1)},${fixed(y, 1)}`);
 	}
 	return `<svg class="det-trace" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="Representative defender-energy trajectory"><polyline points="${points.join(" ")}" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" /></svg>`;
@@ -149,13 +149,9 @@ function energyTrace(result: DeterrenceScenarioResult): string {
 
 function stateStrip(counts: DeterrenceStateCounts): string {
 	const total =
-		counts.contested +
-		counts.adapting +
-		counts.probing +
-		counts.quiet +
-		counts.starvation;
+		counts.contested + counts.adapting + counts.probing + counts.quiet + counts.starvation;
 	if (total <= 0) return "";
-	const segments = [
+	const segments: Array<[string, number]> = [
 		["contested", counts.contested],
 		["adapting", counts.adapting],
 		["probing", counts.probing],
@@ -163,11 +159,10 @@ function stateStrip(counts: DeterrenceStateCounts): string {
 		["starvation", counts.starvation]
 	];
 	return segments
-		.map(segment => {
-			const name = segment[0] as string;
-			const value = segment[1] as number;
-			return `<span class="det-state det-state--${name}" title="${name}: ${fixed(value, 1)} opportunities" style="flex:${Math.max(0.001, value / total)}"></span>`;
-		})
+		.map(
+			([name, value]) =>
+				`<span class="det-state det-state--${name}" title="${name}: ${fixed(value, 1)} opportunities" style="flex:${Math.max(0.001, value / total)}"></span>`
+		)
 		.join("");
 }
 
@@ -186,8 +181,9 @@ function policyCard(aggregate: PolicyAggregate): string {
 				<div><small>mean survival</small><strong>${fixed(aggregate.meanSurvival, 1)}</strong></div>
 				<div><small>raids / breaches</small><strong>${fixed(aggregate.meanRaids, 1)} / ${fixed(aggregate.meanBreaches, 1)}</strong></div>
 				<div><small>attacker ROI</small><strong>${fixed(aggregate.meanAttackerRoi, 2)}</strong></div>
+				<div><small>target signal</small><strong>${fixed(aggregate.meanTargetSignal, 2)}</strong></div>
 			</div>
-			<footer>Representative seed: ${summary.raids} raids · ${summary.breaches} breaches · ${fixed(summary.totalDefenderRecoveredEnergy, 0)} captured energy · ${fixed(summary.totalDefenderBreachLoss, 0)} breach loss</footer>
+			<footer>Representative seed: ${summary.raids} raids · ${summary.breaches} breaches · ${fixed(summary.totalAttackerExtractedEnergy, 0)} actually extracted · ${fixed(summary.totalDefenderRecoveredEnergy, 0)} captured · ${fixed(summary.totalDefenderBreachLoss, 0)} breach loss</footer>
 		</article>
 	`;
 }
@@ -202,7 +198,8 @@ const meta = {
 		collectionEfficiency: 0.78,
 		confidenceSmoothing: 0.14,
 		breachLossMultiplier: 1,
-		starvationThreshold: 6500
+		starvationThreshold: 6500,
+		targetSignalFloor: 0.08
 	},
 	argTypes: {
 		horizon: { control: { type: "range", min: 20, max: 240, step: 10 } },
@@ -210,14 +207,13 @@ const meta = {
 		seedCount: { control: { type: "range", min: 1, max: 64, step: 1 } },
 		collectionEfficiency: { control: { type: "range", min: 0.1, max: 1, step: 0.02 } },
 		confidenceSmoothing: { control: { type: "range", min: 0.02, max: 0.5, step: 0.01 } },
-		breachLossMultiplier: { control: { type: "range", min: 0.25, max: 1.5, step: 0.05 } },
-		starvationThreshold: { control: { type: "range", min: 1000, max: 15000, step: 500 } }
+		breachLossMultiplier: { control: { type: "range", min: 1, max: 2, step: 0.05 } },
+		starvationThreshold: { control: { type: "range", min: 1000, max: 15000, step: 500 } },
+		targetSignalFloor: { control: { type: "range", min: 0.01, max: 0.3, step: 0.01 } }
 	},
 	render: (args: DeterrenceArgs) => {
 		const aggregates = aggregatePolicies(args);
-		const competent = aggregates.find(
-			entry => entry.id === "competent-defense"
-		);
+		const competent = aggregates.find(entry => entry.id === "competent-defense");
 		const leak = aggregates.find(entry => entry.id === "intentional-leak");
 		const antiFarmingPass =
 			competent !== undefined &&
@@ -228,7 +224,7 @@ const meta = {
 		const shell = createLabShell(
 			"Foundations / strategy",
 			"Deterrence and anti-farming economy",
-			"Engine-free normalized model for the defender → deterrence → starvation hinge. Values are experimental, injectable hypotheses rather than production balance. The default sweep should make active competent defense outperform deliberate breach farming while over-fortification still risks self-starvation."
+			"Engine-free conserved-value model for the defender → deterrence → starvation hinge. Actual extraction is capped by available reserve, captured raider energy is bounded by committed value, and dim targets suppress expensive attacker commitments. All values remain experimental hypotheses."
 		);
 
 		shell.frame.innerHTML = `
@@ -279,9 +275,7 @@ type Story = StoryObj<typeof meta>;
 export const PolicySweep: Story = {
 	play: async ({ canvasElement }) => {
 		const cards = canvasElement.querySelectorAll<HTMLElement>("[data-policy]");
-		const gate = canvasElement.querySelector<HTMLElement>(
-			"[data-anti-farming-pass]"
-		);
+		const gate = canvasElement.querySelector<HTMLElement>("[data-anti-farming-pass]");
 		await expect(cards.length).toBe(DEFAULT_DETERRENCE_POLICIES.length);
 		await expect(gate).not.toBeNull();
 		if (!gate) return;
@@ -298,12 +292,16 @@ export const PolicySweep: Story = {
 			const result = invariantResults[resultIndex];
 			for (let stepIndex = 0; stepIndex < result.steps.length; stepIndex += 1) {
 				const step = result.steps[stepIndex];
-				await expect(step.defenderRecoveredEnergy).toBeLessThanOrEqual(
-					step.committedEnergy
-				);
-				await expect(step.defenderEnergyAfter).toBeLessThanOrEqual(
-					config.maxDefenderEnergy
-				);
+				await expect(step.defenderRecoveredEnergy).toBeLessThanOrEqual(step.committedEnergy);
+				await expect(step.extractedEnergy).toBeLessThanOrEqual(step.requestedExtraction);
+				await expect(step.extractedEnergy).toBeLessThanOrEqual(step.defenderEnergyAfterUpkeep);
+				await expect(step.defenderBreachLoss).toBeLessThanOrEqual(step.defenderEnergyAfterUpkeep);
+				await expect(step.extractedEnergy).toBeLessThanOrEqual(step.defenderBreachLoss);
+				await expect(step.targetSignal).toBeGreaterThanOrEqual(config.targetSignalFloor);
+				await expect(step.targetSignal).toBeLessThanOrEqual(1);
+				await expect(step.raidChance).toBeGreaterThanOrEqual(0);
+				await expect(step.raidChance).toBeLessThanOrEqual(1);
+				await expect(step.defenderEnergyAfter).toBeLessThanOrEqual(config.maxDefenderEnergy);
 				await expect(step.defenderEnergyAfter).toBeGreaterThanOrEqual(0);
 			}
 		}
