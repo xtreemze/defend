@@ -10,6 +10,11 @@ import { Position2D } from "./Enemy";
 import { decide } from "./decide";
 import { checkHitPoints } from "./checkHitPoints";
 import randomNumberRange from "../utility/randomNumberRange";
+import {
+	enemyHitPoints,
+	enemyMass,
+	enemyRestitution
+} from "../gameplay/enemyScaling";
 
 interface EnemySphere extends Mesh {
 	hitPoints: number;
@@ -22,9 +27,9 @@ function enemyBorn (
 	diameter: number,
 	level: number = 1 | 2 | 3
 ) {
-	const enemyMass = (enemyGlobals.mass * level * level) as number;
+	const mass = enemyMass(enemyGlobals.mass, level);
 
-	sphereMesh.hitPoints = level * level * enemyGlobals.baseHitPoints + level * 440;
+	sphereMesh.hitPoints = enemyHitPoints(enemyGlobals.baseHitPoints, level);
 
 	const hitPointsMeter = MeshBuilder.CreateIcoSphere(
 		name + "hitPointMeter",
@@ -46,8 +51,8 @@ function enemyBorn (
 		sphereMesh,
 		PhysicsImpostor.SphereImpostor,
 		{
-			mass: enemyMass,
-			restitution: enemyGlobals.restitution - (level * level) / 10,
+			mass,
+			restitution: enemyRestitution(enemyGlobals.restitution, level),
 			friction: enemyGlobals.friction
 		},
 		scene
