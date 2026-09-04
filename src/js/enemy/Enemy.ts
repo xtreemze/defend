@@ -16,6 +16,7 @@ import {
 	economyGlobals
 } from "../main/globalVariables";
 import positionGenerator from "../utility/positionGenerator";
+import { enemyDiameter } from "../gameplay/enemyScaling";
 
 interface Position2D {
 	x: number;
@@ -26,7 +27,7 @@ class Enemy {
 	constructor(level: number, position: Position2D, scene: Scene) {
 		const name = `enemyLevel${level}Index${enemyGlobals.index}` as string;
 		enemyGlobals.index += 1;
-		const diameter = (level * level + 5) as number;
+		const diameter = enemyDiameter(level);
 		const sphereMesh = MeshBuilder.CreateIcoSphere(
 			name,
 			{

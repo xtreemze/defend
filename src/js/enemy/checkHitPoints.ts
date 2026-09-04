@@ -3,6 +3,10 @@ import { enemyGlobals } from "../main/globalVariables";
 import { fragment } from "./Enemy";
 import { destroyEnemy } from "./destroyEnemy";
 import { EnemySphere } from "./enemyBorn";
+import {
+	decayEnemyHitPoints,
+	enemyHealthMeterScale
+} from "../gameplay/enemyLifecycle";
 
 function checkHitPoints(
 	scene: Scene,
@@ -30,9 +34,15 @@ function checkHitPoints(
 
 		destroyEnemy(sphereMesh, scene, level);
 	} else {
-		sphereMesh.hitPoints -= enemyGlobals.decayRate;
-		const scaleRate =
-      1 / ((level * level * enemyGlobals.baseHitPoints) / (sphereMesh.hitPoints));
+		sphereMesh.hitPoints = decayEnemyHitPoints(
+			sphereMesh.hitPoints,
+			enemyGlobals.decayRate
+		);
+		const scaleRate = enemyHealthMeterScale(
+			sphereMesh.hitPoints,
+			enemyGlobals.baseHitPoints,
+			level
+		);
 
 		hitPointsMeter.scaling = new BABYLON.Vector3(
 			scaleRate,

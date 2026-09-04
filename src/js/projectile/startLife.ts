@@ -13,6 +13,7 @@ import { impulsePhys } from "./Projectile";
 import { destroyOnCollide } from "./destroyOnCollide";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
+import { projectileMass } from "../gameplay/tierScaling";
 
 interface LiveProjectile extends Mesh {
 	hitPoints: number;
@@ -41,7 +42,7 @@ export function startLife (
 		projectile,
 		PhysicsImpostor.BoxImpostor,
 		{
-			mass: projectileGlobals.mass * (level * level),
+			mass: projectileMass(projectileGlobals.mass, level),
 			restitution: 0.3,
 			friction: 0.4
 		},
