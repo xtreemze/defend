@@ -1,3 +1,7 @@
 packages:
   - hybrid-engine
   - storybook
+
+saveExact: true
+sharedWorkspaceLockfile: true
+engineStrict: true
