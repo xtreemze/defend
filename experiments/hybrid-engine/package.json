@@ -3,14 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.25.0",
-  "engines": {
-    "node": ">=24.20.0 <25"
-  },
   "scripts": {
     "wasm": "wasm-pack build ./rust --target web --out-dir ../pkg --out-name defend_hybrid_runtime",
     "dev": "pnpm wasm && vite",
     "build": "pnpm wasm && tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check": "biome check ."
   },

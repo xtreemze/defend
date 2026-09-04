@@ -1,0 +1,14 @@
+packages:
+  - hybrid-engine
+  - storybook
+
+saveExact: true
+sharedWorkspaceLockfile: true
+engineStrict: true
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+minimumReleaseAgeIgnoreMissingTime: false
+strictDepBuilds: true
+verifyDepsBeforeRun: error
+blockExoticSubdeps: true
+trustLockfile: false
