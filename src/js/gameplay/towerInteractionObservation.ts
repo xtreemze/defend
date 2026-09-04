@@ -79,7 +79,12 @@ export interface TowerInteractionObservationSummary {
 }
 
 function isFiniteNumber(value: number): boolean {
-	return value === value && value !== Infinity && value !== -Infinity;
+	return (
+		typeof value === "number" &&
+		value === value &&
+		value !== Infinity &&
+		value !== -Infinity
+	);
 }
 
 function finite(value: number, fallback = 0): number {
