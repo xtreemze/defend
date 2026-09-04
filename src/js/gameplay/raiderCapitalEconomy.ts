@@ -1,6 +1,6 @@
 import {
 	settleConservedRaidExchange,
-	type ConservedRaidExchangeResult
+	ConservedRaidExchangeResult
 } from "./conservedRaidExchange";
 
 export type RaiderCapitalTier = 1 | 2 | 3;
@@ -148,10 +148,8 @@ export function settleRaiderCapitalEconomy(
 		exchange.extractedEnergy +
 		exchange.collateralDissipation +
 		returnedCapital +
-		capturedCapital +
 		looseOrDissipatedCapital +
-		sunkAtLaunch -
-		capturedCapital;
+		sunkAtLaunch;
 
 	return {
 		mode: input.mode,
