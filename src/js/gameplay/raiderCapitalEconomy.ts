@@ -18,7 +18,10 @@ export interface RaiderCapitalSettlementInput {
 	defenderReserve: number;
 	defenderCapacity: number;
 	breached: boolean;
-	remainingViability: number;
+	/** Physical viability/capability when extraction occurs. */
+	breachViability: number;
+	/** Capital fraction that actually survives the later retreat/evacuation. */
+	returnViability: number;
 	travelAndOperatingCost: number;
 	defenderCaptureFraction: number;
 	collateralDissipationRatio: number;
@@ -28,7 +31,11 @@ export interface RaiderCapitalSettlement {
 	mode: RaiderCapitalMode;
 	tier: RaiderCapitalTier;
 	committedEnergy: number;
-	remainingViability: number;
+	breachViability: number;
+	returnViability: number;
+	capitalPresentAtBreach: number;
+	preBreachCapitalLoss: number;
+	postBreachCapitalLoss: number;
 	requestedExtractionEnergy: number;
 	extractedEnergy: number;
 	returnedCapital: number;
@@ -48,7 +55,11 @@ export interface RaiderCapitalExpectedValueInput {
 	profile: RaiderCapitalProfile;
 	perceivedTargetEnergy: number;
 	expectedBreachProbability: number;
+	/** Expected body viability/capability at successful extraction. */
 	expectedArrivalViabilityOnBreach: number;
+	/** Expected capital fraction that returns after a successful breach. */
+	expectedReturnViabilityAfterBreach: number;
+	/** Expected capital fraction that returns after a failed breach/retreat. */
 	expectedReturnViabilityOnFailure: number;
 	travelAndOperatingCost: number;
 }
@@ -61,12 +72,20 @@ export interface RaiderCapitalExpectedValue {
 	expectedExtractedEnergy: number;
 	expectedReturnedCapital: number;
 	expectedCapitalLoss: number;
+	expectedPostBreachCapitalLoss: number;
 	expectedNetReturn: number;
 	expectedReturnOnCommitment: number;
 }
 
 function finite(value: number, fallback = 0): number {
-	if (value !== value || value === Infinity || value === -Infinity) return fallback;
+	if (
+		typeof value !== "number" ||
+		value !== value ||
+		value === Infinity ||
+		value === -Infinity
+	) {
+		return fallback;
+	}
 	return value;
 }
 
@@ -94,28 +113,44 @@ function normalizedProfile(profile: RaiderCapitalProfile): RaiderCapitalProfile 
  * therefore cannot also be a defender-recovery source without introducing an
  * additional embodied-energy source.
  *
- * `embodied-return` moves launch commitment into the raider. Surviving capital
- * returns in proportion to final viability; capital that does not return is
- * the only launch capital available for defender capture or dissipation.
+ * `embodied-return` moves launch commitment into the raider. Viability at breach
+ * limits extraction capability and capital still physically present at that
+ * moment. A separate return viability then allows post-breach interception,
+ * ejection, collision or failed evacuation to destroy/expose additional capital.
  */
 export function settleRaiderCapitalEconomy(
 	input: RaiderCapitalSettlementInput
 ): RaiderCapitalSettlement {
 	const profile = normalizedProfile(input.profile);
-	const viability = clamp01(input.remainingViability);
+	const breachViability = input.breached ? clamp01(input.breachViability) : 0;
+	const requestedReturnViability = clamp01(input.returnViability);
+	const returnViability = input.breached
+		? Math.min(requestedReturnViability, breachViability)
+		: requestedReturnViability;
 	const captureFraction = clamp01(input.defenderCaptureFraction);
 	const requestedExtractionEnergy = input.breached
-		? profile.extractionPotential * viability
+		? profile.extractionPotential * breachViability
 		: 0;
 
+	const capitalPresentAtBreach =
+		input.mode === "embodied-return" && input.breached
+			? profile.committedEnergy * breachViability
+			: 0;
 	const returnedCapital =
 		input.mode === "embodied-return"
-			? profile.committedEnergy * viability
+			? profile.committedEnergy * returnViability
 			: 0;
-	const capitalAtRiskLost =
-		input.mode === "embodied-return"
-			? profile.committedEnergy - returnedCapital
+	const preBreachCapitalLoss =
+		input.mode !== "embodied-return"
+			? 0
+			: input.breached
+				? Math.max(0, profile.committedEnergy - capitalPresentAtBreach)
+				: Math.max(0, profile.committedEnergy - returnedCapital);
+	const postBreachCapitalLoss =
+		input.mode === "embodied-return" && input.breached
+			? Math.max(0, capitalPresentAtBreach - returnedCapital)
 			: 0;
+	const capitalAtRiskLost = preBreachCapitalLoss + postBreachCapitalLoss;
 	const requestedRecoveryEnergy = capitalAtRiskLost * captureFraction;
 	const sunkAtLaunch =
 		input.mode === "fully-sunk" ? profile.committedEnergy : 0;
@@ -155,7 +190,11 @@ export function settleRaiderCapitalEconomy(
 		mode: input.mode,
 		tier: profile.tier,
 		committedEnergy: profile.committedEnergy,
-		remainingViability: viability,
+		breachViability,
+		returnViability,
+		capitalPresentAtBreach,
+		preBreachCapitalLoss,
+		postBreachCapitalLoss,
 		requestedExtractionEnergy,
 		extractedEnergy: exchange.extractedEnergy,
 		returnedCapital,
@@ -172,10 +211,9 @@ export function settleRaiderCapitalEconomy(
 }
 
 /**
- * Pre-commit expected value with the same target-richness cap used by #119,
- * extended to account for capital that can physically return from a surviving
- * raider. Failure viability represents a retreat/failed-breach survival
- * hypothesis and remains caller-owned.
+ * Pre-commit expected value with target-richness-bounded extraction and an
+ * explicit post-breach return phase. Successful extraction therefore does not
+ * imply that the same fraction of capital safely reaches the mothership.
  */
 export function estimateRaiderCapitalExpectedValue(
 	input: RaiderCapitalExpectedValueInput
@@ -184,6 +222,10 @@ export function estimateRaiderCapitalExpectedValue(
 	const perceivedTargetEnergy = positive(input.perceivedTargetEnergy);
 	const breachProbability = clamp01(input.expectedBreachProbability);
 	const breachViability = clamp01(input.expectedArrivalViabilityOnBreach);
+	const successReturnViability = Math.min(
+		clamp01(input.expectedReturnViabilityAfterBreach),
+		breachViability
+	);
 	const failureViability = clamp01(input.expectedReturnViabilityOnFailure);
 	const travelAndOperatingCost = positive(input.travelAndOperatingCost);
 	const extractionOnBreach = Math.min(
@@ -195,11 +237,17 @@ export function estimateRaiderCapitalExpectedValue(
 	const expectedReturnedCapital =
 		input.mode === "embodied-return"
 			? profile.committedEnergy *
-				(breachProbability * breachViability +
+				(breachProbability * successReturnViability +
 					(1 - breachProbability) * failureViability)
 			: 0;
 	const expectedCapitalLoss =
 		profile.committedEnergy - expectedReturnedCapital;
+	const expectedPostBreachCapitalLoss =
+		input.mode === "embodied-return"
+			? profile.committedEnergy *
+				breachProbability *
+				Math.max(0, breachViability - successReturnViability)
+			: 0;
 	const expectedNetReturn =
 		expectedExtractedEnergy - expectedCapitalLoss - travelAndOperatingCost;
 	const expectedReturnOnCommitment =
@@ -215,6 +263,7 @@ export function estimateRaiderCapitalExpectedValue(
 		expectedExtractedEnergy,
 		expectedReturnedCapital,
 		expectedCapitalLoss,
+		expectedPostBreachCapitalLoss,
 		expectedNetReturn,
 		expectedReturnOnCommitment
 	};
