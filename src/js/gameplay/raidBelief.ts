@@ -48,9 +48,17 @@ export interface RaidBeliefExpectedValueInputs {
 	expectedArrivalViability: number;
 }
 
+function isFiniteNumber(value: number): boolean {
+	return (
+		typeof value === "number" &&
+		value === value &&
+		value !== Infinity &&
+		value !== -Infinity
+	);
+}
+
 function finite(value: number, fallback = 0): number {
-	if (value !== value || value === Infinity || value === -Infinity) return fallback;
-	return value;
+	return isFiniteNumber(value) ? value : fallback;
 }
 
 function positive(value: number): number {
@@ -80,11 +88,41 @@ function normalizeCalibration(
 	};
 }
 
+function normalizeApproach(approach: RaidApproachBelief): RaidApproachBelief {
+	return {
+		expectedBreachProbability: clamp01(approach.expectedBreachProbability),
+		expectedArrivalViability: clamp01(approach.expectedArrivalViability),
+		uncertainty: clamp01(approach.uncertainty),
+		directObservations: Math.max(
+			0,
+			Math.floor(positive(approach.directObservations))
+		),
+		secondsSinceDirectObservation: positive(
+			approach.secondsSinceDirectObservation
+		)
+	};
+}
+
 function timeAlpha(deltaSeconds: number, halfLifeSeconds: number): number {
 	const delta = positive(deltaSeconds);
 	if (delta <= 0) return 0;
 	if (halfLifeSeconds <= 0) return 1;
 	return 1 - Math.pow(0.5, delta / halfLifeSeconds);
+}
+
+function validSignatureObservation(observedTargetEnergy: number): boolean {
+	return isFiniteNumber(observedTargetEnergy) && observedTargetEnergy >= 0;
+}
+
+function validOutcomeObservation(observation: RaidOutcomeObservation): boolean {
+	return (
+		typeof observation.breached === "boolean" &&
+		isFiniteNumber(observation.reliability) &&
+		observation.reliability > 0 &&
+		isFiniteNumber(observation.remainingViability) &&
+		observation.remainingViability >= 0 &&
+		observation.remainingViability <= 1
+	);
 }
 
 export function createRaidOpportunityBelief(
@@ -137,24 +175,22 @@ export function ageRaidApproachBelief(
 	calibrationInput: RaidBeliefCalibration
 ): RaidApproachBelief {
 	const calibration = normalizeCalibration(calibrationInput);
+	const normalized = normalizeApproach(approach);
 	const delta = positive(deltaSeconds);
 	const staleAlpha = timeAlpha(
 		delta,
 		calibration.uncertaintyStaleHalfLifeSeconds
 	);
-	const uncertainty = clamp01(approach.uncertainty);
 	return {
-		expectedBreachProbability: clamp01(approach.expectedBreachProbability),
-		expectedArrivalViability: clamp01(approach.expectedArrivalViability),
+		expectedBreachProbability: normalized.expectedBreachProbability,
+		expectedArrivalViability: normalized.expectedArrivalViability,
 		uncertainty: clamp01(
-			uncertainty + (1 - uncertainty) * staleAlpha
+			normalized.uncertainty +
+				(1 - normalized.uncertainty) * staleAlpha
 		),
-		directObservations: Math.max(
-			0,
-			Math.floor(positive(approach.directObservations))
-		),
+		directObservations: normalized.directObservations,
 		secondsSinceDirectObservation:
-			positive(approach.secondsSinceDirectObservation) + delta
+			normalized.secondsSinceDirectObservation + delta
 	};
 }
 
@@ -177,8 +213,9 @@ export function ageRaidBelief(
 }
 
 /**
- * Update target-global opportunity from a lossy teal signature. This function
- * knows nothing about a route, raider tier or defense quality.
+ * Update target-global opportunity from a lossy teal signature. Invalid/missing
+ * samples are not evidence that the target is empty: they leave the opportunity
+ * mean unchanged. Values above capacity may still saturate at capacity.
  */
 export function observeRaidOpportunitySignature(
 	opportunity: RaidOpportunityBelief,
@@ -192,10 +229,12 @@ export function observeRaidOpportunitySignature(
 		0,
 		calibration.targetEnergyCapacity
 	);
-	const target = clamp(
-		observedTargetEnergy,
-		0,
-		calibration.targetEnergyCapacity
+	if (!validSignatureObservation(observedTargetEnergy)) {
+		return { perceivedTargetEnergy: current };
+	}
+	const target = Math.min(
+		calibration.targetEnergyCapacity,
+		observedTargetEnergy
 	);
 	const alpha = timeAlpha(deltaSeconds, calibration.signatureHalfLifeSeconds);
 	return {
@@ -203,8 +242,8 @@ export function observeRaidOpportunitySignature(
 	};
 }
 
-/** Convenience composite: time passes for this approach while the target-wide
- * passive signature updates opportunity only. */
+/** Convenience composite: time passes for this approach even when a passive
+ * signature sample is unusable; invalid sensor data does not become knowledge. */
 export function observeRaidSignature(
 	state: RaidBeliefState,
 	observedTargetEnergy: number,
@@ -227,9 +266,9 @@ export function observeRaidSignature(
 }
 
 /**
- * Direct raid evidence updates one contextual approach belief only. A failed R1
- * path therefore need not change the belief for a different R3 insertion unless
- * the caller intentionally shares that context.
+ * Direct raid evidence updates one contextual approach belief only. Invalid
+ * physical evidence or reliability <= 0 is an epistemic no-op: it does not
+ * update means, reduce uncertainty, increment evidence count, or reset age.
  */
 export function observeRaidApproachOutcome(
 	approach: RaidApproachBelief,
@@ -237,28 +276,31 @@ export function observeRaidApproachOutcome(
 	calibrationInput: RaidBeliefCalibration
 ): RaidApproachBelief {
 	const calibration = normalizeCalibration(calibrationInput);
+	const normalized = normalizeApproach(approach);
+	if (!validOutcomeObservation(observation)) {
+		return normalized;
+	}
+
 	const reliability = clamp01(observation.reliability);
 	const breachAlpha = calibration.breachObservationWeight * reliability;
 	const viabilityAlpha = calibration.viabilityObservationWeight * reliability;
 	const breachEvidence = observation.breached ? 1 : 0;
-	const viabilityEvidence = clamp01(observation.remainingViability);
-	const currentBreach = clamp01(approach.expectedBreachProbability);
-	const currentViability = clamp01(approach.expectedArrivalViability);
-	const uncertainty = clamp01(approach.uncertainty);
+	const viabilityEvidence = observation.remainingViability;
 	const uncertaintyRetention =
 		1 - calibration.directUncertaintyReduction * reliability;
 
 	return {
 		expectedBreachProbability: clamp01(
-			currentBreach + (breachEvidence - currentBreach) * breachAlpha
+			normalized.expectedBreachProbability +
+				(breachEvidence - normalized.expectedBreachProbability) * breachAlpha
 		),
 		expectedArrivalViability: clamp01(
-			currentViability +
-				(viabilityEvidence - currentViability) * viabilityAlpha
+			normalized.expectedArrivalViability +
+				(viabilityEvidence - normalized.expectedArrivalViability) *
+					viabilityAlpha
 		),
-		uncertainty: clamp01(uncertainty * uncertaintyRetention),
-		directObservations:
-			Math.max(0, Math.floor(positive(approach.directObservations))) + 1,
+		uncertainty: clamp01(normalized.uncertainty * uncertaintyRetention),
+		directObservations: normalized.directObservations + 1,
 		secondsSinceDirectObservation: 0
 	};
 }
