@@ -1,0 +1,38 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /experiments
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 8
+    versioning-strategy: increase
+    groups:
+      babylon:
+        applies-to: version-updates
+        patterns:
+          - "@babylonjs/*"
+      storybook:
+        applies-to: version-updates
+        patterns:
+          - "storybook"
+          - "@storybook/*"
+      vite-vitest-browser-tooling:
+        applies-to: version-updates
+        patterns:
+          - "vite"
+          - "vitest"
+          - "@vitest/*"
+          - "playwright"
+        update-types:
+          - patch
+          - minor
+      type-and-lint-tooling:
+        applies-to: version-updates
+        patterns:
+          - "typescript"
+          - "@types/*"
+          - "@biomejs/biome"
+        update-types:
+          - patch
+          - minor
