@@ -58,6 +58,12 @@ function scenarios(args: TowerIntentArgs): Scenario[] {
 			request: request(args, { balance: BASE_COST })
 		},
 		{
+			id: "under-cost",
+			label: "Below cost",
+			description: "A true insufficient-reserve case remains rejected under both affordability policies.",
+			request: request(args, { balance: BASE_COST - 1 })
+		},
+		{
 			id: "occupied",
 			label: "Occupied cell",
 			description: "Affordability must not hide an independent spatial rejection.",
@@ -96,6 +102,12 @@ function scenarios(args: TowerIntentArgs): Scenario[] {
 			request: request(args, { targetKind: "invalid-terrain" })
 		},
 		{
+			id: "outside-arena",
+			label: "Outside arena",
+			description: "A world hit outside the playable surface is distinguishable from invalid terrain.",
+			request: request(args, { targetKind: "outside-arena" })
+		},
+		{
 			id: "camera-gesture",
 			label: "Camera owns gesture",
 			description: "Input arbitration is ignored by world placement rather than reported as an economic failure.",
@@ -111,7 +123,7 @@ function scenarios(args: TowerIntentArgs): Scenario[] {
 }
 
 function statusLabel(result: TowerInteractionPreview): string {
-	if (result.disposition === "allowed") return result.intent.toUpper();
+	if (result.disposition === "allowed") return result.intent.toUpperCase();
 	if (result.disposition === "ignored") return "CAMERA";
 	return result.reason.replace(/-/g, " ").toUpperCase();
 }
@@ -143,7 +155,7 @@ const meta = {
 		const shell = createLabShell(
 			"Arena / interaction",
 			"Tower intent and rejection grammar",
-			"A pointer/touch candidate should be classifiable before the scene mutates. The playground keeps current exact-cost and level-3 behavior visible as explicit policies while exposing occupied, protected, terrain, stale-target and camera-arbitration reasons that production currently collapses into silent or ambiguous feedback."
+			"A pointer/touch candidate should be classifiable before the scene mutates. The playground keeps current exact-cost and level-3 behavior visible as explicit policies while exposing affordability, occupancy, protected-space, terrain, arena-boundary, stale-target and camera-arbitration reasons that production currently collapses into silent or ambiguous feedback."
 		);
 
 		shell.frame.innerHTML = `
@@ -199,31 +211,48 @@ type Story = StoryObj<typeof meta>;
 export const IntentMatrix: Story = {
 	play: async ({ canvasElement, args }) => {
 		const cards = canvasElement.querySelectorAll<HTMLElement>("[data-scenario]");
-		await expect(cards.length).toBe(9);
+		await expect(cards.length).toBe(11);
 
 		const exact = canvasElement.querySelector<HTMLElement>("[data-scenario='exact-cost']");
+		const underCost = canvasElement.querySelector<HTMLElement>("[data-scenario='under-cost']");
 		const occupied = canvasElement.querySelector<HTMLElement>("[data-scenario='occupied']");
 		const protectedCore = canvasElement.querySelector<HTMLElement>("[data-scenario='protected']");
 		const towerL1 = canvasElement.querySelector<HTMLElement>("[data-scenario='tower-l1']");
 		const towerMax = canvasElement.querySelector<HTMLElement>("[data-scenario='tower-max']");
+		const outsideArena = canvasElement.querySelector<HTMLElement>("[data-scenario='outside-arena']");
 		const camera = canvasElement.querySelector<HTMLElement>("[data-scenario='camera-gesture']");
 		const stale = canvasElement.querySelector<HTMLElement>("[data-scenario='stale-target']");
 
 		await expect(exact).not.toBeNull();
+		await expect(underCost).not.toBeNull();
 		await expect(occupied).not.toBeNull();
 		await expect(protectedCore).not.toBeNull();
 		await expect(towerL1).not.toBeNull();
 		await expect(towerMax).not.toBeNull();
+		await expect(outsideArena).not.toBeNull();
 		await expect(camera).not.toBeNull();
 		await expect(stale).not.toBeNull();
-		if (!exact || !occupied || !protectedCore || !towerL1 || !towerMax || !camera || !stale) return;
+		if (
+			!exact ||
+			!underCost ||
+			!occupied ||
+			!protectedCore ||
+			!towerL1 ||
+			!towerMax ||
+			!outsideArena ||
+			!camera ||
+			!stale
+		) return;
 
 		await expect(exact.dataset.disposition).toBe(
 			args.affordabilityRule === "inclusive" ? "allowed" : "rejected"
 		);
+		await expect(underCost.dataset.disposition).toBe("rejected");
+		await expect(underCost.dataset.reason).toBe("unaffordable");
 		await expect(occupied.dataset.reason).toBe("occupied");
 		await expect(protectedCore.dataset.reason).toBe("protected-core");
 		await expect(towerL1.dataset.intent).toBe("upgrade");
+		await expect(outsideArena.dataset.reason).toBe("outside-arena");
 		await expect(camera.dataset.disposition).toBe("ignored");
 		await expect(camera.dataset.reason).toBe("camera-gesture");
 		await expect(stale.dataset.reason).toBe("stale-target");
