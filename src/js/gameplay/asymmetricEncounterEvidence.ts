@@ -28,6 +28,7 @@ interface AsymmetricEncounterEvidence {
 interface AsymmetricVictoryThresholds {
 	minimumCommitmentDisadvantage: number;
 	minimumEconomicLeverage: number;
+	minimumEjectionShare: number;
 	minimumNonDestructiveResolutionShare: number;
 	minimumRouteDistanceAdded: number;
 	minimumDelaySeconds: number;
@@ -42,6 +43,7 @@ interface AsymmetricVictoryEvaluation {
 	playerNetCost: number;
 	opponentNetCost: number;
 	economicLeverage: number;
+	ejectionShare: number;
 	nonDestructiveResolutionShare: number;
 	breachRate: number;
 	resolvedBodies: number;
@@ -80,6 +82,10 @@ function fraction(numerator: number, denominator: number): number {
 		return 0;
 	}
 	return Math.max(0, Math.min(1, nonnegative(numerator) / safeDenominator));
+}
+
+function boundedFractionThreshold(value: number): number {
+	return Math.max(0, Math.min(1, finiteScalar(value)));
 }
 
 function encounterGrossCost(
@@ -148,6 +154,7 @@ function evaluateAsymmetricVictory(
 			nonnegative(evidence.bodiesExpired) +
 			nonnegative(evidence.bodiesBreached)
 	);
+	const ejectionShare = fraction(evidence.bodiesEjected, resolvedBodies);
 	const nonDestructiveResolutionShare = fraction(
 		nonnegative(evidence.bodiesEjected) + nonnegative(evidence.bodiesExpired),
 		resolvedBodies
@@ -160,7 +167,7 @@ function evaluateAsymmetricVictory(
 	if (economicLeverage >= nonnegative(thresholds.minimumEconomicLeverage)) {
 		axes.push("economic");
 	}
-	if (nonnegative(evidence.bodiesEjected) > 0) {
+	if (ejectionShare >= boundedFractionThreshold(thresholds.minimumEjectionShare)) {
 		axes.push("displacement");
 	}
 	if (delaySeconds >= nonnegative(thresholds.minimumDelaySeconds)) {
@@ -169,7 +176,10 @@ function evaluateAsymmetricVictory(
 	if (routeDistanceAdded >= nonnegative(thresholds.minimumRouteDistanceAdded)) {
 		axes.push("geometric");
 	}
-	if (nonDestructiveResolutionShare >= nonnegative(thresholds.minimumNonDestructiveResolutionShare)) {
+	if (
+		nonDestructiveResolutionShare >=
+		boundedFractionThreshold(thresholds.minimumNonDestructiveResolutionShare)
+	) {
 		axes.push("attrition");
 	}
 
@@ -178,10 +188,7 @@ function evaluateAsymmetricVictory(
 		1,
 		nonnegative(thresholds.minimumCommitmentDisadvantage)
 	);
-	const breachThreshold = Math.max(
-		0,
-		Math.min(1, finiteScalar(thresholds.maximumBreachRate, 1))
-	);
+	const breachThreshold = boundedFractionThreshold(thresholds.maximumBreachRate);
 
 	return {
 		qualifies:
@@ -196,6 +203,7 @@ function evaluateAsymmetricVictory(
 		playerNetCost,
 		opponentNetCost,
 		economicLeverage,
+		ejectionShare,
 		nonDestructiveResolutionShare,
 		breachRate,
 		resolvedBodies,
