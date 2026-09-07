@@ -3,7 +3,7 @@ import {
   Color3,
   Engine,
   HemisphericLight,
-  Mesh,
+  type Mesh,
   MeshBuilder,
   PointLight,
   RegisterStandardEngineExtensions,

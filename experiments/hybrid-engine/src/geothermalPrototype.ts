@@ -597,8 +597,12 @@ async function main(): Promise<void> {
     relocationIndex = 0;
     collectedFromEruptions = 0;
     eruptionSourceId = null;
-    eruptionParticles.forEach(particle => particle.mesh.dispose());
-    collectedDroplets.forEach(droplet => droplet.mesh.dispose());
+    eruptionParticles.forEach((particle) => {
+      particle.mesh.dispose();
+    });
+    collectedDroplets.forEach((droplet) => {
+      droplet.mesh.dispose();
+    });
     eruptionParticles = [];
     collectedDroplets = [];
 

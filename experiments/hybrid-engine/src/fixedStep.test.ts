@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  INITIAL_FIXED_STEP_STATE,
   advanceFixedStep,
   type FixedStepPolicy,
   type FixedStepState,
+  INITIAL_FIXED_STEP_STATE,
 } from "./fixedStep";
 
 const policy: FixedStepPolicy = {

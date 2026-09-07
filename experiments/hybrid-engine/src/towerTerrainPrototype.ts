@@ -3,7 +3,7 @@ import {
   Color3,
   Engine,
   HemisphericLight,
-  Mesh,
+  type Mesh,
   MeshBuilder,
   RegisterStandardEngineExtensions,
   Scene,
@@ -17,8 +17,8 @@ import {
   accumulateDepression,
   radialDeformationDepth,
   structuralStabilization,
-  terrainImpactProfile,
   type TerrainDeformationCalibration,
+  terrainImpactProfile,
 } from "../../../src/js/gameplay/terrainDeformation";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
@@ -467,7 +467,9 @@ async function main(): Promise<void> {
 
   const buildAll = (): void => {
     for (const tower of towers.splice(0)) disposeTower(tower);
-    towerPositions.forEach((position) => stabilizeFoundation(position));
+    towerPositions.forEach((position) => {
+      stabilizeFoundation(position);
+    });
     createTower(1, towerPositions[0].x, towerPositions[0].z);
     createTower(2, towerPositions[1].x, towerPositions[1].z);
     createTower(3, towerPositions[2].x, towerPositions[2].z);

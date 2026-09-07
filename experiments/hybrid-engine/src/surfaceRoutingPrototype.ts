@@ -3,7 +3,7 @@ import {
   Color3,
   Engine,
   HemisphericLight,
-  Mesh,
+  type Mesh,
   MeshBuilder,
   RegisterStandardEngineExtensions,
   Scene,
@@ -552,9 +552,15 @@ async function main(): Promise<void> {
   spawnEnergy(scene, energyPackets, energyMaterial);
 
   const reset = () => {
-    obstacles.forEach((obstacle) => obstacle.mesh.dispose());
-    raiders.forEach((raider) => raider.mesh.dispose());
-    energyPackets.forEach((packet) => packet.mesh.dispose());
+    obstacles.forEach((obstacle) => {
+      obstacle.mesh.dispose();
+    });
+    raiders.forEach((raider) => {
+      raider.mesh.dispose();
+    });
+    energyPackets.forEach((packet) => {
+      packet.mesh.dispose();
+    });
     obstacles = createFortress(scene);
     raiders = spawnRaiders(scene);
     energyPackets = [];
@@ -572,8 +578,12 @@ async function main(): Promise<void> {
 
   engine.runRenderLoop(() => {
     const deltaSeconds = Math.min(MAX_DT, engine.getDeltaTime() / 1000);
-    raiders.forEach((raider) => updateRaider(raider, obstacles, deltaSeconds));
-    energyPackets.forEach((packet) => updateEnergy(packet, obstacles, deltaSeconds));
+    raiders.forEach((raider) => {
+      updateRaider(raider, obstacles, deltaSeconds);
+    });
+    energyPackets.forEach((packet) => {
+      updateEnergy(packet, obstacles, deltaSeconds);
+    });
 
     const gate = obstacles.find((obstacle) => obstacle.id === "broad-gate");
     const pooled = energyPackets.filter((packet) => packet.state === "pooling");

@@ -12,9 +12,9 @@ import {
 } from "@babylonjs/core/pure";
 import initRuntime, { DefendRuntime } from "../pkg/defend_hybrid_runtime.js";
 import {
-  INITIAL_FIXED_STEP_STATE,
   advanceFixedStep,
   type FixedStepPolicy,
+  INITIAL_FIXED_STEP_STATE,
 } from "./fixedStep";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
