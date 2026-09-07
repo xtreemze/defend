@@ -5,6 +5,7 @@ import {
   HemisphericLight,
   Mesh,
   MeshBuilder,
+  RegisterStandardEngineExtensions,
   Scene,
   StandardMaterial,
   TransformNode,
@@ -19,6 +20,11 @@ import {
   terrainImpactProfile,
   type TerrainDeformationCalibration,
 } from "../../../src/js/gameplay/terrainDeformation";
+
+// "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
+// registers none of the prototype extensions they rely on at runtime. Register
+// what this prototype uses explicitly, or the failure only appears in a browser.
+RegisterStandardEngineExtensions();
 
 type TowerPhase = "foundation" | "base" | "drilling" | "assembly" | "calibrating" | "ready" | "dry" | "renovating";
 
