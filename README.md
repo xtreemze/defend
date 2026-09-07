@@ -1,12 +1,13 @@
-<div align="center">
+<h1 align="center">Defend</h1>
 
-# Defend
+<p align="center"><strong>A physics-driven strategy game about finite energy, temporary defenses, and the cost of perfect deterrence.</strong></p>
 
-**A physics-driven strategy game about finite energy, temporary defenses, and the cost of perfect deterrence.**
-
-[Play the historical web build](https://xtreemze.github.io/defend/) · [Game design manual](./docs/GAME_DESIGN_MANUAL.md) · [Development contract](./AGENTS.md) · [Issues](https://github.com/xtreemze/defend/issues)
-
-</div>
+<p align="center">
+  <a href="https://xtreemze.github.io/defend/">Play the historical web build</a> ·
+  <a href="./docs/GAME_DESIGN_MANUAL.md">Game design manual</a> ·
+  <a href="./AGENTS.md">Development contract</a> ·
+  <a href="https://github.com/xtreemze/defend/issues">Issues</a>
+</p>
 
 ![Defend battlefield](./release/screenshot2.png)
 
