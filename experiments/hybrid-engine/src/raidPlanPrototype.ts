@@ -148,7 +148,11 @@ panel.id = "raid-plan-lab";
 panel.setAttribute("aria-label", "Three-set raid planning prototype");
 document.body.appendChild(panel);
 
-function tierControls(planIndex: number, tier: RaiderTier, value: number): string {
+function tierControls(
+  planIndex: number,
+  tier: RaiderTier,
+  value: number,
+): string {
   return `
     <div class="tier-row">
       <span>R${tier}</span>
@@ -164,7 +168,10 @@ function render(): void {
   const currentSector = api
     ? `${api.state.raidSector.x.toFixed(1)}, ${api.state.raidSector.z.toFixed(1)}`
     : "navigation initializing";
-  const totalCommitment = plans.reduce((sum, plan) => sum + commitment(plan), 0);
+  const totalCommitment = plans.reduce(
+    (sum, plan) => sum + commitment(plan),
+    0,
+  );
 
   panel.innerHTML = `
     <header>
@@ -200,7 +207,7 @@ function render(): void {
   `;
 }
 
-panel.addEventListener("click", event => {
+panel.addEventListener("click", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLButtonElement)) return;
   const action = target.dataset.action;
@@ -235,7 +242,9 @@ function refreshCurrentSector(): void {
 render();
 requestAnimationFrame(refreshCurrentSector);
 
-(window as unknown as { __defendRaidPlanPrototype?: unknown }).__defendRaidPlanPrototype = {
+(
+  window as unknown as { __defendRaidPlanPrototype?: unknown }
+).__defendRaidPlanPrototype = {
   plans,
   advanceQueue,
   useCurrentSector,

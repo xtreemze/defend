@@ -12,9 +12,9 @@ import {
 } from "@babylonjs/core/pure";
 import initRuntime, { DefendRuntime } from "../pkg/defend_hybrid_runtime.js";
 import {
-  INITIAL_FIXED_STEP_STATE,
   advanceFixedStep,
   type FixedStepPolicy,
+  INITIAL_FIXED_STEP_STATE,
 } from "./fixedStep";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
@@ -57,7 +57,11 @@ async function main(): Promise<void> {
   camera.lowerRadiusLimit = 48;
   camera.upperRadiusLimit = 180;
 
-  const light = new HemisphericLight("ambient", new Vector3(0.2, 1, 0.1), scene);
+  const light = new HemisphericLight(
+    "ambient",
+    new Vector3(0.2, 1, 0.1),
+    scene,
+  );
   light.intensity = 0.8;
 
   const coreMaterial = new StandardMaterial("coreMaterial", scene);
@@ -82,7 +86,10 @@ async function main(): Promise<void> {
   bodyTemplate.isVisible = false;
 
   const runtime = new DefendRuntime();
-  const bodyInstances = new Map<number, ReturnType<typeof bodyTemplate.createInstance>>();
+  const bodyInstances = new Map<
+    number,
+    ReturnType<typeof bodyTemplate.createInstance>
+  >();
 
   for (let index = 0; index < BODY_COUNT; index += 1) {
     const angle = (index / BODY_COUNT) * Math.PI * 2;
@@ -110,7 +117,10 @@ async function main(): Promise<void> {
   }
 
   const snapshotIds = Array.from(runtime.body_ids());
-  if (snapshotIds.length !== BODY_COUNT || snapshotIds.some((id) => !bodyInstances.has(id))) {
+  if (
+    snapshotIds.length !== BODY_COUNT ||
+    snapshotIds.some((id) => !bodyInstances.has(id))
+  ) {
     throw new Error("Hybrid runtime body identity contract is inconsistent");
   }
 
@@ -147,17 +157,25 @@ async function main(): Promise<void> {
 
     const positions = runtime.positions();
     if (positions.length !== snapshotIds.length * 3) {
-      throw new Error("Hybrid runtime position snapshot changed without a lifecycle event");
+      throw new Error(
+        "Hybrid runtime position snapshot changed without a lifecycle event",
+      );
     }
 
     snapshotBytes = positions.length * Float32Array.BYTES_PER_ELEMENT;
     for (let index = 0; index < snapshotIds.length; index += 1) {
       const body = bodyInstances.get(snapshotIds[index]);
       if (!body) {
-        throw new Error(`Missing Babylon instance for body ${snapshotIds[index]}`);
+        throw new Error(
+          `Missing Babylon instance for body ${snapshotIds[index]}`,
+        );
       }
       const offset = index * 3;
-      body.position.set(positions[offset], positions[offset + 1], positions[offset + 2]);
+      body.position.set(
+        positions[offset],
+        positions[offset + 1],
+        positions[offset + 2],
+      );
     }
 
     scene.render();
