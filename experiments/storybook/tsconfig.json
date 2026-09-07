@@ -5,7 +5,6 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["node"],
-    "baseUrl": ".",
     "paths": {
       "@defend/*": ["../../src/js/*"]
     },
