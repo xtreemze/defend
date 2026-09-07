@@ -26,7 +26,15 @@ import {
 // what this prototype uses explicitly, or the failure only appears in a browser.
 RegisterStandardEngineExtensions();
 
-type TowerPhase = "foundation" | "base" | "drilling" | "assembly" | "calibrating" | "ready" | "dry" | "renovating";
+type TowerPhase =
+  | "foundation"
+  | "base"
+  | "drilling"
+  | "assembly"
+  | "calibrating"
+  | "ready"
+  | "dry"
+  | "renovating";
 
 interface MagmaSource {
   id: string;
@@ -119,11 +127,24 @@ async function main(): Promise<void> {
   const miss3Button = document.querySelector<HTMLButtonElement>("#miss3");
   const dropButton = document.querySelector<HTMLButtonElement>("#drop");
   const bulgeButton = document.querySelector<HTMLButtonElement>("#bulge");
-  if (!canvas || !metrics || !resetButton || !maintainButton || !migrateButton || !miss2Button || !miss3Button || !dropButton || !bulgeButton) {
+  if (
+    !canvas ||
+    !metrics ||
+    !resetButton ||
+    !maintainButton ||
+    !migrateButton ||
+    !miss2Button ||
+    !miss3Button ||
+    !dropButton ||
+    !bulgeButton
+  ) {
     throw new Error("Tower terrain lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, { antialias: true, adaptToDeviceRatio: true });
+  const engine = new Engine(canvas, true, {
+    antialias: true,
+    adaptToDeviceRatio: true,
+  });
   const scene = new Scene(engine);
   scene.clearColor.set(0.018, 0.012, 0.027, 1);
 
@@ -141,7 +162,11 @@ async function main(): Promise<void> {
   camera.lowerBetaLimit = 0.45;
   camera.upperBetaLimit = 1.42;
 
-  const light = new HemisphericLight("ambient", new Vector3(0.2, 1, -0.15), scene);
+  const light = new HemisphericLight(
+    "ambient",
+    new Vector3(0.2, 1, -0.15),
+    scene,
+  );
   light.intensity = 0.9;
 
   const groundMaterial = createMaterial(
@@ -193,12 +218,19 @@ async function main(): Promise<void> {
 
   const ground = MeshBuilder.CreateGround(
     "deformable-terrain",
-    { width: TERRAIN_SIZE, height: TERRAIN_SIZE, subdivisions: TERRAIN_SUBDIVISIONS, updatable: true },
+    {
+      width: TERRAIN_SIZE,
+      height: TERRAIN_SIZE,
+      subdivisions: TERRAIN_SUBDIVISIONS,
+      updatable: true,
+    },
     scene,
   );
   ground.material = groundMaterial;
 
-  const positions = Array.from(ground.getVerticesData(VertexBuffer.PositionKind) ?? []);
+  const positions = Array.from(
+    ground.getVerticesData(VertexBuffer.PositionKind) ?? [],
+  );
   const indices = Array.from(ground.getIndices() ?? []);
   const baselineHeights = new Array<number>(positions.length / 3);
   const depressionDepths = new Array<number>(positions.length / 3).fill(0);
@@ -207,7 +239,10 @@ async function main(): Promise<void> {
   for (let index = 0; index < positions.length; index += 3) {
     const x = positions[index];
     const z = positions[index + 2];
-    const y = 0.65 * Math.sin(x * 0.075) + 0.38 * Math.cos(z * 0.095) + 0.22 * Math.sin((x + z) * 0.13);
+    const y =
+      0.65 * Math.sin(x * 0.075) +
+      0.38 * Math.cos(z * 0.095) +
+      0.22 * Math.sin((x + z) * 0.13);
     positions[index + 1] = y;
     baselineHeights[index / 3] = y;
   }
@@ -215,7 +250,10 @@ async function main(): Promise<void> {
   const updateTerrainMesh = () => {
     const normals = new Array<number>(positions.length).fill(0);
     for (let vertex = 0; vertex < baselineHeights.length; vertex += 1) {
-      positions[vertex * 3 + 1] = baselineHeights[vertex] + upliftHeights[vertex] - depressionDepths[vertex];
+      positions[vertex * 3 + 1] =
+        baselineHeights[vertex] +
+        upliftHeights[vertex] -
+        depressionDepths[vertex];
     }
     VertexData.ComputeNormals(positions, indices, normals);
     ground.updateVerticesData(VertexBuffer.PositionKind, positions, true);
@@ -236,10 +274,18 @@ async function main(): Promise<void> {
         nearest = vertex;
       }
     }
-    return baselineHeights[nearest] + upliftHeights[nearest] - depressionDepths[nearest];
+    return (
+      baselineHeights[nearest] +
+      upliftHeights[nearest] -
+      depressionDepths[nearest]
+    );
   };
 
-  const stabilizationAt = (x: number, z: number, towerPositions: Vector3[]): number => {
+  const stabilizationAt = (
+    x: number,
+    z: number,
+    towerPositions: Vector3[],
+  ): number => {
     let value = 0;
     for (const towerPosition of towerPositions) {
       value = Math.max(
@@ -263,7 +309,10 @@ async function main(): Promise<void> {
       const distance = Math.hypot(x - center.x, z - center.z);
       if (distance <= radius) {
         affected.push(vertex);
-        average += baselineHeights[vertex] + upliftHeights[vertex] - depressionDepths[vertex];
+        average +=
+          baselineHeights[vertex] +
+          upliftHeights[vertex] -
+          depressionDepths[vertex];
       }
     }
     if (affected.length === 0) return;
@@ -273,7 +322,10 @@ async function main(): Promise<void> {
       const z = positions[vertex * 3 + 2];
       const distance = Math.hypot(x - center.x, z - center.z);
       const influence = smoothstep(1 - distance / radius) * 0.48;
-      const current = baselineHeights[vertex] + upliftHeights[vertex] - depressionDepths[vertex];
+      const current =
+        baselineHeights[vertex] +
+        upliftHeights[vertex] -
+        depressionDepths[vertex];
       baselineHeights[vertex] += (average - current) * influence;
     }
     updateTerrainMesh();
@@ -315,7 +367,12 @@ async function main(): Promise<void> {
     updateTerrainMesh();
   };
 
-  const applyBulge = (x: number, z: number, radius: number, height: number): void => {
+  const applyBulge = (
+    x: number,
+    z: number,
+    radius: number,
+    height: number,
+  ): void => {
     for (let vertex = 0; vertex < upliftHeights.length; vertex += 1) {
       const dx = positions[vertex * 3] - x;
       const dz = positions[vertex * 3 + 2] - z;
@@ -327,10 +384,18 @@ async function main(): Promise<void> {
     updateTerrainMesh();
   };
 
-  const silo = MeshBuilder.CreateBox("silo", { width: 20, depth: 20, height: 3 }, scene);
+  const silo = MeshBuilder.CreateBox(
+    "silo",
+    { width: 20, depth: 20, height: 3 },
+    scene,
+  );
   silo.position.set(0, sampleHeight(0, 0) + 1.5, 0);
   silo.material = towerMaterial;
-  const siloCore = MeshBuilder.CreateBox("silo-core", { width: 13, depth: 13, height: 1 }, scene);
+  const siloCore = MeshBuilder.CreateBox(
+    "silo-core",
+    { width: 13, depth: 13, height: 1 },
+    scene,
+  );
   siloCore.position.set(0, silo.position.y + 2, 0);
   siloCore.material = tealMaterial;
 
@@ -340,13 +405,21 @@ async function main(): Promise<void> {
     { id: "east", position: new Vector3(55, -7, -28) },
   ];
   const sources: MagmaSource[] = sourceData.map(({ id, position }) => {
-    const mesh = MeshBuilder.CreateSphere(`magma-${id}`, { diameter: 5.5, segments: 7 }, scene);
+    const mesh = MeshBuilder.CreateSphere(
+      `magma-${id}`,
+      { diameter: 5.5, segments: 7 },
+      scene,
+    );
     mesh.position.copyFrom(position);
     mesh.material = tealMaterial;
     return { id, position: mesh.position, mesh };
   });
 
-  const target = MeshBuilder.CreateSphere("moving-raider-target", { diameter: 7, segments: 6 }, scene);
+  const target = MeshBuilder.CreateSphere(
+    "moving-raider-target",
+    { diameter: 7, segments: 6 },
+    scene,
+  );
   target.material = targetMaterial;
 
   const towers: TowerModel[] = [];
@@ -362,7 +435,11 @@ async function main(): Promise<void> {
     const groundY = sampleHeight(x, z);
     root.position.set(x, groundY, z);
 
-    const base = MeshBuilder.CreateBox(`tower-${level}-base`, { width: 10, depth: 10, height: 3 }, scene);
+    const base = MeshBuilder.CreateBox(
+      `tower-${level}-base`,
+      { width: 10, depth: 10, height: 3 },
+      scene,
+    );
     base.parent = root;
     base.position.y = 1.5;
     base.material = towerMaterial;
@@ -374,7 +451,11 @@ async function main(): Promise<void> {
     if (level > 1) {
       pillar = MeshBuilder.CreateBox(
         `tower-${level}-pillar`,
-        { width: level === 2 ? 1.5 : 2.2, depth: level === 2 ? 1.5 : 2.2, height: level === 2 ? 6 : 9 },
+        {
+          width: level === 2 ? 1.5 : 2.2,
+          depth: level === 2 ? 1.5 : 2.2,
+          height: level === 2 ? 6 : 9,
+        },
         scene,
       );
       pillar.parent = root;
@@ -392,7 +473,11 @@ async function main(): Promise<void> {
       turret.material = dryMaterial;
       turret.scaling.set(0.04, 0.04, 0.04);
 
-      drill = MeshBuilder.CreateCylinder(`tower-${level}-drill`, { height: 12, diameter: 0.45, tessellation: 7 }, scene);
+      drill = MeshBuilder.CreateCylinder(
+        `tower-${level}-drill`,
+        { height: 12, diameter: 0.45, tessellation: 7 },
+        scene,
+      );
       drill.parent = root;
       drill.position.y = -6;
       drill.material = dryMaterial;
@@ -431,7 +516,11 @@ async function main(): Promise<void> {
     midpoint.y -= 4.5;
     tower.conduit = MeshBuilder.CreateTube(
       `tower-${tower.level}-conduit`,
-      { path: [start, midpoint, end], radius: tower.level === 3 ? 0.42 : 0.3, tessellation: 7 },
+      {
+        path: [start, midpoint, end],
+        radius: tower.level === 3 ? 0.42 : 0.3,
+        tessellation: 7,
+      },
       scene,
     );
     tower.conduit.material = tealMaterial;
@@ -476,14 +565,21 @@ async function main(): Promise<void> {
   };
   buildAll();
 
-  const deploymentCompleteAt = (level: number): number => (level === 1 ? 1.8 : level === 2 ? 4.1 : 5.4);
+  const deploymentCompleteAt = (level: number): number =>
+    level === 1 ? 1.8 : level === 2 ? 4.1 : 5.4;
 
   const updateTowerDeployment = (tower: TowerModel, dt: number): void => {
     tower.elapsed += dt;
     const baseStart = 0.25;
     const baseEnd = tower.level === 1 ? 1.55 : 1.5;
-    const baseT = smoothstep((tower.elapsed - baseStart) / (baseEnd - baseStart));
-    tower.base.scaling.set(0.05 + baseT * 0.95, 0.05 + baseT * 0.95, 0.05 + baseT * 0.95);
+    const baseT = smoothstep(
+      (tower.elapsed - baseStart) / (baseEnd - baseStart),
+    );
+    tower.base.scaling.set(
+      0.05 + baseT * 0.95,
+      0.05 + baseT * 0.95,
+      0.05 + baseT * 0.95,
+    );
 
     if (tower.level === 1) {
       tower.phase = tower.elapsed < baseEnd ? "base" : "ready";
@@ -492,47 +588,73 @@ async function main(): Promise<void> {
 
     const drillStart = 1.0;
     const drillEnd = tower.level === 2 ? 2.35 : 2.8;
-    const drillT = smoothstep((tower.elapsed - drillStart) / (drillEnd - drillStart));
+    const drillT = smoothstep(
+      (tower.elapsed - drillStart) / (drillEnd - drillStart),
+    );
     if (tower.drill) tower.drill.scaling.y = Math.max(0.01, drillT);
 
     const pillarStart = tower.level === 2 ? 1.65 : 2.0;
     const pillarEnd = tower.level === 2 ? 2.9 : 3.65;
-    const pillarT = smoothstep((tower.elapsed - pillarStart) / (pillarEnd - pillarStart));
+    const pillarT = smoothstep(
+      (tower.elapsed - pillarStart) / (pillarEnd - pillarStart),
+    );
     if (tower.pillar) tower.pillar.scaling.y = Math.max(0.01, pillarT);
 
     const turretStart = tower.level === 2 ? 2.45 : 3.15;
     const turretEnd = tower.level === 2 ? 3.55 : 4.65;
-    const turretT = smoothstep((tower.elapsed - turretStart) / (turretEnd - turretStart));
-    if (tower.turret) tower.turret.scaling.set(Math.max(0.04, turretT), Math.max(0.04, turretT), Math.max(0.04, turretT));
+    const turretT = smoothstep(
+      (tower.elapsed - turretStart) / (turretEnd - turretStart),
+    );
+    if (tower.turret)
+      tower.turret.scaling.set(
+        Math.max(0.04, turretT),
+        Math.max(0.04, turretT),
+        Math.max(0.04, turretT),
+      );
 
     if (tower.elapsed < drillStart) tower.phase = "base";
     else if (tower.elapsed < pillarStart) tower.phase = "drilling";
     else if (tower.elapsed < turretEnd) tower.phase = "assembly";
-    else if (tower.elapsed < deploymentCompleteAt(tower.level)) tower.phase = "calibrating";
+    else if (tower.elapsed < deploymentCompleteAt(tower.level))
+      tower.phase = "calibrating";
     else if (tower.powered) tower.phase = "ready";
     else tower.phase = "dry";
 
-    if (!tower.searchAttempted && tower.elapsed >= drillEnd) searchForMagma(tower);
+    if (!tower.searchAttempted && tower.elapsed >= drillEnd)
+      searchForMagma(tower);
   };
 
   const updateTurret = (tower: TowerModel, dt: number): void => {
-    if (!tower.turret || tower.elapsed < (tower.level === 2 ? 3.55 : 4.65)) return;
+    if (!tower.turret || tower.elapsed < (tower.level === 2 ? 3.55 : 4.65))
+      return;
     const dx = target.position.x - tower.root.position.x;
     const dz = target.position.z - tower.root.position.z;
     const desiredYaw = Math.atan2(dx, dz);
     const error = normalizeAngle(desiredYaw - tower.turret.rotation.y);
     const maxSpeed = tower.level === 2 ? 2.45 : 1.15;
     const acceleration = tower.level === 2 ? 6.8 : 2.2;
-    const brakingDistance = (tower.angularVelocity * tower.angularVelocity) / (2 * Math.max(0.001, acceleration));
+    const brakingDistance =
+      (tower.angularVelocity * tower.angularVelocity) /
+      (2 * Math.max(0.001, acceleration));
     const desiredSign = Math.sign(error);
     const shouldBrake = Math.abs(error) <= brakingDistance + 0.025;
     const desiredVelocity = shouldBrake ? 0 : desiredSign * maxSpeed;
     const velocityDelta = desiredVelocity - tower.angularVelocity;
     const maxVelocityChange = acceleration * dt;
-    tower.angularVelocity += Math.max(-maxVelocityChange, Math.min(maxVelocityChange, velocityDelta));
-    tower.turret.rotation.y = normalizeAngle(tower.turret.rotation.y + tower.angularVelocity * dt);
-    tower.aimError = Math.abs(normalizeAngle(desiredYaw - tower.turret.rotation.y));
-    tower.readyToFire = tower.powered && tower.phase === "ready" && tower.aimError < (tower.level === 2 ? 0.09 : 0.055);
+    tower.angularVelocity += Math.max(
+      -maxVelocityChange,
+      Math.min(maxVelocityChange, velocityDelta),
+    );
+    tower.turret.rotation.y = normalizeAngle(
+      tower.turret.rotation.y + tower.angularVelocity * dt,
+    );
+    tower.aimError = Math.abs(
+      normalizeAngle(desiredYaw - tower.turret.rotation.y),
+    );
+    tower.readyToFire =
+      tower.powered &&
+      tower.phase === "ready" &&
+      tower.aimError < (tower.level === 2 ? 0.09 : 0.055);
   };
 
   const spawnMiss = (tower: TowerModel): void => {
@@ -542,11 +664,17 @@ async function main(): Promise<void> {
       { diameter: tower.level === 2 ? 1.0 : 1.55, segments: 5 },
       scene,
     );
-    projectile.position.copyFrom(tower.root.position.add(tower.turret.position));
+    projectile.position.copyFrom(
+      tower.root.position.add(tower.turret.position),
+    );
     projectile.material = projectileMaterial;
     const yaw = tower.turret.rotation.y + (tower.level === 2 ? 0.24 : -0.18);
     const speed = tower.level === 2 ? 34 : 42;
-    const velocity = new Vector3(Math.sin(yaw) * speed, -6.5, Math.cos(yaw) * speed);
+    const velocity = new Vector3(
+      Math.sin(yaw) * speed,
+      -6.5,
+      Math.cos(yaw) * speed,
+    );
     projectiles.push({
       mesh: projectile,
       velocity,
@@ -560,7 +688,10 @@ async function main(): Promise<void> {
       const projectile = projectiles[index];
       projectile.velocity.y -= 12 * dt;
       projectile.mesh.position.addInPlace(projectile.velocity.scale(dt));
-      const groundY = sampleHeight(projectile.mesh.position.x, projectile.mesh.position.z);
+      const groundY = sampleHeight(
+        projectile.mesh.position.x,
+        projectile.mesh.position.z,
+      );
       if (projectile.mesh.position.y <= groundY + projectile.bodyRadius * 0.2) {
         applyImpact(
           projectile.mesh.position.x,
@@ -571,7 +702,10 @@ async function main(): Promise<void> {
         );
         projectile.mesh.dispose();
         projectiles.splice(index, 1);
-      } else if (Math.abs(projectile.mesh.position.x) > 75 || Math.abs(projectile.mesh.position.z) > 75) {
+      } else if (
+        Math.abs(projectile.mesh.position.x) > 75 ||
+        Math.abs(projectile.mesh.position.z) > 75
+      ) {
         projectile.mesh.dispose();
         projectiles.splice(index, 1);
       }
@@ -620,7 +754,9 @@ async function main(): Promise<void> {
     const tower = towers.find((candidate) => candidate.level === 3);
     if (tower) spawnMiss(tower);
   });
-  dropButton.addEventListener("click", () => applyImpact(-11, 24, 48_600, 8.5, 7));
+  dropButton.addEventListener("click", () =>
+    applyImpact(-11, 24, 48_600, 8.5, 7),
+  );
   bulgeButton.addEventListener("click", () => applyBulge(18, 20, 14, 2.2));
 
   window.addEventListener("keydown", (event) => {
@@ -657,8 +793,15 @@ async function main(): Promise<void> {
     updateProjectiles(dt);
 
     const towerLines = towers.map((tower) => {
-      const power = tower.level === 1 ? "passive" : tower.powered ? `source:${tower.connectedSourceId}` : "DRY";
-      const slew = tower.turret ? ` err:${(tower.aimError * 180 / Math.PI).toFixed(1)}° ω:${tower.angularVelocity.toFixed(2)}` : "";
+      const power =
+        tower.level === 1
+          ? "passive"
+          : tower.powered
+            ? `source:${tower.connectedSourceId}`
+            : "DRY";
+      const slew = tower.turret
+        ? ` err:${((tower.aimError * 180) / Math.PI).toFixed(1)}° ω:${tower.angularVelocity.toFixed(2)}`
+        : "";
       return `T${tower.level} ${tower.phase.padEnd(11)} ${power.padEnd(13)}${slew}${tower.readyToFire ? " READY" : ""}`;
     });
     metrics.textContent = [

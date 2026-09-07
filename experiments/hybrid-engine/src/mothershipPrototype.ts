@@ -17,7 +17,12 @@ import {
 // what this prototype uses explicitly, or the failure only appears in a browser.
 RegisterStandardEngineExtensions();
 
-type MothershipPhase = "stable" | "low-reserve" | "critical" | "falling" | "hulk";
+type MothershipPhase =
+  | "stable"
+  | "low-reserve"
+  | "critical"
+  | "falling"
+  | "hulk";
 type CameraMode = "raider" | "defender";
 
 const START_RESERVE = 1;
@@ -202,7 +207,8 @@ function createMothership(scene: Scene) {
     );
     node.parent = root;
     node.position.copyFrom(position);
-    node.material = index % 3 === 0 ? activeStructureMaterial : structureMaterial;
+    node.material =
+      index % 3 === 0 ? activeStructureMaterial : structureMaterial;
     return node;
   });
 
@@ -315,7 +321,11 @@ function createArena(scene: Scene) {
   });
 }
 
-function setCameraMode(camera: ArcRotateCamera, mode: CameraMode, target: Vector3): void {
+function setCameraMode(
+  camera: ArcRotateCamera,
+  mode: CameraMode,
+  target: Vector3,
+): void {
   if (mode === "raider") {
     camera.alpha = -Math.PI / 2.2;
     camera.beta = 0.9;
@@ -351,7 +361,14 @@ async function main(): Promise<void> {
   const fastButton = document.querySelector<HTMLButtonElement>("#fast");
   const cameraButton = document.querySelector<HTMLButtonElement>("#camera");
 
-  if (!canvas || !metrics || !resetButton || !pauseButton || !fastButton || !cameraButton) {
+  if (
+    !canvas ||
+    !metrics ||
+    !resetButton ||
+    !pauseButton ||
+    !fastButton ||
+    !cameraButton
+  ) {
     throw new Error("Mothership lab DOM is incomplete");
   }
 
@@ -383,7 +400,11 @@ async function main(): Promise<void> {
   );
   ambient.intensity = 0.72;
 
-  const coreLight = new PointLight("core-light", new Vector3(0, START_ALTITUDE, 0), scene);
+  const coreLight = new PointLight(
+    "core-light",
+    new Vector3(0, START_ALTITUDE, 0),
+    scene,
+  );
   coreLight.diffuse = new Color3(0.12, 0.9, 0.88);
   coreLight.intensity = 0.65;
   coreLight.range = 62;
@@ -412,9 +433,14 @@ async function main(): Promise<void> {
   }
 
   const updateButtons = () => {
-    pauseButton.textContent = state.paused ? "Resume drain [Space]" : "Pause drain [Space]";
-    fastButton.textContent = state.fastDrain ? "Normal drain [F]" : "Fast drain [F]";
-    cameraButton.textContent = state.cameraMode === "raider" ? "Defender view [C]" : "Raider view [C]";
+    pauseButton.textContent = state.paused
+      ? "Resume drain [Space]"
+      : "Pause drain [Space]";
+    fastButton.textContent = state.fastDrain
+      ? "Normal drain [F]"
+      : "Fast drain [F]";
+    cameraButton.textContent =
+      state.cameraMode === "raider" ? "Defender view [C]" : "Raider view [C]";
   };
 
   const doReset = () => {
@@ -468,7 +494,9 @@ async function main(): Promise<void> {
     if (!state.paused && state.phase !== "hulk") {
       const drainMultiplier = state.fastDrain ? FAST_DRAIN_MULTIPLIER : 1;
       const drainRate =
-        state.phase === "falling" ? FALL_DRAIN_PER_SECOND : HOVER_DRAIN_PER_SECOND;
+        state.phase === "falling"
+          ? FALL_DRAIN_PER_SECOND
+          : HOVER_DRAIN_PER_SECOND;
       state.reserve = Math.max(
         0,
         state.reserve - drainRate * drainMultiplier * deltaSeconds,
@@ -505,7 +533,10 @@ async function main(): Promise<void> {
     } else if (state.phase !== "hulk") {
       const liftFraction = Math.max(
         0,
-        Math.min(1, (state.reserve - FALL_RESERVE) / (START_RESERVE - FALL_RESERVE)),
+        Math.min(
+          1,
+          (state.reserve - FALL_RESERVE) / (START_RESERVE - FALL_RESERVE),
+        ),
       );
       const depletion = 1 - liftFraction;
       const targetAltitude = START_ALTITUDE - depletion * 12;
@@ -513,7 +544,8 @@ async function main(): Promise<void> {
       const damping = 1.1 + liftFraction * 3.1;
       const wobbleAmplitude = 0.08 + depletion * depletion * 1.5;
       const wobble =
-        Math.sin(state.elapsedSeconds * (1.2 + depletion * 1.8)) * wobbleAmplitude;
+        Math.sin(state.elapsedSeconds * (1.2 + depletion * 1.8)) *
+        wobbleAmplitude;
       const acceleration =
         (targetAltitude - mothership.root.position.y) * stiffness -
         state.verticalVelocity * damping +
@@ -523,8 +555,10 @@ async function main(): Promise<void> {
       mothership.root.position.y += state.verticalVelocity * deltaSeconds;
 
       const orientationAmplitude = depletion * depletion * 0.14;
-      const targetPitch = Math.sin(state.elapsedSeconds * 0.72) * orientationAmplitude;
-      const targetRoll = Math.cos(state.elapsedSeconds * 0.58) * orientationAmplitude;
+      const targetPitch =
+        Math.sin(state.elapsedSeconds * 0.72) * orientationAmplitude;
+      const targetRoll =
+        Math.cos(state.elapsedSeconds * 0.58) * orientationAmplitude;
       const correction = Math.max(0.35, 2.6 * liftFraction) * deltaSeconds;
       mothership.root.rotation.x +=
         (targetPitch - mothership.root.rotation.x) * correction;
@@ -538,7 +572,8 @@ async function main(): Promise<void> {
       state.angularVelocity.set(0.22, 0.08, -0.16);
     }
 
-    const visibleReserve = state.phase === "hulk" ? Math.min(state.reserve, 0.025) : state.reserve;
+    const visibleReserve =
+      state.phase === "hulk" ? Math.min(state.reserve, 0.025) : state.reserve;
     const coreScale = 0.26 + Math.cbrt(Math.max(0, visibleReserve)) * 0.74;
     mothership.core.scaling.set(coreScale, coreScale, coreScale);
 
@@ -553,7 +588,8 @@ async function main(): Promise<void> {
       0.17 + visibleReserve * 0.41,
     );
 
-    const structureEnergy = state.phase === "hulk" ? 0.02 : Math.max(0.03, state.reserve);
+    const structureEnergy =
+      state.phase === "hulk" ? 0.02 : Math.max(0.03, state.reserve);
     mothership.activeStructureMaterial.emissiveColor.set(
       0.01,
       0.04 + structureEnergy * 0.15,
@@ -566,7 +602,8 @@ async function main(): Promise<void> {
     );
 
     coreLight.position.copyFrom(mothership.root.position);
-    coreLight.intensity = state.phase === "hulk" ? 0.05 : 0.12 + state.reserve * 0.72;
+    coreLight.intensity =
+      state.phase === "hulk" ? 0.05 : 0.12 + state.reserve * 0.72;
 
     if (state.cameraMode === "raider") {
       const target = mothership.root.position.clone();

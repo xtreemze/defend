@@ -12,7 +12,10 @@ const policy: FixedStepPolicy = {
   maxFrameDeltaSeconds: 0.25,
 };
 
-function simulateFrames(frameCount: number, frameDeltaSeconds: number): {
+function simulateFrames(
+  frameCount: number,
+  frameDeltaSeconds: number,
+): {
   ticks: number;
   state: FixedStepState;
 } {
@@ -76,7 +79,10 @@ describe("advanceFixedStep", () => {
 
   it("sanitizes non-finite timing inputs", () => {
     const advance = advanceFixedStep(
-      { accumulatorSeconds: Number.NaN, droppedSeconds: Number.POSITIVE_INFINITY },
+      {
+        accumulatorSeconds: Number.NaN,
+        droppedSeconds: Number.POSITIVE_INFINITY,
+      },
       Number.NaN,
       {
         fixedDeltaSeconds: Number.NaN,

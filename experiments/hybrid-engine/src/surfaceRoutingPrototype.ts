@@ -98,11 +98,7 @@ function createObstacle(
   health: number,
   breakable: boolean,
 ): Obstacle {
-  const mesh = MeshBuilder.CreateBox(
-    id,
-    { width, depth, height },
-    scene,
-  );
+  const mesh = MeshBuilder.CreateBox(id, { width, depth, height }, scene);
   mesh.position.set(x, height / 2 + terrainHeight(z), z);
   mesh.material = obstacleMaterial;
   return {
@@ -220,7 +216,11 @@ function createArena(scene: Scene) {
     { width: 125, depth: 10, height: 0.15 },
     scene,
   );
-  valley.position.set(0, terrainHeight(TERRAIN_VALLEY_Z) - 0.15, TERRAIN_VALLEY_Z);
+  valley.position.set(
+    0,
+    terrainHeight(TERRAIN_VALLEY_Z) - 0.15,
+    TERRAIN_VALLEY_Z,
+  );
   valley.material = valleyMaterial;
 
   const siloMaterial = material(
@@ -269,23 +269,103 @@ function createFortress(scene: Scene) {
   );
 
   const obstacles: Obstacle[] = [
-    createObstacle(scene, "wall-south", WALL_X, -43, 6, 18, 8, wallMaterial, 9999, false),
-    createObstacle(scene, "wall-mid", WALL_X, -12, 6, 28, 8, wallMaterial, 9999, false),
-    createObstacle(scene, "wall-north", WALL_X, 37, 6, 30, 8, wallMaterial, 9999, false),
-    createObstacle(scene, "broad-gate", WALL_X, BROAD_GATE_Z, 6, 20, 8, gateMaterial, 900, true),
+    createObstacle(
+      scene,
+      "wall-south",
+      WALL_X,
+      -43,
+      6,
+      18,
+      8,
+      wallMaterial,
+      9999,
+      false,
+    ),
+    createObstacle(
+      scene,
+      "wall-mid",
+      WALL_X,
+      -12,
+      6,
+      28,
+      8,
+      wallMaterial,
+      9999,
+      false,
+    ),
+    createObstacle(
+      scene,
+      "wall-north",
+      WALL_X,
+      37,
+      6,
+      30,
+      8,
+      wallMaterial,
+      9999,
+      false,
+    ),
+    createObstacle(
+      scene,
+      "broad-gate",
+      WALL_X,
+      BROAD_GATE_Z,
+      6,
+      20,
+      8,
+      gateMaterial,
+      900,
+      true,
+    ),
   ];
 
   const sideWalls = [
-    createObstacle(scene, "north-return", 38, 52, 46, 5, 7, wallMaterial, 9999, false),
-    createObstacle(scene, "south-return", 38, -52, 46, 5, 7, wallMaterial, 9999, false),
-    createObstacle(scene, "east-return", 61, 0, 5, 104, 7, wallMaterial, 9999, false),
+    createObstacle(
+      scene,
+      "north-return",
+      38,
+      52,
+      46,
+      5,
+      7,
+      wallMaterial,
+      9999,
+      false,
+    ),
+    createObstacle(
+      scene,
+      "south-return",
+      38,
+      -52,
+      46,
+      5,
+      7,
+      wallMaterial,
+      9999,
+      false,
+    ),
+    createObstacle(
+      scene,
+      "east-return",
+      61,
+      0,
+      5,
+      104,
+      7,
+      wallMaterial,
+      9999,
+      false,
+    ),
   ];
   obstacles.push(...sideWalls);
 
   return obstacles;
 }
 
-function createRaiderMaterial(scene: Scene, tier: RaiderTier): StandardMaterial {
+function createRaiderMaterial(
+  scene: Scene,
+  tier: RaiderTier,
+): StandardMaterial {
   const diffuse = [
     new Color3(0.22, 0.05, 0.34),
     new Color3(0.27, 0.055, 0.4),
@@ -327,10 +407,21 @@ function spawnRaiders(scene: Scene): RaiderBody[] {
 }
 
 function raiderDecision(body: RaiderBody, obstacles: Obstacle[]): Vector3 {
-  const direct = normalize2(SILO.x - body.mesh.position.x, SILO.z - body.mesh.position.z);
+  const direct = normalize2(
+    SILO.x - body.mesh.position.x,
+    SILO.z - body.mesh.position.z,
+  );
 
   if (body.tier === 1) {
-    return bestOpenDirection(body.mesh.position, body.radius + 0.25, SILO, obstacles, 4.4) ?? direct;
+    return (
+      bestOpenDirection(
+        body.mesh.position,
+        body.radius + 0.25,
+        SILO,
+        obstacles,
+        4.4,
+      ) ?? direct
+    );
   }
 
   if (body.tier === 2) {
@@ -341,11 +432,25 @@ function raiderDecision(body: RaiderBody, obstacles: Obstacle[]): Vector3 {
       obstacles,
     );
     if (blocker?.breakable) return direct;
-    return bestOpenDirection(body.mesh.position, body.radius + 0.35, SILO, obstacles, 5.2) ?? direct;
+    return (
+      bestOpenDirection(
+        body.mesh.position,
+        body.radius + 0.35,
+        SILO,
+        obstacles,
+        5.2,
+      ) ?? direct
+    );
   }
 
-  const downhillBias = normalize2(0, (TERRAIN_VALLEY_Z - body.mesh.position.z) * 0.28);
-  return normalize2(direct.x + downhillBias.x * 0.3, direct.z + downhillBias.z * 0.3);
+  const downhillBias = normalize2(
+    0,
+    (TERRAIN_VALLEY_Z - body.mesh.position.z) * 0.28,
+  );
+  return normalize2(
+    direct.x + downhillBias.x * 0.3,
+    direct.z + downhillBias.z * 0.3,
+  );
 }
 
 function applyObstacleImpact(body: RaiderBody, obstacle: Obstacle): void {
@@ -353,7 +458,10 @@ function applyObstacleImpact(body: RaiderBody, obstacle: Obstacle): void {
   if (obstacle.breakable) {
     const speed = Math.hypot(body.velocity.x, body.velocity.z);
     const tierImpulse = body.tier === 1 ? 6 : body.tier === 2 ? 26 : 68;
-    obstacle.health = Math.max(0, obstacle.health - tierImpulse * Math.max(0.5, speed));
+    obstacle.health = Math.max(
+      0,
+      obstacle.health - tierImpulse * Math.max(0.5, speed),
+    );
     const remaining = obstacle.health / obstacle.maxHealth;
     obstacle.mesh.scaling.y = Math.max(0.15, remaining);
     obstacle.mesh.position.y =
@@ -369,7 +477,11 @@ function applyObstacleImpact(body: RaiderBody, obstacle: Obstacle): void {
   body.state = "blocked";
 }
 
-function updateRaider(body: RaiderBody, obstacles: Obstacle[], deltaSeconds: number): void {
+function updateRaider(
+  body: RaiderBody,
+  obstacles: Obstacle[],
+  deltaSeconds: number,
+): void {
   if (body.state === "reached") return;
 
   const cadence = body.tier === 1 ? 0.16 : body.tier === 2 ? 0.42 : 0.9;
@@ -384,7 +496,10 @@ function updateRaider(body: RaiderBody, obstacles: Obstacle[], deltaSeconds: num
   body.velocity.x += body.desired.x * acceleration * deltaSeconds;
   body.velocity.z += body.desired.z * acceleration * deltaSeconds;
 
-  const damping = Math.max(0, 1 - (body.tier === 1 ? 1.8 : body.tier === 2 ? 0.9 : 0.35) * deltaSeconds);
+  const damping = Math.max(
+    0,
+    1 - (body.tier === 1 ? 1.8 : body.tier === 2 ? 0.9 : 0.35) * deltaSeconds,
+  );
   body.velocity.scaleInPlace(damping);
   const speed = Math.hypot(body.velocity.x, body.velocity.z);
   if (speed > maxSpeed) {
@@ -430,7 +545,11 @@ function createEnergyMaterial(scene: Scene): StandardMaterial {
   return result;
 }
 
-function spawnEnergy(scene: Scene, packets: EnergyPacket[], energyMaterial: StandardMaterial): void {
+function spawnEnergy(
+  scene: Scene,
+  packets: EnergyPacket[],
+  energyMaterial: StandardMaterial,
+): void {
   const offsets = [-4, -2, 0, 2, 4];
   offsets.forEach((offset, index) => {
     const mesh = MeshBuilder.CreateSphere(
@@ -455,8 +574,14 @@ function spawnEnergy(scene: Scene, packets: EnergyPacket[], energyMaterial: Stan
   });
 }
 
-function energyDirection(packet: EnergyPacket, obstacles: Obstacle[]): Vector3 | undefined {
-  const direct = normalize2(SILO.x - packet.mesh.position.x, SILO.z - packet.mesh.position.z);
+function energyDirection(
+  packet: EnergyPacket,
+  obstacles: Obstacle[],
+): Vector3 | undefined {
+  const direct = normalize2(
+    SILO.x - packet.mesh.position.x,
+    SILO.z - packet.mesh.position.z,
+  );
   const candidates = candidateDirections(direct)
     .filter((candidate) => {
       const x = packet.mesh.position.x + candidate.x * 3.2;
@@ -471,7 +596,11 @@ function energyDirection(packet: EnergyPacket, obstacles: Obstacle[]): Vector3 |
   return candidates[0];
 }
 
-function updateEnergy(packet: EnergyPacket, obstacles: Obstacle[], deltaSeconds: number): void {
+function updateEnergy(
+  packet: EnergyPacket,
+  obstacles: Obstacle[],
+  deltaSeconds: number,
+): void {
   if (packet.state === "collected") return;
 
   const distance = Math.hypot(
@@ -526,7 +655,10 @@ async function main(): Promise<void> {
     throw new Error("Surface routing lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, { adaptToDeviceRatio: true, antialias: true });
+  const engine = new Engine(canvas, true, {
+    adaptToDeviceRatio: true,
+    antialias: true,
+  });
   const scene = new Scene(engine);
   scene.clearColor.set(0.02, 0.012, 0.034, 1);
   const camera = new ArcRotateCamera(
@@ -541,7 +673,11 @@ async function main(): Promise<void> {
   camera.lowerRadiusLimit = 70;
   camera.upperRadiusLimit = 190;
 
-  const light = new HemisphericLight("routing-light", new Vector3(0.2, 1, 0.1), scene);
+  const light = new HemisphericLight(
+    "routing-light",
+    new Vector3(0.2, 1, 0.1),
+    scene,
+  );
   light.intensity = 0.82;
 
   createArena(scene);
@@ -568,11 +704,14 @@ async function main(): Promise<void> {
   };
 
   resetButton.addEventListener("click", reset);
-  energyButton.addEventListener("click", () => spawnEnergy(scene, energyPackets, energyMaterial));
+  energyButton.addEventListener("click", () =>
+    spawnEnergy(scene, energyPackets, energyMaterial),
+  );
   gateButton.addEventListener("click", () => openBroadGate(obstacles));
   window.addEventListener("keydown", (event) => {
     if (event.key.toLowerCase() === "r") reset();
-    if (event.key.toLowerCase() === "e") spawnEnergy(scene, energyPackets, energyMaterial);
+    if (event.key.toLowerCase() === "e")
+      spawnEnergy(scene, energyPackets, energyMaterial);
     if (event.key.toLowerCase() === "g") openBroadGate(obstacles);
   });
 
@@ -587,7 +726,9 @@ async function main(): Promise<void> {
 
     const gate = obstacles.find((obstacle) => obstacle.id === "broad-gate");
     const pooled = energyPackets.filter((packet) => packet.state === "pooling");
-    const collected = energyPackets.filter((packet) => packet.state === "collected");
+    const collected = energyPackets.filter(
+      (packet) => packet.state === "collected",
+    );
     metrics.textContent = [
       "Shared surface topology proof of concept",
       `R1 navigator: ${raiders[0].state} | collisions ${raiders[0].collisions} | path ${raiders[0].distanceTravelled.toFixed(1)}`,
