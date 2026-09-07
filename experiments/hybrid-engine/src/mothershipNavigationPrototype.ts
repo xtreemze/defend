@@ -3,7 +3,7 @@ import {
   Color3,
   Engine,
   HemisphericLight,
-  Mesh,
+  type Mesh,
   MeshBuilder,
   PointLight,
   RegisterStandardEngineExtensions,
@@ -315,7 +315,10 @@ function resetState(state: NavigationState, root: TransformNode): void {
   state.reserve = START_RESERVE;
   state.velocity.set(0, 0, 0);
   state.raidSector.set(52, 0.16, 42);
-  const initialTarget = desiredShipPositionForSector(state.raidSector, START_POSITION);
+  const initialTarget = desiredShipPositionForSector(
+    state.raidSector,
+    START_POSITION,
+  );
   state.desiredPosition.copyFrom(initialTarget.desired);
   state.cameraAnchor.copyFrom(START_POSITION);
   state.phase = "stable";
@@ -349,7 +352,8 @@ function setTargetSector(
 
 function siloAttraction(position: Vector3, phase: NavigationPhase): Vector3 {
   const distance = horizontalDistance(position);
-  if (distance >= SILO_WARNING_RADIUS || distance < 0.001) return Vector3.Zero();
+  if (distance >= SILO_WARNING_RADIUS || distance < 0.001)
+    return Vector3.Zero();
 
   const inward = new Vector3(-position.x, 0, -position.z).normalize();
   const normalized = 1 - distance / SILO_WARNING_RADIUS;
@@ -375,8 +379,11 @@ function movementAcceleration(
   const desiredDirection = error.normalize();
   const desiredSpeed = Math.min(MAX_SPEED, Math.max(4, distance * 0.38));
   const desiredVelocity = desiredDirection.scale(desiredSpeed);
-  const correction = desiredVelocity.subtract(new Vector3(velocity.x, 0, velocity.z));
-  if (correction.length() > MAX_ACCELERATION) correction.normalize().scaleInPlace(MAX_ACCELERATION);
+  const correction = desiredVelocity.subtract(
+    new Vector3(velocity.x, 0, velocity.z),
+  );
+  if (correction.length() > MAX_ACCELERATION)
+    correction.normalize().scaleInPlace(MAX_ACCELERATION);
   return correction;
 }
 
@@ -389,7 +396,9 @@ function updateCamera(
   if (state.cameraMode === "raider") {
     const followTarget = root.position.add(new Vector3(0, -5, 0));
     const smoothing = 1 - Math.exp(-deltaSeconds * 4.2);
-    state.cameraAnchor.copyFrom(Vector3.Lerp(state.cameraAnchor, followTarget, smoothing));
+    state.cameraAnchor.copyFrom(
+      Vector3.Lerp(state.cameraAnchor, followTarget, smoothing),
+    );
     camera.setTarget(state.cameraAnchor);
     camera.radius += (64 - camera.radius) * Math.min(1, deltaSeconds * 2.2);
     camera.beta += (0.93 - camera.beta) * Math.min(1, deltaSeconds * 1.4);
@@ -405,11 +414,21 @@ async function main(): Promise<void> {
   const nearButton = document.querySelector<HTMLButtonElement>("#near");
   const farButton = document.querySelector<HTMLButtonElement>("#far");
   const cameraButton = document.querySelector<HTMLButtonElement>("#camera");
-  if (!canvas || !metrics || !resetButton || !nearButton || !farButton || !cameraButton) {
+  if (
+    !canvas ||
+    !metrics ||
+    !resetButton ||
+    !nearButton ||
+    !farButton ||
+    !cameraButton
+  ) {
     throw new Error("Navigation lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, { adaptToDeviceRatio: true, antialias: true });
+  const engine = new Engine(canvas, true, {
+    adaptToDeviceRatio: true,
+    antialias: true,
+  });
   const scene = new Scene(engine);
   scene.clearColor.set(0.02, 0.012, 0.034, 1);
 
@@ -427,12 +446,20 @@ async function main(): Promise<void> {
   camera.lowerBetaLimit = 0.35;
   camera.upperBetaLimit = 2.2;
 
-  const ambient = new HemisphericLight("navigation-ambient", new Vector3(0.15, 1, 0.2), scene);
+  const ambient = new HemisphericLight(
+    "navigation-ambient",
+    new Vector3(0.15, 1, 0.2),
+    scene,
+  );
   ambient.intensity = 0.74;
 
   const arena = createArena(scene);
   const mothership = createMothership(scene);
-  const coreLight = new PointLight("navigation-core-light", START_POSITION, scene);
+  const coreLight = new PointLight(
+    "navigation-core-light",
+    START_POSITION,
+    scene,
+  );
   coreLight.diffuse = new Color3(0.1, 0.92, 0.88);
   coreLight.intensity = 0.7;
   coreLight.range = 62;
@@ -451,8 +478,18 @@ async function main(): Promise<void> {
     new Color3(0.18, 0.07, 0.01),
     0.7,
   );
-  const raidMarker = createMarker("raid-sector-marker", scene, raidMarkerMaterial, 7);
-  const desiredMarker = createMarker("ship-target-marker", scene, desiredMarkerMaterial, 5);
+  const raidMarker = createMarker(
+    "raid-sector-marker",
+    scene,
+    raidMarkerMaterial,
+    7,
+  );
+  const desiredMarker = createMarker(
+    "ship-target-marker",
+    scene,
+    desiredMarkerMaterial,
+    5,
+  );
 
   const state: NavigationState = {
     reserve: START_RESERVE,
@@ -467,7 +504,13 @@ async function main(): Promise<void> {
     elapsedSeconds: 0,
   };
   resetState(state, mothership.root);
-  setTargetSector(state, mothership.root, raidMarker, desiredMarker, state.raidSector);
+  setTargetSector(
+    state,
+    mothership.root,
+    raidMarker,
+    desiredMarker,
+    state.raidSector,
+  );
 
   let inspectable: { dispose(): void } | undefined;
   if (new URLSearchParams(location.search).has("inspect")) {
@@ -476,12 +519,19 @@ async function main(): Promise<void> {
   }
 
   const updateCameraButton = () => {
-    cameraButton.textContent = state.cameraMode === "raider" ? "Defender view [C]" : "Raider view [C]";
+    cameraButton.textContent =
+      state.cameraMode === "raider" ? "Defender view [C]" : "Raider view [C]";
   };
 
   const doReset = () => {
     resetState(state, mothership.root);
-    setTargetSector(state, mothership.root, raidMarker, desiredMarker, state.raidSector);
+    setTargetSector(
+      state,
+      mothership.root,
+      raidMarker,
+      desiredMarker,
+      state.raidSector,
+    );
     camera.alpha = -Math.PI / 2.1;
     camera.beta = 0.93;
     camera.radius = 64;
@@ -489,10 +539,22 @@ async function main(): Promise<void> {
   };
 
   const setNearTarget = () => {
-    setTargetSector(state, mothership.root, raidMarker, desiredMarker, new Vector3(4, 0, 3));
+    setTargetSector(
+      state,
+      mothership.root,
+      raidMarker,
+      desiredMarker,
+      new Vector3(4, 0, 3),
+    );
   };
   const setFarTarget = () => {
-    setTargetSector(state, mothership.root, raidMarker, desiredMarker, new Vector3(-66, 0, 46));
+    setTargetSector(
+      state,
+      mothership.root,
+      raidMarker,
+      desiredMarker,
+      new Vector3(-66, 0, 46),
+    );
   };
   const toggleCamera = () => {
     state.cameraMode = state.cameraMode === "raider" ? "defender" : "raider";
@@ -514,8 +576,18 @@ async function main(): Promise<void> {
   cameraButton.addEventListener("click", toggleCamera);
 
   scene.onPointerDown = (_event, pickInfo) => {
-    if (pickInfo.hit && pickInfo.pickedPoint && pickInfo.pickedMesh === arena.ground) {
-      setTargetSector(state, mothership.root, raidMarker, desiredMarker, pickInfo.pickedPoint);
+    if (
+      pickInfo.hit &&
+      pickInfo.pickedPoint &&
+      pickInfo.pickedMesh === arena.ground
+    ) {
+      setTargetSector(
+        state,
+        mothership.root,
+        raidMarker,
+        desiredMarker,
+        pickInfo.pickedPoint,
+      );
     }
   };
 
@@ -529,7 +601,10 @@ async function main(): Promise<void> {
 
   let frame = 0;
   engine.runRenderLoop(() => {
-    const deltaSeconds = Math.min(MAX_FRAME_DELTA_SECONDS, engine.getDeltaTime() / 1000);
+    const deltaSeconds = Math.min(
+      MAX_FRAME_DELTA_SECONDS,
+      engine.getDeltaTime() / 1000,
+    );
     state.elapsedSeconds += deltaSeconds;
 
     if (state.phase !== "captured") {
@@ -549,13 +624,21 @@ async function main(): Promise<void> {
         new Vector3(state.velocity.x, 0, state.velocity.z),
         horizontalDirection(mothership.root.position, new Vector3(1, 0, 0)),
       );
-      if (horizontalDistance(mothership.root.position) < SILO_CRITICAL_RADIUS * 0.55 && inwardSpeed > 3) {
+      if (
+        horizontalDistance(mothership.root.position) <
+          SILO_CRITICAL_RADIUS * 0.55 &&
+        inwardSpeed > 3
+      ) {
         state.phase = "captured";
       }
     }
 
     if (state.phase === "captured") {
-      const inward = new Vector3(-mothership.root.position.x, -10, -mothership.root.position.z);
+      const inward = new Vector3(
+        -mothership.root.position.x,
+        -10,
+        -mothership.root.position.z,
+      );
       if (inward.lengthSquared() > 0.001) {
         inward.normalize().scaleInPlace(CAPTURE_PULL_STRENGTH * 1.35);
         acceleration.copyFrom(inward);
@@ -566,7 +649,8 @@ async function main(): Promise<void> {
     const damping = Math.exp(-LINEAR_DAMPING * deltaSeconds);
     state.velocity.x *= damping;
     state.velocity.z *= damping;
-    state.velocity.y = state.phase === "captured" ? state.velocity.y - 8 * deltaSeconds : 0;
+    state.velocity.y =
+      state.phase === "captured" ? state.velocity.y - 8 * deltaSeconds : 0;
 
     const horizontalSpeed = Math.sqrt(
       state.velocity.x * state.velocity.x + state.velocity.z * state.velocity.z,
@@ -578,12 +662,17 @@ async function main(): Promise<void> {
     }
 
     mothership.root.position.addInPlace(state.velocity.scale(deltaSeconds));
-    if (state.phase !== "captured") mothership.root.position.y = START_POSITION.y;
+    if (state.phase !== "captured")
+      mothership.root.position.y = START_POSITION.y;
     else mothership.root.position.y = Math.max(15, mothership.root.position.y);
 
-    const movementDrain = acceleration.length() * MOVEMENT_DRAIN_PER_ACCEL * deltaSeconds;
+    const movementDrain =
+      acceleration.length() * MOVEMENT_DRAIN_PER_ACCEL * deltaSeconds;
     state.totalMovementEnergy += movementDrain;
-    state.reserve = Math.max(0, state.reserve - HOVER_DRAIN_PER_SECOND * deltaSeconds - movementDrain);
+    state.reserve = Math.max(
+      0,
+      state.reserve - HOVER_DRAIN_PER_SECOND * deltaSeconds - movementDrain,
+    );
 
     const reserveScale = Math.max(0.3, Math.sqrt(state.reserve));
     mothership.core.scaling.set(reserveScale, reserveScale, reserveScale);
@@ -596,16 +685,35 @@ async function main(): Promise<void> {
     coreLight.intensity = 0.2 + state.reserve * 0.62;
 
     const speed = state.velocity.length();
-    const targetHeading = speed > 0.3 ? Math.atan2(state.velocity.x, state.velocity.z) : mothership.root.rotation.y;
-    mothership.root.rotation.y += (targetHeading - mothership.root.rotation.y) * Math.min(1, deltaSeconds * 1.8);
-    const stress = state.phase === "warning" ? 0.025 : state.phase === "critical" ? 0.06 : state.phase === "captured" ? 0.12 : 0.008;
-    mothership.root.rotation.z = Math.sin(state.elapsedSeconds * 1.8) * stress + state.velocity.x * -0.003;
-    mothership.root.rotation.x = Math.cos(state.elapsedSeconds * 1.4) * stress + state.velocity.z * 0.002;
+    const targetHeading =
+      speed > 0.3
+        ? Math.atan2(state.velocity.x, state.velocity.z)
+        : mothership.root.rotation.y;
+    mothership.root.rotation.y +=
+      (targetHeading - mothership.root.rotation.y) *
+      Math.min(1, deltaSeconds * 1.8);
+    const stress =
+      state.phase === "warning"
+        ? 0.025
+        : state.phase === "critical"
+          ? 0.06
+          : state.phase === "captured"
+            ? 0.12
+            : 0.008;
+    mothership.root.rotation.z =
+      Math.sin(state.elapsedSeconds * 1.8) * stress + state.velocity.x * -0.003;
+    mothership.root.rotation.x =
+      Math.cos(state.elapsedSeconds * 1.4) * stress + state.velocity.z * 0.002;
 
     const distanceToSilo = horizontalDistance(mothership.root.position);
-    arena.warningRing.scaling.setAll(1 + Math.sin(state.elapsedSeconds * 2.2) * 0.01);
-    arena.criticalRing.scaling.setAll(1 + Math.sin(state.elapsedSeconds * 3.3) * 0.025);
-    arena.siloCore.scaling.y = 1 + Math.max(0, 1 - distanceToSilo / SILO_WARNING_RADIUS) * 0.45;
+    arena.warningRing.scaling.setAll(
+      1 + Math.sin(state.elapsedSeconds * 2.2) * 0.01,
+    );
+    arena.criticalRing.scaling.setAll(
+      1 + Math.sin(state.elapsedSeconds * 3.3) * 0.025,
+    );
+    arena.siloCore.scaling.y =
+      1 + Math.max(0, 1 - distanceToSilo / SILO_WARNING_RADIUS) * 0.45;
 
     updateCamera(camera, state, mothership.root, deltaSeconds);
     scene.render();
@@ -651,10 +759,18 @@ async function main(): Promise<void> {
     { once: true },
   );
 
-  (window as unknown as { __defendMothershipNavigation?: unknown }).__defendMothershipNavigation = {
+  (
+    window as unknown as { __defendMothershipNavigation?: unknown }
+  ).__defendMothershipNavigation = {
     state,
     setSector: (x: number, z: number) =>
-      setTargetSector(state, mothership.root, raidMarker, desiredMarker, new Vector3(x, 0, z)),
+      setTargetSector(
+        state,
+        mothership.root,
+        raidMarker,
+        desiredMarker,
+        new Vector3(x, 0, z),
+      ),
   };
 }
 
