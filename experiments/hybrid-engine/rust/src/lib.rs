@@ -234,7 +234,10 @@ mod tests {
         assert_eq!(one_batch.tick(), 240);
         assert_eq!(split_batches.tick(), 240);
         assert_eq!(one_batch.positions(), split_batches.positions());
-        assert_eq!(one_batch.state_fingerprint(), split_batches.state_fingerprint());
+        assert_eq!(
+            one_batch.state_fingerprint(),
+            split_batches.state_fingerprint()
+        );
     }
 
     #[test]
