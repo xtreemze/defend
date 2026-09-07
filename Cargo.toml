@@ -1,3 +1,4 @@
 [workspace]
 members = ["crates/defend-core"]
+exclude = ["experiments/hybrid-engine/rust"]
 resolver = "2"

@@ -81,23 +81,31 @@ Capture at least:
 
 Prefer one coherent recorded browser session over repeated restarts for every issue.
 
-#### Legacy root script warning
+#### Historical root command status
 
-Until #35 is certified and merged, the root package still has historical unsafe command semantics:
+#35 has merged. The ordinary root validation commands now have safe semantics for certification:
 
-- `npm run lint` contains `--fix` and mutates source;
-- `npm run build` contains `--watch` and does not terminate normally;
-- `npm run soundTest` contains the invalid `--hots` flag.
+- `npm run lint` is non-mutating; use `npm run lint:fix` only for an intentional source-editing task;
+- `npm run build` is a terminating one-shot production build;
+- `npm run build:watch` is the explicitly non-terminating watch variant;
+- `npm run soundTest` uses the valid hot-reload flag.
 
-Do not use those commands as ordinary certification gates before #35. Use the installed tool binaries directly with non-mutating/one-shot arguments and record the exact commands.
+Subsequent repository-safety cleanup also removed the historical package commands/helpers that staged/versioned/pushed Git state, recursively deleted `node_modules`, invoked unpinned PWA Builder code, or exposed broken archive/config-check workflows.
 
-The root has no committed npm lockfile. Prefer an install that does not create/update one in the certification clone, and capture the resolved dependency tree as evidence rather than silently committing it.
+The historical export path is deliberately still present. `preexportp` removes/rebuilds `dist/`, so do not run `npm run exportp` as an ordinary build gate; use it only when the campaign explicitly includes historical export/PWA-output characterization.
 
-### Lane B — Storybook laboratory
+The root has no committed npm lockfile and still contains a historical Yarn lockfile. Record which package manager actually reconstructs the baseline, capture the resolved dependency tree/audit as evidence, and do not silently create or commit a new root lockfile during certification.
 
-From `experiments/storybook/`:
+### Lane B — modern browser laboratories
+
+Use the package-manager root and exact workspace head recorded in #92.
+
+Before a shared modern workspace is promoted, package-local Storybook commands remain valid for a package-local target. When #92 points to a workspace candidate, install from that workspace root and use its shared lockfile/policy instead of independently resolving each child package.
+
+For a package-local Storybook target, the established commands are:
 
 ```sh
+cd experiments/storybook
 pnpm install
 pnpm exec playwright install chromium   # only when needed
 pnpm typecheck
@@ -105,9 +113,11 @@ pnpm build
 pnpm test
 ```
 
+For a shared-workspace target, follow the exact aggregate/filter commands recorded on that PR/#92. Do not generate separate child lockfiles when the target declares a shared workspace lockfile.
+
 Exercise the deterministic stories and their controls, including maximum-size stress fixtures. Record console warnings and verify stories that claim to be passive do not leave AudioContexts, Workers, animation loops, timers, or other persistent resources behind.
 
-If the generated lockfile is coherent, preserve its checksum/resolution as evidence. Commit it later in a narrow reviewed PR rather than mixing it into unrelated local work.
+A generated lockfile belongs only to the dependency/workspace PR that explicitly owns it. Inspect it before committing and keep unrelated local work out of that commit.
 
 ### Lane C — Rust and Babylon/Bevy experiments
 
@@ -115,21 +125,23 @@ For the dependency-light Rust core:
 
 ```sh
 cargo test -p defend-core
-rustup target add wasm32-unknown-unknown   # only when missing
+rustup target add wasm32-unknown-unknown   # only when missing and not already owned by a pinned toolchain
 cargo check -p defend-core --features wasm --target wasm32-unknown-unknown
 ```
+
+If the target contains a repository `rust-toolchain.toml`, let that exact toolchain own required components/targets and record the resolved `rustc`/Cargo versions before testing.
 
 Record native/WASM parity samples, generated JS/WASM size, compile time and debugging/source-map ergonomics.
 
 For `experiments/hybrid-engine/`, run the declared pnpm/Rust validation, then exercise the Babylon/Bevy fixture in a browser. Record fixed-step behavior, WASM initialization, first interactive frame, steady frame time/FPS, simulation step cost, JS↔WASM snapshot cost, payload size and Babylon Inspector behavior.
 
-Use `cargo tree` to confirm the intended modular Bevy dependency boundary remains intact.
+Use `cargo tree` to confirm the intended modular Bevy dependency boundary remains intact. When #92 requests a supply-chain/cache inspection for a known Rust incident, complete that check before committing a new Cargo lockfile or treating the dependency graph as certified.
 
 ### Lane D — live behavior-preserving PRs
 
 Issue #92 owns the current ordered queue. Test exact PR heads in the certification clone, not in the shared checkout.
 
-Prioritize tooling safety first, then economy/tower/projectile/enemy parity work. Post the evidence back to each PR so its merge decision remains self-contained.
+Prioritize the targets that unblock the most downstream work. Post evidence back to each PR so its merge decision remains self-contained.
 
 Reuse dependency caches only when package metadata is unchanged. Reuse must not hide a dependency difference between targets.
 
@@ -170,13 +182,13 @@ Do not equate a clean install, a mergeable PR, or absence of console output with
 
 ## 8. Time-limited priority
 
-When a campaign cannot cover everything, prefer this order:
+When a campaign cannot cover everything, follow the current ordering in #92. As a stable default, prefer:
 
-1. current `master` historical build/browser baseline;
-2. #35 tooling safety;
-3. Storybook laboratory;
+1. current `master` historical build/browser baseline when it is stale or required for parity decisions;
+2. dependency/workspace/toolchain targets that unblock many later PRs;
+3. modern Storybook/browser laboratory gates;
 4. live behavior-preserving PR queue from #92;
-5. Rust core and hybrid-engine base;
+5. Rust core and hybrid-engine targets;
 6. top stacked design experiments;
 7. deeper performance, audio and PWA investigations.
 
