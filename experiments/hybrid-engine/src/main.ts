@@ -4,6 +4,8 @@ import {
   Engine,
   HemisphericLight,
   MeshBuilder,
+  RegisterInstancedMesh,
+  RegisterStandardEngineExtensions,
   Scene,
   StandardMaterial,
   Vector3,
@@ -14,6 +16,13 @@ import {
   advanceFixedStep,
   type FixedStepPolicy,
 } from "./fixedStep";
+
+// "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
+// registers none of the prototype extensions or mesh capabilities they rely on
+// at runtime. Everything this lab actually uses has to be registered explicitly,
+// or the failure only appears in a browser.
+RegisterStandardEngineExtensions();
+RegisterInstancedMesh();
 
 const BODY_COUNT = 128;
 const ARENA_RADIUS = 72;

@@ -6,10 +6,16 @@ import {
   Mesh,
   MeshBuilder,
   PointLight,
+  RegisterStandardEngineExtensions,
   Scene,
   StandardMaterial,
   Vector3,
 } from "@babylonjs/core/pure";
+
+// "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
+// registers none of the prototype extensions they rely on at runtime. Register
+// what this prototype uses explicitly, or the failure only appears in a browser.
+RegisterStandardEngineExtensions();
 
 type SourcePhase = "active" | "retreating" | "erupting";
 type TowerTier = 1 | 2 | 3;

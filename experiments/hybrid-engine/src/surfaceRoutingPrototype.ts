@@ -5,10 +5,16 @@ import {
   HemisphericLight,
   Mesh,
   MeshBuilder,
+  RegisterStandardEngineExtensions,
   Scene,
   StandardMaterial,
   Vector3,
 } from "@babylonjs/core/pure";
+
+// "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
+// registers none of the prototype extensions they rely on at runtime. Register
+// what this prototype uses explicitly, or the failure only appears in a browser.
+RegisterStandardEngineExtensions();
 
 type RaiderTier = 1 | 2 | 3;
 type RaiderState = "moving" | "blocked" | "reached";
