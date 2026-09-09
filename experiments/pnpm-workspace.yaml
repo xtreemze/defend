@@ -1,0 +1,21 @@
+packages:
+  - hybrid-engine
+  - storybook
+
+saveExact: true
+sharedWorkspaceLockfile: true
+engineStrict: true
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+minimumReleaseAgeIgnoreMissingTime: false
+strictDepBuilds: true
+verifyDepsBeforeRun: error
+blockExoticSubdeps: true
+trustLockfile: false
+allowBuilds:
+  # esbuild's postinstall (install.js) is optional for this workspace: the
+  # platform package @esbuild/darwin-arm64 is resolved through the lockfile and
+  # the JS API works without it. Its fallback paths can shell out to
+  # `npm install` or download a tarball straight from registry.npmjs.org, which
+  # would bypass the lockfile and the minimumReleaseAge maturation gate.
+  esbuild: false

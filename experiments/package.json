@@ -1,0 +1,17 @@
+{
+  "name": "@defend/experiments-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": "24.20.x",
+    "pnpm": "11.25.0"
+  },
+  "scripts": {
+    "typecheck": "pnpm -r --workspace-concurrency=1 run typecheck",
+    "check": "pnpm typecheck && pnpm --filter @defend/hybrid-engine-lab check",
+    "test": "pnpm -r --workspace-concurrency=1 run test",
+    "build": "pnpm -r --workspace-concurrency=1 run build",
+    "verify": "pnpm check && pnpm test && pnpm build"
+  }
+}

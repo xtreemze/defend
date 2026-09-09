@@ -5,25 +5,25 @@ This package is an isolated modern browser workshop for Defend experiments. It i
 ## Requirements
 
 - Node.js 24.20.x LTS.
-- pnpm 11.25.0, matching the package's pinned `packageManager` field.
-- Install dependencies from this directory only until the repository-wide modern workspace is introduced.
+- pnpm 11.25.0, pinned by the `experiments/` workspace root.
+- Install dependencies from `experiments/` so Storybook and the hybrid-engine lab share one resolved dependency graph and lockfile.
 - Install Playwright Chromium before browser tests when it is not already present.
 
 ## Commands
 
 ```sh
-cd experiments/storybook
+cd experiments
 pnpm install
-pnpm exec playwright install chromium
-pnpm typecheck
-pnpm dev
-pnpm build
-pnpm test
+pnpm --filter @defend/storybook-lab exec playwright install chromium
+pnpm --filter @defend/storybook-lab typecheck
+pnpm --filter @defend/storybook-lab dev
+pnpm --filter @defend/storybook-lab build
+pnpm --filter @defend/storybook-lab test
 ```
 
-The compatibility aliases `pnpm storybook`, `pnpm build-storybook`, and `pnpm test-storybook` remain available for Storybook-oriented workflows.
+The compatibility aliases `pnpm storybook`, `pnpm build-storybook`, and `pnpm test-storybook` remain available when commands are run directly against the Storybook package.
 
-Commit the generated `pnpm-lock.yaml` only after local installation confirms the pinned dependency set is coherent. Installation/build/test must not mutate the legacy root dependency graph.
+Commit the generated `experiments/pnpm-lock.yaml` only after local installation confirms the pinned dependency set is coherent. Installation/build/test must not mutate the legacy root dependency graph.
 
 ## Story taxonomy
 
@@ -75,6 +75,6 @@ The current deterministic domain playgrounds deliberately consume the merged sou
 
 These stories certify presentation and deterministic fixture behavior only after the local Storybook package itself passes install/typecheck/build/browser tests. They do not promote the underlying calibration values to production gameplay/audio constants.
 
-## Future workspace integration
+## Workspace role
 
-When #66 introduces the repository-wide modern workspace, this package should become the canonical `apps/storybook`/Storybook package rather than creating a second lab. Preserve the story taxonomy and browser-test lifecycle while relocating only after the workspace layout is locally certified.
+This package is a member of the modern `experiments/` pnpm workspace introduced under #143. It should eventually become the canonical `apps/storybook` package from #66 rather than spawning a second Storybook surface. Preserve the story taxonomy and browser-test lifecycle if/when relocation is locally certified.

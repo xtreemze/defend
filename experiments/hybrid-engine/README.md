@@ -29,21 +29,23 @@ The initial runtime intentionally uses only `bevy_app`, `bevy_ecs` and `bevy_mat
 - Rapier JS 0.20.0
 - Babylon Havok 1.3.14
 
-Versions are pinned for reproducible experiments. They should be updated deliberately rather than floating on `latest` during certification.
+Node and pnpm are owned by the `experiments/` workspace root. Direct package versions remain pinned for reproducible experiments and should be updated deliberately rather than floating on `latest` during certification.
 
 ## Run locally
 
-Install `wasm-pack` 0.15.0 and use Node 24 LTS, then from this directory:
+Install `wasm-pack` 0.15.0 and use Node 24 LTS, then install from the shared modern workspace root:
 
 ```sh
+cd experiments
 pnpm install
-pnpm test
-pnpm check
-pnpm build
-pnpm dev
+pnpm --filter @defend/hybrid-engine-lab typecheck
+pnpm --filter @defend/hybrid-engine-lab test
+pnpm --filter @defend/hybrid-engine-lab check
+pnpm --filter @defend/hybrid-engine-lab build
+pnpm --filter @defend/hybrid-engine-lab dev
 ```
 
-`pnpm build` and `pnpm dev` first compile `rust/` to `pkg/`.
+The hybrid package's `build` and `dev` scripts first compile `rust/` to `pkg/`.
 
 Use `?inspect=1` to start Babylon's headless Inspector bridge for agent-driven scene inspection.
 
@@ -104,10 +106,10 @@ For physics variants, compare contact/knockback behavior against Defend's charac
 
 ## Required local certification before promotion
 
-- `pnpm install` succeeds and produces a committed lockfile without touching the repository root dependency graph.
-- `wasm-pack build ./rust --target web --out-dir ../pkg --out-name defend_hybrid_runtime` succeeds.
+- `pnpm install` from `experiments/` succeeds and produces one committed `experiments/pnpm-lock.yaml` without touching the repository root dependency graph.
+- `wasm-pack build ./rust --target web --out-dir ../pkg --out-name defend_hybrid_runtime` succeeds from the hybrid package.
 - `cargo fmt --check`, `cargo clippy`, and `cargo test` succeed for the runtime crate.
-- `pnpm check`, `pnpm test`, and `pnpm build` succeed.
+- workspace-filtered `pnpm typecheck`, `pnpm check`, `pnpm test`, and `pnpm build` succeed.
 - Browser fixture renders all 128 bodies with no console errors.
 - 60/120/144 Hz display cadences preserve the expected fixed simulation rate.
 - an artificial long frame cannot trigger an unbounded catch-up spiral and reports dropped backlog.
