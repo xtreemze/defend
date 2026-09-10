@@ -1,4 +1,4 @@
-import proceduralAudioWorkletUrl from "./proceduralAudio.worklet.ts?worker&url";
+import proceduralAudioWorkletUrl from "./proceduralAudio.worklet.js?url";
 
 export interface ProceduralVoiceControl {
   id: number;
