@@ -76,7 +76,7 @@ describe("AI planner", () => {
 });
 
 describe("audio planner", () => {
-  it("virtualizes low-priority voices and bounds Doppler control", () => {
+  it("virtualizes low-priority voices and pitches approaching sources upward", () => {
     const result = planAudioBatch({
       sourceIds: new Uint32Array([1, 2, 3]),
       sourcePositions: new Float32Array([2, 0, 0, 40, 0, 0, 4, 0, 0]),
@@ -89,8 +89,34 @@ describe("audio planner", () => {
     });
 
     expect(Array.from(result.sourceIds)).toEqual([1, 2]);
-    expect(result.dopplerRatios[0]).toBeGreaterThanOrEqual(0.5);
+    expect(result.dopplerRatios[0]).toBeGreaterThan(1);
     expect(result.dopplerRatios[0]).toBeLessThanOrEqual(2);
     expect(result.distances[0]).toBeCloseTo(2, 5);
+  });
+
+  it("pitches a receding source downward and a listener moving toward it upward", () => {
+    const receding = planAudioBatch({
+      sourceIds: new Uint32Array([9]),
+      sourcePositions: new Float32Array([10, 0, 0]),
+      sourceVelocities: new Float32Array([20, 0, 0]),
+      sourceImportance: new Float32Array([1]),
+      listenerPosition: [0, 0, 0],
+      listenerVelocity: [0, 0, 0],
+      maxRenderedVoices: 1,
+      speedOfSound: 343,
+    });
+    const listenerApproach = planAudioBatch({
+      sourceIds: new Uint32Array([9]),
+      sourcePositions: new Float32Array([10, 0, 0]),
+      sourceVelocities: new Float32Array([0, 0, 0]),
+      sourceImportance: new Float32Array([1]),
+      listenerPosition: [0, 0, 0],
+      listenerVelocity: [20, 0, 0],
+      maxRenderedVoices: 1,
+      speedOfSound: 343,
+    });
+
+    expect(receding.dopplerRatios[0]).toBeLessThan(1);
+    expect(listenerApproach.dopplerRatios[0]).toBeGreaterThan(1);
   });
 });
