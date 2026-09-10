@@ -42,10 +42,7 @@ const MAX_AI_SPEED = 6;
 const AUDIO_VOICE_BUDGET = 12;
 const TURRET_IDS = new Uint32Array([1, 2, 3, 4]);
 const TURRET_POSITIONS = new Float32Array([
-  18, 2, 0,
-  -18, 2, 0,
-  0, 2, 18,
-  0, 2, -18,
+  18, 2, 0, -18, 2, 0, 0, 2, 18, 0, 2, -18,
 ]);
 
 interface ParallelDiagnostics {
@@ -150,7 +147,9 @@ async function main(): Promise<void> {
   const snapshotIds = Array.from(runtime.body_ids());
   const snapshotIdArray = Uint32Array.from(snapshotIds);
   const bodyIndex = new Map<number, number>();
-  snapshotIds.forEach((id, index) => bodyIndex.set(id, index));
+  snapshotIds.forEach((id, index) => {
+    bodyIndex.set(id, index);
+  });
   if (
     snapshotIds.length !== BODY_COUNT ||
     snapshotIds.some((id) => !bodyInstances.has(id))
@@ -175,8 +174,11 @@ async function main(): Promise<void> {
     workerErrors: 0,
     audioState: "disabled",
   };
-  (window as typeof window & { __defendParallelDiagnostics?: ParallelDiagnostics })
-    .__defendParallelDiagnostics = diagnostics;
+  (
+    window as typeof window & {
+      __defendParallelDiagnostics?: ParallelDiagnostics;
+    }
+  ).__defendParallelDiagnostics = diagnostics;
 
   let parallelWorkers: ParallelSystemWorkers | undefined;
   try {
@@ -230,7 +232,7 @@ async function main(): Promise<void> {
   let aiInFlight = false;
   let combatInFlight = false;
   let audioInFlight = false;
-  let previousCameraPosition = camera.position.clone();
+  const previousCameraPosition = camera.position.clone();
   let previousCameraSampleMs = performance.now();
 
   const recordWorkerError = () => {
@@ -258,7 +260,9 @@ async function main(): Promise<void> {
       positions.length !== snapshotIds.length * 3 ||
       velocities.length !== snapshotIds.length * 3
     ) {
-      throw new Error("Hybrid runtime snapshot changed without a lifecycle event");
+      throw new Error(
+        "Hybrid runtime snapshot changed without a lifecycle event",
+      );
     }
 
     snapshotBytes =
@@ -266,7 +270,9 @@ async function main(): Promise<void> {
     for (let index = 0; index < snapshotIds.length; index += 1) {
       const body = bodyInstances.get(snapshotIds[index]);
       if (!body) {
-        throw new Error(`Missing Babylon instance for body ${snapshotIds[index]}`);
+        throw new Error(
+          `Missing Babylon instance for body ${snapshotIds[index]}`,
+        );
       }
       const offset = index * 3;
       body.position.set(
@@ -315,7 +321,13 @@ async function main(): Promise<void> {
           [ids.buffer, workerPositions.buffer, workerVelocities.buffer],
         )
         .then((response) => {
-          if (!resultIsFresh(response.sourceTick, runtime.tick(), MAX_WORKER_LAG_TICKS)) {
+          if (
+            !resultIsFresh(
+              response.sourceTick,
+              runtime.tick(),
+              MAX_WORKER_LAG_TICKS,
+            )
+          ) {
             diagnostics.staleResults += 1;
             return;
           }
@@ -368,7 +380,13 @@ async function main(): Promise<void> {
           ],
         )
         .then((response) => {
-          if (!resultIsFresh(response.sourceTick, runtime.tick(), MAX_WORKER_LAG_TICKS)) {
+          if (
+            !resultIsFresh(
+              response.sourceTick,
+              runtime.tick(),
+              MAX_WORKER_LAG_TICKS,
+            )
+          ) {
             diagnostics.staleResults += 1;
             return;
           }
@@ -404,7 +422,10 @@ async function main(): Promise<void> {
           positions[index * 3 + 1],
           positions[index * 3 + 2],
         );
-        sourceImportance[index] = Math.min(1, 0.2 + 30 / Math.max(30, distance));
+        sourceImportance[index] = Math.min(
+          1,
+          0.2 + 30 / Math.max(30, distance),
+        );
       }
       void parallelWorkers
         .submit(
@@ -415,7 +436,11 @@ async function main(): Promise<void> {
             sourcePositions,
             sourceVelocities,
             sourceImportance,
-            listenerPosition: [camera.position.x, camera.position.y, camera.position.z],
+            listenerPosition: [
+              camera.position.x,
+              camera.position.y,
+              camera.position.z,
+            ],
             listenerVelocity,
             maxRenderedVoices: AUDIO_VOICE_BUDGET,
             speedOfSound: 343,
@@ -428,7 +453,13 @@ async function main(): Promise<void> {
           ],
         )
         .then((response) => {
-          if (!resultIsFresh(response.sourceTick, runtime.tick(), MAX_WORKER_LAG_TICKS)) {
+          if (
+            !resultIsFresh(
+              response.sourceTick,
+              runtime.tick(),
+              MAX_WORKER_LAG_TICKS,
+            )
+          ) {
             diagnostics.staleResults += 1;
             return;
           }
