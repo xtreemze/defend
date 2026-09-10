@@ -32,18 +32,17 @@ function defaultWorkerFactory(lane: WorkerLane): Worker {
   return new SystemWorker({ name: `defend-${lane}-worker` });
 }
 
-/**
- * Three persistent system-level workers rather than one worker per entity.
- *
- * Callers decide when to submit based on their multi-rate policy. Returned
- * snapshots remain tick stamped and must pass resultIsFresh() plus authoritative
- * lifecycle/physics checks before they are applied.
- */
+/** Three persistent system-level workers rather than one worker per entity. */
 export class ParallelSystemWorkers {
   readonly workers: Record<WorkerLane, Worker>;
 
   private nextJobId = 1;
   private readonly pending = new Map<number, PendingJob>();
+  private readonly available: Record<WorkerLane, boolean> = {
+    combat: true,
+    ai: true,
+    audio: true,
+  };
 
   constructor(factory: SystemWorkerFactory = defaultWorkerFactory) {
     this.workers = {
@@ -63,12 +62,16 @@ export class ParallelSystemWorkers {
         pending.resolve(event.data);
       };
       worker.onerror = (event) => {
-        this.rejectLane(
-          lane,
-          new Error(event.message || `${lane} worker failed`),
-        );
+        this.disableLane(lane, new Error(event.message || `${lane} worker failed`));
+      };
+      worker.onmessageerror = () => {
+        this.disableLane(lane, new Error(`${lane} worker message could not be decoded`));
       };
     }
+  }
+
+  laneAvailable(lane: WorkerLane): boolean {
+    return this.available[lane];
   }
 
   submit<Lane extends WorkerLane>(
@@ -77,15 +80,13 @@ export class ParallelSystemWorkers {
     payload: LanePayloadMap[Lane],
     transfer: Transferable[] = [],
   ): Promise<TickStampedResponse<LaneResultMap[Lane]>> {
+    if (!this.available[lane]) {
+      return Promise.reject(new Error(`${lane} worker is unavailable`));
+    }
+
     const jobId = this.nextJobId;
     this.nextJobId += 1;
-
-    const request = {
-      lane,
-      jobId,
-      sourceTick,
-      payload,
-    } as SystemWorkerRequest;
+    const request = { lane, jobId, sourceTick, payload } as SystemWorkerRequest;
 
     return new Promise((resolve, reject) => {
       this.pending.set(jobId, {
@@ -94,13 +95,19 @@ export class ParallelSystemWorkers {
           resolve(response as TickStampedResponse<LaneResultMap[Lane]>),
         reject,
       });
-      this.workers[lane].postMessage(request, transfer);
+      try {
+        this.workers[lane].postMessage(request, transfer);
+      } catch (error) {
+        this.pending.delete(jobId);
+        reject(error instanceof Error ? error : new Error(String(error)));
+      }
     });
   }
 
   dispose(): void {
-    for (const worker of Object.values(this.workers)) {
-      worker.terminate();
+    for (const lane of ["combat", "ai", "audio"] as const) {
+      this.available[lane] = false;
+      this.workers[lane].terminate();
     }
     for (const pending of this.pending.values()) {
       pending.reject(new Error("Parallel worker runtime disposed"));
@@ -108,7 +115,9 @@ export class ParallelSystemWorkers {
     this.pending.clear();
   }
 
-  private rejectLane(lane: WorkerLane, error: Error): void {
+  private disableLane(lane: WorkerLane, error: Error): void {
+    this.available[lane] = false;
+    this.workers[lane].terminate();
     for (const [jobId, pending] of this.pending.entries()) {
       if (pending.lane === lane) {
         this.pending.delete(jobId);
