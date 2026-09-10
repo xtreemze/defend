@@ -6,8 +6,12 @@ import {
 	towerGlobals,
 	materialGlobals
 } from "../main/globalVariables";
+import { getGlobalMaterialFactory } from "./materialFactory";
 
 function generateMaterials(scene: Scene) {
+	// Initialize material factory for efficient material reuse
+	const factory = getGlobalMaterialFactory(scene);
+
 	const groundMaterial = new StandardMaterial("groundMaterial", scene);
 
 	groundMaterial.wireframe = true;

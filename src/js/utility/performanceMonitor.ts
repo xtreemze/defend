@@ -10,6 +10,7 @@ export class PerformanceMonitor {
   private minFps = 60;
   private maxFrameTime = 0;
   private isMonitoring = false;
+  private materialCacheStats: any = null;
 
   /**
    * Start monitoring performance
@@ -76,6 +77,13 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Register material cache stats for logging
+   */
+  registerMaterialCacheStats(stats: any): void {
+    this.materialCacheStats = stats;
+  }
+
+  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -87,6 +95,9 @@ export class PerformanceMonitor {
       console.log(
         `Memory - Used: ${stats.memory.usedJSHeap}MB / ${stats.memory.totalJSHeap}MB (limit: ${stats.memory.limit}MB)`
       );
+    }
+    if (this.materialCacheStats) {
+      console.log(`Material Cache - Cached: ${this.materialCacheStats.cachedCount}, Memory: ${this.materialCacheStats.totalMemory}`);
     }
   }
 }
