@@ -16,11 +16,17 @@ import {
   type FixedStepPolicy,
   INITIAL_FIXED_STEP_STATE,
 } from "./fixedStep";
+import {
+  createProceduralAudioNode,
+  updateProceduralVoices,
+} from "./parallel/proceduralAudio";
+import { ParallelSystemWorkers } from "./parallel/systemWorkers";
+import {
+  intervalForDistanceTier,
+  resultIsFresh,
+  shouldScheduleTick,
+} from "./parallel/workerProtocol";
 
-// "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
-// registers none of the prototype extensions or mesh capabilities they rely on
-// at runtime. Everything this lab actually uses has to be registered explicitly,
-// or the failure only appears in a browser.
 RegisterStandardEngineExtensions();
 RegisterInstancedMesh();
 
@@ -28,6 +34,31 @@ const BODY_COUNT = 128;
 const ARENA_RADIUS = 72;
 const MAX_CATCH_UP_STEPS = 8;
 const MAX_FRAME_DELTA_SECONDS = 0.25;
+const MAX_WORKER_LAG_TICKS = 12;
+const AI_INTERVAL_TICKS = intervalForDistanceTier("standard");
+const COMBAT_INTERVAL_TICKS = intervalForDistanceTier("standard");
+const AUDIO_INTERVAL_TICKS = intervalForDistanceTier("standard");
+const MAX_AI_SPEED = 6;
+const AUDIO_VOICE_BUDGET = 12;
+const TURRET_IDS = new Uint32Array([1, 2, 3, 4]);
+const TURRET_POSITIONS = new Float32Array([
+  18, 2, 0,
+  -18, 2, 0,
+  0, 2, 18,
+  0, 2, -18,
+]);
+
+interface ParallelDiagnostics {
+  aiCompleted: number;
+  aiApplied: number;
+  combatCompleted: number;
+  combatTargets: number;
+  audioCompleted: number;
+  audioVoices: number;
+  staleResults: number;
+  workerErrors: number;
+  audioState: "disabled" | "ready" | "unavailable" | "failed";
+}
 
 async function main(): Promise<void> {
   await initRuntime();
@@ -117,6 +148,9 @@ async function main(): Promise<void> {
   }
 
   const snapshotIds = Array.from(runtime.body_ids());
+  const snapshotIdArray = Uint32Array.from(snapshotIds);
+  const bodyIndex = new Map<number, number>();
+  snapshotIds.forEach((id, index) => bodyIndex.set(id, index));
   if (
     snapshotIds.length !== BODY_COUNT ||
     snapshotIds.some((id) => !bodyInstances.has(id))
@@ -130,6 +164,56 @@ async function main(): Promise<void> {
     inspectable = StartInspectable(scene);
   }
 
+  const diagnostics: ParallelDiagnostics = {
+    aiCompleted: 0,
+    aiApplied: 0,
+    combatCompleted: 0,
+    combatTargets: 0,
+    audioCompleted: 0,
+    audioVoices: 0,
+    staleResults: 0,
+    workerErrors: 0,
+    audioState: "disabled",
+  };
+  (window as typeof window & { __defendParallelDiagnostics?: ParallelDiagnostics })
+    .__defendParallelDiagnostics = diagnostics;
+
+  let parallelWorkers: ParallelSystemWorkers | undefined;
+  try {
+    parallelWorkers = new ParallelSystemWorkers();
+  } catch {
+    diagnostics.workerErrors += 1;
+  }
+
+  let audioContext: AudioContext | undefined;
+  let audioNode: AudioWorkletNode | undefined;
+  const enableAudio = async () => {
+    if (audioNode || diagnostics.audioState === "failed") {
+      return;
+    }
+    if (!("AudioContext" in window)) {
+      diagnostics.audioState = "unavailable";
+      return;
+    }
+    try {
+      audioContext = new AudioContext();
+      if (!audioContext.audioWorklet) {
+        diagnostics.audioState = "unavailable";
+        await audioContext.close();
+        audioContext = undefined;
+        return;
+      }
+      audioNode = await createProceduralAudioNode(audioContext);
+      audioNode.connect(audioContext.destination);
+      await audioContext.resume();
+      diagnostics.audioState = "ready";
+    } catch {
+      diagnostics.audioState = "failed";
+      diagnostics.workerErrors += 1;
+    }
+  };
+  window.addEventListener("pointerdown", enableAudio, { once: true });
+
   const fixedStepPolicy: FixedStepPolicy = {
     fixedDeltaSeconds: runtime.fixed_delta_seconds(),
     maxCatchUpSteps: MAX_CATCH_UP_STEPS,
@@ -140,6 +224,18 @@ async function main(): Promise<void> {
   let snapshotBytes = 0;
   let stepsThisFrame = 0;
   let renderAlpha = 0;
+  let lastAiTick: number | null = null;
+  let lastCombatTick: number | null = null;
+  let lastAudioTick: number | null = null;
+  let aiInFlight = false;
+  let combatInFlight = false;
+  let audioInFlight = false;
+  let previousCameraPosition = camera.position.clone();
+  let previousCameraSampleMs = performance.now();
+
+  const recordWorkerError = () => {
+    diagnostics.workerErrors += 1;
+  };
 
   engine.runRenderLoop(() => {
     const advance = advanceFixedStep(
@@ -155,20 +251,22 @@ async function main(): Promise<void> {
       runtime.step_fixed(stepsThisFrame);
     }
 
+    const tick = runtime.tick();
     const positions = runtime.positions();
-    if (positions.length !== snapshotIds.length * 3) {
-      throw new Error(
-        "Hybrid runtime position snapshot changed without a lifecycle event",
-      );
+    const velocities = runtime.velocities();
+    if (
+      positions.length !== snapshotIds.length * 3 ||
+      velocities.length !== snapshotIds.length * 3
+    ) {
+      throw new Error("Hybrid runtime snapshot changed without a lifecycle event");
     }
 
-    snapshotBytes = positions.length * Float32Array.BYTES_PER_ELEMENT;
+    snapshotBytes =
+      (positions.length + velocities.length) * Float32Array.BYTES_PER_ELEMENT;
     for (let index = 0; index < snapshotIds.length; index += 1) {
       const body = bodyInstances.get(snapshotIds[index]);
       if (!body) {
-        throw new Error(
-          `Missing Babylon instance for body ${snapshotIds[index]}`,
-        );
+        throw new Error(`Missing Babylon instance for body ${snapshotIds[index]}`);
       }
       const offset = index * 3;
       body.position.set(
@@ -178,19 +276,202 @@ async function main(): Promise<void> {
       );
     }
 
+    const cameraNowMs = performance.now();
+    const cameraDeltaSeconds = Math.max(
+      0.001,
+      (cameraNowMs - previousCameraSampleMs) / 1000,
+    );
+    const listenerVelocity: [number, number, number] = [
+      (camera.position.x - previousCameraPosition.x) / cameraDeltaSeconds,
+      (camera.position.y - previousCameraPosition.y) / cameraDeltaSeconds,
+      (camera.position.z - previousCameraPosition.z) / cameraDeltaSeconds,
+    ];
+    previousCameraPosition.copyFrom(camera.position);
+    previousCameraSampleMs = cameraNowMs;
+
+    if (
+      parallelWorkers?.laneAvailable("ai") &&
+      !aiInFlight &&
+      shouldScheduleTick(tick, lastAiTick, AI_INTERVAL_TICKS)
+    ) {
+      aiInFlight = true;
+      lastAiTick = tick;
+      const ids = snapshotIdArray.slice();
+      const workerPositions = positions.slice();
+      const workerVelocities = velocities.slice();
+      void parallelWorkers
+        .submit(
+          "ai",
+          tick,
+          {
+            agentIds: ids,
+            positions: workerPositions,
+            velocities: workerVelocities,
+            objective: [0, 1.5, 0],
+            preferredSpeed: 4.5,
+            separationRadius: 5.5,
+            separationWeight: 1.4,
+          },
+          [ids.buffer, workerPositions.buffer, workerVelocities.buffer],
+        )
+        .then((response) => {
+          if (!resultIsFresh(response.sourceTick, runtime.tick(), MAX_WORKER_LAG_TICKS)) {
+            diagnostics.staleResults += 1;
+            return;
+          }
+          diagnostics.aiApplied = runtime.apply_velocity_commands(
+            response.sourceTick,
+            MAX_WORKER_LAG_TICKS,
+            response.result.agentIds,
+            response.result.desiredVelocities,
+            MAX_AI_SPEED,
+          );
+          diagnostics.aiCompleted += 1;
+        })
+        .catch(recordWorkerError)
+        .finally(() => {
+          aiInFlight = false;
+        });
+    }
+
+    if (
+      parallelWorkers?.laneAvailable("combat") &&
+      !combatInFlight &&
+      shouldScheduleTick(tick, lastCombatTick, COMBAT_INTERVAL_TICKS)
+    ) {
+      combatInFlight = true;
+      lastCombatTick = tick;
+      const turretIds = TURRET_IDS.slice();
+      const turretPositions = TURRET_POSITIONS.slice();
+      const targetIds = snapshotIdArray.slice();
+      const targetPositions = positions.slice();
+      const targetVelocities = velocities.slice();
+      void parallelWorkers
+        .submit(
+          "combat",
+          tick,
+          {
+            turretIds,
+            turretPositions,
+            targetIds,
+            targetPositions,
+            targetVelocities,
+            projectileSpeed: 38,
+            maxRange: 80,
+          },
+          [
+            turretIds.buffer,
+            turretPositions.buffer,
+            targetIds.buffer,
+            targetPositions.buffer,
+            targetVelocities.buffer,
+          ],
+        )
+        .then((response) => {
+          if (!resultIsFresh(response.sourceTick, runtime.tick(), MAX_WORKER_LAG_TICKS)) {
+            diagnostics.staleResults += 1;
+            return;
+          }
+          let selected = 0;
+          for (const targetId of response.result.targetIds) {
+            if (targetId !== 0xffffffff) {
+              selected += 1;
+            }
+          }
+          diagnostics.combatTargets = selected;
+          diagnostics.combatCompleted += 1;
+        })
+        .catch(recordWorkerError)
+        .finally(() => {
+          combatInFlight = false;
+        });
+    }
+
+    if (
+      parallelWorkers?.laneAvailable("audio") &&
+      !audioInFlight &&
+      shouldScheduleTick(tick, lastAudioTick, AUDIO_INTERVAL_TICKS)
+    ) {
+      audioInFlight = true;
+      lastAudioTick = tick;
+      const ids = snapshotIdArray.slice();
+      const sourcePositions = positions.slice();
+      const sourceVelocities = velocities.slice();
+      const sourceImportance = new Float32Array(ids.length);
+      for (let index = 0; index < sourceImportance.length; index += 1) {
+        const distance = Math.hypot(
+          positions[index * 3],
+          positions[index * 3 + 1],
+          positions[index * 3 + 2],
+        );
+        sourceImportance[index] = Math.min(1, 0.2 + 30 / Math.max(30, distance));
+      }
+      void parallelWorkers
+        .submit(
+          "audio",
+          tick,
+          {
+            sourceIds: ids,
+            sourcePositions,
+            sourceVelocities,
+            sourceImportance,
+            listenerPosition: [camera.position.x, camera.position.y, camera.position.z],
+            listenerVelocity,
+            maxRenderedVoices: AUDIO_VOICE_BUDGET,
+            speedOfSound: 343,
+          },
+          [
+            ids.buffer,
+            sourcePositions.buffer,
+            sourceVelocities.buffer,
+            sourceImportance.buffer,
+          ],
+        )
+        .then((response) => {
+          if (!resultIsFresh(response.sourceTick, runtime.tick(), MAX_WORKER_LAG_TICKS)) {
+            diagnostics.staleResults += 1;
+            return;
+          }
+          diagnostics.audioVoices = response.result.sourceIds.length;
+          diagnostics.audioCompleted += 1;
+          if (!audioNode) {
+            return;
+          }
+          const voices = Array.from(response.result.sourceIds, (id, index) => {
+            const bodyOffset = (bodyIndex.get(id) ?? 0) * 3;
+            const relativeX = positions[bodyOffset] - camera.position.x;
+            return {
+              id,
+              frequencyHz: 95 + (id % 11) * 17,
+              gain: Math.min(0.06, response.result.priorities[index] * 0.06),
+              dopplerRatio: response.result.dopplerRatios[index],
+              pan: Math.max(-1, Math.min(1, relativeX / 40)),
+            };
+          });
+          updateProceduralVoices(audioNode, voices);
+        })
+        .catch(recordWorkerError)
+        .finally(() => {
+          audioInFlight = false;
+        });
+    }
+
     scene.render();
     frame += 1;
     if (frame % 15 === 0) {
       const fingerprint = runtime.state_fingerprint();
       metrics.textContent = [
-        "Babylon 9.23 renderer + Bevy 0.19 ECS/WASM",
+        "Babylon 9.25 renderer + Bevy 0.19 ECS/WASM",
         `bodies: ${BODY_COUNT}`,
         `fps: ${engine.getFps().toFixed(1)}`,
         `simulation: ${(1 / fixedStepPolicy.fixedDeltaSeconds).toFixed(0)} Hz fixed tick`,
-        `tick: ${runtime.tick()} (${stepsThisFrame} step(s) this frame)`,
+        `tick: ${tick} (${stepsThisFrame} step(s) this frame)`,
         `state: ${fingerprint}`,
         `render alpha: ${renderAlpha.toFixed(2)}`,
         `snapshot: ${snapshotBytes} B/frame + ${snapshotIds.length * Uint32Array.BYTES_PER_ELEMENT} B identity table`,
+        `workers: AI ${diagnostics.aiCompleted}/${diagnostics.aiApplied} applied · combat ${diagnostics.combatCompleted}/${diagnostics.combatTargets} targets · audio ${diagnostics.audioCompleted}/${diagnostics.audioVoices} voices`,
+        `worker stale/errors: ${diagnostics.staleResults}/${diagnostics.workerErrors}`,
+        `procedural audio: ${diagnostics.audioState} (pointer/tap enables)`,
         `dropped catch-up time: ${(fixedStepState.droppedSeconds * 1000).toFixed(1)} ms`,
         `WebGPU available: ${"gpu" in navigator}`,
         `crossOriginIsolated: ${String(crossOriginIsolated)}`,
@@ -205,6 +486,10 @@ async function main(): Promise<void> {
     "beforeunload",
     () => {
       window.removeEventListener("resize", resize);
+      window.removeEventListener("pointerdown", enableAudio);
+      audioNode?.disconnect();
+      void audioContext?.close();
+      parallelWorkers?.dispose();
       inspectable?.dispose();
       engine.stopRenderLoop();
       scene.dispose();
