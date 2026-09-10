@@ -1,3 +1,10 @@
+import {
+  spatialRenderHints,
+  type SpatialAudioCalibration,
+  type SpatialAudioObjectState,
+  type SpatialListenerState,
+} from "../../../../src/js/audio/spatialAudio";
+
 export interface AudioBatchInput {
   sourceIds: Uint32Array;
   sourcePositions: Float32Array;
@@ -26,8 +33,8 @@ function finiteOrZero(value: number): number {
   return Number.isFinite(value) ? value : 0;
 }
 
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value));
+function clamp01(value: number): number {
+  return Math.min(1, Math.max(0, finiteOrZero(value)));
 }
 
 interface RankedSource {
@@ -38,9 +45,9 @@ interface RankedSource {
 }
 
 /**
- * Worker-side source prioritization and motion-control preparation.
- * Audio rendering itself belongs in AudioWorklet; this function only produces
- * lower-rate control data that can be interpolated sample-accurately there.
+ * Worker-side spatial control preparation using the canonical #61 spatial math.
+ * This adapter intentionally keeps the transferable SoA protocol while avoiding
+ * a second Doppler/closest-approach/priority implementation in the worker lab.
  */
 export function planAudioBatch(input: AudioBatchInput): AudioBatchResult {
   const count = input.sourceIds.length;
@@ -50,13 +57,36 @@ export function planAudioBatch(input: AudioBatchInput): AudioBatchResult {
     throw new Error("sourceImportance must match sourceIds length");
   }
 
-  const listenerX = finiteOrZero(input.listenerPosition[0]);
-  const listenerY = finiteOrZero(input.listenerPosition[1]);
-  const listenerZ = finiteOrZero(input.listenerPosition[2]);
-  const listenerVelocityX = finiteOrZero(input.listenerVelocity[0]);
-  const listenerVelocityY = finiteOrZero(input.listenerVelocity[1]);
-  const listenerVelocityZ = finiteOrZero(input.listenerVelocity[2]);
-  const speedOfSound = Math.max(1, finiteOrZero(input.speedOfSound));
+  const listener: SpatialListenerState = {
+    position: {
+      x: finiteOrZero(input.listenerPosition[0]),
+      y: finiteOrZero(input.listenerPosition[1]),
+      z: finiteOrZero(input.listenerPosition[2]),
+    },
+    velocity: {
+      x: finiteOrZero(input.listenerVelocity[0]),
+      y: finiteOrZero(input.listenerVelocity[1]),
+      z: finiteOrZero(input.listenerVelocity[2]),
+    },
+    forward: { x: 0, y: 0, z: 1 },
+    up: { x: 0, y: 1, z: 0 },
+  };
+  const calibration: SpatialAudioCalibration = {
+    speedOfSound: Math.max(1, finiteOrZero(input.speedOfSound)),
+    maxRadialFractionOfSoundSpeed: 0.9,
+    minDopplerRatio: 0.5,
+    maxDopplerRatio: 2,
+    referenceDistance: 12,
+    rolloffExponent: 1.6,
+    airAbsorptionPerUnit: 0.004,
+    predictionHorizonSeconds: 1.5,
+    energyReference: 0.5,
+    proximityWeight: 0.25,
+    closestApproachWeight: 0.3,
+    energyWeight: 0.1,
+    threatWeight: 0.25,
+    continuityWeight: 0.1,
+  };
   const maxRenderedVoices = Math.max(
     0,
     Math.min(count, Math.floor(finiteOrZero(input.maxRenderedVoices))),
@@ -65,39 +95,38 @@ export function planAudioBatch(input: AudioBatchInput): AudioBatchResult {
 
   for (let index = 0; index < count; index += 1) {
     const offset = index * 3;
-    const relativeX = finiteOrZero(input.sourcePositions[offset]) - listenerX;
-    const relativeY = finiteOrZero(input.sourcePositions[offset + 1]) - listenerY;
-    const relativeZ = finiteOrZero(input.sourcePositions[offset + 2]) - listenerZ;
-    const distance = Math.hypot(relativeX, relativeY, relativeZ);
-    const inverseDistance = distance > Number.EPSILON ? 1 / distance : 0;
-    const radialX = relativeX * inverseDistance;
-    const radialY = relativeY * inverseDistance;
-    const radialZ = relativeZ * inverseDistance;
-
-    // The radial basis points from listener to source. Source-positive therefore
-    // means moving away, while listener-positive means moving toward the source.
-    // The classical moving-source/listener ratio in that convention is
-    // (c + listenerTowardSource) / (c + sourceAwayFromListener).
-    const sourceRadialVelocity =
-      finiteOrZero(input.sourceVelocities[offset]) * radialX +
-      finiteOrZero(input.sourceVelocities[offset + 1]) * radialY +
-      finiteOrZero(input.sourceVelocities[offset + 2]) * radialZ;
-    const listenerRadialVelocity =
-      listenerVelocityX * radialX +
-      listenerVelocityY * radialY +
-      listenerVelocityZ * radialZ;
-    const denominator = Math.max(1, speedOfSound + sourceRadialVelocity);
-    const dopplerRatio = clamp(
-      (speedOfSound + listenerRadialVelocity) / denominator,
-      0.5,
-      2,
-    );
-    const importance = Math.max(0, finiteOrZero(input.sourceImportance[index]));
-    const distanceAttenuation = 1 / (1 + distance * distance * 0.0025);
-    const approachBoost = sourceRadialVelocity < 0 ? 1.2 : 1;
-    const priority = importance * distanceAttenuation * approachBoost;
-
-    ranked.push({ index, distance, priority, dopplerRatio });
+    const importance = clamp01(input.sourceImportance[index]);
+    const source: SpatialAudioObjectState = {
+      id: String(input.sourceIds[index]),
+      kind: "hybrid-body",
+      acousticProfile: "procedural-body",
+      position: {
+        x: finiteOrZero(input.sourcePositions[offset]),
+        y: finiteOrZero(input.sourcePositions[offset + 1]),
+        z: finiteOrZero(input.sourcePositions[offset + 2]),
+      },
+      velocity: {
+        x: finiteOrZero(input.sourceVelocities[offset]),
+        y: finiteOrZero(input.sourceVelocities[offset + 1]),
+        z: finiteOrZero(input.sourceVelocities[offset + 2]),
+      },
+      orientation: { x: 0, y: 0, z: 1 },
+      directivity: 0,
+      radius: 1,
+      baseGain: 1,
+      excitationEnergy: importance,
+      threat: importance,
+      continuity: 0.25,
+      seed: input.sourceIds[index],
+      sustained: true,
+    };
+    const hints = spatialRenderHints(source, listener, calibration);
+    ranked.push({
+      index,
+      distance: hints.distance,
+      priority: hints.priority,
+      dopplerRatio: hints.doppler.ratio,
+    });
   }
 
   ranked.sort((left, right) => {
