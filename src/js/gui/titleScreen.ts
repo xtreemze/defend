@@ -22,6 +22,7 @@ import {
 	installButtonStyle,
 	startButtonHTML
 } from "./startHTML";
+import { getGlobalLazyLoadingOrchestrator } from "../utility/lazyLoadingOrchestrator";
 
 function titleScreen(
 	scene: Scene,
@@ -181,7 +182,15 @@ function titleScreen(
 		});
 	});
 
-	function startGame() {
+	async function startGame() {
+		// Ensure all gameplay modules are loaded before starting
+		const orchestrator = getGlobalLazyLoadingOrchestrator();
+		try {
+			await orchestrator.loadGameplayModules(scene, canvas);
+		} catch (err) {
+			console.error("Failed to load gameplay modules:", err);
+		}
+
 		displayEconomy(scene);
 
 		// start Enemy Generation and Waves

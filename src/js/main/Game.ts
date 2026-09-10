@@ -15,6 +15,7 @@ import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals, towerGlobal
 import { map } from "./map";
 import { detectDeviceCapabilities } from "../utility/deviceDetection";
 import { getGlobalPerformanceMonitor } from "../utility/performanceMonitor";
+import { getGlobalLazyLoadingOrchestrator } from "../utility/lazyLoadingOrchestrator";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -171,6 +172,12 @@ window.addEventListener("DOMContentLoaded", () => {
 	}
 
 	renderPipeline(game.scene);
+
+	// Preload gameplay modules in the background while title screen is showing
+	const orchestrator = getGlobalLazyLoadingOrchestrator();
+	orchestrator.preloadGameplayModules(game.scene).catch(err => {
+		console.error("Failed to preload gameplay modules:", err);
+	});
 
 	game.doRender();
 });
