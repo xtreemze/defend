@@ -74,7 +74,8 @@ function interceptTime(
   const a = velocitySquared - speedSquared;
   const b =
     2 * (relativeX * velocityX + relativeY * velocityY + relativeZ * velocityZ);
-  const c = relativeX * relativeX + relativeY * relativeY + relativeZ * relativeZ;
+  const c =
+    relativeX * relativeX + relativeY * relativeY + relativeZ * relativeZ;
   return smallestPositiveRoot(a, b, c);
 }
 
