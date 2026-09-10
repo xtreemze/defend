@@ -15,7 +15,9 @@ class DefendProceduralAudioProcessor extends AudioWorkletProcessor {
     super();
     this.voices = new Map();
     this.port.onmessage = (event) => {
-      const controls = Array.isArray(event.data) ? event.data.slice(0, MAX_VOICES) : [];
+      const controls = Array.isArray(event.data)
+        ? event.data.slice(0, MAX_VOICES)
+        : [];
       const activeIds = new Set();
 
       for (const control of controls) {
