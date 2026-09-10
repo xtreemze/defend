@@ -1,4 +1,3 @@
-import SystemWorker from "./systemWorker.worker.ts?worker";
 import type { AiBatchInput, AiBatchResult } from "./aiPlanner";
 import type { AudioBatchInput, AudioBatchResult } from "./audioPlanner";
 import type { CombatBatchInput, CombatBatchResult } from "./combatPlanner";
@@ -6,6 +5,7 @@ import type {
   SystemWorkerRequest,
   SystemWorkerResponse,
 } from "./systemWorker.worker";
+import SystemWorker from "./systemWorker.worker.ts?worker";
 import type { TickStampedResponse, WorkerLane } from "./workerProtocol";
 
 interface LanePayloadMap {
@@ -62,10 +62,16 @@ export class ParallelSystemWorkers {
         pending.resolve(event.data);
       };
       worker.onerror = (event) => {
-        this.disableLane(lane, new Error(event.message || `${lane} worker failed`));
+        this.disableLane(
+          lane,
+          new Error(event.message || `${lane} worker failed`),
+        );
       };
       worker.onmessageerror = () => {
-        this.disableLane(lane, new Error(`${lane} worker message could not be decoded`));
+        this.disableLane(
+          lane,
+          new Error(`${lane} worker message could not be decoded`),
+        );
       };
     }
   }
