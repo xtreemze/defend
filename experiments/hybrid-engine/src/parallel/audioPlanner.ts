@@ -1,8 +1,8 @@
 import {
-  spatialRenderHints,
   type SpatialAudioCalibration,
   type SpatialAudioObjectState,
   type SpatialListenerState,
+  spatialRenderHints,
 } from "../../../../src/js/audio/spatialAudio";
 
 export interface AudioBatchInput {
@@ -23,7 +23,11 @@ export interface AudioBatchResult {
   dopplerRatios: Float32Array;
 }
 
-function requireVec3Length(name: string, values: Float32Array, count: number): void {
+function requireVec3Length(
+  name: string,
+  values: Float32Array,
+  count: number,
+): void {
   if (values.length !== count * 3) {
     throw new Error(`${name} must contain exactly ${count * 3} scalar values`);
   }
