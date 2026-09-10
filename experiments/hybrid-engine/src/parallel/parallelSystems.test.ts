@@ -68,8 +68,14 @@ describe("AI planner", () => {
     });
 
     expect(result.agentIds).toEqual(new Uint32Array([1, 2]));
-    expect(Math.hypot(...result.desiredVelocities.slice(0, 3))).toBeCloseTo(4, 5);
-    expect(Math.hypot(...result.desiredVelocities.slice(3, 6))).toBeCloseTo(4, 5);
+    expect(Math.hypot(...result.desiredVelocities.slice(0, 3))).toBeCloseTo(
+      4,
+      5,
+    );
+    expect(Math.hypot(...result.desiredVelocities.slice(3, 6))).toBeCloseTo(
+      4,
+      5,
+    );
     expect(result.desiredVelocities[0]).toBeLessThan(0);
     expect(result.desiredVelocities[3]).toBeLessThan(0);
   });
