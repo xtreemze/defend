@@ -4,7 +4,7 @@ import {
 	Color4,
 	ParticleSystem,
 	GPUParticleSystem
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { createTexture } from "./flare";
 import { projectileGlobals, renderGlobals } from "../main/globalVariables";
 

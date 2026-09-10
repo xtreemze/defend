@@ -13,7 +13,7 @@ import {
 import * as FX from "../../vendor/wafxr/wafxr";
 import { newEnemyWave } from "../enemy/enemyWaves";
 import { newTower } from "../tower/pick";
-import { Scene, PhysicsEngine } from "babylonjs";
+import { Scene, PhysicsEngine } from "../utility/babylonOptimized";
 import { displayEconomy } from "./currency";
 import { upgradeTower } from "../tower/upgradeTower";
 import {

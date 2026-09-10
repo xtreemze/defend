@@ -1,4 +1,4 @@
-import { Scene, ArcRotateCamera, Vector3, Camera } from "babylonjs";
+import { Scene, ArcRotateCamera, Vector3, Camera } from "../utility/babylonOptimized";
 import { mapGlobals } from "./globalVariables";
 import * as FX from "../../vendor/wafxr/wafxr";
 

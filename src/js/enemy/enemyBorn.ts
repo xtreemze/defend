@@ -1,4 +1,4 @@
-import { Scene, Vector3, MeshBuilder, Mesh, PhysicsImpostor } from "babylonjs";
+import { Scene, Vector3, MeshBuilder, Mesh, PhysicsImpostor } from "../utility/babylonOptimized";
 import enemyAi from "./enemyAi";
 import {
 	enemyGlobals,

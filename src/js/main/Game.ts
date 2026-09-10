@@ -8,7 +8,7 @@ import {
 	SceneOptimizerOptions,
 	CannonJSPlugin,
 	PhysicsEngine
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 
 import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals, towerGlobals } from "./globalVariables";

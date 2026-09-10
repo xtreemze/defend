@@ -1,4 +1,4 @@
-import { MeshBuilder, Material, Mesh, InstancedMesh, Vector3 } from "babylonjs";
+import { MeshBuilder, Material, Mesh, InstancedMesh, Vector3 } from "../utility/babylonOptimized";
 import { materialGlobals, towerGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
 

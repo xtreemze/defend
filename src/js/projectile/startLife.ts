@@ -7,7 +7,7 @@ import {
 	PhysicsImpostor,
 	PhysicsEngine,
 	InstancedMesh
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { projectileGlobals, mapGlobals } from "../main/globalVariables";
 import { impulsePhys } from "./Projectile";
 import { destroyOnCollide } from "./destroyOnCollide";

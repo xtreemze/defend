@@ -1,5 +1,5 @@
 
-import { Scene } from "babylonjs";
+import { Scene } from "../utility/babylonOptimized";
 import { newWave } from "../main/sound";
 import {
 	enemyGlobals,

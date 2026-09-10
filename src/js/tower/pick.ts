@@ -5,7 +5,7 @@ import {
 	PointerEventTypes,
 	PickingInfo,
 	Tags
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { Tower } from "../tower/Tower";
 import { towerGlobals, economyGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";

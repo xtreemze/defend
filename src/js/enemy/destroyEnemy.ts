@@ -1,5 +1,5 @@
 import { EnemySphere } from "./enemyBorn";
-import { Tags, Scene } from "babylonjs";
+import { Tags, Scene } from "../utility/babylonOptimized";
 import { enemyGlobals } from "../main/globalVariables";
 import { enemyExplode } from "./../main/sound";
 

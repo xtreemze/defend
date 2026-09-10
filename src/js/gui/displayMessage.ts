@@ -3,7 +3,7 @@ import {
 	enemyGlobals,
 	towerGlobals
 } from "../main/globalVariables";
-import { Scene } from "babylonjs";
+import { Scene } from "../utility/babylonOptimized";
 import { rampUp } from "./currency";
 import { newEnemyWave } from "../enemy/enemyWaves";
 import {

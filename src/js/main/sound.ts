@@ -1,5 +1,5 @@
 import * as FX from "../../vendor/wafxr/wafxr";
-import { Mesh } from "babylonjs";
+import { Mesh } from "../utility/babylonOptimized";
 import { towerGlobals, mapGlobals, enemyGlobals } from "./globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
 

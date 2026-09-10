@@ -1,4 +1,4 @@
-import { Scene, Vector3, Mesh, PhysicsEngine, Ray } from "babylonjs";
+import { Scene, Vector3, Mesh, PhysicsEngine, Ray } from "../utility/babylonOptimized";
 import fireProjectile from "../projectile/Projectile";
 import { towerGlobals, enemyGlobals } from "../main/globalVariables";
 import { rotateTurret } from "./Tower";

@@ -8,7 +8,7 @@ import {
 	DirectionalLight,
 	GroundMesh,
 	Mesh
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { mapGlobals, materialGlobals } from "./globalVariables";
 
 function map(scene: Scene) {

@@ -6,9 +6,8 @@ import {
 	Scene,
 	MeshBuilder,
 	GroundMesh,
-	Mesh,
-	IGlowLayerOptions
-} from "babylonjs";
+	Mesh
+} from "../utility/babylonOptimized";
 import {
 	renderGlobals,
 	mapGlobals,
@@ -67,7 +66,7 @@ function renderPipeline(scene: Scene) {
 			blurKernelSize: deviceCap.glowKernelSize,
 			// Dynamic texture ratio based on device
 			mainTextureRatio: deviceCap.glowTextureRatio
-		} as IGlowLayerOptions);
+		});
 
 		glowLayer.intensity = renderGlobals.glowIntensity;
 		glowLayer.addExcludedMesh(mapGlobals.groundMesh);

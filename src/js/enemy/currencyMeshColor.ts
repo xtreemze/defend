@@ -1,4 +1,4 @@
-import { Material } from "babylonjs";
+import { Material } from "../utility/babylonOptimized";
 import { economyGlobals, materialGlobals } from "../main/globalVariables";
 export function currencyMeshColor() {
 	setTimeout(() => {

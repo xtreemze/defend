@@ -10,7 +10,7 @@ import {
 	newWave,
 	enemyExplode
 } from "./sound";
-import { Vector3, Mesh } from "babylonjs";
+import { Vector3, Mesh } from "../utility/babylonOptimized";
 import randomNumberRange from "../utility/randomNumberRange";
 import { towerGlobals, enemyGlobals, mapGlobals } from "./globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";

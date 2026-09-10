@@ -11,7 +11,7 @@ import {
 	Mesh,
 	PhysicsImpostor,
 	Tags
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 
 function displayEconomy(scene: Scene) {
 	const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;

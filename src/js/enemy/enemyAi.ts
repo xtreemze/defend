@@ -1,4 +1,4 @@
-import { Vector3 } from "babylonjs";
+import { Vector3 } from "../utility/babylonOptimized";
 import randomNumberRange from "../utility/randomNumberRange";
 import { enemyGlobals } from "../main/globalVariables";
 import { EnemySphere } from "./enemyBorn";

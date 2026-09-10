@@ -1,4 +1,4 @@
-import { StandardMaterial, Scene, Color3 } from "babylonjs";
+import { StandardMaterial, Scene, Color3 } from "../utility/babylonOptimized";
 
 /**
  * Material cache to reuse materials instead of creating duplicates

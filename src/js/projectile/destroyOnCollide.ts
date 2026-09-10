@@ -1,6 +1,6 @@
 import { LiveProjectileInstance } from "./startLife";
 import { destroyProjectile } from "./destroyProjectile";
-import { Scene, PhysicsImpostor, PhysicsEngine } from "babylonjs";
+import { Scene, PhysicsImpostor, PhysicsEngine } from "../utility/babylonOptimized";
 import { mapGlobals } from "../main/globalVariables";
 import { explosion } from "../enemy/explodeParticle";
 

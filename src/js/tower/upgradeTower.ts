@@ -5,7 +5,7 @@ import {
 	PointerEventTypes,
 	PickingInfo,
 	Tags,
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { Position2D } from "../enemy/Enemy";
 import {
 	towerGlobals,

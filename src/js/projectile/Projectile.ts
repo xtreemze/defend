@@ -1,6 +1,6 @@
 import { startLife, LiveProjectileInstance } from "./startLife";
 
-import { Scene, Vector3, PhysicsEngine } from "babylonjs";
+import { Scene, Vector3, PhysicsEngine } from "../utility/babylonOptimized";
 import { projectileGlobals } from "../main/globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";

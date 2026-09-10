@@ -7,7 +7,7 @@ import {
 	Tags,
 	PhysicsImpostor,
 	Vector3
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { addTower } from "../main/sound";
 import { towerGlobals, projectileGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";

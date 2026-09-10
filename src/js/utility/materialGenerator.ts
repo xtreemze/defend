@@ -1,4 +1,4 @@
-import { Color3, StandardMaterial, Scene, Material } from "babylonjs";
+import { Color3, StandardMaterial, Scene, Material } from "../utility/babylonOptimized";
 import {
 	enemyGlobals,
 	mapGlobals,

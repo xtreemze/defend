@@ -6,7 +6,7 @@ import {
 	Vector3,
 	CSG,
 	Scene
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { materialGlobals, towerGlobals } from "../main/globalVariables";
 
 function createTowerBaseInstance() {

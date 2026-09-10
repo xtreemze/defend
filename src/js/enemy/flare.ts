@@ -1,4 +1,4 @@
-import { Texture, Scene } from "babylonjs";
+import { Texture, Scene } from "../utility/babylonOptimized";
 
 function createTexture(scene: Scene) {
 	return Texture.CreateFromBase64String(

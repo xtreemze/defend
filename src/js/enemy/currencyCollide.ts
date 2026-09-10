@@ -3,7 +3,7 @@ import { currencyMeshColor } from "./currencyMeshColor";
 import { economyGlobals } from "../main/globalVariables";
 import { damageCurrency } from "../main/sound";
 import { EnemySphere } from "./enemyBorn";
-import { Vector3, Scene } from "babylonjs";
+import { Vector3, Scene } from "../utility/babylonOptimized";
 import { fragment } from "./Enemy";
 import { destroyEnemy } from "./destroyEnemy";
 

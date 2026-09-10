@@ -1,4 +1,4 @@
-import { PhysicsImpostor, Mesh } from "babylonjs";
+import { PhysicsImpostor, Mesh } from "../utility/babylonOptimized";
 
 /**
  * Object pool for physics impostors to reduce garbage collection pressure

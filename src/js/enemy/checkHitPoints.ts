@@ -1,4 +1,4 @@
-import { Scene, Vector3, Mesh } from "babylonjs";
+import { Scene, Vector3, Mesh } from "../utility/babylonOptimized";
 import { enemyGlobals } from "../main/globalVariables";
 import { fragment } from "./Enemy";
 import { destroyEnemy } from "./destroyEnemy";

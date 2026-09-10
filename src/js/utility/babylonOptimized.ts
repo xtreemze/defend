@@ -36,6 +36,7 @@ export { HemisphericLight } from "babylonjs";
 export { DirectionalLight } from "babylonjs";
 
 // Cameras
+export { Camera } from "babylonjs";
 export { UniversalCamera } from "babylonjs";
 export { ArcRotateCamera } from "babylonjs";
 
@@ -50,6 +51,18 @@ export { ParticleSystem } from "babylonjs";
 export { DefaultRenderingPipeline } from "babylonjs";
 export { DepthOfFieldEffectBlurLevel } from "babylonjs";
 export { GlowLayer } from "babylonjs";
+
+// Raycasting
+export { Ray, RayHelper } from "babylonjs";
+
+// Picking
+export { PointerInfo, PointerEventTypes, PickingInfo } from "babylonjs";
+
+// CSG (Constructive Solid Geometry)
+export { CSG } from "babylonjs";
+
+// Textures
+export { Texture, DynamicTexture } from "babylonjs";
 
 // Utilities
 export { Tags } from "babylonjs";

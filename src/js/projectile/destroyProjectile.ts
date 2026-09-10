@@ -1,4 +1,4 @@
-import { PhysicsImpostor, PhysicsEngine, Tags } from "babylonjs";
+import { PhysicsImpostor, PhysicsEngine, Tags } from "../utility/babylonOptimized";
 import { mapGlobals } from "../main/globalVariables";
 import { LiveProjectileInstance } from "./startLife";
 

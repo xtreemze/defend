@@ -11,7 +11,7 @@ import {
 	Color3,
 	CSG,
 	PhysicsEngine
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 
 import {
 	towerGlobals,

@@ -1,4 +1,4 @@
-import { MeshBuilder, Material, Mesh } from "babylonjs";
+import { MeshBuilder, Material, Mesh } from "../utility/babylonOptimized";
 import { projectileGlobals, materialGlobals } from "../main/globalVariables";
 
 function createProjectileInstances() {

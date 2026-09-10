@@ -8,7 +8,7 @@ import {
 	PhysicsImpostor,
 	Scene,
 	Material
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import {
 	enemyGlobals,
 	projectileGlobals,

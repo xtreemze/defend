@@ -5,7 +5,7 @@ import {
 	GroundMesh,
 	HemisphericLight,
 	DirectionalLight
-} from "babylonjs";
+} from "../utility/babylonOptimized";
 import { Position2D } from "../enemy/Enemy";
 import { LiveProjectileInstance } from "../projectile/startLife";
 
