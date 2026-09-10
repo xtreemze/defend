@@ -11,8 +11,9 @@ import {
 } from "babylonjs";
 
 import * as FX from "../../vendor/wafxr/wafxr";
-import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals } from "./globalVariables";
+import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals, towerGlobals } from "./globalVariables";
 import { map } from "./map";
+import { detectDeviceCapabilities } from "../utility/deviceDetection";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -51,25 +52,39 @@ class Game {
 		this.scene = new Scene(this.engine);
 		// this.scene.autoClear = false; // Color buffer
 		// this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+
+		// Apply device-specific settings
+		const deviceCap = detectDeviceCapabilities();
+		mapGlobals.impostorLimit = deviceCap.impostorLimit;
+		projectileGlobals.particleLimit = Math.ceil(deviceCap.maxParticles / 10);
+		enemyGlobals.fragments = deviceCap.enemyFragments;
+
 		if (mapGlobals.optimizerOn) {
+			// Use device-appropriate target FPS
+			const targetFPS = deviceCap.isLowEnd ? 45 : 30;
+
 			// const originalGenerationRate = enemyGlobals.generationRate;
 			// const originalTowerLifetime = towerGlobals.lifeTime;
 			SceneOptimizer.OptimizeAsync(
 				this.scene,
-				// SceneOptimizerOptions.HighDegradationAllowed(62),
-				// SceneOptimizerOptions.ModerateDegradationAllowed(60),
-				SceneOptimizerOptions.LowDegradationAllowed(30),
+				// Increase target FPS on devices that can handle it
+				SceneOptimizerOptions.LowDegradationAllowed(targetFPS),
 				function () {
 					// On success
 					mapGlobals.soundOn = true;
-					enemyGlobals.fragments = 1;
-					projectileGlobals.particleLimit = 3;
+					enemyGlobals.fragments = deviceCap.enemyFragments;
+					projectileGlobals.particleLimit = Math.ceil(deviceCap.maxParticles / 5);
 				},
 				function () {
-					// FPS target not reached
+					// FPS target not reached - reduce quality further
 					mapGlobals.soundOn = false;
 					enemyGlobals.fragments = 0;
 					projectileGlobals.particleLimit = 1;
+					// Reduce enemy generation rate on low-end devices
+					if (deviceCap.isLowEnd) {
+						enemyGlobals.generationRate = 12000;
+						towerGlobals.rateOfFire = 50;
+					}
 				}
 			);
 		}

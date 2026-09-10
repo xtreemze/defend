@@ -26,7 +26,7 @@ module.exports = function e() {
 				}
 			}
 		},
-		devtool: "eval-source-map",
+		devtool: false, // No source maps in production for faster builds and smaller bundles
 		output: {
 			path: `${__dirname}/dist`,
 			filename: "./js/[name].js",

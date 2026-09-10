@@ -18,7 +18,7 @@ module.exports = function e() {
 			oimo: true,
 			earcut: true
 		},
-		devtool: "eval-source-map",
+		devtool: "eval-source-map", // Keep source maps for development debugging
 		output: {
 			path: `${__dirname}/dist`,
 			filename: "./js/[name].js",

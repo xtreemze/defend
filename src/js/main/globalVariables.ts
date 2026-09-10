@@ -138,9 +138,9 @@ const economyGlobals = {
 
 const renderGlobals = {
 	gpuParticles: true,
-	pipelineOn: true,
+	pipelineOn: false, // Disabled by default for better mobile performance
 	glow: true,
-	glowIntensity: 2.7,
+	glowIntensity: 1.5, // Reduced from 2.7 for better performance
 	sharpenning: false,
 	antialiasing: false,
 	depthOfField: false,
