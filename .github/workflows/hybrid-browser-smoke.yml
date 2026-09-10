@@ -69,18 +69,96 @@ jobs:
         working-directory: experiments
         run: pnpm build
 
-      - name: Install Playwright browsers
-        working-directory: experiments/hybrid-engine
+      - name: Install Chromium
+        working-directory: experiments/storybook
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run smoke tests
-        working-directory: experiments/hybrid-engine
-        run: pnpm exec playwright test
+      - name: Run hybrid browser smoke
+        working-directory: experiments/storybook
+        shell: bash
+        run: |
+          mkdir -p hybrid-smoke-artifacts
+          (cd ../hybrid-engine && pnpm exec vite preview --host 127.0.0.1 --port 5173) > /tmp/hybrid-vite.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
 
-      - name: Upload Playwright report on failure
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:5173/ >/dev/null; then
+              break
+            fi
+            if ! kill -0 "$SERVER_PID" 2>/dev/null; then
+              cat /tmp/hybrid-vite.log
+              exit 1
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:5173/ >/dev/null
+
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+
+          const targets = [
+            ['main', '/'],
+            ['mothership', '/mothership.html'],
+            ['navigation', '/navigation.html'],
+            ['routing', '/routing.html'],
+            ['geothermal', '/geothermal.html'],
+            ['tower-terrain', '/tower-terrain.html'],
+            ['inspect', '/?inspect=1'],
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          try {
+            for (const [name, path] of targets) {
+              const page = await browser.newPage();
+              const consoleErrors = [];
+              const pageErrors = [];
+              page.on('console', (message) => {
+                if (message.type() === 'error') consoleErrors.push(message.text());
+              });
+              page.on('pageerror', (error) => pageErrors.push(error.message));
+
+              const response = await page.goto(`http://127.0.0.1:5173${path}`, {
+                waitUntil: 'networkidle',
+                timeout: 30_000,
+              });
+              if (!response || response.status() >= 400) {
+                throw new Error(`${name}: HTTP ${response?.status() ?? 'no response'}`);
+              }
+
+              if (name === 'main') {
+                await page.waitForFunction(
+                  () => document.querySelector('#metrics')?.textContent?.includes('bodies: 128'),
+                  undefined,
+                  { timeout: 15_000 },
+                );
+              } else {
+                await page.waitForTimeout(750);
+              }
+
+              await page.screenshot({
+                path: `hybrid-smoke-artifacts/${name}.png`,
+                fullPage: true,
+              });
+
+              if (pageErrors.length || consoleErrors.length) {
+                throw new Error(
+                  `${name}: browser errors: ${[...pageErrors, ...consoleErrors].join(' | ')}`,
+                );
+              }
+              await page.close();
+            }
+          } finally {
+            await browser.close();
+          }
+          NODE
+
+      - name: Upload smoke evidence on failure
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: playwright-report
-          path: experiments/hybrid-engine/playwright-report/
+          name: hybrid-browser-smoke-evidence
+          path: |
+            experiments/storybook/hybrid-smoke-artifacts/
+            /tmp/hybrid-vite.log
           retention-days: 7
