@@ -20,7 +20,6 @@
   "devDependencies": {
     "@babylonjs/inspector": "9.25.0",
     "@biomejs/biome": "2.5.11",
-    "playwright": "1.62.1",
     "typescript": "7.0.2",
     "vite": "8.2.2",
     "vitest": "4.1.11"
