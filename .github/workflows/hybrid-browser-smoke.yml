@@ -107,6 +107,10 @@ jobs:
             ['inspect', '/?inspect=1'],
           ];
 
+          const inspectorCliUnavailable = (message) =>
+            message.includes("WebSocket connection to 'ws://127.0.0.1:4400/' failed") &&
+            message.includes('ERR_CONNECTION_REFUSED');
+
           const browser = await chromium.launch({ headless: true });
           try {
             for (const [name, path] of targets) {
@@ -114,7 +118,10 @@ jobs:
               const consoleErrors = [];
               const pageErrors = [];
               page.on('console', (message) => {
-                if (message.type() === 'error') consoleErrors.push(message.text());
+                if (message.type() !== 'error') return;
+                const text = message.text();
+                if (name === 'inspect' && inspectorCliUnavailable(text)) return;
+                consoleErrors.push(text);
               });
               page.on('pageerror', (error) => pageErrors.push(error.message));
 
