@@ -17,7 +17,11 @@ export interface CombatBatchResult {
   interceptSeconds: Float32Array;
 }
 
-function requireVec3Length(name: string, values: Float32Array, count: number): void {
+function requireVec3Length(
+  name: string,
+  values: Float32Array,
+  count: number,
+): void {
   if (values.length !== count * 3) {
     throw new Error(`${name} must contain exactly ${count * 3} scalar values`);
   }
@@ -69,14 +73,8 @@ function interceptTime(
     velocityX * velocityX + velocityY * velocityY + velocityZ * velocityZ;
   const a = velocitySquared - speedSquared;
   const b =
-    2 *
-    (relativeX * velocityX +
-      relativeY * velocityY +
-      relativeZ * velocityZ);
-  const c =
-    relativeX * relativeX +
-    relativeY * relativeY +
-    relativeZ * relativeZ;
+    2 * (relativeX * velocityX + relativeY * velocityY + relativeZ * velocityZ);
+  const c = relativeX * relativeX + relativeY * relativeY + relativeZ * relativeZ;
   return smallestPositiveRoot(a, b, c);
 }
 
