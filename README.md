@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://xtreemze.github.io/defend/">Play the historical web build</a> ·
   <a href="./docs/GAME_DESIGN_MANUAL.md">Game design manual</a> ·
+  <a href="./docs/ROADMAP.md">Development roadmap</a> ·
   <a href="./AGENTS.md">Development contract</a> ·
   <a href="https://github.com/xtreemze/defend/issues">Issues</a>
 </p>
@@ -34,7 +35,7 @@ The larger campaign is built around a systemic inversion: **becoming too success
 | **One system, two perspectives** | The campaign is designed so the mechanics learned while defending remain legible when the player's strategic role changes. |
 | **The world explains itself** | Geometry, motion, color, sound, and visible resource movement should communicate state before text or hidden modifiers do. |
 
-These principles are canonicalized in the [Game Design Manual](./docs/GAME_DESIGN_MANUAL.md). Experimental numbers and implementation approaches are kept separate from identity-level rules.
+These principles are canonicalized in the [Game Design Manual](./docs/GAME_DESIGN_MANUAL.md). The [development roadmap](./docs/ROADMAP.md) connects those principles to the MCP, architecture ownership, implementation order, and promotion gates. Experimental numbers and implementation approaches are kept separate from identity-level rules.
 
 ## The defensive loop
 
@@ -68,6 +69,7 @@ Defend is an older playable web game undergoing a deliberate modernization. The 
 | --- | --- |
 | `src/` + root Webpack app | **Playable historical baseline.** BabylonJS 3, Cannon physics, procedural audio, PWA delivery, and the original browser gameplay remain the behavior reference while migration work is validated. |
 | [`docs/GAME_DESIGN_MANUAL.md`](./docs/GAME_DESIGN_MANUAL.md) | **Canonical game-design source of truth.** Separates enduring principles, measured/current baseline behavior, and experimental hypotheses. |
+| [`docs/ROADMAP.md`](./docs/ROADMAP.md) | **Canonical integration roadmap.** Defines the MCP, architecture ownership, development sequence, critical path, and promotion gates across parallel work. |
 | [`docs/design/`](./docs/design/) | **Focused system chapters and experiments** for energy flow, world ecology, mothership/raider play, geothermal power, locomotion, terrain, and related mechanics. |
 | [`crates/defend-core/`](./crates/defend-core/) | **Dependency-light deterministic Rust core** for formulas, topology, and contracts that benefit from portable executable tests. |
 | [`experiments/storybook/`](./experiments/storybook/) | **Interactive systems laboratory** for deterministic fixtures, design experiments, visual inspection, and behavior certification. |
@@ -84,11 +86,12 @@ The current architecture direction is intentionally hybrid rather than a wholesa
 - Storybook and isolated labs are used to prove contracts before production integration.
 - The historical app stays runnable until replacement paths meet parity and certification gates.
 
-See [issue #66](https://github.com/xtreemze/defend/issues/66) for the architecture program and [`docs/LOCAL_CERTIFICATION.md`](./docs/LOCAL_CERTIFICATION.md) for the evidence model used before promotion.
+See the [development roadmap](./docs/ROADMAP.md) for the cross-system sequence, [issue #66](https://github.com/xtreemze/defend/issues/66) for the architecture program, and [`docs/LOCAL_CERTIFICATION.md`](./docs/LOCAL_CERTIFICATION.md) for the evidence model used before promotion.
 
 ## Explore the project
 
 - **Design:** [`docs/GAME_DESIGN_MANUAL.md`](./docs/GAME_DESIGN_MANUAL.md)
+- **Development roadmap / MCP:** [`docs/ROADMAP.md`](./docs/ROADMAP.md)
 - **Focused design chapters:** [`docs/design/`](./docs/design/)
 - **Development invariants and agent guidance:** [`AGENTS.md`](./AGENTS.md)
 - **Local certification:** [`docs/LOCAL_CERTIFICATION.md`](./docs/LOCAL_CERTIFICATION.md)
