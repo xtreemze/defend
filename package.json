@@ -52,6 +52,7 @@
         "browserslist": "^4.3.6",
         "cannon": "^0.6.2",
         "cli-real-favicon": "0.0.7",
+        "compression-webpack-plugin": "^2.0.0",
         "css-loader": "^2.0.1",
         "eslint": "^5.10.0",
         "eslint-config-airbnb-base": "^13.1.0",

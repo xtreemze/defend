@@ -14,6 +14,7 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals, towerGlobals } from "./globalVariables";
 import { map } from "./map";
 import { detectDeviceCapabilities } from "../utility/deviceDetection";
+import { getGlobalPerformanceMonitor } from "../utility/performanceMonitor";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -137,10 +138,20 @@ class Game {
 	}
 
 	doRender(): void {
+		// Performance monitoring
+		const perfMonitor = getGlobalPerformanceMonitor();
+		perfMonitor.start();
+
 		// Run the render loop.
 		this.engine.runRenderLoop(() => {
+			perfMonitor.update();
 			this.scene.render();
 		});
+
+		// Log performance stats every 10 seconds
+		setInterval(() => {
+			perfMonitor.logStats();
+		}, 10000);
 
 		// The canvas/window resize event handler.
 		window.addEventListener("resize", () => {

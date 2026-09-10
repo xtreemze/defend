@@ -2120,6 +2120,26 @@ bytes@3.1.0:
   resolved "https://registry.npmjs.org/bytes/-/bytes-3.1.0.tgz"
   integrity sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg==
 
+cacache@^11.2.0:
+  version "11.3.3"
+  resolved "https://registry.npmjs.org/cacache/-/cacache-11.3.3.tgz"
+  integrity sha512-p8WcneCytvzPxhDvYp31PD039vi77I12W+/KfR9S8AZbaiARFBCpsPJS+9uhWfeBfeAtW7o/4vt3MUqLkbY6nA==
+  dependencies:
+    bluebird "^3.5.5"
+    chownr "^1.1.1"
+    figgy-pudding "^3.5.1"
+    glob "^7.1.4"
+    graceful-fs "^4.1.15"
+    lru-cache "^5.1.1"
+    mississippi "^3.0.0"
+    mkdirp "^0.5.1"
+    move-concurrently "^1.0.1"
+    promise-inflight "^1.0.1"
+    rimraf "^2.6.3"
+    ssri "^6.0.1"
+    unique-filename "^1.1.1"
+    y18n "^4.0.0"
+
 cacache@^12.0.2:
   version "12.0.3"
   resolved "https://registry.npmjs.org/cacache/-/cacache-12.0.3.tgz"
@@ -2435,6 +2455,18 @@ compressible@~2.0.16:
   integrity sha512-BGHeLCK1GV7j1bSmQQAi26X+GgWcTjLr/0tzSvMCl3LH1w1IJ4PFSPoV5316b30cneTziC+B1a+3OjoSUcQYmw==
   dependencies:
     mime-db ">= 1.40.0 < 2"
+
+compression-webpack-plugin@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/compression-webpack-plugin/-/compression-webpack-plugin-2.0.0.tgz"
+  integrity sha512-bDgd7oTUZC8EkRx8j0sjyCfeiO+e5sFcfgaFcjVhfQf5lLya7oY2BczxcJ7IUuVjz5m6fy8IECFmVFew3xLk8Q==
+  dependencies:
+    cacache "^11.2.0"
+    find-cache-dir "^2.0.0"
+    neo-async "^2.5.0"
+    schema-utils "^1.0.0"
+    serialize-javascript "^1.4.0"
+    webpack-sources "^1.0.1"
 
 compression@^1.7.4:
   version "1.7.4"
@@ -6600,7 +6632,7 @@ send@0.17.1:
     range-parser "~1.2.1"
     statuses "~1.5.0"
 
-serialize-javascript@^1.7.0:
+serialize-javascript@^1.4.0, serialize-javascript@^1.7.0:
   version "1.8.0"
   resolved "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-1.8.0.tgz"
   integrity sha512-3tHgtF4OzDmeKYj6V9nSyceRS0UJ3C7VqyD2Yj28vC/z2j6jG5FmFGahOKMD9CrglxTm3tETr87jEypaYV8DUg==
@@ -7683,7 +7715,7 @@ webpack-log@^2.0.0:
     ansi-colors "^3.0.0"
     uuid "^3.3.2"
 
-webpack-sources@^1.4.0, webpack-sources@^1.4.1:
+webpack-sources@^1.0.1, webpack-sources@^1.4.0, webpack-sources@^1.4.1:
   version "1.4.3"
   resolved "https://registry.npmjs.org/webpack-sources/-/webpack-sources-1.4.3.tgz"
   integrity sha512-lgTS3Xhv1lCOKo7SA5TjKXMjpSM4sBjNV5+q2bqesbSPs5FjGmU6jjtBSkX9b4qW87vDIsCIlUPOEhbZrMdjeQ==
@@ -7691,7 +7723,7 @@ webpack-sources@^1.4.0, webpack-sources@^1.4.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-"webpack@^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^3.0.0 || ^4.0.0", webpack@^4.0.0, webpack@^4.28.0, webpack@>=2, webpack@4.x.x:
+"webpack@^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^3.0.0 || ^4.0.0", webpack@^4.0.0, webpack@^4.28.0, webpack@^4.3.0, webpack@>=2, webpack@4.x.x:
   version "4.39.3"
   resolved "https://registry.npmjs.org/webpack/-/webpack-4.39.3.tgz"
   integrity sha512-BXSI9M211JyCVc3JxHWDpze85CvjC842EvpRsVTc/d15YJGlox7GIDd38kJgWrb3ZluyvIjgenbLDMBQPDcxYQ==
