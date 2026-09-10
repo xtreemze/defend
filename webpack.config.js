@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 // const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 // const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 
@@ -91,6 +92,13 @@ module.exports = function e() {
 		},
 
 		plugins: [
+			// Gzip compression for all JS, CSS, HTML assets
+			new CompressionPlugin({
+				algorithm: "gzip",
+				test: /\.(js|css|html|svg)$/,
+				threshold: 8192,
+				minRatio: 0.8
+			}),
 			// new UglifyJSPlugin({
 			//   // include: `${__dirname}/src`
 			//   uglifyOptions: {

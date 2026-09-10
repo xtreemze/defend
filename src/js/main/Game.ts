@@ -60,30 +60,48 @@ class Game {
 		enemyGlobals.fragments = deviceCap.enemyFragments;
 
 		if (mapGlobals.optimizerOn) {
-			// Use device-appropriate target FPS
-			const targetFPS = deviceCap.isLowEnd ? 45 : 30;
+			// Aggressive FPS targeting based on device capability
+			// Mobile: 45 FPS, Desktop: 55 FPS (higher than default 30)
+			const targetFPS = deviceCap.quality === "high" ? 55 :
+			                  deviceCap.quality === "medium" ? 48 : 45;
 
 			// const originalGenerationRate = enemyGlobals.generationRate;
 			// const originalTowerLifetime = towerGlobals.lifeTime;
 			SceneOptimizer.OptimizeAsync(
 				this.scene,
-				// Increase target FPS on devices that can handle it
 				SceneOptimizerOptions.LowDegradationAllowed(targetFPS),
 				function () {
-					// On success
+					// On success - increase quality when FPS target is achieved
 					mapGlobals.soundOn = true;
 					enemyGlobals.fragments = deviceCap.enemyFragments;
-					projectileGlobals.particleLimit = Math.ceil(deviceCap.maxParticles / 5);
+					// Scale particles based on device quality
+					projectileGlobals.particleLimit =
+						deviceCap.quality === "high" ? Math.ceil(deviceCap.maxParticles / 3) :
+						deviceCap.quality === "medium" ? Math.ceil(deviceCap.maxParticles / 5) :
+						Math.ceil(deviceCap.maxParticles / 8);
 				},
 				function () {
-					// FPS target not reached - reduce quality further
+					// FPS target not reached - gracefully degrade quality
 					mapGlobals.soundOn = false;
 					enemyGlobals.fragments = 0;
 					projectileGlobals.particleLimit = 1;
-					// Reduce enemy generation rate on low-end devices
-					if (deviceCap.isLowEnd) {
+
+					// Adaptive quality reduction based on device tier
+					if (deviceCap.quality === "high") {
+						// High-end device: reduce some features but keep most
+						enemyGlobals.generationRate = 10000;
+						towerGlobals.rateOfFire = 30;
+						mapGlobals.impostorLimit = Math.floor(deviceCap.impostorLimit * 0.75);
+					} else if (deviceCap.quality === "medium") {
+						// Medium device: more aggressive reduction
+						enemyGlobals.generationRate = 11000;
+						towerGlobals.rateOfFire = 40;
+						mapGlobals.impostorLimit = Math.floor(deviceCap.impostorLimit * 0.6);
+					} else {
+						// Low-end device: significant reduction
 						enemyGlobals.generationRate = 12000;
 						towerGlobals.rateOfFire = 50;
+						mapGlobals.impostorLimit = Math.floor(deviceCap.impostorLimit * 0.5);
 					}
 				}
 			);
