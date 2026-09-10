@@ -45,6 +45,26 @@ fn hash_vec3(hash: &mut u64, value: Vec3) {
     hash_u32(hash, value.z.to_bits());
 }
 
+fn bounded_velocity(x: f32, y: f32, z: f32, max_speed: f32) -> Option<Vec3> {
+    if !x.is_finite() || !y.is_finite() || !z.is_finite() || !max_speed.is_finite() {
+        return None;
+    }
+    let requested = Vec3::new(x, y, z);
+    let speed_limit = max_speed.max(0.0);
+    if speed_limit <= f32::EPSILON {
+        return Some(Vec3::ZERO);
+    }
+    let speed = requested.length();
+    if !speed.is_finite() {
+        return None;
+    }
+    if speed > speed_limit && speed > f32::EPSILON {
+        Some(requested * (speed_limit / speed))
+    } else {
+        Some(requested)
+    }
+}
+
 /// Headless Bevy ECS runtime used only by the Babylon/Bevy comparative lab.
 /// Babylon owns browser rendering; this runtime owns semantic body state.
 ///
@@ -84,9 +104,9 @@ impl DefendRuntime {
 
     /// Spawn one semantic body and return a stable external id.
     ///
-    /// Babylon and future protocol consumers must not depend on Bevy query or
-    /// archetype iteration order for identity. The runtime therefore retains an
-    /// explicit stable body order separate from ECS storage order.
+    /// Babylon and protocol consumers must not depend on Bevy query or archetype
+    /// iteration order for identity. The runtime therefore retains an explicit
+    /// stable body order separate from ECS storage order.
     pub fn spawn_body(
         &mut self,
         x: f32,
@@ -116,10 +136,6 @@ impl DefendRuntime {
     }
 
     /// Advance the authoritative simulation by exactly `steps` fixed ticks.
-    ///
-    /// The host is responsible for deciding how wall-clock time maps to ticks.
-    /// This makes frame pacing an interpolation concern instead of simulation
-    /// state and gives replay fixtures a deterministic primitive.
     pub fn step_fixed(&mut self, steps: u32) {
         for _ in 0..steps {
             self.app.update();
@@ -127,19 +143,12 @@ impl DefendRuntime {
         }
     }
 
-    /// Stable ids in the same order as the flat xyz triples returned by
-    /// `positions()`. This first fixture has no lifecycle changes, so callers can
-    /// fetch the ids once after spawn. Future spawn/despawn events should update
-    /// the protocol explicitly rather than relying on array position identity.
+    /// Stable ids in the same order as positions() and velocities().
     pub fn body_ids(&self) -> Vec<u32> {
         self.bodies.iter().map(|body| body.id).collect()
     }
 
     /// Flat xyz triples ordered by the explicit stable body registry.
-    ///
-    /// This intentionally performs a straightforward copied snapshot. A direct
-    /// WASM memory view, shared memory, SoA layout, or binary protocol is only
-    /// justified after profiling shows this baseline copy boundary is material.
     pub fn positions(&self) -> Vec<f32> {
         let world = self.app.world();
         let mut positions = Vec::with_capacity(self.bodies.len() * 3);
@@ -156,16 +165,74 @@ impl DefendRuntime {
         positions
     }
 
+    /// Flat authoritative velocity triples ordered exactly like body_ids().
+    pub fn velocities(&self) -> Vec<f32> {
+        let world = self.app.world();
+        let mut velocities = Vec::with_capacity(self.bodies.len() * 3);
+
+        for body in &self.bodies {
+            let velocity = world
+                .get::<Velocity>(body.entity)
+                .expect("registered hybrid body missing Velocity");
+            velocities.push(velocity.0.x);
+            velocities.push(velocity.0.y);
+            velocities.push(velocity.0.z);
+        }
+
+        velocities
+    }
+
+    /// Accept worker-planned velocities at the authoritative boundary.
+    ///
+    /// Results are rejected wholesale when the source tick is too old (or from
+    /// the future under wrapping arithmetic). Individual commands are accepted
+    /// only for live ids and finite vectors, and are clamped to `max_speed`.
+    /// The return value is the number of commands actually applied.
+    pub fn apply_velocity_commands(
+        &mut self,
+        source_tick: u32,
+        max_lag_ticks: u32,
+        body_ids: Vec<u32>,
+        velocities: Vec<f32>,
+        max_speed: f32,
+    ) -> u32 {
+        if self.tick.wrapping_sub(source_tick) > max_lag_ticks {
+            return 0;
+        }
+        if velocities.len() != body_ids.len().saturating_mul(3) {
+            return 0;
+        }
+
+        let mut applied = 0_u32;
+        for (index, id) in body_ids.iter().enumerate() {
+            let offset = index * 3;
+            let Some(next_velocity) = bounded_velocity(
+                velocities[offset],
+                velocities[offset + 1],
+                velocities[offset + 2],
+                max_speed,
+            ) else {
+                continue;
+            };
+            let entity = self
+                .bodies
+                .iter()
+                .find(|body| body.id == *id)
+                .map(|body| body.entity);
+            let Some(entity) = entity else {
+                continue;
+            };
+            let Some(mut velocity) = self.app.world_mut().get_mut::<Velocity>(entity) else {
+                continue;
+            };
+            velocity.0 = next_velocity;
+            applied = applied.saturating_add(1);
+        }
+
+        applied
+    }
+
     /// Return a deterministic fingerprint of public semantic state.
-    ///
-    /// The hash deliberately excludes Bevy `Entity` ids and storage layout.
-    /// Stable public body ids, tick, positions, and velocities are hashed by
-    /// their exact little-endian IEEE-754 bit patterns. The hexadecimal string
-    /// avoids exposing a WASM `u64`/BigInt ABI solely for diagnostics.
-    ///
-    /// FNV-1a is used as a lightweight divergence detector, not as a security or
-    /// collision-proof content identifier. Full serialized fixtures remain the
-    /// authority when a hash mismatch needs diagnosis.
     pub fn state_fingerprint(&self) -> String {
         let world = self.app.world();
         let mut hash = FNV1A_OFFSET_BASIS;
@@ -214,10 +281,48 @@ mod tests {
 
         runtime.step_fixed(120);
         let positions = runtime.positions();
+        let velocities = runtime.velocities();
 
         assert_eq!(positions.len(), 6);
+        assert_eq!(velocities, vec![1.0, 0.0, 0.0, -2.0, 0.0, 0.0]);
         assert!((positions[0] - 2.0).abs() < 0.0001);
         assert!((positions[3] - 8.0).abs() < 0.0001);
+    }
+
+    #[test]
+    fn worker_velocity_commands_are_tick_validated_and_speed_bounded() {
+        let mut runtime = DefendRuntime::new();
+        let id = spawn_linear(&mut runtime, 0.0, 1.0);
+        runtime.step_fixed(10);
+
+        assert_eq!(
+            runtime.apply_velocity_commands(10, 2, vec![id], vec![30.0, 0.0, 0.0], 5.0),
+            1
+        );
+        assert!((runtime.velocities()[0] - 5.0).abs() < 0.0001);
+
+        runtime.step_fixed(4);
+        assert_eq!(
+            runtime.apply_velocity_commands(10, 2, vec![id], vec![-2.0, 0.0, 0.0], 5.0),
+            0
+        );
+        assert!((runtime.velocities()[0] - 5.0).abs() < 0.0001);
+    }
+
+    #[test]
+    fn malformed_or_unknown_velocity_commands_fail_closed() {
+        let mut runtime = DefendRuntime::new();
+        let id = spawn_linear(&mut runtime, 0.0, 1.0);
+
+        assert_eq!(
+            runtime.apply_velocity_commands(0, 2, vec![id], vec![f32::NAN, 0.0, 0.0], 5.0),
+            0
+        );
+        assert_eq!(
+            runtime.apply_velocity_commands(0, 2, vec![99], vec![1.0, 0.0, 0.0], 5.0),
+            0
+        );
+        assert_eq!(runtime.velocities(), vec![1.0, 0.0, 0.0]);
     }
 
     #[test]
