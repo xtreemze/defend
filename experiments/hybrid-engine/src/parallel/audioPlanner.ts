@@ -73,6 +73,11 @@ export function planAudioBatch(input: AudioBatchInput): AudioBatchResult {
     const radialX = relativeX * inverseDistance;
     const radialY = relativeY * inverseDistance;
     const radialZ = relativeZ * inverseDistance;
+
+    // The radial basis points from listener to source. Source-positive therefore
+    // means moving away, while listener-positive means moving toward the source.
+    // The classical moving-source/listener ratio in that convention is
+    // (c + listenerTowardSource) / (c + sourceAwayFromListener).
     const sourceRadialVelocity =
       finiteOrZero(input.sourceVelocities[offset]) * radialX +
       finiteOrZero(input.sourceVelocities[offset + 1]) * radialY +
@@ -81,9 +86,9 @@ export function planAudioBatch(input: AudioBatchInput): AudioBatchResult {
       listenerVelocityX * radialX +
       listenerVelocityY * radialY +
       listenerVelocityZ * radialZ;
-    const denominator = Math.max(1, speedOfSound - sourceRadialVelocity);
+    const denominator = Math.max(1, speedOfSound + sourceRadialVelocity);
     const dopplerRatio = clamp(
-      (speedOfSound - listenerRadialVelocity) / denominator,
+      (speedOfSound + listenerRadialVelocity) / denominator,
       0.5,
       2,
     );
