@@ -59,7 +59,7 @@ jobs:
       - name: Setup wasm-pack
         uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa
         with:
-          version: 0.13.1
+          version: v0.13.1
 
       - name: pnpm install
         working-directory: experiments
