@@ -37,7 +37,9 @@ function nonNegativeInteger(value: number): number {
 
 /** Unsigned tick distance, including the ordinary u32 wrap-around case. */
 export function tickDelta(currentTick: number, earlierTick: number): number {
-  return (nonNegativeInteger(currentTick) - nonNegativeInteger(earlierTick)) >>> 0;
+  return (
+    (nonNegativeInteger(currentTick) - nonNegativeInteger(earlierTick)) >>> 0
+  );
 }
 
 export function intervalForDistanceTier(
@@ -62,7 +64,10 @@ export function shouldScheduleTick(
   if (lastScheduledTick === null) {
     return true;
   }
-  return tickDelta(currentTick, lastScheduledTick) >= Math.max(1, nonNegativeInteger(intervalTicks));
+  return (
+    tickDelta(currentTick, lastScheduledTick) >=
+    Math.max(1, nonNegativeInteger(intervalTicks))
+  );
 }
 
 /**
