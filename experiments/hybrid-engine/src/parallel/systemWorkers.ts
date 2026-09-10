@@ -1,3 +1,4 @@
+import SystemWorker from "./systemWorker.worker.ts?worker";
 import type { AiBatchInput, AiBatchResult } from "./aiPlanner";
 import type { AudioBatchInput, AudioBatchResult } from "./audioPlanner";
 import type { CombatBatchInput, CombatBatchResult } from "./combatPlanner";
@@ -28,10 +29,7 @@ interface PendingJob {
 export type SystemWorkerFactory = (lane: WorkerLane) => Worker;
 
 function defaultWorkerFactory(lane: WorkerLane): Worker {
-  return new Worker(new URL("./systemWorker.worker.ts", import.meta.url), {
-    type: "module",
-    name: `defend-${lane}-worker`,
-  });
+  return new SystemWorker({ name: `defend-${lane}-worker` });
 }
 
 /**
