@@ -13,7 +13,11 @@ export interface AiBatchResult {
   desiredVelocities: Float32Array;
 }
 
-function requireVec3Length(name: string, values: Float32Array, count: number): void {
+function requireVec3Length(
+  name: string,
+  values: Float32Array,
+  count: number,
+): void {
   if (values.length !== count * 3) {
     throw new Error(`${name} must contain exactly ${count * 3} scalar values`);
   }
