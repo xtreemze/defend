@@ -16,6 +16,7 @@ import {
 	economyGlobals
 } from "../main/globalVariables";
 import positionGenerator from "../utility/positionGenerator";
+import { getGlobalImpostorLifecycleManager } from "../utility/impostorLifecycleManager";
 
 interface Position2D {
 	x: number;
@@ -80,6 +81,9 @@ function fragment(
 			}
 		) as PhysicsImpostor;
 
+		// Track impostor for lifecycle management (reduces GC pressure)
+		getGlobalImpostorLifecycleManager().trackCreated(fragment.physicsImpostor);
+
 		fragment.physicsImpostor.setLinearVelocity(enemyLinearVelocity);
 		fragment.physicsImpostor.setAngularVelocity(enemyAngularVelocity);
 		if (!isBlue) {
@@ -99,12 +103,11 @@ function fragment(
 				fragment.unregisterAfterRender(disposeFragment);
 				fragment.setEnabled(false);
 
-
-
-					if (fragment.physicsImpostor !== null) {
-						fragment.physicsImpostor.dispose();
-					}
-					fragment.dispose();
+				if (fragment.physicsImpostor !== null) {
+					// Use batched disposal to reduce GC spikes
+					getGlobalImpostorLifecycleManager().queueDisposal(fragment.physicsImpostor);
+				}
+				fragment.dispose();
 
 			}, projectileGlobals.lifeTime * 3);
 		};

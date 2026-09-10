@@ -13,6 +13,7 @@ import { impulsePhys } from "./Projectile";
 import { destroyOnCollide } from "./destroyOnCollide";
 import { EnemySphere } from "../enemy/enemyBorn";
 import { TowerTurret } from "../tower/towerBorn";
+import { getGlobalImpostorLifecycleManager } from "../utility/impostorLifecycleManager";
 
 interface LiveProjectile extends Mesh {
 	hitPoints: number;
@@ -48,8 +49,10 @@ export function startLife (
 		scene
 	) as PhysicsImpostor;
 
-	// projectile.rotation = clonedRotation;
+	// Track impostor for lifecycle management (reduces GC pressure)
+	getGlobalImpostorLifecycleManager().trackCreated(projectile.physicsImpostor);
 
+	// projectile.rotation = clonedRotation;
 
 	mapGlobals.allImpostors.unshift(projectile.physicsImpostor);
 

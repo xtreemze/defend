@@ -10,6 +10,7 @@ import { Position2D } from "./Enemy";
 import { decide } from "./decide";
 import { checkHitPoints } from "./checkHitPoints";
 import randomNumberRange from "../utility/randomNumberRange";
+import { getGlobalImpostorLifecycleManager } from "../utility/impostorLifecycleManager";
 
 interface EnemySphere extends Mesh {
 	hitPoints: number;
@@ -52,6 +53,9 @@ function enemyBorn (
 		},
 		scene
 	) as PhysicsImpostor;
+
+	// Track impostor for lifecycle management (reduces GC pressure)
+	getGlobalImpostorLifecycleManager().trackCreated(sphereMesh.physicsImpostor);
 
 	mapGlobals.allImpostors.unshift(sphereMesh.physicsImpostor);
 
