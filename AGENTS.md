@@ -5,16 +5,21 @@ This repository is expected to be developed by multiple highly capable AI execut
 ## Source of truth
 
 - `master` is the integration branch.
+- [`docs/GAME_DESIGN_MANUAL.md`](./docs/GAME_DESIGN_MANUAL.md) is the canonical game-design source of truth unless a later explicit GitHub design decision supersedes a rule.
+- [`docs/ROADMAP.md`](./docs/ROADMAP.md) is the canonical integration roadmap for MCP scope, architecture ownership, development sequence, current critical path, and promotion gates.
 - GitHub issues are the durable source for design decisions, investigations, findings, disagreements, and future work.
 - Pull requests are the unit of implementation. Keep them narrow enough to review and merge independently.
-- Start with issue #29 for the game principles and modernization program. Preserve those principles unless a later issue records an explicit design decision to change them.
+- Issue #29 remains the modernization/game-principles coordination thread; issue #66 owns the hybrid architecture program. Use the roadmap to understand how those and later focused issues compose rather than treating every open issue as an independent production priority.
+
+When sources overlap, preserve durable game identity first, then follow the roadmap's integration order and the focused issue that owns the seam. Experimental code does not become canonical simply because it exists. Exact dependency versions in old planning issues are historical snapshots; repository toolchain files, manifests, lockfiles, and approved upgrade PRs are the authority for the version being certified.
 
 ## Before changing code
 
-1. Inspect open issues and pull requests for overlapping work.
-2. State a clear ownership boundary in the issue/PR.
+1. Read the roadmap phase/gate relevant to the work and inspect open issues and pull requests for overlap.
+2. State a clear ownership boundary in the issue/PR and identify which roadmap dependency or evidence gate the work advances.
 3. Prefer a new focused branch/PR over expanding an unrelated branch.
 4. Do not assume old code is intentional merely because it exists; distinguish observed gameplay, documented intent, and implementation defects.
+5. If concurrent changes expand a branch beyond its documented ownership, update the issue/PR description so documented scope matches the actual diff before promotion.
 
 ## Gameplay invariants
 
@@ -30,7 +35,7 @@ Modernization must preserve Defend's identity unless an issue explicitly changes
 - procedural/abstract visuals and spatial/procedural sound are part of the product identity;
 - visual effects may degrade for performance before core simulation fidelity does.
 
-Issue #30 owns the behavioral certification contract. When a refactor and legacy implementation disagree, use certification evidence and #29 rather than preserving an obvious bug by accident.
+Issue #30 owns the behavioral certification contract. When a refactor and legacy implementation disagree, use certification evidence, the Game Design Manual, the roadmap, and #29 rather than preserving an obvious bug by accident.
 
 ## Parallel-work rules
 
@@ -40,6 +45,7 @@ Issue #30 owns the behavioral certification contract. When a refactor and legacy
 - Never force-update another executor's branch or repurpose another PR without explicit coordination.
 - Rebase/update only the branch you own and only when needed to resolve real integration drift.
 - If another PR lands in the same area, reassess overlap before continuing rather than blindly replaying old assumptions.
+- Parallel implementation may explore later phases, but production promotion must not bypass unresolved prerequisite gates from the roadmap.
 
 ## Local Codex executor
 
@@ -94,6 +100,6 @@ The project intentionally distinguishes local runtime certification from hosted 
 
 ## Modernization policy
 
-The repository contains a stale backlog of dependency-update PRs from the historical toolchain. Treat them as evidence of obsolete/security-sensitive dependencies, not as a required merge sequence. Follow issue #31 and migrate the stack coherently.
+The repository contains a stale backlog of dependency-update PRs from the historical toolchain. Treat them as evidence of obsolete/security-sensitive dependencies, not as a required merge sequence. Follow issue #31 and the foundation phase in `docs/ROADMAP.md`; migrate the stack coherently.
 
 Favor incremental boundaries that make later changes easier: explicit gameplay calculations, typed entity metadata, owned lifecycle cleanup, isolated rendering/audio effects, and testable state transitions. Avoid a big-bang engine/ECS rewrite unless measured evidence shows it is necessary.
