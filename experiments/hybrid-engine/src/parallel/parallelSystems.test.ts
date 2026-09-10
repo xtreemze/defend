@@ -76,12 +76,12 @@ describe("AI planner", () => {
 });
 
 describe("audio planner", () => {
-  it("virtualizes low-priority voices and pitches approaching sources upward", () => {
+  it("uses canonical spatial priority to virtualize low-value distant voices", () => {
     const result = planAudioBatch({
       sourceIds: new Uint32Array([1, 2, 3]),
-      sourcePositions: new Float32Array([2, 0, 0, 40, 0, 0, 4, 0, 0]),
+      sourcePositions: new Float32Array([2, 0, 0, 40, 0, 0, 100, 0, 0]),
       sourceVelocities: new Float32Array([-20, 0, 0, 0, 0, 0, 5, 0, 0]),
-      sourceImportance: new Float32Array([1, 1, 0.1]),
+      sourceImportance: new Float32Array([1, 1, 0]),
       listenerPosition: [0, 0, 0],
       listenerVelocity: [0, 0, 0],
       maxRenderedVoices: 2,
