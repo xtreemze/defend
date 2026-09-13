@@ -228,7 +228,7 @@ const meta = {
         @media (max-width: 620px) { .causal-grid { grid-template-columns: 1fr; } .causal-copy { min-height: 0; } }
       </style>
       <p class="causal-intro">
-        The first nine rows mirror #106's required comparison families. The final row is intentionally causally opaque and must fail. The contract never invents physics: it only evaluates evidence emitted after authoritative outcomes exist.
+        Seven rows cover #106's canonical experimental families; edge ejection and fortress/world residue extend the same evidence seam to related design work. The final row is intentionally causally opaque and must fail. The contract never invents physics: it only evaluates evidence emitted after authoritative outcomes exist.
       </p>
       <section class="causal-grid" aria-label="Causal legibility fixture matrix">${cards}</section>
     `;
@@ -245,9 +245,9 @@ export const EvidenceMatrix: Story = {
     const cards = Array.from(canvasElement.querySelectorAll<HTMLElement>("[data-fixture]"));
     await expect(cards).toHaveLength(10);
 
-    const required = cards.filter(card => card.dataset.fixture !== "broken-control");
-    await expect(required).toHaveLength(9);
-    required.forEach(card => {
+    const positive = cards.filter(card => card.dataset.fixture !== "broken-control");
+    await expect(positive).toHaveLength(9);
+    positive.forEach(card => {
       expect(card.dataset.qualified).toBe("true");
       expect(card.dataset.expectedMatch).toBe("true");
     });
