@@ -5,7 +5,7 @@ import {
   type DefendStatusViewModel
 } from "@defend/ui";
 import "@defend/ui/webawesome";
-import { expect, userEvent, within } from "storybook/test";
+import { expect, userEvent } from "storybook/test";
 
 type StatusArgs = {
   energy: number;
@@ -110,12 +110,24 @@ type Story = StoryObj<typeof meta>;
 
 export const TypedSnapshotBoundary: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByRole("heading", { name: "Stronghold status" })).toBeVisible();
-    await expect(canvas.getByText("22,600 / 30,000")).toBeVisible();
-    const button = canvas.getByRole("button", { name: "Simulate presentation pressure" });
+    const panel = canvasElement.querySelector<DefendStatusPanel>("defend-status-panel");
+    const button = canvasElement.querySelector<HTMLElement>("wa-button");
+
+    await expect(panel).not.toBeNull();
+    await expect(button).not.toBeNull();
+    if (!panel || !button) return;
+
+    await panel.updateComplete;
+    const heading = panel.shadowRoot?.querySelector("h2");
+    const progress = panel.shadowRoot?.querySelector("progress");
+    await expect(heading).toHaveTextContent("Stronghold status");
+    await expect(progress).toHaveAttribute("value", "22600");
+    await expect(progress).toHaveAttribute("max", "30000");
+
     await userEvent.click(button);
+    await panel.updateComplete;
     await expect(button).toHaveAttribute("data-pressure", "true");
-    await expect(canvas.getByRole("heading", { name: "Stronghold under pressure" })).toBeVisible();
+    await expect(heading).toHaveTextContent("Stronghold under pressure");
+    await expect(panel.shadowRoot?.querySelector("[data-state='critical']")).not.toBeNull();
   }
 };
