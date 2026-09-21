@@ -1,12 +1,12 @@
 # pnpm 12 Evaluation Report
 
 **Status**: Post-bootstrap evaluation of pnpm 12 compatibility  
-**Date**: 2026-09-09  
+**Date**: 2026-09-21  
 **Context**: Baseline established on pnpm 11.25.0 per #158; ready for major-version evaluation
 
 ## Evaluation Scope
 
-This document records the compatibility assessment of pnpm 12 against the certified workspace baseline established under pnpm 11.25.0. The evaluation follows the 10-point checklist defined in #158.
+This document records the compatibility assessment of pnpm 12.5.0 against the certified workspace baseline established under pnpm 11.25.0. The evaluation follows the 10-point checklist defined in #158.
 
 ## Current Baseline (Certified)
 
@@ -17,6 +17,7 @@ This document records the compatibility assessment of pnpm 12 against the certif
 
 ## pnpm 12 Context
 
+- **Target under evaluation**: pnpm 12.5.0
 - **Status**: Released, Rust/pacquet-based rewrite
 - **Channel**: Major-specific (not default `latest` tag)
 - **Known issues**: Post-release regressions accepted upstream; some formerly-supported flags rejected
@@ -25,9 +26,9 @@ This document records the compatibility assessment of pnpm 12 against the certif
 ## Planned Evaluation Checklist
 
 ### 1. Shared Workspace Lockfile Compatibility
-- [ ] Both pnpm 11.25.0 and 12.x can read existing `experiments/pnpm-lock.yaml`
+- [ ] Both pnpm 11.25.0 and 12.5.0 can read existing `experiments/pnpm-lock.yaml`
 - [ ] lockfileVersion 9.0 is recognized and preserved
-- [ ] Three importers (., hybrid-engine, storybook) resolve identically
+- [ ] Four importers (., hybrid-engine, storybook, ui) resolve identically
 
 ### 2. Workspace Policy Enforcement
 - [ ] `saveExact: true` respected in both versions
@@ -74,7 +75,7 @@ This document records the compatibility assessment of pnpm 12 against the certif
 ### 10. Upstream Regression Review
 - [ ] Catalog of known pnpm 12 regressions reviewed
 - [ ] None identified as blocking our command surface
-- [ ] Documentation link: https://github.com/pnpm/pnpm/releases/tag/v12.0.0
+- [ ] Documentation link: https://github.com/pnpm/pnpm/releases/tag/v12.5.0
 
 ## Evaluation Timeline
 
