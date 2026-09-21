@@ -2,18 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Defend — Modern Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#08050d" />
+    <meta name="description" content="Babylon presentation driven by a fixed-step Bevy ECS/WASM simulation." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>Defend — Deterministic Arena</title>
     <style>
       html, body, #app, canvas { width: 100%; height: 100%; margin: 0; overflow: hidden; }
       body { background: #08050d; color: #e8d8c0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
       canvas { display: block; touch-action: none; }
       #metrics { position: fixed; top: 12px; left: 12px; z-index: 2; padding: 8px 10px; border: 1px solid rgba(214, 145, 76, .35); background: rgba(8, 5, 13, .78); font-size: 12px; line-height: 1.45; pointer-events: none; }
     </style>
+    <link rel="stylesheet" href="/src/preview-shell.css" />
   </head>
   <body>
     <div id="app"><canvas id="renderCanvas"></canvas></div>
     <div id="metrics">initializing…</div>
+    <script type="module" src="/src/previewShell.ts"></script>
     <script type="module" src="/src/main.ts"></script>
+      <noscript><div style="position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:#08050d;color:#f3eadf;font:16px system-ui,sans-serif;text-align:center">Defend requires JavaScript and WebAssembly to run this interactive preview.</div></noscript>
   </body>
 </html>

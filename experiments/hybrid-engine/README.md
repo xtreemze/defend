@@ -49,6 +49,21 @@ The hybrid package's `build` and `dev` scripts first compile `rust/` to `pkg/`.
 
 Use `?inspect=1` to start Babylon's headless Inspector bridge for agent-driven scene inspection.
 
+## Public preview shell
+
+The GitHub Pages build uses this package as the current modern Defend preview. The six browser fixtures remain directly addressable but share one presentation shell:
+
+- `/` — deterministic arena / Babylon + Bevy/WASM baseline;
+- `/mothership.html` — finite-energy mothership;
+- `/navigation.html` — raid navigation and target-sector planning;
+- `/geothermal.html` — finite geothermal energy and pressure;
+- `/routing.html` — surface routing and drainage topology;
+- `/tower-terrain.html` — tower deployment and shared terrain deformation.
+
+`src/previewShell.ts` and `src/preview-shell.css` provide navigation, responsive scene controls, collapsed diagnostics, help/fullscreen affordances, loading/error states, and accessible labeling without owning gameplay state. Route simulations remain independent and continue to own their existing controls and keyboard shortcuts.
+
+The shell is deliberately dependency-free. It is a deployment/presentation boundary, not a second simulation state store and not a substitute for the planned Lit component package while that architecture remains under separate certification.
+
 ## Current fixture
 
 The fixture creates 128 semantic bodies in the Rust/Bevy ECS runtime. Babylon creates lightweight instances and renders a copied xyz snapshot from the authoritative runtime.

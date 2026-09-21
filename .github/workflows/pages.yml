@@ -67,7 +67,9 @@ jobs:
           test -f experiments/hybrid-engine/dist/geothermal.html
           test -f experiments/hybrid-engine/dist/routing.html
           test -f experiments/hybrid-engine/dist/tower-terrain.html
+          test -f experiments/hybrid-engine/dist/favicon.svg
           grep -q '/defend/assets/' experiments/hybrid-engine/dist/index.html
+          grep -q 'Defend — Deterministic Arena' experiments/hybrid-engine/dist/index.html
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
