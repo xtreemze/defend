@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**"]
+    "includes": ["**", "!!dist/**", "!!pkg/**"]
   },
   "formatter": {
     "enabled": true,
@@ -14,8 +14,13 @@
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "project": "all",
+      "types": "all",
+      "test": "all"
+    },
     "rules": {
-      "preset": "recommended"
+      "preset": "all"
     }
   }
 }
