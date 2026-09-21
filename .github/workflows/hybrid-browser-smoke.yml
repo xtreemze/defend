@@ -223,9 +223,11 @@ jobs:
               undefined,
               { timeout: 15_000 },
             );
-            if (!(await journey.getByRole('button', { name: /Deploy tower/ }).count())) {
-              throw new Error('journey: tower scene did not expose working deployment controls');
+            const towerAction = journey.getByRole('button', { name: /Force T2 miss/ });
+            if (!(await towerAction.count())) {
+              throw new Error('journey: tower scene did not expose working interaction controls');
             }
+            await towerAction.click();
             await journey.close();
 
             const mobile = await browser.newPage({
