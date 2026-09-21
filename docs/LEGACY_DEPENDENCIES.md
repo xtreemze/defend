@@ -6,7 +6,7 @@ The historical root application (Webpack, Babylon.js 3, Cannon physics) maintain
 
 ## Status
 
-**Current state**: Legacy root remains the behavioral-parity reference during modernization. No new production features should depend on the historical Webpack/Babylon/Cannon graph.
+**Current state**: The root application is the working MVP and current product trunk. Its dependency graph is legacy/security-sensitive, but the application is not a disposable reference build. Modernization replaces dependency and subsystem ownership incrementally behind explicit seams while keeping the MVP playable.
 
 **Known vulnerabilities**: 
 - 18 critical vulnerabilities
@@ -23,15 +23,18 @@ The historical root application (Webpack, Babylon.js 3, Cannon physics) maintain
 
 ### 1. Legacy Application Scope
 
-The root application serves **solely** for:
-- Behavioral-parity testing during modernization
-- Historical regression validation
-- Documentation of original mechanics
+The root application currently serves as:
+- the playable MVP and primary product surface;
+- the behavioral baseline for modernization;
+- the integration host for certified subsystem replacements;
+- historical regression evidence for original mechanics.
 
-**New features DO NOT**:
-- Add dependencies to the root `package.json`
-- Extend the Webpack graph
-- Introduce new Babylon 3 or Cannon integrations
+**Modern work SHOULD NOT** deepen obsolete infrastructure:
+- avoid adding dependencies to the root `package.json` when an isolated modern module/package can own the capability;
+- avoid extending Webpack-specific architecture beyond what is needed to keep the MVP build operational;
+- avoid new Babylon 3 or Cannon ownership where a certified replacement seam is being introduced.
+
+New product behavior may still land in the MVP. Prefer implementing it through modern isolated modules/adapters and integrating those into the working game rather than building the feature only in a separate replacement application.
 
 ### 2. Dependency Management
 
@@ -67,10 +70,12 @@ The root application serves **solely** for:
 ## Exit Condition
 
 Close #152 and retire this policy when:
-1. The modern pnpm workspace (experiments/) reaches behavioral-parity certification
-2. The modern browser route can replace the historical Webpack application
-3. Legacy dependencies are no longer needed for reference or certification
-4. The historical root can be archived or removed from the main repository
+1. production-owned browser seams no longer depend on the legacy npm/Webpack/Babylon 3/Cannon graph;
+2. each migrated subsystem has integrated MVP certification rather than lab-only parity;
+3. remaining historical dependencies are no longer needed for build, rollback, reference, or certification;
+4. obsolete root tooling can be removed without switching users to a separately rebuilt application.
+
+The expected end state is an evolved MVP whose internals have been replaced incrementally, not a greenfield application that supersedes it in one release.
 
 ## Evidence from Certification
 
@@ -84,7 +89,7 @@ Document for each local certification run:
 ## References
 
 - **Issue #152**: Contain legacy dependency security risk  
-- **Issue #31**: Retire the historical root when modernization reaches parity  
+- **Issue #31**: Modernize the toolchain through behavior-preserving stages  
 - **docs/LOCAL_CERTIFICATION.md**: Certification procedures for legacy baseline  
 - **Dependabot PRs**: #69 (browserslist), #70 (Cordova), #71 (js-yaml) — closed as evidence, not required for merge
 
