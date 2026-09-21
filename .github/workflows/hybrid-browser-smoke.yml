@@ -163,9 +163,9 @@ jobs:
                 const intro = page.locator('[data-preview-intro]');
                 await intro.waitFor({ state: 'visible', timeout: 15_000 });
 
-                const pause = page.getByRole('button', { name: /Pause simulation/ });
-                const restart = page.getByRole('button', { name: /Restart arena/ });
-                const resetCamera = page.getByRole('button', { name: /Reset camera/ });
+                const pause = page.locator('#arena-pause');
+                const restart = page.locator('#arena-restart');
+                const resetCamera = page.locator('#arena-camera');
                 await pause.click();
                 await page.waitForFunction(
                   () => document.querySelector('#metrics')?.textContent?.includes('paused: yes'),
