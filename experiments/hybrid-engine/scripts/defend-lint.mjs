@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SOURCE_ROOT = path.join(PACKAGE_ROOT, "src");
 const SOURCE_EXTENSIONS = new Set([".js", ".jsx", ".ts", ".tsx", ".mjs", ".mts", ".cjs", ".cts"]);
 
 const RULE = Object.freeze({
