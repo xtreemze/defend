@@ -58,9 +58,9 @@ Classify results explicitly as `PASS`, `FAIL`, or `BLOCKED`.
 
 ## 4. Campaign lanes
 
-### Lane A — current master baseline
+### Lane A — current playable MVP baseline
 
-Certify the current integrated game before judging behavior-preserving PRs.
+Certify the current integrated game before judging behavior-preserving PRs. This is the product trunk, not merely a legacy reference target; modernization evidence must show that an integrated MVP remains playable after each promoted seam.
 
 Capture at least:
 
@@ -96,9 +96,11 @@ The historical export path is deliberately still present. `preexportp` removes/r
 
 The root has no committed npm lockfile and still contains a historical Yarn lockfile. Record which package manager actually reconstructs the baseline, capture the resolved dependency tree/audit as evidence, and do not silently create or commit a new root lockfile during certification.
 
-### Lane B — modern browser laboratories
+### Lane B — adjacent modern browser laboratories
 
 Use the package-manager root and exact workspace head recorded in #92.
+
+These laboratories validate candidate subsystems and architecture. A successful lab does not establish product parity by itself; promotion requires evidence from an MVP-integrated slice using the same seam.
 
 Before a shared modern workspace is promoted, package-local Storybook commands remain valid for a package-local target. When #92 points to a workspace candidate, install from that workspace root and use its shared lockfile/policy instead of independently resolving each child package.
 
@@ -184,7 +186,7 @@ Do not equate a clean install, a mergeable PR, or absence of console output with
 
 When a campaign cannot cover everything, follow the current ordering in #92. As a stable default, prefer:
 
-1. current `master` historical build/browser baseline when it is stale or required for parity decisions;
+1. current `master` playable MVP build/browser baseline when it is stale or required for parity decisions;
 2. dependency/workspace/toolchain targets that unblock many later PRs;
 3. modern Storybook/browser laboratory gates;
 4. live behavior-preserving PR queue from #92;
