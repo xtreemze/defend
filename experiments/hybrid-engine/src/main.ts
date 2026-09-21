@@ -193,7 +193,7 @@ async function main(): Promise<void> {
       resetCamera();
     }
   };
-  window.addEventListener("keydown", keydown);
+  globalThis.addEventListener("keydown", keydown);
   updatePauseButton();
 
   engine.runRenderLoop(() => {
@@ -260,12 +260,12 @@ async function main(): Promise<void> {
   });
 
   const resize = () => engine.resize();
-  window.addEventListener("resize", resize);
-  window.addEventListener(
+  globalThis.addEventListener("resize", resize);
+  globalThis.addEventListener(
     "beforeunload",
     () => {
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("keydown", keydown);
+      globalThis.removeEventListener("resize", resize);
+      globalThis.removeEventListener("keydown", keydown);
       inspectable?.dispose();
       engine.stopRenderLoop();
       scene.dispose();
