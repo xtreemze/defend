@@ -8,9 +8,10 @@ The modern workspace uses the most opinionated stable Biome preset available to 
 
 - `preset: "all"` enables every stable Biome lint rule;
 - the `project`, `types`, and `test` domains are enabled at `all` so cross-file, type-aware, dependency, cycle, and test rules participate;
-- `biome check` runs with `--error-on-warnings`, so opinionated warnings are promotion-blocking rather than advisory.
+- the unrelated Qwik domain is explicitly disabled rather than allowing framework-specific false positives;
+- `biome lint` runs with `--error-on-warnings`, so opinionated warnings are promotion-blocking rather than advisory.
 
-Rules that are genuinely incompatible with an intentional Defend architecture decision must be disabled narrowly and documented here. Do not downgrade the global preset to make a branch green.
+Rules that are genuinely incompatible with an intentional Defend architecture decision must be disabled narrowly and documented here. Do not downgrade the global preset to make a branch green. `noUnresolvedImports` is disabled because TypeScript already owns package/export resolution for this TypeScript workspace and Biome documents that its duplicate check is usually unnecessary for TypeScript; `useImportExtensions` is disabled because Vite/TypeScript bundler resolution intentionally owns extensionless source imports. Node-module imports are allowed only in `scripts/**`, and default exports are allowed only in tool configuration files.
 
 ## Defend-specific policy lint
 
