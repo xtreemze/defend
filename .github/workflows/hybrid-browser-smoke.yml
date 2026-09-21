@@ -59,7 +59,7 @@ jobs:
       - name: Setup wasm-pack
         uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa
         with:
-          version: v0.13.1
+          version: v0.15.0
 
       - name: pnpm install
         working-directory: experiments
@@ -159,6 +159,39 @@ jobs:
                   undefined,
                   { timeout: 15_000 },
                 );
+
+                const intro = page.locator('[data-preview-intro]');
+                await intro.waitFor({ state: 'visible', timeout: 15_000 });
+
+                const pause = page.locator('#arena-pause');
+                const restart = page.locator('#arena-restart');
+                const resetCamera = page.locator('#arena-camera');
+                await pause.click();
+                await page.waitForFunction(
+                  () => document.querySelector('#metrics')?.textContent?.includes('paused: yes'),
+                  undefined,
+                  { timeout: 15_000 },
+                );
+                if ((await pause.getAttribute('aria-pressed')) !== 'true') {
+                  throw new Error('main: pause control did not expose pressed state');
+                }
+                await pause.click();
+                await resetCamera.click();
+
+                await page.getByRole('button', { name: 'Stay in the arena' }).click();
+                if (!(await intro.isHidden())) {
+                  throw new Error('main: start guide did not dismiss');
+                }
+
+                await restart.click();
+                await page.waitForFunction(
+                  () => document.body.dataset.previewReady === 'true',
+                  undefined,
+                  { timeout: 15_000 },
+                );
+                if (await page.locator('[data-preview-intro]').count()) {
+                  throw new Error('main: dismissed start guide reappeared after deterministic restart');
+                }
               }
 
               await page.screenshot({
@@ -173,6 +206,29 @@ jobs:
               }
               await page.close();
             }
+
+            const journey = await browser.newPage();
+            const journeyResponse = await journey.goto(
+              'http://127.0.0.1:5173/',
+              { waitUntil: 'networkidle', timeout: 30_000 },
+            );
+            if (!journeyResponse || journeyResponse.status() >= 400) {
+              throw new Error(`journey: HTTP ${journeyResponse?.status() ?? 'no response'}`);
+            }
+            await journey.waitForSelector('[data-preview-intro]', { state: 'visible', timeout: 15_000 });
+            await journey.getByRole('link', { name: /Towers & Terrain/ }).click();
+            await journey.waitForURL(/\/tower-terrain\.html$/);
+            await journey.waitForFunction(
+              () => document.body.dataset.previewReady === 'true',
+              undefined,
+              { timeout: 15_000 },
+            );
+            const towerAction = journey.getByRole('button', { name: /Force T2 miss/ });
+            if (!(await towerAction.count())) {
+              throw new Error('journey: tower scene did not expose working interaction controls');
+            }
+            await towerAction.click();
+            await journey.close();
 
             const mobile = await browser.newPage({
               viewport: { width: 390, height: 844 },
