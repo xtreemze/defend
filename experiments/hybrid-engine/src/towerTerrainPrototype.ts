@@ -97,18 +97,27 @@ function smoothstep(value: number): number {
 
 function normalizeAngle(angle: number): number {
   let value = angle;
-  while (value > Math.PI) value -= Math.PI * 2;
-  while (value < -Math.PI) value += Math.PI * 2;
+  while (value > Math.PI) {
+    value -= Math.PI * 2;
+  }
+  while (value < -Math.PI) {
+    value += Math.PI * 2;
+  }
   return value;
+}
+
+interface MaterialAppearance {
+  diffuse: Color3;
+  emissive: Color3;
+  alpha?: number;
 }
 
 function createMaterial(
   name: string,
   scene: Scene,
-  diffuse: Color3,
-  emissive: Color3,
-  alpha = 1,
+  appearance: MaterialAppearance,
 ): StandardMaterial {
+  const { diffuse, emissive, alpha = 1 } = appearance;
   const material = new StandardMaterial(name, scene);
   material.diffuseColor = diffuse;
   material.emissiveColor = emissive;
@@ -117,7 +126,7 @@ function createMaterial(
   return material;
 }
 
-async function main(): Promise<void> {
+function main(): void {
   const canvas = document.querySelector<HTMLCanvasElement>("#renderCanvas");
   const metrics = document.querySelector<HTMLElement>("#metrics");
   const resetButton = document.querySelector<HTMLButtonElement>("#reset");
@@ -169,52 +178,38 @@ async function main(): Promise<void> {
   );
   light.intensity = 0.9;
 
-  const groundMaterial = createMaterial(
-    "terrain",
-    scene,
-    new Color3(0.055, 0.045, 0.07),
-    new Color3(0.008, 0.006, 0.012),
-    0.91,
-  );
-  const towerMaterial = createMaterial(
-    "tower",
-    scene,
-    new Color3(0.08, 0.36, 0.2),
-    new Color3(0.012, 0.07, 0.03),
-  );
-  const towerActiveMaterial = createMaterial(
-    "tower-active",
-    scene,
-    new Color3(0.1, 0.48, 0.31),
-    new Color3(0.02, 0.12, 0.06),
-  );
-  const tealMaterial = createMaterial(
-    "magma",
-    scene,
-    new Color3(0.04, 0.68, 0.67),
-    new Color3(0.02, 0.5, 0.52),
-    0.9,
-  );
+  const groundMaterial = createMaterial("terrain", scene, {
+    diffuse: new Color3(0.055, 0.045, 0.07),
+    emissive: new Color3(0.008, 0.006, 0.012),
+    alpha: 0.91,
+  });
+  const towerMaterial = createMaterial("tower", scene, {
+    diffuse: new Color3(0.08, 0.36, 0.2),
+    emissive: new Color3(0.012, 0.07, 0.03),
+  });
+  const towerActiveMaterial = createMaterial("tower-active", scene, {
+    diffuse: new Color3(0.1, 0.48, 0.31),
+    emissive: new Color3(0.02, 0.12, 0.06),
+  });
+  const tealMaterial = createMaterial("magma", scene, {
+    diffuse: new Color3(0.04, 0.68, 0.67),
+    emissive: new Color3(0.02, 0.5, 0.52),
+    alpha: 0.9,
+  });
   tealMaterial.specularColor = new Color3(0.2, 0.9, 0.88);
-  const dryMaterial = createMaterial(
-    "dry",
-    scene,
-    new Color3(0.2, 0.12, 0.2),
-    new Color3(0.03, 0.01, 0.03),
-  );
-  const targetMaterial = createMaterial(
-    "target",
-    scene,
-    new Color3(0.32, 0.08, 0.42),
-    new Color3(0.09, 0.01, 0.13),
-  );
+  const dryMaterial = createMaterial("dry", scene, {
+    diffuse: new Color3(0.2, 0.12, 0.2),
+    emissive: new Color3(0.03, 0.01, 0.03),
+  });
+  const targetMaterial = createMaterial("target", scene, {
+    diffuse: new Color3(0.32, 0.08, 0.42),
+    emissive: new Color3(0.09, 0.01, 0.13),
+  });
   targetMaterial.wireframe = true;
-  const projectileMaterial = createMaterial(
-    "projectile",
-    scene,
-    new Color3(0.92, 0.42, 0.11),
-    new Color3(0.62, 0.18, 0.03),
-  );
+  const projectileMaterial = createMaterial("projectile", scene, {
+    diffuse: new Color3(0.92, 0.42, 0.11),
+    emissive: new Color3(0.62, 0.18, 0.03),
+  });
 
   const ground = MeshBuilder.CreateGround(
     "deformable-terrain",
@@ -759,7 +754,7 @@ async function main(): Promise<void> {
   );
   bulgeButton.addEventListener("click", () => applyBulge(18, 20, 14, 2.2));
 
-  window.addEventListener("keydown", (event) => {
+  globalThis.addEventListener("keydown", (event) => {
     if (event.key.toLowerCase() === "r") buildAll();
     if (event.key.toLowerCase() === "m") renovateDryT3();
     if (event.key.toLowerCase() === "g") migrateMagma();
@@ -815,7 +810,7 @@ async function main(): Promise<void> {
     scene.render();
   });
 
-  window.addEventListener("resize", () => engine.resize());
+  globalThis.addEventListener("resize", () => engine.resize());
 }
 
-void main();
+main();
