@@ -238,6 +238,70 @@ function buildShell(): void {
     );
   });
 
+  if (route.file === "index.html") {
+    const introKey = "defend.preview.start-dismissed";
+    let introDismissed = false;
+    try {
+      introDismissed = sessionStorage.getItem(introKey) === "true";
+    } catch {
+      introDismissed = false;
+    }
+
+    if (!introDismissed) {
+      const intro = document.createElement("section");
+      intro.className = "preview-panel preview-panel--intro";
+      intro.dataset.previewIntro = "";
+      intro.setAttribute("role", "dialog");
+      intro.setAttribute("aria-labelledby", "preview-intro-title");
+      intro.innerHTML = `
+        <div class="preview-panel__heading">Start here</div>
+        <div class="preview-intro__body">
+          <h2 id="preview-intro-title">Explore the systems that make Defend different</h2>
+          <p>The arena proves the deterministic runtime. These working scenes expose the most game-like interactions in the current public build.</p>
+          <div class="preview-intro__routes">
+            <a href="./tower-terrain.html">
+              <strong>Towers & Terrain</strong>
+              <span>Deploy, drill, aim, miss, and deform shared ground.</span>
+            </a>
+            <a href="./geothermal.html">
+              <strong>Geothermal Energy</strong>
+              <span>Stress finite sources, conduits, pressure, and eruption.</span>
+            </a>
+            <a href="./navigation.html">
+              <strong>Raid Navigation</strong>
+              <span>Choose sectors and inspect physically constrained approach planning.</span>
+            </a>
+          </div>
+          <button type="button" data-preview-intro-dismiss>Stay in the arena</button>
+        </div>
+      `;
+
+      const rememberDismissal = (): void => {
+        try {
+          sessionStorage.setItem(introKey, "true");
+        } catch {
+          // Session storage may be unavailable in hardened/private contexts.
+        }
+        intro.hidden = true;
+      };
+
+      intro.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          try {
+            sessionStorage.setItem(introKey, "true");
+          } catch {
+            // Navigation still works when storage is unavailable.
+          }
+        });
+      });
+      intro
+        .querySelector<HTMLButtonElement>("[data-preview-intro-dismiss]")
+        ?.addEventListener("click", rememberDismissal);
+
+      document.body.append(intro);
+    }
+  }
+
   const loading = document.createElement("div");
   loading.className = "preview-loading";
   loading.setAttribute("role", "status");
