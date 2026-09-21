@@ -14,6 +14,10 @@ import {
   VertexData,
 } from "@babylonjs/core/pure";
 import {
+  applyVisualRole,
+  type VisualRole,
+} from "./visualLanguage";
+import {
   accumulateDepression,
   radialDeformationDepth,
   structuralStabilization,
@@ -107,6 +111,7 @@ function createMaterial(
   scene: Scene,
   diffuse: Color3,
   emissive: Color3,
+  role: VisualRole,
   alpha = 1,
 ): StandardMaterial {
   const material = new StandardMaterial(name, scene);
@@ -114,6 +119,7 @@ function createMaterial(
   material.emissiveColor = emissive;
   material.specularColor = new Color3(0.12, 0.12, 0.13);
   material.alpha = alpha;
+  applyVisualRole(material, role);
   return material;
 }
 
@@ -174,6 +180,7 @@ async function main(): Promise<void> {
     scene,
     new Color3(0.055, 0.045, 0.07),
     new Color3(0.008, 0.006, 0.012),
+    "terrain",
     0.91,
   );
   const towerMaterial = createMaterial(
@@ -181,18 +188,21 @@ async function main(): Promise<void> {
     scene,
     new Color3(0.08, 0.36, 0.2),
     new Color3(0.012, 0.07, 0.03),
+    "structure",
   );
   const towerActiveMaterial = createMaterial(
     "tower-active",
     scene,
     new Color3(0.1, 0.48, 0.31),
     new Color3(0.02, 0.12, 0.06),
+    "structure",
   );
   const tealMaterial = createMaterial(
     "magma",
     scene,
     new Color3(0.04, 0.68, 0.67),
     new Color3(0.02, 0.5, 0.52),
+    "lava",
     0.9,
   );
   tealMaterial.specularColor = new Color3(0.2, 0.9, 0.88);
@@ -201,19 +211,21 @@ async function main(): Promise<void> {
     scene,
     new Color3(0.2, 0.12, 0.2),
     new Color3(0.03, 0.01, 0.03),
+    "damage-impact",
   );
   const targetMaterial = createMaterial(
     "target",
     scene,
     new Color3(0.32, 0.08, 0.42),
     new Color3(0.09, 0.01, 0.13),
+    "raider",
   );
-  targetMaterial.wireframe = true;
   const projectileMaterial = createMaterial(
     "projectile",
     scene,
     new Color3(0.92, 0.42, 0.11),
     new Color3(0.62, 0.18, 0.03),
+    "projectile",
   );
 
   const ground = MeshBuilder.CreateGround(
@@ -743,6 +755,58 @@ async function main(): Promise<void> {
     east.mesh.position.set(38, -7, -15);
   };
 
+  const snapToPlacementGrid = (value: number): number =>
+    Math.round(value / 10) * 10;
+
+  const findTowerForMesh = (mesh: Mesh): TowerModel | undefined =>
+    towers.find(
+      (tower) =>
+        tower.base === mesh ||
+        tower.pillar === mesh ||
+        tower.turret === mesh ||
+        tower.drill === mesh ||
+        tower.conduit === mesh,
+    );
+
+  const removeTowerModel = (tower: TowerModel): void => {
+    const index = towers.indexOf(tower);
+    if (index >= 0) towers.splice(index, 1);
+    disposeTower(tower);
+  };
+
+  scene.onPointerObservable.add((event) => {
+    if (event.type !== 1) return;
+    const pick = event.pickInfo;
+    if (!pick?.hit || !pick.pickedMesh) return;
+
+    const existingTower = findTowerForMesh(pick.pickedMesh as Mesh);
+    if (existingTower) {
+      if (existingTower.level >= 3) return;
+      const { x, z } = existingTower.root.position;
+      const nextLevel = (existingTower.level + 1) as 2 | 3;
+      removeTowerModel(existingTower);
+      stabilizeFoundation(new Vector3(x, 0, z));
+      createTower(nextLevel, x, z);
+      return;
+    }
+
+    if (pick.pickedMesh !== ground || !pick.pickedPoint) return;
+    const x = snapToPlacementGrid(pick.pickedPoint.x);
+    const z = snapToPlacementGrid(pick.pickedPoint.z);
+    if (Math.hypot(x - SILO_POSITION.x, z - SILO_POSITION.z) < 16) return;
+    if (
+      towers.some(
+        (tower) =>
+          Math.hypot(tower.root.position.x - x, tower.root.position.z - z) < 7,
+      )
+    ) {
+      return;
+    }
+
+    stabilizeFoundation(new Vector3(x, 0, z));
+    createTower(1, x, z);
+  });
+
   resetButton.addEventListener("click", buildAll);
   maintainButton.addEventListener("click", renovateDryT3);
   migrateButton.addEventListener("click", migrateMagma);
@@ -807,6 +871,7 @@ async function main(): Promise<void> {
     metrics.textContent = [
       "TOWER / TERRAIN PHYSICS LAB",
       ...towerLines,
+      `controls: tap ground = place T1 | tap tower = upgrade`,
       `projectiles: ${projectiles.length}`,
       `east magma: (${sources[2].mesh.position.x.toFixed(0)}, ${sources[2].mesh.position.z.toFixed(0)})`,
       `FPS: ${engine.getFps().toFixed(0)} | meshes: ${scene.meshes.length}`,
