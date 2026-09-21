@@ -1,4 +1,4 @@
-import type { Meta } from "@storybook/html-vite";
+import type { Meta } from "@storybook/web-components-vite";
 
 export const labBaseCss = `
   .lab {

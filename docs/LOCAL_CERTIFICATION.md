@@ -117,6 +117,14 @@ For a shared-workspace target, follow the exact aggregate/filter commands record
 
 Exercise the deterministic stories and their controls, including maximum-size stress fixtures. Record console warnings and verify stories that claim to be passive do not leave AudioContexts, Workers, animation loops, timers, or other persistent resources behind.
 
+When a candidate includes the `@defend/ui` package from #204, additionally verify:
+
+- the shared workspace install regenerates a coherent lockfile containing `lit`, `@awesome.me/webawesome`, and `@storybook/web-components-vite`;
+- `pnpm --filter @defend/ui typecheck` and `pnpm --filter @defend/ui build` pass;
+- all pre-existing Storybook stories still typecheck/build/test under the Web Components renderer;
+- `UI/Status Panel` renders, its browser interaction test passes, and the Lit element receives a plain view model rather than a mutable simulation object;
+- the Web Awesome bundle path is cherry-picked through `@defend/ui/webawesome` rather than importing/registering the full component catalog.
+
 A generated lockfile belongs only to the dependency/workspace PR that explicitly owns it. Inspect it before committing and keep unrelated local work out of that commit.
 
 ### Lane C — Rust and Babylon/Bevy experiments

@@ -42,6 +42,7 @@ The target browser architecture is deliberately hybrid:
 
 - **Babylon.js** owns browser rendering, camera, picking, input integration, WebGL/WebGPU presentation, accessibility integration, Inspector diagnostics, and interpolation of authoritative simulation snapshots.
 - **Rust/WASM with modular Bevy crates** owns deterministic fixed-step semantic simulation where it improves correctness, portability, testing, or performance.
+- **Lit custom elements** own the modern DOM presentation boundary for status, accessibility equivalents, settings, and other application surfaces. They consume presentation-safe view models and emit intents; they do not own simulation facts. Cherry-picked Web Awesome controls are allowed only for conventional application controls.
 - **One physics authority** owns authoritative collision/integration. Rapier is the leading candidate, but production ownership follows comparative evidence rather than preference. Babylon/Havok may remain a benchmark/control path.
 - **Web Audio / AudioWorklet** owns browser audio rendering. Procedural/spatial audio objects originate from semantic simulation state; an ordinary Worker may perform lower-rate prioritization/control planning.
 - **Workers are advisory system lanes**, not alternate authorities. Combat targeting, AI planning, and audio planning may run in persistent batched workers when profiling justifies the boundary. Every result is tick-stamped and revalidated by authoritative simulation before it can affect gameplay.
@@ -239,6 +240,7 @@ Until evidence explicitly changes them:
 - no unbounded energy generation from combat;
 - no damage-type rock-paper-scissors or RPG progression added merely to manufacture depth;
 - no menu-heavy control layer replacing direct physical interaction;
+- no framework-owned duplicate gameplay store or SPA state authority beside the simulation; DOM UI observes snapshots and emits intents;
 - no big-bang legacy rewrite before parity evidence;
 - no retirement of the historical path before the replacement satisfies the relevant certification gates.
 
@@ -247,6 +249,7 @@ Until evidence explicitly changes them:
 The project is aligned when architecture, game design, experiments, PR descriptions, and implementation all agree on these boundaries:
 
 - Babylon presents; deterministic simulation decides.
+- Lit/Web Components present DOM application/accessibility surfaces; they do not become simulation authority.
 - Physics is causal gameplay, not decoration.
 - Workers advise; authoritative simulation validates.
 - Audio rendering is real-time isolated; semantic audio remains part of the world model.
