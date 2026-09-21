@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!!dist/**", "!!pkg/**"]
+    "includes": ["**", "!!dist", "!!pkg"]
   },
   "formatter": {
     "enabled": true,
@@ -16,11 +16,38 @@
     "enabled": true,
     "domains": {
       "project": "all",
+      "qwik": "none",
       "types": "all",
       "test": "all"
     },
     "rules": {
-      "preset": "all"
+      "preset": "all",
+      "correctness": {
+        "noUnresolvedImports": "off",
+        "useImportExtensions": "off"
+      }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["scripts/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["*.config.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
 }
