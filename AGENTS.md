@@ -64,6 +64,8 @@ When working in a checkout that may contain concurrent work:
 
 ## Validation
 
+Modern workspace changes must follow [`docs/LINT_POLICY.md`](./docs/LINT_POLICY.md). Treat `pnpm check` as an architecture/policy gate, not a formatting suggestion; local exceptions require a concrete inline rationale and should remain narrower than changing the global ruleset.
+
 Each PR should explain what was validated and what could not be validated online. Do not claim runtime, physics, browser, audio, or PWA verification unless it was actually performed. When local verification is required, leave an explicit checklist for the local executor and update the PR with the results.
 
 Prefer behavioral assertions over snapshots of implementation details. Preserve deterministic seams for stochastic behavior where practical, but do not replace emergent physics with a fake deterministic simulation merely to make tests easy.
