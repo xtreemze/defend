@@ -16,6 +16,7 @@ import {
   type FixedStepPolicy,
   INITIAL_FIXED_STEP_STATE,
 } from "./fixedStep";
+import { applyVisualRole } from "./visualLanguage";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
 // registers none of the prototype extensions or mesh capabilities they rely on
@@ -77,6 +78,7 @@ async function main(): Promise<void> {
   const coreMaterial = new StandardMaterial("coreMaterial", scene);
   coreMaterial.diffuseColor = new Color3(0.66, 0.31, 0.13);
   coreMaterial.emissiveColor = new Color3(0.18, 0.055, 0.02);
+  applyVisualRole(coreMaterial, "energy");
   MeshBuilder.CreateCylinder(
     "energy-core",
     { diameter: 14, height: 4, tessellation: 6 },
@@ -86,6 +88,7 @@ async function main(): Promise<void> {
   const bodyMaterial = new StandardMaterial("bodyMaterial", scene);
   bodyMaterial.diffuseColor = new Color3(0.28, 0.08, 0.42);
   bodyMaterial.emissiveColor = new Color3(0.06, 0.01, 0.09);
+  applyVisualRole(bodyMaterial, "raider");
 
   const bodyTemplate = MeshBuilder.CreateSphere(
     "enemy-template",
