@@ -2,8 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Defend Mothership Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#08050d" />
+    <meta name="description" content="Explore hover, depletion, instability, impact, and persistent physical consequence." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Defend — Finite-Energy Mothership</title>
     <style>
       :root { color-scheme: dark; }
       html, body, #app, canvas { width: 100%; height: 100%; margin: 0; overflow: hidden; }
@@ -57,6 +60,7 @@
         text-align: center;
       }
     </style>
+    <link rel="stylesheet" href="/src/preview-shell.css" />
   </head>
   <body>
     <div id="app"><canvas id="renderCanvas"></canvas></div>
@@ -68,6 +72,8 @@
       <button id="camera" type="button">Defender view [C]</button>
     </div>
     <div id="caption">Finite teal reserve sustains hover. Depletion weakens suspension until gravity wins.</div>
+    <script type="module" src="/src/previewShell.ts"></script>
     <script type="module" src="/src/mothershipPrototype.ts"></script>
+      <noscript><div style="position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:#08050d;color:#f3eadf;font:16px system-ui,sans-serif;text-align:center">Defend requires JavaScript and WebAssembly to run this interactive preview.</div></noscript>
   </body>
 </html>

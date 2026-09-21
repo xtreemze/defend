@@ -133,14 +133,31 @@ jobs:
                 throw new Error(`${name}: HTTP ${response?.status() ?? 'no response'}`);
               }
 
+              await page.waitForSelector('[data-preview-shell]', { timeout: 15_000 });
+              await page.waitForFunction(
+                () => document.body.dataset.previewReady === 'true',
+                undefined,
+                { timeout: 15_000 },
+              );
+
+              const sceneLinks = await page.locator('[data-preview-nav] a').count();
+              if (sceneLinks !== 6) {
+                throw new Error(`${name}: expected 6 preview scene links, found ${sceneLinks}`);
+              }
+
+              const diagnosticsHidden = await page.locator('#preview-diagnostics-panel').evaluate(
+                (element) => element.hasAttribute('hidden'),
+              );
+              if (!diagnosticsHidden) {
+                throw new Error(`${name}: diagnostics should be collapsed by default`);
+              }
+
               if (name === 'main') {
                 await page.waitForFunction(
                   () => document.querySelector('#metrics')?.textContent?.includes('bodies: 128'),
                   undefined,
                   { timeout: 15_000 },
                 );
-              } else {
-                await page.waitForTimeout(750);
               }
 
               await page.screenshot({
@@ -155,6 +172,56 @@ jobs:
               }
               await page.close();
             }
+
+            const mobile = await browser.newPage({
+              viewport: { width: 390, height: 844 },
+              hasTouch: true,
+              isMobile: true,
+            });
+            const mobileErrors = [];
+            mobile.on('console', (message) => {
+              if (message.type() === 'error') mobileErrors.push(message.text());
+            });
+            mobile.on('pageerror', (error) => mobileErrors.push(error.message));
+
+            const mobileResponse = await mobile.goto(
+              'http://127.0.0.1:5173/tower-terrain.html',
+              { waitUntil: 'networkidle', timeout: 30_000 },
+            );
+            if (!mobileResponse || mobileResponse.status() >= 400) {
+              throw new Error(`mobile: HTTP ${mobileResponse?.status() ?? 'no response'}`);
+            }
+
+            await mobile.waitForSelector('[data-preview-shell]', { timeout: 15_000 });
+            await mobile.waitForFunction(
+              () => document.body.dataset.previewReady === 'true',
+              undefined,
+              { timeout: 15_000 },
+            );
+
+            const controlsButton = mobile.getByRole('button', { name: 'Controls' });
+            if ((await controlsButton.getAttribute('aria-expanded')) !== 'false') {
+              throw new Error('mobile: scene controls should begin collapsed');
+            }
+            await controlsButton.click();
+            await mobile.locator('#preview-controls-panel').waitFor({ state: 'visible' });
+
+            const hasHorizontalOverflow = await mobile.evaluate(
+              () => document.documentElement.scrollWidth > window.innerWidth + 1,
+            );
+            if (hasHorizontalOverflow) {
+              throw new Error('mobile: preview chrome causes horizontal document overflow');
+            }
+
+            await mobile.screenshot({
+              path: 'hybrid-smoke-artifacts/mobile-tower-terrain.png',
+              fullPage: true,
+            });
+
+            if (mobileErrors.length) {
+              throw new Error(`mobile: browser errors: ${mobileErrors.join(' | ')}`);
+            }
+            await mobile.close();
           } finally {
             await browser.close();
           }
