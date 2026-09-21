@@ -5,6 +5,7 @@ import {
   HemisphericLight,
   type Mesh,
   MeshBuilder,
+  PointerEventTypes,
   RegisterStandardEngineExtensions,
   Scene,
   StandardMaterial,
@@ -775,7 +776,7 @@ async function main(): Promise<void> {
   };
 
   scene.onPointerObservable.add((event) => {
-    if (event.type !== 1) return;
+    if (event.type !== PointerEventTypes.POINTERTAP) return;
     const pick = event.pickInfo;
     if (!pick?.hit || !pick.pickedMesh) return;
 
