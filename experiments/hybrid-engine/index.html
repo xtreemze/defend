@@ -18,6 +18,12 @@
   <body>
     <div id="app"><canvas id="renderCanvas"></canvas></div>
     <div id="metrics">initializing…</div>
+    <div id="controls" role="toolbar" aria-label="Arena controls">
+      <button id="arena-pause" type="button">Pause simulation [Space]</button>
+      <button id="arena-restart" type="button">Restart arena [R]</button>
+      <button id="arena-camera" type="button">Reset camera [C]</button>
+    </div>
+    <div id="hint">Orbit with drag, zoom with wheel or pinch, or open Start here to jump into the interactive systems.</div>
     <script type="module" src="/src/previewShell.ts"></script>
     <script type="module" src="/src/main.ts"></script>
       <noscript><div style="position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:#08050d;color:#f3eadf;font:16px system-ui,sans-serif;text-align:center">Defend requires JavaScript and WebAssembly to run this interactive preview.</div></noscript>
