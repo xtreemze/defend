@@ -9,7 +9,10 @@
     "build": "pnpm wasm && tsc --noEmit && vite build",
     "typecheck": "pnpm wasm && tsc --noEmit",
     "test": "vitest run",
-    "check": "biome check ."
+    "check:biome": "biome check . --error-on-warnings --max-diagnostics=200",
+    "check:principles": "node ./scripts/defend-lint.mjs",
+    "test:lint-policy": "node --test ./scripts/defend-lint.test.mjs",
+    "check": "pnpm check:biome && pnpm check:principles && pnpm test:lint-policy"
   },
   "dependencies": {
     "@babylonjs/accessibility": "9.25.0",
