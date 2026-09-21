@@ -133,7 +133,8 @@ jobs:
                 throw new Error(`${name}: HTTP ${response?.status() ?? 'no response'}`);
               }
 
-              await page.waitForSelector('[data-preview-shell]', { timeout: 15_000 });
+              await page.waitForSelector('[data-preview-shell]', { state: 'attached', timeout: 15_000 });
+              await page.waitForSelector('.preview-header', { state: 'visible', timeout: 15_000 });
               await page.waitForFunction(
                 () => document.body.dataset.previewReady === 'true',
                 undefined,
@@ -192,7 +193,8 @@ jobs:
               throw new Error(`mobile: HTTP ${mobileResponse?.status() ?? 'no response'}`);
             }
 
-            await mobile.waitForSelector('[data-preview-shell]', { timeout: 15_000 });
+            await mobile.waitForSelector('[data-preview-shell]', { state: 'attached', timeout: 15_000 });
+            await mobile.waitForSelector('.preview-header', { state: 'visible', timeout: 15_000 });
             await mobile.waitForFunction(
               () => document.body.dataset.previewReady === 'true',
               undefined,
