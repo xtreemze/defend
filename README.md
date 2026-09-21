@@ -3,7 +3,8 @@
 <p align="center"><strong>A physics-driven strategy game about finite energy, temporary defenses, and the cost of perfect deterrence.</strong></p>
 
 <p align="center">
-  <a href="https://xtreemze.github.io/defend/">Explore the modern web preview</a> ·
+  <a href="https://xtreemze.github.io/defend/">Play Defend</a> ·
+  <a href="https://xtreemze.github.io/defend/labs/">Modern systems labs</a> ·
   <a href="./docs/GAME_DESIGN_MANUAL.md">Game design manual</a> ·
   <a href="./docs/ROADMAP.md">Development roadmap</a> ·
   <a href="./AGENTS.md">Development contract</a> ·
@@ -63,34 +64,35 @@ Raiders share the same physical world but differ through size, mass, momentum, s
 
 ## Repository status
 
-Defend is an older playable web game undergoing a deliberate modernization. GitHub Pages now publishes the modern Babylon/Bevy/WASM systems preview, while the historical implementation remains available as the behavioral reference until the replacement path reaches full gameplay parity and MCP certification.
+Defend already has a playable, historically tested MVP. Modernization now builds on that working game incrementally rather than treating a separate modern preview as its replacement. GitHub Pages publishes the MVP as the primary experience, while Babylon/Bevy/WASM scenes remain adjacent systems laboratories whose capabilities are promoted into the game one certified seam at a time.
 
 | Area | Role today |
 | --- | --- |
-| `src/` + root Webpack app | **Playable historical baseline.** BabylonJS 3, Cannon physics, procedural audio, PWA delivery, and the original browser gameplay remain the behavior reference while migration work is validated. |
+| `src/` + root Webpack app | **Playable MVP and product trunk.** BabylonJS 3, Cannon physics, procedural audio, PWA delivery, and the established browser gameplay remain live while individual internals are modernized behind certified seams. |
 | [`docs/GAME_DESIGN_MANUAL.md`](./docs/GAME_DESIGN_MANUAL.md) | **Canonical game-design source of truth.** Separates enduring principles, measured/current baseline behavior, and experimental hypotheses. |
 | [`docs/ROADMAP.md`](./docs/ROADMAP.md) | **Canonical integration roadmap.** Defines the MCP, architecture ownership, development sequence, critical path, and promotion gates across parallel work. |
 | [`docs/design/`](./docs/design/) | **Focused system chapters and experiments** for energy flow, world ecology, mothership/raider play, geothermal power, locomotion, terrain, and related mechanics. |
 | [`crates/defend-core/`](./crates/defend-core/) | **Dependency-light deterministic Rust core** for formulas, topology, and contracts that benefit from portable executable tests. |
 | [`experiments/storybook/`](./experiments/storybook/) | **Interactive systems laboratory** for deterministic fixtures, design experiments, visual inspection, and behavior certification. |
-| [`experiments/hybrid-engine/`](./experiments/hybrid-engine/) | **Current GitHub Pages modern preview.** Babylon 9 renders while a headless modular Bevy/Rust WASM runtime owns semantic simulation state; the deployed scenes exercise real modern subsystems without yet claiming complete historical-game parity. |
+| [`experiments/hybrid-engine/`](./experiments/hybrid-engine/) | **Adjacent modern systems lab.** Babylon 9 and headless Bevy/Rust WASM exercise candidate subsystems and integration contracts. It informs and supplies incremental MVP upgrades; it is not a second product implementation. |
 
 ### Modernization direction
 
-The current architecture direction is intentionally hybrid rather than a wholesale engine rewrite:
+The current architecture direction is intentionally **brownfield and incremental** rather than a wholesale engine rewrite. Start from the working MVP, isolate one responsibility, certify a modern implementation against the existing behavior, integrate it into the MVP, then move to the next seam:
 
 - Babylon.js remains the browser presentation/rendering authority.
 - Rust/WASM is introduced where deterministic simulation, testing, portability, or performance justify it.
 - Modular Bevy ECS/app/time crates are evaluated as a headless simulation framework without bringing a second renderer into the browser path.
 - Physics backends are compared against characterized gameplay behavior before ownership changes.
 - Storybook and isolated labs are used to prove contracts before production integration.
-- The historical app stays runnable as the reference baseline while the modern GitHub Pages preview advances toward full gameplay parity and certification.
+- The working MVP stays continuously playable and remains the product trunk; modern labs only become production behavior when their owned subsystem is integrated and certified inside it.
 
 See the [development roadmap](./docs/ROADMAP.md) for the cross-system sequence, [issue #66](https://github.com/xtreemze/defend/issues/66) for the architecture program, and [`docs/LOCAL_CERTIFICATION.md`](./docs/LOCAL_CERTIFICATION.md) for the evidence model used before promotion.
 
 ## Explore the project
 
-- **Live modern preview:** [xtreemze.github.io/defend](https://xtreemze.github.io/defend/)
+- **Playable MVP:** [xtreemze.github.io/defend](https://xtreemze.github.io/defend/)
+- **Modern systems labs:** [xtreemze.github.io/defend/labs/](https://xtreemze.github.io/defend/labs/)
 - **Design:** [`docs/GAME_DESIGN_MANUAL.md`](./docs/GAME_DESIGN_MANUAL.md)
 - **Development roadmap / MCP:** [`docs/ROADMAP.md`](./docs/ROADMAP.md)
 - **Focused design chapters:** [`docs/design/`](./docs/design/)
@@ -132,7 +134,7 @@ The hybrid-engine experiment has its own reproducible toolchain and run instruct
 
 ## Development philosophy
 
-Modernization should preserve the mechanics that give Defend its identity rather than preserving obsolete implementation techniques. Gameplay changes, architecture changes, and balance changes should remain reviewable independently where practical, with GitHub issues providing durable design context and experiments providing evidence before promotion.
+Modernization should preserve the mechanics that give Defend its identity rather than preserving obsolete implementation techniques. It should also preserve the value of the already working MVP: prefer refactoring and replacing one owned seam at a time over rebuilding equivalent gameplay in parallel. Gameplay changes, architecture changes, and balance changes should remain reviewable independently where practical, with GitHub issues providing durable design context and experiments providing evidence before promotion.
 
 In particular, preserve the closed energy economy, temporary defenses, physical projectiles and knockback, finite-lived raiders, direct battlefield interaction, procedural presentation, and the ability to reduce presentation cost before sacrificing simulation behavior on constrained devices.
 
