@@ -83,11 +83,11 @@ test("enforces worker, audio, shared-memory, and attacker-knowledge ownership", 
   ]);
 
   assert.deepEqual(
-    lintSourceText("src/workers/createCombatWorker.ts", `export const worker = new Worker("./combat.js");`),
+    lintSourceText("src/workers/createCombatWorker.ts", 'export const worker = new Worker("./combat.js");'),
     [],
   );
   assert.deepEqual(
-    lintSourceText("src/audio/createContext.ts", `export const audio = new AudioContext();`),
+    lintSourceText("src/audio/createContext.ts", 'export const audio = new AudioContext();'),
     [],
   );
 });
