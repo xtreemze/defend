@@ -78,7 +78,6 @@ test("enforces worker, audio, shared-memory, and attacker-knowledge ownership", 
     "architecture/worker-ownership",
     "architecture/audio-context-ownership",
     "architecture/no-baseline-shared-memory",
-    "architecture/no-baseline-shared-memory",
     "ai/no-fortress-strength-oracle",
     "ai/no-fortress-strength-oracle",
   ]);
