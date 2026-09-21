@@ -9,7 +9,7 @@
     "build": "pnpm wasm && tsc --noEmit && vite build",
     "typecheck": "pnpm wasm && tsc --noEmit",
     "test": "vitest run",
-    "check:biome": "biome check . --error-on-warnings --max-diagnostics=200",
+    "check:biome": "biome lint . --error-on-warnings --max-diagnostics=200",
     "check:principles": "node ./scripts/defend-lint.mjs",
     "test:lint-policy": "node --test ./scripts/defend-lint.test.mjs",
     "check": "pnpm check:biome && pnpm check:principles && pnpm test:lint-policy"
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babylonjs/inspector": "9.25.0",
     "@biomejs/biome": "2.5.11",
+    "playwright": "1.62.1",
     "typescript": "7.0.2",
     "vite": "8.2.2",
     "vitest": "4.1.11"
