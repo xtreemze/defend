@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   build:
-    name: Build site
+    name: Build modern preview
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: read
 
@@ -29,24 +29,54 @@ jobs:
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v6.0.0
         with:
           node-version: 24.20.0
-          cache: npm
 
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2
+        with:
+          version: 11.25.0
 
-      - name: Build production site
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
-        run: npm run build
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: 1.98.1
+          targets: wasm32-unknown-unknown
+          components: rustfmt,clippy
+
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa
+        with:
+          version: v0.15.0
+
+      - name: Install modern workspace
+        working-directory: experiments
+        run: pnpm install --frozen-lockfile
+
+      - name: Build modern Pages preview
+        working-directory: experiments
+        run: |
+          pnpm --filter @defend/hybrid-engine-lab wasm
+          pnpm --filter @defend/hybrid-engine-lab exec tsc --noEmit
+          pnpm --filter @defend/hybrid-engine-lab exec vite build --base=/defend/
+
+      - name: Verify Pages artifact
+        shell: bash
+        run: |
+          test -f experiments/hybrid-engine/dist/index.html
+          test -f experiments/hybrid-engine/dist/mothership.html
+          test -f experiments/hybrid-engine/dist/navigation.html
+          test -f experiments/hybrid-engine/dist/geothermal.html
+          test -f experiments/hybrid-engine/dist/routing.html
+          test -f experiments/hybrid-engine/dist/tower-terrain.html
+          grep -q '/defend/assets/' experiments/hybrid-engine/dist/index.html
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: dist
+          path: experiments/hybrid-engine/dist
 
   deploy:
-    name: Deploy site
+    name: Deploy modern preview
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest

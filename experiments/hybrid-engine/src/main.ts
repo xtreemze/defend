@@ -183,7 +183,7 @@ async function main(): Promise<void> {
     if (frame % 15 === 0) {
       const fingerprint = runtime.state_fingerprint();
       metrics.textContent = [
-        "Babylon 9.23 renderer + Bevy 0.19 ECS/WASM",
+        "Defend modern preview — Babylon 9 + Bevy 0.19 ECS/WASM",
         `bodies: ${BODY_COUNT}`,
         `fps: ${engine.getFps().toFixed(1)}`,
         `simulation: ${(1 / fixedStepPolicy.fixedDeltaSeconds).toFixed(0)} Hz fixed tick`,
