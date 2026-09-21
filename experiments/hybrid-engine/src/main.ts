@@ -34,8 +34,11 @@ async function main(): Promise<void> {
 
   const canvas = document.querySelector<HTMLCanvasElement>("#renderCanvas");
   const metrics = document.querySelector<HTMLElement>("#metrics");
-  if (!canvas || !metrics) {
-    throw new Error("Hybrid lab DOM is incomplete");
+  const pauseButton = document.querySelector<HTMLButtonElement>("#arena-pause");
+  const restartButton = document.querySelector<HTMLButtonElement>("#arena-restart");
+  const cameraButton = document.querySelector<HTMLButtonElement>("#arena-camera");
+  if (!canvas || !metrics || !pauseButton || !restartButton || !cameraButton) {
+    throw new Error("Hybrid arena DOM is incomplete");
   }
 
   const engine = new Engine(canvas, true, {
@@ -56,6 +59,13 @@ async function main(): Promise<void> {
   camera.attachControl(canvas, true);
   camera.lowerRadiusLimit = 48;
   camera.upperRadiusLimit = 180;
+
+  const resetCamera = (): void => {
+    camera.alpha = -Math.PI / 2;
+    camera.beta = Math.PI / 3.2;
+    camera.radius = 118;
+    camera.setTarget(Vector3.Zero());
+  };
 
   const light = new HemisphericLight(
     "ambient",
@@ -140,19 +150,68 @@ async function main(): Promise<void> {
   let snapshotBytes = 0;
   let stepsThisFrame = 0;
   let renderAlpha = 0;
+  let paused = false;
+
+  const updatePauseButton = (): void => {
+    pauseButton.textContent = paused
+      ? "Resume simulation [Space]"
+      : "Pause simulation [Space]";
+    pauseButton.setAttribute("aria-pressed", String(paused));
+  };
+
+  const togglePaused = (): void => {
+    paused = !paused;
+    updatePauseButton();
+  };
+
+  pauseButton.addEventListener("click", togglePaused);
+  restartButton.addEventListener("click", () => location.reload());
+  cameraButton.addEventListener("click", resetCamera);
+
+  const keydown = (event: KeyboardEvent): void => {
+    const target = event.target;
+    if (
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement ||
+      target instanceof HTMLButtonElement ||
+      target instanceof HTMLAnchorElement
+    ) {
+      return;
+    }
+
+    if (event.code === "Space") {
+      event.preventDefault();
+      togglePaused();
+      return;
+    }
+    if (event.key.toLowerCase() === "r") {
+      location.reload();
+      return;
+    }
+    if (event.key.toLowerCase() === "c") {
+      resetCamera();
+    }
+  };
+  window.addEventListener("keydown", keydown);
+  updatePauseButton();
 
   engine.runRenderLoop(() => {
-    const advance = advanceFixedStep(
-      fixedStepState,
-      engine.getDeltaTime() / 1000,
-      fixedStepPolicy,
-    );
-    fixedStepState = advance.state;
-    stepsThisFrame = advance.steps;
-    renderAlpha = advance.alpha;
+    if (!paused) {
+      const advance = advanceFixedStep(
+        fixedStepState,
+        engine.getDeltaTime() / 1000,
+        fixedStepPolicy,
+      );
+      fixedStepState = advance.state;
+      stepsThisFrame = advance.steps;
+      renderAlpha = advance.alpha;
 
-    if (stepsThisFrame > 0) {
-      runtime.step_fixed(stepsThisFrame);
+      if (stepsThisFrame > 0) {
+        runtime.step_fixed(stepsThisFrame);
+      }
+    } else {
+      stepsThisFrame = 0;
     }
 
     const positions = runtime.positions();
@@ -187,6 +246,7 @@ async function main(): Promise<void> {
         `bodies: ${BODY_COUNT}`,
         `fps: ${engine.getFps().toFixed(1)}`,
         `simulation: ${(1 / fixedStepPolicy.fixedDeltaSeconds).toFixed(0)} Hz fixed tick`,
+        `paused: ${paused ? "yes" : "no"}`,
         `tick: ${runtime.tick()} (${stepsThisFrame} step(s) this frame)`,
         `state: ${fingerprint}`,
         `render alpha: ${renderAlpha.toFixed(2)}`,
@@ -205,6 +265,7 @@ async function main(): Promise<void> {
     "beforeunload",
     () => {
       window.removeEventListener("resize", resize);
+      window.removeEventListener("keydown", keydown);
       inspectable?.dispose();
       engine.stopRenderLoop();
       scene.dispose();
