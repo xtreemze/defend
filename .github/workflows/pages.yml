@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   build:
-    name: Build modern preview
+    name: Build playable MVP + modern labs
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     permissions:
       contents: write
 
@@ -29,6 +29,15 @@ jobs:
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v6.0.0
         with:
           node-version: 24.20.0
+          cache: npm
+
+      - name: Install MVP dependencies
+        run: npm ci --legacy-peer-deps --no-audit --no-fund
+
+      - name: Build playable MVP
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: npm run build
 
       - name: Setup pnpm
         uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2
@@ -51,29 +60,33 @@ jobs:
         working-directory: experiments
         run: pnpm install --frozen-lockfile
 
-      - name: Build modern Pages preview
+      - name: Build adjacent modern systems labs
         working-directory: experiments
         run: |
           pnpm --filter @defend/hybrid-engine-lab wasm
           pnpm --filter @defend/hybrid-engine-lab exec tsc --noEmit
-          pnpm --filter @defend/hybrid-engine-lab exec vite build --base=/defend/
+          pnpm --filter @defend/hybrid-engine-lab exec vite build --base=/defend/labs/
+
+      - name: Add labs to MVP artifact
+        shell: bash
+        run: |
+          mkdir -p dist/labs
+          cp -R experiments/hybrid-engine/dist/. dist/labs/
 
       - name: Verify Pages artifact
         shell: bash
         run: |
-          test -f experiments/hybrid-engine/dist/index.html
-          test -f experiments/hybrid-engine/dist/mothership.html
-          test -f experiments/hybrid-engine/dist/navigation.html
-          test -f experiments/hybrid-engine/dist/geothermal.html
-          test -f experiments/hybrid-engine/dist/routing.html
-          test -f experiments/hybrid-engine/dist/tower-terrain.html
-          test -f experiments/hybrid-engine/dist/favicon.svg
-          grep -q '/defend/assets/' experiments/hybrid-engine/dist/index.html
-          grep -q 'Defend — Deterministic Arena' experiments/hybrid-engine/dist/index.html
+          test -f dist/index.html
+          test -f dist/js/game.js
+          test -f dist/labs/index.html
+          test -f dist/labs/tower-terrain.html
+          grep -q '/defend/labs/assets/' dist/labs/index.html
+          grep -q '<title>Defend</title>' dist/index.html
+          grep -q 'Defend — Deterministic Arena' dist/labs/index.html
 
-      - name: Publish verified preview to gh-pages
+      - name: Publish playable MVP and labs to gh-pages
         if: github.event_name != 'pull_request'
-        working-directory: experiments/hybrid-engine/dist
+        working-directory: dist
         env:
           GITHUB_TOKEN: ${{ github.token }}
         shell: bash
@@ -84,6 +97,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add --all
-          git commit -m "Deploy modern preview from ${GITHUB_SHA}"
+          git commit -m "Deploy MVP + modern labs from ${GITHUB_SHA}"
           git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push --force origin gh-pages
