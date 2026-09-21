@@ -20,6 +20,11 @@ const RULE = Object.freeze({
   invalidException: "policy/invalid-exception",
 });
 
+const SIMULATION_DIRECTORY_PATTERN = /\/(?:core|domain|protocol|simulation|workers)(?:\/|$)/u;
+const SIMULATION_FILE_PATTERN = /\.(?:domain|model|protocol|simulation|state)\.[cm]?[jt]sx?$/u;
+const WORKER_DIRECTORY_PATTERN = /(^|\/)src\/workers\//u;
+const AUDIO_DIRECTORY_PATTERN = /(^|\/)src\/audio\//u;
+
 const DOM_GLOBALS = new Set([
   "document",
   "window",
@@ -61,18 +66,15 @@ function toPosix(value) {
 
 function isSimulationBoundary(relativePath) {
   const normalized = `/${toPosix(relativePath)}`;
-  return (
-    /\/(?:core|domain|protocol|simulation|workers)(?:\/|$)/u.test(normalized) ||
-    /\.(?:domain|model|protocol|simulation|state)\.[cm]?[jt]sx?$/u.test(normalized)
-  );
+  return SIMULATION_DIRECTORY_PATTERN.test(normalized) || SIMULATION_FILE_PATTERN.test(normalized);
 }
 
 function isWorkerBoundary(relativePath) {
-  return /(^|\/)src\/workers\//u.test(toPosix(relativePath));
+  return WORKER_DIRECTORY_PATTERN.test(toPosix(relativePath));
 }
 
 function isAudioBoundary(relativePath) {
-  return /(^|\/)src\/audio\//u.test(toPosix(relativePath));
+  return AUDIO_DIRECTORY_PATTERN.test(toPosix(relativePath));
 }
 
 function sourceLine(sourceFile, lineIndex) {
@@ -88,10 +90,14 @@ function exceptionReason(sourceFile, node, ruleId) {
   const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
   const marker = `defend-lint-allow ${ruleId} -- `;
   for (const candidate of [line, line - 1]) {
-    if (candidate < 0) continue;
+    if (candidate < 0) {
+      continue;
+    }
     const text = sourceLine(sourceFile, candidate);
     const markerIndex = text.indexOf(marker);
-    if (markerIndex === -1) continue;
+    if (markerIndex === -1) {
+      continue;
+    }
     return text.slice(markerIndex + marker.length).trim();
   }
   return null;
@@ -123,7 +129,9 @@ function directCall(node, name) {
 }
 
 function constructorName(node) {
-  if (!ts.isNewExpression(node) || !ts.isIdentifier(node.expression)) return null;
+  if (!ts.isNewExpression(node) || !ts.isIdentifier(node.expression)) {
+    return null;
+  }
   return node.expression.text;
 }
 
@@ -138,7 +146,9 @@ export function lintSourceText(relativePath, source) {
   const report = (node, ruleId, message) => {
     const reason = exceptionReason(sourceFile, node, ruleId);
     if (reason !== null) {
-      if (reason.length >= 16) return;
+      if (reason.length >= 16) {
+        return;
+      }
       const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
       const key = `${position.line}:${ruleId}`;
       if (!invalidExceptionKeys.has(key)) {
@@ -252,7 +262,9 @@ export function lintDependencyManifest(manifest) {
     const dependencies = manifest[section] ?? {};
     for (const dependency of Object.keys(dependencies)) {
       const reason = FORBIDDEN_DEPENDENCIES.get(dependency);
-      if (!reason) continue;
+      if (!reason) {
+        continue;
+      }
       violations.push({
         file: "package.json",
         line: 1,
@@ -269,7 +281,9 @@ function deduplicateViolations(violations) {
   const seen = new Set();
   return violations.filter((violation) => {
     const key = `${violation.file}:${violation.line}:${violation.column}:${violation.ruleId}`;
-    if (seen.has(key)) return false;
+    if (seen.has(key)) {
+      return false;
+    }
     seen.add(key);
     return true;
   });
@@ -283,7 +297,9 @@ async function sourceFiles(directory) {
       files.push(...(await sourceFiles(absolute)));
       continue;
     }
-    if (SOURCE_EXTENSIONS.has(path.extname(entry.name))) files.push(absolute);
+    if (SOURCE_EXTENSIONS.has(path.extname(entry.name))) {
+      files.push(absolute);
+    }
   }
   return files;
 }
