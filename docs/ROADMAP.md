@@ -38,7 +38,23 @@ The game should communicate this loop primarily through geometry, motion, sound,
 
 ## Architecture contract
 
-The target browser architecture is deliberately hybrid:
+### Brownfield modernization rule
+
+Defend already has a working, historically tested MVP. That MVP is the product trunk and the starting point for modernization; it is not disposable scaffolding for a greenfield replacement application.
+
+Modernization therefore follows a strangler-style, seam-by-seam process:
+
+1. characterize the current MVP behavior at the seam being changed and preserve or add regression evidence;
+2. introduce the smallest explicit boundary/adapter needed to isolate that responsibility inside the working game;
+3. implement the modern subsystem against that boundary in an adjacent module or laboratory;
+4. exercise old and new implementations against the same behavioral/physical fixtures where comparison is meaningful;
+5. integrate the modern implementation back into the working MVP for one vertical slice;
+6. promote ownership only after the integrated slice preserves required behavior, interaction, presentation identity, and performance;
+7. remove the superseded implementation only after that seam is certified and the rollback/reference value is no longer needed.
+
+A standalone modern laboratory may prove architecture, but it does not become the product merely by accumulating features. New gameplay should normally land on the working MVP through certified seams rather than being rebuilt independently in a second application. GitHub Pages should expose the playable MVP as the primary experience; modern laboratories are additions beneath it until their individual systems are integrated.
+
+The target browser architecture may become hybrid incrementally:
 
 - **Babylon.js** owns browser rendering, camera, picking, input integration, WebGL/WebGPU presentation, accessibility integration, Inspector diagnostics, and interpolation of authoritative simulation snapshots.
 - **Rust/WASM with modular Bevy crates** owns deterministic fixed-step semantic simulation where it improves correctness, portability, testing, or performance.
@@ -46,7 +62,7 @@ The target browser architecture is deliberately hybrid:
 - **Web Audio / AudioWorklet** owns browser audio rendering. Procedural/spatial audio objects originate from semantic simulation state; an ordinary Worker may perform lower-rate prioritization/control planning.
 - **Workers are advisory system lanes**, not alternate authorities. Combat targeting, AI planning, and audio planning may run in persistent batched workers when profiling justifies the boundary. Every result is tick-stamped and revalidated by authoritative simulation before it can affect gameplay.
 - **SharedArrayBuffer is optional**, never a baseline requirement. Start with explicit structures and transferable typed arrays; optimize transport only after measurement.
-- **The historical application remains runnable** until the replacement path reaches behavioral parity and certification. Migration is by subsystem seam, not a repository-wide rewrite.
+- **The existing MVP remains the product trunk.** Modern subsystems are introduced through certified seams inside that working application. There is no planned one-time handoff from a legacy app to a separately rebuilt browser app.
 
 The browser must never run two production 3D render authorities or two competing physics authorities for the same world.
 
@@ -78,7 +94,7 @@ Multiple campaigns, many biomes, large progression trees, multiplayer, extensive
 
 ### Phase 0 — certify the development foundation
 
-Establish one reproducible modern workspace before promoting additional architecture.
+Keep the playable MVP continuously buildable and establish a reproducible adjacent modern workspace for subsystem experiments and modules. The modern workspace supports the MVP; it is not a replacement product trunk.
 
 Current dependency order:
 
@@ -105,7 +121,7 @@ Required seams:
 - replay seed and deterministic fingerprints;
 - Babylon presentation consumes/interpolates snapshots and does not mutate authoritative state directly.
 
-Gate: repeated seeded runs produce equivalent semantic state and presentation can be destroyed/recreated without changing simulation outcome.
+Gate: repeated seeded runs produce equivalent semantic state and presentation can be destroyed/recreated without changing simulation outcome. The first promoted boundary must also be callable from an integrated MVP slice without requiring a second application shell.
 
 ### Phase 2 — measured system-level parallelism
 
@@ -138,9 +154,9 @@ The chosen path must preserve Defend-specific mechanics:
 
 Gate: one physics authority passes characterized fixtures and replaces legacy ownership only for a certified vertical slice.
 
-### Phase 4 — build the first authoritative defensive vertical slice
+### Phase 4 — build the first authoritative defensive vertical slice inside the MVP
 
-Do not independently productionize every planned subsystem. Build one causal chain end to end:
+Do not independently productionize every planned subsystem or reproduce the game in a second shell. Replace one owned seam in the existing playable MVP and build one causal chain end to end:
 
 `energy source -> finite defender reserve -> tower deployment/operation -> physical projectile/impulse -> raider damage/delay/displacement/expiry -> released embodied energy -> geometry-dependent drainage -> collection into reserve -> breach/extraction`
 
@@ -197,19 +213,21 @@ Promote bounded world residue so history remains visible: impacts, wrecks, deple
 
 Run full MCP certification across deterministic simulation, browser presentation, interactions, accessibility equivalents, spatial/procedural audio, performance tiers, replay evidence, and both campaign perspectives.
 
-Only after this gate should the legacy implementation be considered eligible for retirement as the primary gameplay path.
+Only after this gate should any remaining obsolete implementations be considered eligible for retirement. The product itself evolves in place; retirement is per subsystem/toolchain seam, not a switch from one complete app to another.
 
 ## Current critical path
 
 The immediate priority is not breadth. It is to get from experiments to **one certified causal vertical slice** while preserving the eventual full MCP dependency chain.
 
-1. Stabilize/certify the modern workspace and toolchain (#163, then dependent workspace work).
-2. Reconcile and certify the parallel-worker prototype (#197), then measure #195/#196 rather than assuming more threads are automatically better.
-3. Establish the authoritative fixed-step semantic boundary and select physics ownership through fixtures.
-4. Implement the defensive vertical slice through real conserved collection/extraction.
-5. Feed its observable outcomes into the layered attacker model (#128).
-6. Prove deterrence/starvation behavior before adding campaign breadth.
-7. Reuse the same systems for the raider/mothership inversion and finish MCP certification.
+1. Keep the historical MVP build/browser baseline continuously playable and characterize the next seam before changing ownership.
+2. Stabilize/certify the adjacent modern workspace and toolchain (#163, then dependent workspace work) as a source of modules/labs for that MVP.
+3. Reconcile and certify the parallel-worker prototype (#197), then measure #195/#196 rather than assuming more threads are automatically better.
+4. Establish the authoritative fixed-step semantic boundary and select physics ownership through fixtures.
+5. Integrate that boundary into one MVP vertical slice before expanding the separate lab.
+6. Implement the defensive vertical slice through real conserved collection/extraction.
+7. Feed its observable outcomes into the layered attacker model (#128).
+8. Prove deterrence/starvation behavior before adding campaign breadth.
+9. Reuse the same systems for the raider/mothership inversion and finish MCP certification.
 
 This order intentionally prioritizes `deterministic authority -> measured parallelism -> physical causation -> conserved economy -> intelligible interaction -> adaptive AI -> deterrence/starvation -> inversion -> polish/expansion`.
 
@@ -239,8 +257,9 @@ Until evidence explicitly changes them:
 - no unbounded energy generation from combat;
 - no damage-type rock-paper-scissors or RPG progression added merely to manufacture depth;
 - no menu-heavy control layer replacing direct physical interaction;
-- no big-bang legacy rewrite before parity evidence;
-- no retirement of the historical path before the replacement satisfies the relevant certification gates.
+- no greenfield reimplementation of already working MVP behavior when a seam-by-seam migration is practical;
+- no separate modern application becoming the de facto product trunk merely because it has newer tooling;
+- no removal of an MVP subsystem until its integrated replacement satisfies the relevant certification gate.
 
 ## Definition of alignment
 
