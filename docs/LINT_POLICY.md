@@ -8,6 +8,8 @@ The modern workspace uses the most opinionated stable Biome preset available to 
 
 - `preset: "all"` enables every stable Biome lint rule;
 - the `project`, `types`, and `test` domains are enabled at `all` so cross-file, type-aware, dependency, cycle, and test rules participate;
+- policy-aligned nursery rules are enabled explicitly: `noRestrictedDependencies` blocks dependencies with known better-maintained alternatives and `noJsonUnsafeValues` rejects non-portable JSON values;
+- nursery is not enabled indiscriminately: Biome deliberately excludes nursery rules from `preset: "all"` because they are experimental, so each nursery rule must earn its place without weakening determinism, portability, or reviewability;
 - the unrelated Qwik domain is explicitly disabled rather than allowing framework-specific false positives;
 - `biome lint` runs with `--error-on-warnings`, so opinionated warnings are promotion-blocking rather than advisory.
 
@@ -19,14 +21,14 @@ Rules that are genuinely incompatible with an intentional Defend architecture de
 
 It rejects:
 
-- `Math.random()` in maintained game code; stochastic behavior must receive a seeded/random source;
-- `Date.now()`; authoritative behavior derives time from fixed simulation ticks;
+- ambient randomness such as `Math.random()`, `crypto.randomUUID()`, and `crypto.getRandomValues()`; stochastic behavior must receive a seeded/random source;
+- ambient wall-clock reads such as `Date.now()`, `new Date()`, and zero-argument `Date()`; authoritative behavior derives time from fixed simulation ticks;
 - ambient `setTimeout` / `setInterval`; use authoritative ticks or an explicitly owned render/audio lifecycle;
-- Worker construction outside `src/workers/`;
-- AudioContext construction outside `src/audio/`;
+- Worker or SharedWorker construction outside `src/workers/`;
+- AudioContext or OfflineAudioContext construction outside `src/audio/`;
 - `SharedArrayBuffer` in the baseline path;
 - a hidden `fortressStrength` oracle;
-- Babylon imports or browser globals from domain/simulation/protocol/worker boundaries;
+- Babylon imports, browser globals, persistent storage, or ambient network/messaging APIs such as `fetch`, WebSocket, EventSource, BroadcastChannel, and MessageChannel from domain/simulation/protocol/worker boundaries;
 - competing renderers/frameworks, historical Cannon/Webpack packages, and legacy lint tooling in the modern hybrid package.
 
 The purpose is not to prohibit future evidence-backed changes. It makes architecture changes explicit: change the governing decision and the lint contract together instead of silently bypassing a boundary.

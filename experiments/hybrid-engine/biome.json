@@ -25,6 +25,10 @@
       "correctness": {
         "noUnresolvedImports": "off",
         "useImportExtensions": "off"
+      },
+      "nursery": {
+        "noJsonUnsafeValues": "error",
+        "noRestrictedDependencies": "error"
       }
     }
   },

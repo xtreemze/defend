@@ -16,6 +16,7 @@ const RULE = Object.freeze({
   hiddenOracle: "ai/no-fortress-strength-oracle",
   rendererInSimulation: "architecture/no-renderer-in-simulation",
   domInSimulation: "architecture/no-dom-in-simulation",
+  networkInSimulation: "architecture/no-network-in-simulation",
   competingDependency: "architecture/no-competing-runtime-dependency",
   invalidException: "policy/invalid-exception",
 });
@@ -37,6 +38,16 @@ const DOM_GLOBALS = new Set([
   "requestAnimationFrame",
   "cancelAnimationFrame",
   "performance",
+  "indexedDB",
+]);
+
+const NETWORK_GLOBALS = new Set([
+  "fetch",
+  "WebSocket",
+  "EventSource",
+  "BroadcastChannel",
+  "MessageChannel",
+  "MessagePort",
 ]);
 
 const FORBIDDEN_DEPENDENCIES = new Map([
@@ -128,6 +139,14 @@ function directCall(node, name) {
   return ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === name;
 }
 
+function zeroArgumentCall(node, name) {
+  return directCall(node, name) && node.arguments.length === 0;
+}
+
+function memberCallAny(node, owner, properties) {
+  return properties.some((property) => memberCall(node, owner, property));
+}
+
 function constructorName(node) {
   if (!ts.isNewExpression(node) || !ts.isIdentifier(node.expression)) {
     return null;
@@ -168,19 +187,26 @@ export function lintSourceText(relativePath, source) {
   };
 
   const visit = (node) => {
-    if (memberCall(node, "Math", "random")) {
+    if (
+      memberCall(node, "Math", "random") ||
+      memberCallAny(node, "crypto", ["getRandomValues", "randomUUID"])
+    ) {
       report(
         node,
         RULE.unseededRandom,
-        "Inject a seeded/random source owned by the simulation instead of calling Math.random().",
+        "Inject a seeded/random source owned by the simulation instead of using ambient platform randomness.",
       );
     }
 
-    if (memberCall(node, "Date", "now")) {
+    if (
+      memberCall(node, "Date", "now") ||
+      zeroArgumentCall(node, "Date") ||
+      (ts.isNewExpression(node) && constructorName(node) === "Date" && (node.arguments?.length ?? 0) === 0)
+    ) {
       report(
         node,
         RULE.wallClock,
-        "Authoritative behavior must derive time from fixed ticks; Date.now() makes replay and certification nondeterministic.",
+        "Authoritative behavior must derive time from fixed ticks; ambient wall-clock reads make replay and certification nondeterministic.",
       );
     }
 
@@ -193,28 +219,25 @@ export function lintSourceText(relativePath, source) {
     }
 
     const constructed = constructorName(node);
-    if (constructed === "Worker" && !workerBoundary) {
+    if ((constructed === "Worker" || constructed === "SharedWorker") && !workerBoundary) {
       report(
         node,
         RULE.workerOwnership,
         "Create Workers only behind src/workers/ so advisory lanes have explicit ownership and teardown.",
       );
     }
-    if ((constructed === "AudioContext" || constructed === "webkitAudioContext") && !audioBoundary) {
+    if (
+      ["AudioContext", "webkitAudioContext", "OfflineAudioContext", "webkitOfflineAudioContext"].includes(
+        constructed ?? "",
+      ) &&
+      !audioBoundary
+    ) {
       report(
         node,
         RULE.audioOwnership,
         "Create audio rendering contexts only behind src/audio/ so lifecycle and real-time ownership stay explicit.",
       );
     }
-    if (constructed === "SharedArrayBuffer") {
-      report(
-        node,
-        RULE.sharedMemory,
-        "SharedArrayBuffer may be an evidence-backed optimization, but it cannot become a baseline requirement.",
-      );
-    }
-
     if (ts.isIdentifier(node) && node.text === "SharedArrayBuffer") {
       report(
         node,
@@ -246,6 +269,14 @@ export function lintSourceText(relativePath, source) {
         node,
         RULE.domInSimulation,
         `Simulation/domain/protocol/worker code must not depend on browser global ${node.text}.`,
+      );
+    }
+
+    if (simulationBoundary && ts.isIdentifier(node) && NETWORK_GLOBALS.has(node.text)) {
+      report(
+        node,
+        RULE.networkInSimulation,
+        `Simulation/domain/protocol/worker code must not depend on ambient network/messaging global ${node.text}.`,
       );
     }
 

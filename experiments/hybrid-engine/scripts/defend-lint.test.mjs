@@ -16,31 +16,42 @@ test("accepts injected deterministic sources", () => {
   assert.deepEqual(violations, []);
 });
 
-test("rejects unseeded randomness, wall-clock time, and ambient timers", () => {
+test("rejects ambient randomness, wall-clock time, and ambient timers", () => {
   const violations = lintSourceText(
     "src/presentation/example.ts",
     `
       const sample = Math.random();
+      const id = crypto.randomUUID();
+      const entropy = crypto.getRandomValues(new Uint32Array(1));
       const now = Date.now();
+      const implicitNow = new Date();
+      const implicitStringNow = Date();
       setTimeout(() => sample + now, 10);
       setInterval(() => sample, 100);
+      void id; void entropy; void implicitNow; void implicitStringNow;
     `,
   );
   assert.deepEqual(ids(violations), [
     "determinism/no-unseeded-random",
+    "determinism/no-unseeded-random",
+    "determinism/no-unseeded-random",
+    "determinism/no-wall-clock",
+    "determinism/no-wall-clock",
     "determinism/no-wall-clock",
     "lifecycle/no-ambient-timer",
     "lifecycle/no-ambient-timer",
   ]);
 });
 
-test("keeps Babylon and DOM out of semantic simulation boundaries", () => {
+test("keeps Babylon, DOM, and ambient networking out of semantic simulation boundaries", () => {
   const violations = lintSourceText(
     "src/simulation/world.state.ts",
     `
       import { Vector3 } from "@babylonjs/core";
       export const width = window.innerWidth;
       export const canvas = document.querySelector("canvas");
+      export const socket = new WebSocket("wss://example.invalid");
+      export const request = fetch("/state");
       export const vector = new Vector3(0, 0, 0);
     `,
   );
@@ -48,6 +59,8 @@ test("keeps Babylon and DOM out of semantic simulation boundaries", () => {
     "architecture/no-renderer-in-simulation",
     "architecture/no-dom-in-simulation",
     "architecture/no-dom-in-simulation",
+    "architecture/no-network-in-simulation",
+    "architecture/no-network-in-simulation",
   ]);
 });
 
@@ -68,14 +81,18 @@ test("enforces worker, audio, shared-memory, and attacker-knowledge ownership", 
     "src/presentation/runtime.ts",
     `
       const worker = new Worker("./combat.js");
+      const sharedWorker = new SharedWorker("./coordination.js");
       const audio = new AudioContext();
+      const offlineAudio = new OfflineAudioContext(1, 128, 48000);
       const shared = new SharedArrayBuffer(64);
       const fortressStrength = 0.9;
-      void worker; void audio; void shared; void fortressStrength;
+      void worker; void sharedWorker; void audio; void offlineAudio; void shared; void fortressStrength;
     `,
   );
   assert.deepEqual(ids(ordinary), [
     "architecture/worker-ownership",
+    "architecture/worker-ownership",
+    "architecture/audio-context-ownership",
     "architecture/audio-context-ownership",
     "architecture/no-baseline-shared-memory",
     "ai/no-fortress-strength-oracle",
@@ -83,11 +100,17 @@ test("enforces worker, audio, shared-memory, and attacker-knowledge ownership", 
   ]);
 
   assert.deepEqual(
-    lintSourceText("src/workers/createCombatWorker.ts", 'export const worker = new Worker("./combat.js");'),
+    lintSourceText(
+      "src/workers/createCombatWorker.ts",
+      'export const worker = new Worker("./combat.js"); export const shared = new SharedWorker("./coordination.js");',
+    ),
     [],
   );
   assert.deepEqual(
-    lintSourceText("src/audio/createContext.ts", 'export const audio = new AudioContext();'),
+    lintSourceText(
+      "src/audio/createContext.ts",
+      "export const audio = new AudioContext(); export const offline = new OfflineAudioContext(1, 128, 48000);",
+    ),
     [],
   );
 });
