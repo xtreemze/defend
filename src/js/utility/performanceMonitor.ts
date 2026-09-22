@@ -15,6 +15,7 @@ export class PerformanceMonitor {
   private projectilePoolStats: any = null;
   private enemyPoolStats: any = null;
   private fragmentPoolStats: any = null;
+  private audioStats: any = null;
 
   /**
    * Start monitoring performance
@@ -116,6 +117,13 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Register audio stats for logging
+   */
+  registerAudioStats(stats: any): void {
+    this.audioStats = stats;
+  }
+
+  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -143,6 +151,9 @@ export class PerformanceMonitor {
     }
     if (this.fragmentPoolStats) {
       console.log(`Fragment Pool - Total: ${this.fragmentPoolStats.total}, InUse: ${this.fragmentPoolStats.inUse}, Reused: ${this.fragmentPoolStats.reusePct}%`);
+    }
+    if (this.audioStats) {
+      console.log(`Audio - Cache: ${this.audioStats.cacheSize}, Hits: ${this.audioStats.cacheHits}, Misses: ${this.audioStats.cacheMisses}, Hit Rate: ${this.audioStats.hitRate}%`);
     }
   }
 }

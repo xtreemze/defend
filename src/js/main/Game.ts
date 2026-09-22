@@ -10,7 +10,6 @@ import {
 	PhysicsEngine
 } from "../utility/babylonOptimized";
 
-import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals, towerGlobals } from "./globalVariables";
 import { map } from "./map";
 import { detectDeviceCapabilities } from "../utility/deviceDetection";
@@ -21,6 +20,7 @@ import { getGlobalParticlePoolManager } from "../utility/particlePoolManager";
 import { getGlobalProjectilePoolManager } from "../projectile/projectilePoolManager";
 import { getGlobalEnemyPoolManager } from "../enemy/enemyPoolManager";
 import { getGlobalFragmentPoolManager } from "../enemy/fragmentPoolManager";
+import { getGlobalAudioManager } from "../utility/audioManager";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -114,10 +114,7 @@ class Game {
 			);
 		}
 
-		FX.setVolume(1);
-		FX._tone.Master.mute = true;
-		// FX._tone.context.latencyHint = "fastest";
-		// FX._tone.Transport.start("+0.5");
+		// Audio will be lazy-loaded on first sound play
 		const gravity = -20;
 		// const gravity = -9.81;
 		// const gravity = -9.81 * 2;
@@ -166,6 +163,9 @@ class Game {
 		// Initialize fragment pool
 		const fragmentPool = getGlobalFragmentPoolManager(this.scene);
 
+		// Initialize audio manager (lazy loads on first sound)
+		const audioManager = getGlobalAudioManager();
+
 		// Log performance stats every 10 seconds (including cache and pool stats)
 		setInterval(() => {
 			const factory = getGlobalMaterialFactory(this.scene);
@@ -174,6 +174,7 @@ class Game {
 			perfMonitor.registerProjectilePoolStats(projectilePool.getStats());
 			perfMonitor.registerEnemyPoolStats(enemyPool.getStats());
 			perfMonitor.registerFragmentPoolStats(fragmentPool.getStats());
+			perfMonitor.registerAudioStats(audioManager.getStats());
 			perfMonitor.logStats();
 		}, 10000);
 
