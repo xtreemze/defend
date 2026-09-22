@@ -16,6 +16,7 @@ export class PerformanceMonitor {
   private enemyPoolStats: any = null;
   private fragmentPoolStats: any = null;
   private audioStats: any = null;
+  private renderingStats: any = null;
 
   /**
    * Start monitoring performance
@@ -124,6 +125,13 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Register rendering stats for logging
+   */
+  registerRenderingStats(stats: any): void {
+    this.renderingStats = stats;
+  }
+
+  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -154,6 +162,10 @@ export class PerformanceMonitor {
     }
     if (this.audioStats) {
       console.log(`Audio - Cache: ${this.audioStats.cacheSize}, Hits: ${this.audioStats.cacheHits}, Misses: ${this.audioStats.cacheMisses}, Hit Rate: ${this.audioStats.hitRate}%`);
+    }
+    if (this.renderingStats) {
+      const glowStatus = this.renderingStats.glowEnabled ? "enabled" : "disabled";
+      console.log(`Rendering - Glow: ${glowStatus} (intensity: ${this.renderingStats.glowIntensity.toFixed(2)}), Avg FPS: ${this.renderingStats.averageFPS}, Min: ${this.renderingStats.minFPS}`);
     }
   }
 }
