@@ -11,6 +11,7 @@ export class PerformanceMonitor {
   private maxFrameTime = 0;
   private isMonitoring = false;
   private materialCacheStats: any = null;
+  private particlePoolStats: any = null;
 
   /**
    * Start monitoring performance
@@ -84,6 +85,13 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Register particle pool stats for logging
+   */
+  registerParticlePoolStats(stats: any): void {
+    this.particlePoolStats = stats;
+  }
+
+  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -98,6 +106,9 @@ export class PerformanceMonitor {
     }
     if (this.materialCacheStats) {
       console.log(`Material Cache - Cached: ${this.materialCacheStats.cachedCount}, Memory: ${this.materialCacheStats.totalMemory}`);
+    }
+    if (this.particlePoolStats) {
+      console.log(`Particle Pool - Pool: ${this.particlePoolStats.poolSize}, InUse: ${this.particlePoolStats.inUse}, Reused: ${this.particlePoolStats.reuseCount}`);
     }
   }
 }
