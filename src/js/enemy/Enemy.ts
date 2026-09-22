@@ -1,5 +1,6 @@
 import { enemyBorn, EnemySphere } from "./enemyBorn";
 import { getGlobalEnemyPoolManager } from "./enemyPoolManager";
+import { getGlobalFragmentPoolManager } from "./fragmentPoolManager";
 
 import {
 	Vector3,
@@ -55,10 +56,17 @@ function fragment(
 	isBlue?: Boolean,
 	scene?: Scene
 ) {
+	const fragmentPool = getGlobalFragmentPoolManager(scene!);
 	for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
-		const fragment = MeshBuilder.CreateBox("enemyFragment" + index, {
-			size: (level * level + 5) / 1.5 / (enemyGlobals.fragments * level)
-		}, scene) as Mesh;
+		const fragment = fragmentPool.acquireFragment();
+		if (!fragment) {
+			console.warn("Fragment pool exhausted, skipping fragment creation");
+			continue;
+		}
+
+		// Scale fragment to appropriate size
+		const fragmentSize = (level * level + 5) / 1.5 / (enemyGlobals.fragments * level);
+		fragment.scaling = new Vector3(fragmentSize, fragmentSize, fragmentSize);
 		fragment.position = new Vector3(
 			enemyPosition.x,
 			enemyPosition.y / level + ((level * level + 5) / level) * index,
@@ -103,13 +111,14 @@ function fragment(
 			setTimeout(() => {
 
 				fragment.unregisterAfterRender(disposeFragment);
-				fragment.setEnabled(false);
 
 				if (fragment.physicsImpostor !== null) {
 					// Use batched disposal to reduce GC spikes
 					getGlobalImpostorLifecycleManager().queueDisposal(fragment.physicsImpostor);
 				}
-				fragment.dispose();
+
+				// Return fragment to pool instead of disposing
+				fragmentPool.releaseFragment(fragment);
 
 			}, projectileGlobals.lifeTime * 3);
 		};

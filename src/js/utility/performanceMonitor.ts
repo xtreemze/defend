@@ -14,6 +14,7 @@ export class PerformanceMonitor {
   private particlePoolStats: any = null;
   private projectilePoolStats: any = null;
   private enemyPoolStats: any = null;
+  private fragmentPoolStats: any = null;
 
   /**
    * Start monitoring performance
@@ -108,6 +109,13 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Register fragment pool stats for logging
+   */
+  registerFragmentPoolStats(stats: any): void {
+    this.fragmentPoolStats = stats;
+  }
+
+  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -132,6 +140,9 @@ export class PerformanceMonitor {
     if (this.enemyPoolStats) {
       const poolsStr = Object.entries(this.enemyPoolStats.pools).map((entry: any) => `L${entry[0]}: ${entry[1].total}/${entry[1].inUse}`).join(", ");
       console.log(`Enemy Pool - ${poolsStr}, Reused: ${this.enemyPoolStats.reusePct}%`);
+    }
+    if (this.fragmentPoolStats) {
+      console.log(`Fragment Pool - Total: ${this.fragmentPoolStats.total}, InUse: ${this.fragmentPoolStats.inUse}, Reused: ${this.fragmentPoolStats.reusePct}%`);
     }
   }
 }

@@ -20,6 +20,7 @@ import { getGlobalMaterialFactory } from "../utility/materialFactory";
 import { getGlobalParticlePoolManager } from "../utility/particlePoolManager";
 import { getGlobalProjectilePoolManager } from "../projectile/projectilePoolManager";
 import { getGlobalEnemyPoolManager } from "../enemy/enemyPoolManager";
+import { getGlobalFragmentPoolManager } from "../enemy/fragmentPoolManager";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -162,6 +163,9 @@ class Game {
 		// Initialize enemy pool
 		const enemyPool = getGlobalEnemyPoolManager(this.scene);
 
+		// Initialize fragment pool
+		const fragmentPool = getGlobalFragmentPoolManager(this.scene);
+
 		// Log performance stats every 10 seconds (including cache and pool stats)
 		setInterval(() => {
 			const factory = getGlobalMaterialFactory(this.scene);
@@ -169,6 +173,7 @@ class Game {
 			perfMonitor.registerParticlePoolStats(particlePool.getStats());
 			perfMonitor.registerProjectilePoolStats(projectilePool.getStats());
 			perfMonitor.registerEnemyPoolStats(enemyPool.getStats());
+			perfMonitor.registerFragmentPoolStats(fragmentPool.getStats());
 			perfMonitor.logStats();
 		}, 10000);
 
