@@ -1,13 +1,15 @@
 import { enemyBorn, EnemySphere } from "./enemyBorn";
+import { getGlobalEnemyPoolManager } from "./enemyPoolManager";
 
 import {
 	Vector3,
-	MeshBuilder,
 	Mesh,
 	Tags,
 	PhysicsImpostor,
 	Scene,
-	Material
+	Material,
+	InstancedMesh,
+	MeshBuilder
 } from "../utility/babylonOptimized";
 import {
 	enemyGlobals,
@@ -25,26 +27,22 @@ interface Position2D {
 
 class Enemy {
 	constructor(level: number, position: Position2D, scene: Scene) {
-		const name = `enemyLevel${level}Index${enemyGlobals.index}` as string;
 		enemyGlobals.index += 1;
 		const diameter = (level * level + 5) as number;
-		const sphereMesh = MeshBuilder.CreateIcoSphere(
-			name,
-			{
-				subdivisions: level,
-				radius: diameter / 2,
-				updatable: false
-			},
-			scene
-		) as EnemySphere;
-		sphereMesh.isPickable = false;
 
-		// sphereMesh.convertToUnIndexedMesh();
-		// enemyGlobals.allEnemies.unshift(sphereMesh);
+		// Acquire enemy mesh from pool
+		const poolManager = getGlobalEnemyPoolManager(scene);
+		const sphereMesh = poolManager.acquireEnemy(level) as EnemySphere;
 
-		enemyBorn(scene, position, sphereMesh, diameter, level);
+		if (sphereMesh) {
+			sphereMesh.isPickable = false;
+			// Store level on instance for pool return
+			(sphereMesh as any).poolLevel = level;
 
-		Tags.AddTagsTo(sphereMesh, "enemy");
+			enemyBorn(scene, position, sphereMesh, diameter, level);
+
+			Tags.AddTagsTo(sphereMesh, "enemy");
+		}
 	}
 }
 
@@ -54,12 +52,13 @@ function fragment(
 	enemyRotation: Vector3,
 	enemyLinearVelocity: Vector3,
 	enemyAngularVelocity: Vector3,
-	isBlue?: Boolean
+	isBlue?: Boolean,
+	scene?: Scene
 ) {
 	for (let index = 1; index <= enemyGlobals.fragments * level; index++) {
 		const fragment = MeshBuilder.CreateBox("enemyFragment" + index, {
 			size: (level * level + 5) / 1.5 / (enemyGlobals.fragments * level)
-		}) as Mesh;
+		}, scene) as Mesh;
 		fragment.position = new Vector3(
 			enemyPosition.x,
 			enemyPosition.y / level + ((level * level + 5) / level) * index,
@@ -86,16 +85,19 @@ function fragment(
 
 		fragment.physicsImpostor.setLinearVelocity(enemyLinearVelocity);
 		fragment.physicsImpostor.setAngularVelocity(enemyAngularVelocity);
-		if (!isBlue) {
-
-			fragment.material = materialGlobals.damagedMaterial as Material;
-		} else {
-			fragment.material = materialGlobals.enemyMaterial as Material;
-
-		}
 
 		fragment.isPickable = false;
 		fragment.convertToUnIndexedMesh();
+
+		try {
+			if (!isBlue && materialGlobals.damagedMaterial) {
+				fragment.material = materialGlobals.damagedMaterial;
+			} else if (isBlue && materialGlobals.enemyMaterial) {
+				fragment.material = materialGlobals.enemyMaterial;
+			}
+		} catch (e) {
+			console.warn("Fragment material assignment failed:", e);
+		}
 
 		const disposeFragment = () => {
 			setTimeout(() => {

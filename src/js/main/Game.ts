@@ -19,6 +19,7 @@ import { getGlobalLazyLoadingOrchestrator } from "../utility/lazyLoadingOrchestr
 import { getGlobalMaterialFactory } from "../utility/materialFactory";
 import { getGlobalParticlePoolManager } from "../utility/particlePoolManager";
 import { getGlobalProjectilePoolManager } from "../projectile/projectilePoolManager";
+import { getGlobalEnemyPoolManager } from "../enemy/enemyPoolManager";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -158,12 +159,16 @@ class Game {
 		// Initialize projectile pool (will be created after projectile instances are available)
 		const projectilePool = getGlobalProjectilePoolManager();
 
+		// Initialize enemy pool
+		const enemyPool = getGlobalEnemyPoolManager(this.scene);
+
 		// Log performance stats every 10 seconds (including cache and pool stats)
 		setInterval(() => {
 			const factory = getGlobalMaterialFactory(this.scene);
 			perfMonitor.registerMaterialCacheStats(factory.getStats());
 			perfMonitor.registerParticlePoolStats(particlePool.getStats());
 			perfMonitor.registerProjectilePoolStats(projectilePool.getStats());
+			perfMonitor.registerEnemyPoolStats(enemyPool.getStats());
 			perfMonitor.logStats();
 		}, 10000);
 

@@ -13,6 +13,7 @@ export class PerformanceMonitor {
   private materialCacheStats: any = null;
   private particlePoolStats: any = null;
   private projectilePoolStats: any = null;
+  private enemyPoolStats: any = null;
 
   /**
    * Start monitoring performance
@@ -100,6 +101,13 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Register enemy pool stats for logging
+   */
+  registerEnemyPoolStats(stats: any): void {
+    this.enemyPoolStats = stats;
+  }
+
+  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -120,6 +128,10 @@ export class PerformanceMonitor {
     }
     if (this.projectilePoolStats) {
       console.log(`Projectile Pool - L2: ${this.projectilePoolStats.poolL2.total}/${this.projectilePoolStats.poolL2.inUse}, L3: ${this.projectilePoolStats.poolL3.total}/${this.projectilePoolStats.poolL3.inUse}, Reused: ${this.projectilePoolStats.reusePct}%`);
+    }
+    if (this.enemyPoolStats) {
+      const poolsStr = Object.entries(this.enemyPoolStats.pools).map((entry: any) => `L${entry[0]}: ${entry[1].total}/${entry[1].inUse}`).join(", ");
+      console.log(`Enemy Pool - ${poolsStr}, Reused: ${this.enemyPoolStats.reusePct}%`);
     }
   }
 }
