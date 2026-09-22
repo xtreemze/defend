@@ -12,6 +12,7 @@ export class PerformanceMonitor {
   private isMonitoring = false;
   private materialCacheStats: any = null;
   private particlePoolStats: any = null;
+  private projectilePoolStats: any = null;
 
   /**
    * Start monitoring performance
@@ -92,6 +93,13 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Register projectile pool stats for logging
+   */
+  registerProjectilePoolStats(stats: any): void {
+    this.projectilePoolStats = stats;
+  }
+
+  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -109,6 +117,9 @@ export class PerformanceMonitor {
     }
     if (this.particlePoolStats) {
       console.log(`Particle Pool - Pool: ${this.particlePoolStats.poolSize}, InUse: ${this.particlePoolStats.inUse}, Reused: ${this.particlePoolStats.reuseCount}`);
+    }
+    if (this.projectilePoolStats) {
+      console.log(`Projectile Pool - L2: ${this.projectilePoolStats.poolL2.total}/${this.projectilePoolStats.poolL2.inUse}, L3: ${this.projectilePoolStats.poolL3.total}/${this.projectilePoolStats.poolL3.inUse}, Reused: ${this.projectilePoolStats.reusePct}%`);
     }
   }
 }
