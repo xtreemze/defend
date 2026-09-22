@@ -11,7 +11,7 @@ import {
 	towerGlobals,
 	economyGlobals,
 } from "../main/globalVariables";
-import { towerBasePositions, Tower } from "./Tower";
+import { towerBasePositions, towerLevel, Tower } from "./Tower";
 import { removeTower } from "../main/sound";
 import { currencyMeshColor } from "../enemy/currencyMeshColor";
 import { createBaseInstance } from "./indicatorInstance";
@@ -19,17 +19,14 @@ import { createBaseInstance } from "./indicatorInstance";
 function upgradeTower(scene: Scene, physicsEngine: PhysicsEngine) {
 	//When pointer tap event is raised
 	scene.onPointerObservable.add(function (evt: PointerInfo) {
-		let currentLevel = 0;
 		const pickResult = evt.pickInfo as PickingInfo;
-		if (pickResult.pickedMesh !== null) {
-			currentLevel = parseInt(pickResult.pickedMesh.name[10]);
-		}
 		if (
 			pickResult.hit &&
 			pickResult.pickedMesh !== null &&
 			Tags.MatchesQuery(pickResult.pickedMesh, "towerBase") &&
 			pickResult.pickedMesh.name !== "ground"
 		) {
+			const currentLevel = towerLevel(pickResult.pickedMesh);
 			const samePosition = {
 				x: pickResult.pickedMesh.position.x,
 				z: pickResult.pickedMesh.position.z
