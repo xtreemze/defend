@@ -73,7 +73,7 @@ The root README uses these stable Pages URLs rather than temporary Actions artif
 
 ## GIF delivery budget
 
-README media is intentionally constrained to 8 fps, a 64-color generated palette, Lanczos scaling, 640 px desktop width, and 300 px mobile width. CI fails if any GIF exceeds 4.5 MB, if the desktop set exceeds 10 MB, if the mobile set exceeds 6 MB, or if the combined ten-GIF payload exceeds 15 MB. These are upper bounds, not targets; scenes should remain as short as practical.
+README media is intentionally constrained to 8 fps, a 64-color generated palette, Lanczos scaling, 620 px desktop width, and 300 px mobile width. CI fails if any GIF exceeds 4.5 MB, if the desktop set exceeds 10 MB, if the mobile set exceeds 6 MB, or if the combined ten-GIF payload exceeds 15 MB. These are upper bounds, not targets; scenes should remain as short as practical.
 
 ## Presentation guidance
 
