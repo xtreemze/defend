@@ -82,6 +82,8 @@ async function renderProject(project) {
       "fps=10,scale=" +
         project.gifWidth +
         ":-2:flags=lanczos,palettegen=max_colors=96:stats_mode=diff",
+      "-frames:v",
+      "1",
       palette,
     ]);
     run("ffmpeg", [
