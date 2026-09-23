@@ -8,7 +8,7 @@ export const showcase = {
       name: "Desktop Showcase",
       viewport: { width: 1440, height: 900 },
       device: { hasTouch: false, isMobile: false },
-      gifWidth: 640,
+      gifWidth: 620,
     },
     {
       key: "mobile",
