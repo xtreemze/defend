@@ -1,7 +1,8 @@
 import { PhysicsImpostor, PhysicsEngine, Tags } from "../utility/babylonOptimized";
-import { mapGlobals } from "../main/globalVariables";
+import { mapGlobals, projectileGlobals } from "../main/globalVariables";
 import { LiveProjectileInstance } from "./startLife";
 import { getGlobalImpostorLifecycleManager } from "../utility/impostorLifecycleManager";
+import { getGlobalProjectilePoolManager } from "./projectilePoolManager";
 
 export function destroyProjectile(
 	projectile: LiveProjectileInstance,
@@ -19,6 +20,10 @@ export function destroyProjectile(
 			getGlobalImpostorLifecycleManager().queueDisposal(projectile.physicsImpostor);
 			mapGlobals.allImpostors = physicsEngine.getImpostors() as PhysicsImpostor[];
 		}
-		projectile.dispose();
+
+		// Return projectile to pool instead of disposing
+		const poolManager = getGlobalProjectilePoolManager();
+		const level = (projectile as any).poolLevel || 2;
+		poolManager.releaseProjectile(projectile, level as 2 | 3);
 	}, 30);
 }

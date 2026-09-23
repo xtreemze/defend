@@ -2,8 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Defend Mothership Navigation Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#08050d" />
+    <meta name="description" content="Choose a raid sector and inspect physically constrained mothership approach planning." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>Defend — Raid Navigation</title>
     <style>
       html, body, #app, canvas { width: 100%; height: 100%; margin: 0; overflow: hidden; }
       body { background: #08050d; color: #e8d8c0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -14,6 +17,7 @@
       button:hover, button:focus-visible { border-color: rgba(66, 216, 210, .85); outline: none; }
       #hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 3; padding: 6px 9px; background: rgba(8, 5, 13, .72); border: 1px solid rgba(214, 145, 76, .25); font-size: 12px; pointer-events: none; text-align: center; }
     </style>
+    <link rel="stylesheet" href="/src/preview-shell.css" />
   </head>
   <body>
     <div id="app"><canvas id="renderCanvas"></canvas></div>
@@ -25,7 +29,9 @@
       <button id="camera" type="button">Defender view [C]</button>
     </div>
     <div id="hint">Tap/click the surface to choose a raid sector. The mothership moves physically toward an offset launch position; unsafe central targets are projected out of the silo field. The three-set planner can commit a composition or deliberately hold.</div>
+    <script type="module" src="/src/previewShell.ts"></script>
     <script type="module" src="/src/mothershipNavigationPrototype.ts"></script>
     <script type="module" src="/src/raidPlanPrototype.ts"></script>
+      <noscript><div style="position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:#08050d;color:#f3eadf;font:16px system-ui,sans-serif;text-align:center">Defend requires JavaScript and WebAssembly to run this interactive preview.</div></noscript>
   </body>
 </html>

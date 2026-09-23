@@ -10,13 +10,18 @@ import {
 	PhysicsEngine
 } from "../utility/babylonOptimized";
 
-import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals, towerGlobals } from "./globalVariables";
 import { map } from "./map";
 import { detectDeviceCapabilities } from "../utility/deviceDetection";
 import { getGlobalPerformanceMonitor } from "../utility/performanceMonitor";
 import { getGlobalLazyLoadingOrchestrator } from "../utility/lazyLoadingOrchestrator";
 import { getGlobalMaterialFactory } from "../utility/materialFactory";
+import { getGlobalParticlePoolManager } from "../utility/particlePoolManager";
+import { getGlobalProjectilePoolManager } from "../projectile/projectilePoolManager";
+import { getGlobalEnemyPoolManager } from "../enemy/enemyPoolManager";
+import { getGlobalFragmentPoolManager } from "../enemy/fragmentPoolManager";
+import { getGlobalAudioManager } from "../utility/audioManager";
+import { initializeGlobalRenderingOptimizer, getGlobalRenderingOptimizer } from "../utility/renderingOptimizer";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -34,6 +39,7 @@ class Game {
 	public canvas: HTMLCanvasElement;
 	public engine: Engine;
 	public scene!: Scene;
+	public glowLayer: any;
 
 	constructor(canvasElement: string) {
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
@@ -110,10 +116,7 @@ class Game {
 			);
 		}
 
-		FX.setVolume(1);
-		FX._tone.Master.mute = true;
-		// FX._tone.context.latencyHint = "fastest";
-		// FX._tone.Transport.start("+0.5");
+		// Audio will be lazy-loaded on first sound play
 		const gravity = -20;
 		// const gravity = -9.81;
 		// const gravity = -9.81 * 2;
@@ -150,10 +153,50 @@ class Game {
 			this.scene.render();
 		});
 
-		// Log performance stats every 10 seconds (including material cache stats)
+		// Initialize particle pool
+		const particlePool = getGlobalParticlePoolManager(this.scene);
+
+		// Initialize projectile pool (will be created after projectile instances are available)
+		const projectilePool = getGlobalProjectilePoolManager();
+
+		// Initialize enemy pool
+		const enemyPool = getGlobalEnemyPoolManager(this.scene);
+
+		// Initialize fragment pool
+		const fragmentPool = getGlobalFragmentPoolManager(this.scene);
+
+		// Initialize audio manager (lazy loads on first sound)
+		const audioManager = getGlobalAudioManager();
+
+		// Initialize rendering optimizer for adaptive quality
+		const renderingOptimizer = initializeGlobalRenderingOptimizer(
+			this.scene,
+			this.glowLayer,
+			renderGlobals.glowIntensity,
+			16 // default kernel size for high-end
+		);
+
+		// Update rendering optimizer with FPS every frame
+		let frameCounter = 0;
+		const originalRenderLoop = this.engine.runRenderLoop.bind(this.engine);
+		let lastFPS = 120;
+		setInterval(() => {
+			const stats = perfMonitor.getStats();
+			lastFPS = stats.fps;
+			renderingOptimizer.updatePerformance(stats.fps);
+		}, 100);
+
+		// Log performance stats every 10 seconds (including cache and pool stats)
 		setInterval(() => {
 			const factory = getGlobalMaterialFactory(this.scene);
+			const renderStats = renderingOptimizer.getStats();
 			perfMonitor.registerMaterialCacheStats(factory.getStats());
+			perfMonitor.registerParticlePoolStats(particlePool.getStats());
+			perfMonitor.registerProjectilePoolStats(projectilePool.getStats());
+			perfMonitor.registerEnemyPoolStats(enemyPool.getStats());
+			perfMonitor.registerFragmentPoolStats(fragmentPool.getStats());
+			perfMonitor.registerAudioStats(audioManager.getStats());
+			perfMonitor.registerRenderingStats(renderStats);
 			perfMonitor.logStats();
 		}, 10000);
 
@@ -174,7 +217,8 @@ window.addEventListener("DOMContentLoaded", () => {
 		titleScreen(game.scene, game.canvas, physicsEngine);
 	}
 
-	renderPipeline(game.scene);
+	const renderResult = renderPipeline(game.scene);
+	game.glowLayer = renderResult.glowLayer;
 
 	// Preload gameplay modules in the background while title screen is showing
 	const orchestrator = getGlobalLazyLoadingOrchestrator();
