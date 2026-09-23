@@ -1197,6 +1197,8 @@ Defender actions:
 - inspect energy and lifecycle states from the world itself;
 - manipulate camera without entering a separate build screen.
 
+This direct world grammar is a modernization invariant. Toolbars, keyboard shortcuts, debug panels, and accessibility affordances may supplement it, but the modern game must not replace ordinary placement and upgrade actions with a separate control-panel workflow.
+
 Raider actions:
 
 - select body tier;
@@ -1284,6 +1286,28 @@ Current baseline broadly establishes:
 - hit/structural/wireframe states: darker purple/magenta language.
 
 Exact colors may evolve, but semantic consistency matters more than specific RGB values.
+
+### Topology and fill contract
+
+The historical renderer establishes a second semantic layer beyond color: most world geometry exposes its topology instead of presenting as opaque filled surfaces.
+
+Modern rendering should therefore default to:
+
+- skeletal/wireframe terrain and environmental geometry;
+- skeletal/wireframe towers and ordinary structural forms;
+- skeletal/wireframe living raiders;
+- coarse/generated geometry whose vertices and edges remain visually legible.
+
+Filled surfaces are deliberate exceptions rather than the default. They are appropriate for:
+
+- energy reservoirs, conduits, cores, and other explicit energy states;
+- projectiles;
+- lava/magma and comparable fluid-energy phenomena;
+- selected transient impact or damage states where fill communicates a state change.
+
+Damage does not automatically imply a filled surface; structural degradation may remain skeletal. PBR materials, richer lighting, WebGPU, and new engines must preserve this topology hierarchy rather than flattening the game into conventionally shaded 3D assets.
+
+Historical commits `9d7dcb1` and `eb307b8` are implementation evidence for this visual language and should be used as references when certifying renderer parity.
 
 ## 21.3 Silhouette hierarchy
 
@@ -1600,7 +1624,9 @@ However, engine changes must preserve:
 - timing;
 - collision semantics;
 - deterministic seams where useful;
-- broad device support.
+- broad device support;
+- the historical vertex-forward topology/fill hierarchy;
+- the direct point/tap/click placement-and-upgrade interaction grammar.
 
 ## 28.3 Do not fake physics for testability
 

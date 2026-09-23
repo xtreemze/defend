@@ -18,7 +18,7 @@ When sources overlap, preserve durable game identity first, then follow the road
 1. Read the roadmap phase/gate relevant to the work and inspect open issues and pull requests for overlap.
 2. State a clear ownership boundary in the issue/PR and identify which roadmap dependency or evidence gate the work advances.
 3. Prefer a new focused branch/PR over expanding an unrelated branch.
-4. Do not assume old code is intentional merely because it exists; distinguish observed gameplay, documented intent, and implementation defects.
+4. Do not discard working MVP behavior merely because its implementation is old. Distinguish observed/certified gameplay, documented intent, and implementation defects; well-tested MVP behavior is the default regression baseline until an explicit design decision changes it.
 5. If concurrent changes expand a branch beyond its documented ownership, update the issue/PR description so documented scope matches the actual diff before promotion.
 
 ## Gameplay invariants
@@ -102,4 +102,15 @@ The project intentionally distinguishes local runtime certification from hosted 
 
 The repository contains a stale backlog of dependency-update PRs from the historical toolchain. Treat them as evidence of obsolete/security-sensitive dependencies, not as a required merge sequence. Follow issue #31 and the foundation phase in `docs/ROADMAP.md`; migrate the stack coherently.
 
-Favor incremental boundaries that make later changes easier: explicit gameplay calculations, typed entity metadata, owned lifecycle cleanup, isolated rendering/audio effects, and testable state transitions. Avoid a big-bang engine/ECS rewrite unless measured evidence shows it is necessary.
+The existing playable MVP is the product trunk. Do not create a second feature-complete game and plan to replace the MVP later. Modern work in Storybook, the hybrid engine, Rust/WASM, Vite, Babylon 9, workers, or new physics backends is an adjacent proving ground until it is integrated into an owned seam of the working game.
+
+For each modernization seam:
+
+1. characterize the current MVP behavior and add regression evidence where practical;
+2. isolate the responsibility behind a narrow interface/adapter in the MVP;
+3. implement and test the modern candidate outside or beside that seam;
+4. integrate it into one real MVP vertical slice;
+5. compare behavior/performance/interaction against the baseline;
+6. promote ownership only after certification, then remove the superseded implementation when safe.
+
+Favor incremental boundaries that make later changes easier: explicit gameplay calculations, typed entity metadata, owned lifecycle cleanup, isolated rendering/audio effects, and testable state transitions. A greenfield rewrite of already-working gameplay is a design/process regression unless an explicit issue documents why incremental migration is infeasible.

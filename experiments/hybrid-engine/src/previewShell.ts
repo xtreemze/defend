@@ -173,7 +173,9 @@ function buildShell(): void {
     controlsPanel.append(panelHeading("Scene controls"), controls);
     document.body.append(controlsPanel);
 
-    const initiallyExpanded = !matchMedia("(max-width: 760px)").matches;
+    const initiallyExpanded =
+      route.file !== "tower-terrain.html" &&
+      !matchMedia("(max-width: 760px)").matches;
     setExpanded(controlsToggle, controlsPanel, initiallyExpanded);
     controlsToggle.addEventListener("click", () => {
       setExpanded(
