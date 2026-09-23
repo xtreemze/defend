@@ -8,16 +8,26 @@ export const showcase = {
       name: "Desktop Showcase",
       viewport: { width: 1440, height: 900 },
       device: { hasTouch: false, isMobile: false },
-      gifWidth: 720,
+      gifWidth: 640,
     },
     {
       key: "mobile",
       name: "Mobile Showcase",
       viewport: { width: 390, height: 844 },
       device: { hasTouch: true, isMobile: true },
-      gifWidth: 320,
+      gifWidth: 300,
     },
   ],
+  gif: {
+    fps: 8,
+    colors: 64,
+    budgets: {
+      perFile: 4_500_000,
+      desktopTotal: 10_000_000,
+      mobileTotal: 6_000_000,
+      combined: 15_000_000,
+    },
+  },
   scenes: [
     {
       id: "01-deterministic-arena",
