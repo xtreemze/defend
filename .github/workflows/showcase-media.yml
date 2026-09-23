@@ -21,7 +21,12 @@ on:
       - '.github/workflows/pages.yml'
       - 'README.md'
       - 'docs/SHOWCASE.md'
+      - 'experiments/pnpm-lock.yaml'
+      - 'experiments/pnpm-workspace.yaml'
+      - 'experiments/storybook/package.json'
       - 'experiments/hybrid-engine/**'
+      - 'rust-toolchain.toml'
+      - 'Cargo.lock'
   workflow_dispatch:
 
 concurrency:
@@ -91,7 +96,7 @@ jobs:
         working-directory: experiments
         shell: bash
         run: |
-          nohup pnpm --filter @defend/hybrid-engine-lab exec vite --host 127.0.0.1 > /tmp/defend-showcase-vite.log 2>&1 &
+          nohup pnpm --filter @defend/hybrid-engine-lab exec vite preview --host 127.0.0.1 --port 5173 > /tmp/defend-showcase-vite.log 2>&1 &
           echo $! > /tmp/defend-showcase-vite.pid
           for attempt in {1..60}; do
             if curl --fail --silent http://127.0.0.1:5173/ >/dev/null; then
