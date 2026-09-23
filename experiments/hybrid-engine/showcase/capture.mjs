@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import showcase from "./manifest.mjs";
+import mediaConfig from "./playwright.showcase.config.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.resolve(here, "..");
@@ -68,21 +69,6 @@ async function addBranding(page, project, scene) {
   );
 }
 
-async function clickAndReturn(page, selector, activeText, checkpoint) {
-  const button = page.locator(selector);
-  await button.click();
-  if (activeText) {
-    await assert.doesNotReject(async () => {
-      await button.waitFor({ state: "visible" });
-      assert.match((await button.textContent()) ?? "", activeText);
-    });
-  }
-  await sleep(750);
-  await checkpoint();
-  await button.click();
-  await sleep(300);
-}
-
 async function runArena(page, project, checkpoint) {
   const canvas = page.locator("#renderCanvas");
   const box = await canvas.boundingBox();
@@ -107,7 +93,9 @@ async function runArena(page, project, checkpoint) {
   await checkpoint();
   await pause.click();
   assert.equal(await pause.getAttribute("aria-pressed"), "false");
-  await page.locator("#arena-camera").click();
+  if (project.key === "desktop") {
+    await page.locator("#arena-camera").click();
+  }
 }
 
 async function runMothership(page, _project, checkpoint) {
@@ -208,6 +196,7 @@ async function recordScene(browser, project, scene) {
     },
   });
   const page = await context.newPage();
+  const recordingStartedAt = Date.now();
   const video = page.video();
   assert.ok(video, "Playwright video capture must be active");
 
@@ -231,6 +220,7 @@ async function recordScene(browser, project, scene) {
   await ensureControls(page);
   await addBranding(page, project, scene);
   await sleep(450);
+  const sceneStartMs = Date.now() - recordingStartedAt;
 
   let checkpointTaken = false;
   const screenshotPath = path.join(formRoot, scene.id + ".png");
@@ -244,6 +234,7 @@ async function recordScene(browser, project, scene) {
   await action(page, project, checkpoint);
   assert.equal(checkpointTaken, true, scene.id + " must capture its demonstrated state");
   await sleep(550);
+  const sceneEndMs = Date.now() - recordingStartedAt;
 
   assert.deepEqual(browserErrors, [], scene.id + " produced browser errors");
 
@@ -253,6 +244,10 @@ async function recordScene(browser, project, scene) {
     formFactor: project.key,
     viewport: project.viewport,
     scene,
+    trim: {
+      startSeconds: Math.max(0, (sceneStartMs - 150) / 1000),
+      durationSeconds: Math.max(0.5, (sceneEndMs - sceneStartMs + 300) / 1000),
+    },
     capturedAt: new Date().toISOString(),
   };
   await writeFile(
@@ -261,9 +256,8 @@ async function recordScene(browser, project, scene) {
   );
 
   const videoPath = path.join(formRoot, scene.id + ".webm");
-  await page.close();
-  await video.saveAs(videoPath);
   await context.close();
+  await video.saveAs(videoPath);
 }
 
 async function main() {
@@ -272,7 +266,8 @@ async function main() {
 
   const browser = await chromium.launch({ headless: true });
   try {
-    for (const project of showcase.projects) {
+    for (const configuredProject of mediaConfig.projects) {
+      const project = configuredProject.metadata.showcase;
       for (const scene of showcase.scenes) {
         process.stdout.write("capture " + project.key + " / " + scene.id + "\n");
         await recordScene(browser, project, scene);
