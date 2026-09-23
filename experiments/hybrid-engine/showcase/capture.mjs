@@ -102,7 +102,7 @@ async function runMothership(page, _project, checkpoint) {
   const fast = page.locator("#fast");
   await fast.click();
   assert.match((await fast.textContent()) ?? "", /Normal drain/);
-  await sleep(900);
+  await sleep(650);
 
   const camera = page.locator("#camera");
   const before = (await camera.textContent()) ?? "";
