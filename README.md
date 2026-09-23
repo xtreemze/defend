@@ -34,31 +34,31 @@ The modern preview is recorded by CI in real Chromium. Desktop and mobile showca
 
 Babylon presents the battlefield while fixed-step Bevy/WASM state remains authoritative.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/01-deterministic-arena.gif" alt="Defend deterministic arena desktop showcase" width="720">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/01-deterministic-arena.gif" alt="Defend deterministic arena desktop showcase" width="640">
 
 #### Finite-energy mothership
 
 Finite reserve, hover drain, and reversible defender/raider perspective.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership desktop showcase" width="720">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership desktop showcase" width="640">
 
 #### Raid navigation
 
 Target-sector selection drives physically constrained mothership movement.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/03-raid-navigation.gif" alt="Defend raid navigation desktop showcase" width="720">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/03-raid-navigation.gif" alt="Defend raid navigation desktop showcase" width="640">
 
 #### Geothermal energy
 
 Local finite energy, pressure, conduits, and eruption remain part of the battlefield.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/04-geothermal-energy.gif" alt="Defend geothermal energy desktop showcase" width="720">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/04-geothermal-energy.gif" alt="Defend geothermal energy desktop showcase" width="640">
 
 #### Towers and terrain
 
 Turret misses and impacts operate against the same deformable terrain surface.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/05-towers-and-terrain.gif" alt="Defend towers and terrain desktop showcase" width="720">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/05-towers-and-terrain.gif" alt="Defend towers and terrain desktop showcase" width="640">
 
 ### Mobile
 
@@ -66,31 +66,31 @@ Turret misses and impacts operate against the same deformable terrain surface.
 
 Portrait touch capture uses the real responsive preview rather than a scaled desktop recording.
 
-<img src="https://xtreemze.github.io/defend/showcase/mobile/01-deterministic-arena.gif" alt="Defend deterministic arena mobile showcase" width="320">
+<img src="https://xtreemze.github.io/defend/showcase/mobile/01-deterministic-arena.gif" alt="Defend deterministic arena mobile showcase" width="300">
 
 #### Finite-energy mothership
 
 The same finite-energy system is exercised through mobile-responsive controls.
 
-<img src="https://xtreemze.github.io/defend/showcase/mobile/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership mobile showcase" width="320">
+<img src="https://xtreemze.github.io/defend/showcase/mobile/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership mobile showcase" width="300">
 
 #### Raid navigation
 
 Target selection and camera interaction remain available in the portrait layout.
 
-<img src="https://xtreemze.github.io/defend/showcase/mobile/03-raid-navigation.gif" alt="Defend raid navigation mobile showcase" width="320">
+<img src="https://xtreemze.github.io/defend/showcase/mobile/03-raid-navigation.gif" alt="Defend raid navigation mobile showcase" width="300">
 
 #### Geothermal energy
 
 Pressure and eruption controls remain legible and operable without reducing the system.
 
-<img src="https://xtreemze.github.io/defend/showcase/mobile/04-geothermal-energy.gif" alt="Defend geothermal energy mobile showcase" width="320">
+<img src="https://xtreemze.github.io/defend/showcase/mobile/04-geothermal-energy.gif" alt="Defend geothermal energy mobile showcase" width="300">
 
 #### Towers and terrain
 
 Projectile and deformation interactions are captured with touch-enabled mobile context.
 
-<img src="https://xtreemze.github.io/defend/showcase/mobile/05-towers-and-terrain.gif" alt="Defend towers and terrain mobile showcase" width="320">
+<img src="https://xtreemze.github.io/defend/showcase/mobile/05-towers-and-terrain.gif" alt="Defend towers and terrain mobile showcase" width="300">
 
 ## What makes Defend distinct
 
