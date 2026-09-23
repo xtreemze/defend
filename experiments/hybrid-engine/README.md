@@ -17,12 +17,12 @@ The initial runtime intentionally uses only `bevy_app`, `bevy_ecs` and `bevy_mat
 
 - Node 24.20 LTS
 - pnpm 11.25.0
-- Vite 8.2.2
+- Vite 8.3.0
 - TypeScript 7.0.2
-- Biome 2.5.11
+- Biome 2.5.14
 - Vitest 4.1.11
-- Babylon.js 9.23.0
-- Rust 1.98.0 / edition 2024
+- Babylon.js 9.27.1
+- Rust 1.98.1 / edition 2024
 - Bevy modular crates 0.19.1
 - wasm-bindgen 0.2.127
 - wasm-pack 0.15.0
