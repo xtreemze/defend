@@ -1,4 +1,5 @@
 import { startLife, LiveProjectileInstance } from "./startLife";
+import { getGlobalProjectilePoolManager } from "./projectilePoolManager";
 
 import { Scene, Vector3, PhysicsEngine } from "../utility/babylonOptimized";
 import { projectileGlobals } from "../main/globalVariables";
@@ -14,27 +15,18 @@ class Projectile {
 		physicsEngine: PhysicsEngine,
 		clonedRotation: Vector3
 	) {
-		const name = `projectile${level}` as string;
-		let projectile;
-		switch (level) {
-			case 2:
-				projectile = projectileGlobals.projectileMeshL2.createInstance(
-					name
-				) as LiveProjectileInstance;
-				break;
-			case 3:
-				projectile = projectileGlobals.projectileMeshL3.createInstance(
-					name
-				) as LiveProjectileInstance;
+		const poolManager = getGlobalProjectilePoolManager();
+		let projectile: LiveProjectileInstance | null = null;
 
-				break;
-
-			default:
-				break;
+		// Acquire projectile from pool
+		if (level === 2 || level === 3) {
+			projectile = poolManager.acquireProjectile(level as 2 | 3) as LiveProjectileInstance;
 		}
-		if (projectile !== undefined) {
 
+		if (projectile !== null) {
 			projectile.hitPoints = level * level * level * projectileGlobals.baseHitPoints;
+			// Store level on instance for pool return
+			(projectile as any).poolLevel = level;
 
 			startLife(
 				scene,

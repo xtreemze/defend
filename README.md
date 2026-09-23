@@ -3,7 +3,7 @@
 <p align="center"><strong>A physics-driven strategy game about finite energy, temporary defenses, and the cost of perfect deterrence.</strong></p>
 
 <p align="center">
-  <a href="https://xtreemze.github.io/defend/">Play the historical web build</a> ·
+  <a href="https://xtreemze.github.io/defend/">Explore the modern web preview</a> ·
   <a href="./docs/GAME_DESIGN_MANUAL.md">Game design manual</a> ·
   <a href="./docs/ROADMAP.md">Development roadmap</a> ·
   <a href="./AGENTS.md">Development contract</a> ·
@@ -63,7 +63,7 @@ Raiders share the same physical world but differ through size, mass, momentum, s
 
 ## Repository status
 
-Defend is an older playable web game undergoing a deliberate modernization. The repository keeps the historical implementation available while new architecture and gameplay contracts are developed beside it and certified before they are allowed to replace production ownership.
+Defend is an older playable web game undergoing a deliberate modernization. GitHub Pages now publishes the modern Babylon/Bevy/WASM systems preview, while the historical implementation remains available as the behavioral reference until the replacement path reaches full gameplay parity and MCP certification.
 
 | Area | Role today |
 | --- | --- |
@@ -73,7 +73,7 @@ Defend is an older playable web game undergoing a deliberate modernization. The 
 | [`docs/design/`](./docs/design/) | **Focused system chapters and experiments** for energy flow, world ecology, mothership/raider play, geothermal power, locomotion, terrain, and related mechanics. |
 | [`crates/defend-core/`](./crates/defend-core/) | **Dependency-light deterministic Rust core** for formulas, topology, and contracts that benefit from portable executable tests. |
 | [`experiments/storybook/`](./experiments/storybook/) | **Interactive systems laboratory** for deterministic fixtures, design experiments, visual inspection, and behavior certification. |
-| [`experiments/hybrid-engine/`](./experiments/hybrid-engine/) | **Architecture experiment, not production migration.** Babylon 9 renders while a headless modular Bevy/Rust WASM runtime owns semantic simulation state. |
+| [`experiments/hybrid-engine/`](./experiments/hybrid-engine/) | **Current GitHub Pages modern preview.** Babylon 9 renders while a headless modular Bevy/Rust WASM runtime owns semantic simulation state; the deployed scenes exercise real modern subsystems without yet claiming complete historical-game parity. |
 
 ### Modernization direction
 
@@ -84,12 +84,13 @@ The current architecture direction is intentionally hybrid rather than a wholesa
 - Modular Bevy ECS/app/time crates are evaluated as a headless simulation framework without bringing a second renderer into the browser path.
 - Physics backends are compared against characterized gameplay behavior before ownership changes.
 - Storybook and isolated labs are used to prove contracts before production integration.
-- The historical app stays runnable until replacement paths meet parity and certification gates.
+- The historical app stays runnable as the reference baseline while the modern GitHub Pages preview advances toward full gameplay parity and certification.
 
 See the [development roadmap](./docs/ROADMAP.md) for the cross-system sequence, [issue #66](https://github.com/xtreemze/defend/issues/66) for the architecture program, and [`docs/LOCAL_CERTIFICATION.md`](./docs/LOCAL_CERTIFICATION.md) for the evidence model used before promotion.
 
 ## Explore the project
 
+- **Live modern preview:** [xtreemze.github.io/defend](https://xtreemze.github.io/defend/)
 - **Design:** [`docs/GAME_DESIGN_MANUAL.md`](./docs/GAME_DESIGN_MANUAL.md)
 - **Development roadmap / MCP:** [`docs/ROADMAP.md`](./docs/ROADMAP.md)
 - **Focused design chapters:** [`docs/design/`](./docs/design/)

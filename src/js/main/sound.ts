@@ -2,6 +2,7 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { Mesh } from "../utility/babylonOptimized";
 import { towerGlobals, mapGlobals, enemyGlobals } from "./globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
+import { getGlobalAudioManager } from "../utility/audioManager";
 
 const third = 1 / 3;
 
@@ -14,7 +15,8 @@ function shoot(originMesh: Mesh, level: number) {
 		mapGlobals.projectileSounds += 1;
 
 		if (mapGlobals.soundOn) {
-			FX.play({
+			const audioManager = getGlobalAudioManager();
+			const params = {
 				volume: 5,
 				sustain: 0.03,
 				release: 0.03,
@@ -22,12 +24,12 @@ function shoot(originMesh: Mesh, level: number) {
 				sweep: -third,
 				source: "triangle",
 				highpass: 360,
-				// lowpass: 7000,
 				soundX: originMesh.position.x,
 				soundY: originMesh.position.y,
 				soundZ: originMesh.position.z,
 				rolloff: 0.05
-			} as FX.audioParams);
+			} as FX.audioParams;
+			audioManager.play(params);
 		}
 	}
 }
@@ -41,7 +43,8 @@ function damage(enemy: EnemySphere) {
 		mapGlobals.projectileSounds += 1;
 
 		if (mapGlobals.soundOn) {
-			FX.play({
+			const audioManager = getGlobalAudioManager();
+			const params = {
 				volume: 6,
 				sustain: 0.01,
 				release: 0.04,
@@ -54,7 +57,8 @@ function damage(enemy: EnemySphere) {
 				soundY: enemy.position.y,
 				soundZ: enemy.position.z,
 				rolloff: 0.05
-			} as FX.audioParams);
+			} as FX.audioParams;
+			audioManager.play(params);
 		}
 	}
 }
@@ -68,21 +72,21 @@ function damageCurrency(enemy: EnemySphere) {
 		mapGlobals.simultaneousSounds += 1;
 
 		if (mapGlobals.soundOn) {
-			FX.play({
+			const audioManager = getGlobalAudioManager();
+			const params = {
 				volume: 8,
 				release: 0.8,
-				frequency:
-					(enemyGlobals.baseHitPoints * 3) / 120 + 120,
+				frequency: (enemyGlobals.baseHitPoints * 3) / 120 + 120,
 				sweep: -0.5,
 				source: "sine",
 				repeat: 9,
 				highpass: 200,
-				// lowpass: 4000,
 				soundX: enemy.position.x,
 				soundY: enemy.position.y,
 				soundZ: enemy.position.z,
 				rolloff: 0.05
-			} as FX.audioParams);
+			} as FX.audioParams;
+			audioManager.play(params);
 		}
 	}
 }
@@ -96,7 +100,8 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 		mapGlobals.projectileSounds += 1;
 
 		if (mapGlobals.soundOn) {
-			FX.play({
+			const audioManager = getGlobalAudioManager();
+			const params = {
 				volume: 8,
 				sustain: 0.1,
 				release: 0.8,
@@ -111,7 +116,8 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 				soundY: enemy.position.y,
 				soundZ: enemy.position.z,
 				rolloff: 0.05
-			} as FX.audioParams);
+			} as FX.audioParams;
+			audioManager.play(params);
 		}
 	}
 }
@@ -124,17 +130,18 @@ function newWave() {
 
 		mapGlobals.simultaneousSounds += 1;
 		if (mapGlobals.soundOn) {
-			FX.play({
+			const audioManager = getGlobalAudioManager();
+			const params = {
 				volume: 15,
 				decay: 0.15,
 				release: 0.4,
 				frequency: 96 + enemyGlobals.currentWave,
 				highpass: 420,
-				// lowpass: 6000,
 				sweep: 1.8,
 				source: "sine",
 				rolloff: 0.05
-			} as FX.audioParams);
+			} as FX.audioParams;
+			audioManager.play(params);
 		}
 	}
 }
@@ -147,20 +154,20 @@ function addTower(tower: Mesh, level: number) {
 
 		mapGlobals.simultaneousSounds += 1;
 		if (mapGlobals.soundOn) {
-			FX.play({
+			const audioManager = getGlobalAudioManager();
+			const params = {
 				volume: 6,
 				sustain: 0.03,
 				frequency: 450 / level + towerGlobals.allTowers.length * 3,
 				sweep: 0.125,
 				repeat: 9,
-				// highpass: 80,
-				// lowpass: 4000,
 				source: "sine",
 				soundX: tower.position.x,
 				soundY: tower.position.y,
 				soundZ: tower.position.z,
 				rolloff: 0.05
-			} as FX.audioParams);
+			} as FX.audioParams;
+			audioManager.play(params);
 		}
 	}
 }
@@ -173,27 +180,28 @@ function removeTower(tower: Mesh, level: number) {
 
 		mapGlobals.simultaneousSounds += 1;
 		if (mapGlobals.soundOn) {
-			FX.play({
+			const audioManager = getGlobalAudioManager();
+			const params = {
 				volume: 6,
 				sustain: 0.3,
 				frequency: 730 / 2 + towerGlobals.allTowers.length + 80 * level,
 				sweep: -0.5,
 				repeat: 9,
-				// highpass: 80,
-				// lowpass: 4000,
 				source: "sine",
 				soundX: tower.position.x,
 				soundY: tower.position.y,
 				soundZ: tower.position.z,
 				rolloff: 0.05
-			} as FX.audioParams);
+			} as FX.audioParams;
+			audioManager.play(params);
 		}
 	}
 }
 
 function defeated() {
 	if (mapGlobals.soundOn) {
-		FX.play({
+		const audioManager = getGlobalAudioManager();
+		const params = {
 			volume: -12,
 			attack: 1,
 			sustain: 0.08,
@@ -205,13 +213,15 @@ function defeated() {
 			pulseWidth: 0.5,
 			repeat: 6,
 			rolloff: 0.05
-		} as FX.audioParams);
+		} as FX.audioParams;
+		audioManager.play(params);
 	}
 }
 
 function victory() {
 	if (mapGlobals.soundOn) {
-		FX.play({
+		const audioManager = getGlobalAudioManager();
+		const params = {
 			volume: -12,
 			attack: 0.8,
 			sustain: 0.12,
@@ -222,7 +232,8 @@ function victory() {
 			source: "sine",
 			pulseWidth: 0.5,
 			repeat: 8
-		} as FX.audioParams);
+		} as FX.audioParams;
+		audioManager.play(params);
 	}
 }
 

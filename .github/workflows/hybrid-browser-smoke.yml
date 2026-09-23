@@ -59,7 +59,7 @@ jobs:
       - name: Setup wasm-pack
         uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa
         with:
-          version: v0.13.1
+          version: v0.15.0
 
       - name: pnpm install
         working-directory: experiments
@@ -133,14 +133,65 @@ jobs:
                 throw new Error(`${name}: HTTP ${response?.status() ?? 'no response'}`);
               }
 
+              await page.waitForSelector('[data-preview-shell]', { state: 'attached', timeout: 15_000 });
+              await page.waitForSelector('.preview-header', { state: 'visible', timeout: 15_000 });
+              await page.waitForFunction(
+                () => document.body.dataset.previewReady === 'true',
+                undefined,
+                { timeout: 15_000 },
+              );
+
+              const sceneLinks = await page.locator('[data-preview-nav] a').count();
+              if (sceneLinks !== 6) {
+                throw new Error(`${name}: expected 6 preview scene links, found ${sceneLinks}`);
+              }
+
+              const diagnosticsHidden = await page.locator('#preview-diagnostics-panel').evaluate(
+                (element) => element.hasAttribute('hidden'),
+              );
+              if (!diagnosticsHidden) {
+                throw new Error(`${name}: diagnostics should be collapsed by default`);
+              }
+
               if (name === 'main') {
                 await page.waitForFunction(
                   () => document.querySelector('#metrics')?.textContent?.includes('bodies: 128'),
                   undefined,
                   { timeout: 15_000 },
                 );
-              } else {
-                await page.waitForTimeout(750);
+
+                const intro = page.locator('[data-preview-intro]');
+                await intro.waitFor({ state: 'visible', timeout: 15_000 });
+
+                const pause = page.locator('#arena-pause');
+                const restart = page.locator('#arena-restart');
+                const resetCamera = page.locator('#arena-camera');
+                await pause.click();
+                await page.waitForFunction(
+                  () => document.querySelector('#metrics')?.textContent?.includes('paused: yes'),
+                  undefined,
+                  { timeout: 15_000 },
+                );
+                if ((await pause.getAttribute('aria-pressed')) !== 'true') {
+                  throw new Error('main: pause control did not expose pressed state');
+                }
+                await pause.click();
+                await resetCamera.click();
+
+                await page.getByRole('button', { name: 'Stay in the arena' }).click();
+                if (!(await intro.isHidden())) {
+                  throw new Error('main: start guide did not dismiss');
+                }
+
+                await restart.click();
+                await page.waitForFunction(
+                  () => document.body.dataset.previewReady === 'true',
+                  undefined,
+                  { timeout: 15_000 },
+                );
+                if (await page.locator('[data-preview-intro]').count()) {
+                  throw new Error('main: dismissed start guide reappeared after deterministic restart');
+                }
               }
 
               await page.screenshot({
@@ -155,6 +206,80 @@ jobs:
               }
               await page.close();
             }
+
+            const journey = await browser.newPage();
+            const journeyResponse = await journey.goto(
+              'http://127.0.0.1:5173/',
+              { waitUntil: 'networkidle', timeout: 30_000 },
+            );
+            if (!journeyResponse || journeyResponse.status() >= 400) {
+              throw new Error(`journey: HTTP ${journeyResponse?.status() ?? 'no response'}`);
+            }
+            await journey.waitForSelector('[data-preview-intro]', { state: 'visible', timeout: 15_000 });
+            await journey.getByRole('link', { name: /Towers & Terrain/ }).click();
+            await journey.waitForURL(/\/tower-terrain\.html$/);
+            await journey.waitForFunction(
+              () => document.body.dataset.previewReady === 'true',
+              undefined,
+              { timeout: 15_000 },
+            );
+            const towerAction = journey.getByRole('button', { name: /Force T2 miss/ });
+            if (!(await towerAction.count())) {
+              throw new Error('journey: tower scene did not expose working interaction controls');
+            }
+            await towerAction.click();
+            await journey.close();
+
+            const mobile = await browser.newPage({
+              viewport: { width: 390, height: 844 },
+              hasTouch: true,
+              isMobile: true,
+            });
+            const mobileErrors = [];
+            mobile.on('console', (message) => {
+              if (message.type() === 'error') mobileErrors.push(message.text());
+            });
+            mobile.on('pageerror', (error) => mobileErrors.push(error.message));
+
+            const mobileResponse = await mobile.goto(
+              'http://127.0.0.1:5173/tower-terrain.html',
+              { waitUntil: 'networkidle', timeout: 30_000 },
+            );
+            if (!mobileResponse || mobileResponse.status() >= 400) {
+              throw new Error(`mobile: HTTP ${mobileResponse?.status() ?? 'no response'}`);
+            }
+
+            await mobile.waitForSelector('[data-preview-shell]', { state: 'attached', timeout: 15_000 });
+            await mobile.waitForSelector('.preview-header', { state: 'visible', timeout: 15_000 });
+            await mobile.waitForFunction(
+              () => document.body.dataset.previewReady === 'true',
+              undefined,
+              { timeout: 15_000 },
+            );
+
+            const controlsButton = mobile.getByRole('button', { name: 'Controls' });
+            if ((await controlsButton.getAttribute('aria-expanded')) !== 'false') {
+              throw new Error('mobile: scene controls should begin collapsed');
+            }
+            await controlsButton.click();
+            await mobile.locator('#preview-controls-panel').waitFor({ state: 'visible' });
+
+            const hasHorizontalOverflow = await mobile.evaluate(
+              () => document.documentElement.scrollWidth > window.innerWidth + 1,
+            );
+            if (hasHorizontalOverflow) {
+              throw new Error('mobile: preview chrome causes horizontal document overflow');
+            }
+
+            await mobile.screenshot({
+              path: 'hybrid-smoke-artifacts/mobile-tower-terrain.png',
+              fullPage: true,
+            });
+
+            if (mobileErrors.length) {
+              throw new Error(`mobile: browser errors: ${mobileErrors.join(' | ')}`);
+            }
+            await mobile.close();
           } finally {
             await browser.close();
           }

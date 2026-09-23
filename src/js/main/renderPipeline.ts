@@ -16,7 +16,11 @@ import {
 } from "./globalVariables";
 import { detectDeviceCapabilities, logDeviceInfo } from "../utility/deviceDetection";
 
-function renderPipeline(scene: Scene) {
+interface RenderPipelineResult {
+	glowLayer: GlowLayer | null;
+}
+
+function renderPipeline(scene: Scene): RenderPipelineResult {
 	const groundMaterial = materialGlobals.groundMaterial;
 
 	// Detect device capabilities and auto-configure quality
@@ -60,8 +64,9 @@ function renderPipeline(scene: Scene) {
 	}
 
 	// Glow - optimized for device capability
+	let glowLayer: GlowLayer | null = null;
 	if (shouldEnableGlow) {
-		const glowLayer = new GlowLayer("glow", scene, {
+		glowLayer = new GlowLayer("glow", scene, {
 			// Dynamic kernel size based on device
 			blurKernelSize: deviceCap.glowKernelSize,
 			// Dynamic texture ratio based on device
@@ -86,6 +91,8 @@ function renderPipeline(scene: Scene) {
 		demoSphere.position = new Vector3(0, 40, 0);
 		demoSphere.material = groundMaterial;
 	}
+
+	return { glowLayer };
 }
 
-export { renderPipeline };
+export { renderPipeline, RenderPipelineResult };
