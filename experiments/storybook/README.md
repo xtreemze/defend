@@ -1,6 +1,6 @@
 # Defend Storybook Lab
 
-This package is an isolated modern browser workshop for Defend experiments. It intentionally does not participate in the legacy root Webpack/TypeScript build.
+This package is an isolated modern browser workshop for Defend experiments. It intentionally does not participate in the legacy root Webpack/TypeScript build. Storybook uses the Web Components + Vite renderer so its UI fixtures match the Lit/custom-element boundary adopted in #204.
 
 ## Requirements
 
@@ -30,6 +30,7 @@ Commit the generated `experiments/pnpm-lock.yaml` only after local installation 
 Use these stable prefixes:
 
 - `Diagnostics/*`
+- `UI/*`
 - `Foundations/Topology/*`
 - `Foundations/Physics/*`
 - `Audio/Materials/*`
@@ -45,7 +46,7 @@ Tag stories according to their intended use. Prefer `test` and `visual` for dete
 
 ## Ownership boundary
 
-Storybook may mount DOM, SVG, Canvas, Web Audio controls, or explicitly-created Babylon scenes. Stories should import renderer-independent project modules when practical rather than duplicating formulas.
+Storybook may mount Lit/custom elements, DOM, SVG, Canvas, Web Audio controls, or explicitly-created Babylon scenes. Stories should import renderer-independent project modules when practical rather than duplicating formulas. The `@defend/ui` workspace package is the canonical experimental DOM component boundary; do not introduce a second framework-specific UI tree inside Storybook.
 
 Do not use this package as the sole certification environment for AudioWorklet latency/underruns, full production physics timing, PWA/service-worker behavior, SharedArrayBuffer deployment headers, or long-running soak tests.
 
