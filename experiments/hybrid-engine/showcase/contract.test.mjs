@@ -42,6 +42,8 @@ test("capture preserves raw video screenshots and metadata", async () => {
   assert.match(source, /video\.saveAs/);
   assert.match(source, /capturedAt/);
   assert.match(source, /browserErrors/);
+  assert.match(source, /target\.tap\(\)/);
+  assert.match(source, /keyboard\.press\("Space"\)/);
 });
 
 test("renderer keeps separate reels and budgeted optimized infinite GIFs", async () => {
@@ -72,4 +74,5 @@ test("README and Pages publishing reference both stable GIF collections", async 
   assert.match(readme, /showcase\/mobile\/01-deterministic-arena\.gif/);
   assert.match(workflow, /publish\/showcase/);
   assert.match(workflow, /gh-pages/);
+  assert.match(workflow, /vite preview --host 127\.0\.0\.1 --port 5173/);
 });
