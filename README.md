@@ -24,6 +24,74 @@ Defenses are temporary. Towers age, higher tiers degrade into lower ones, and th
 
 The larger campaign is built around a systemic inversion: **becoming too successful at defense eventually changes the economy that made the stronghold sustainable.** The player's relationship to the same resource, units, and physical rules then reverses. The intended story is expressed primarily through mechanics and consequences rather than exposition.
 
+## Product in motion
+
+The modern preview is recorded by CI in real Chromium. Desktop and mobile showcase the same five systems with form-factor-appropriate interaction; source recordings, screenshots, and metadata remain attached to each workflow run. See [`docs/SHOWCASE.md`](./docs/SHOWCASE.md) for the evidence and publication contract.
+
+### Desktop
+
+#### Deterministic arena
+
+Babylon presents the battlefield while fixed-step Bevy/WASM state remains authoritative.
+
+<img src="https://xtreemze.github.io/defend/showcase/desktop/01-deterministic-arena.gif" alt="Defend deterministic arena desktop showcase" width="720">
+
+#### Finite-energy mothership
+
+Finite reserve, hover drain, and reversible defender/raider perspective.
+
+<img src="https://xtreemze.github.io/defend/showcase/desktop/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership desktop showcase" width="720">
+
+#### Raid navigation
+
+Target-sector selection drives physically constrained mothership movement.
+
+<img src="https://xtreemze.github.io/defend/showcase/desktop/03-raid-navigation.gif" alt="Defend raid navigation desktop showcase" width="720">
+
+#### Geothermal energy
+
+Local finite energy, pressure, conduits, and eruption remain part of the battlefield.
+
+<img src="https://xtreemze.github.io/defend/showcase/desktop/04-geothermal-energy.gif" alt="Defend geothermal energy desktop showcase" width="720">
+
+#### Towers and terrain
+
+Turret misses and impacts operate against the same deformable terrain surface.
+
+<img src="https://xtreemze.github.io/defend/showcase/desktop/05-towers-and-terrain.gif" alt="Defend towers and terrain desktop showcase" width="720">
+
+### Mobile
+
+#### Deterministic arena
+
+Portrait touch capture uses the real responsive preview rather than a scaled desktop recording.
+
+<img src="https://xtreemze.github.io/defend/showcase/mobile/01-deterministic-arena.gif" alt="Defend deterministic arena mobile showcase" width="320">
+
+#### Finite-energy mothership
+
+The same finite-energy system is exercised through mobile-responsive controls.
+
+<img src="https://xtreemze.github.io/defend/showcase/mobile/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership mobile showcase" width="320">
+
+#### Raid navigation
+
+Target selection and camera interaction remain available in the portrait layout.
+
+<img src="https://xtreemze.github.io/defend/showcase/mobile/03-raid-navigation.gif" alt="Defend raid navigation mobile showcase" width="320">
+
+#### Geothermal energy
+
+Pressure and eruption controls remain legible and operable without reducing the system.
+
+<img src="https://xtreemze.github.io/defend/showcase/mobile/04-geothermal-energy.gif" alt="Defend geothermal energy mobile showcase" width="320">
+
+#### Towers and terrain
+
+Projectile and deformation interactions are captured with touch-enabled mobile context.
+
+<img src="https://xtreemze.github.io/defend/showcase/mobile/05-towers-and-terrain.gif" alt="Defend towers and terrain mobile showcase" width="320">
+
 ## What makes Defend distinct
 
 | Principle | Gameplay consequence |
