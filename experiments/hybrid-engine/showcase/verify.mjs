@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile, stat } from "node:fs/promises";
+import { access, readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import showcase from "./manifest.mjs";
@@ -22,7 +22,14 @@ for (const project of showcase.projects) {
     await mustExist(path.join(outputRoot, "gifs", project.key, scene.id + ".gif"));
     await mustExist(path.join(outputRoot, "publish", "showcase", project.key, scene.id + ".gif"));
   }
+  const gifFiles = (await readdir(path.join(outputRoot, "gifs", project.key))).filter((file) => file.endsWith(".gif"));
+  assert.equal(gifFiles.length, 5, project.key + " must contain exactly five GIFs");
+  const rawFiles = await readdir(path.join(outputRoot, "raw", project.key));
+  assert.equal(rawFiles.filter((file) => file.endsWith(".webm")).length, 5, project.key + " must contain exactly five raw videos");
+  assert.equal(rawFiles.filter((file) => file.endsWith(".png")).length, 5, project.key + " must contain exactly five screenshots");
+  assert.equal(rawFiles.filter((file) => file.endsWith(".json")).length, 5, project.key + " must contain exactly five metadata files");
   await mustExist(path.join(outputRoot, "reels", "defend-" + project.key + "-highlight.mp4"));
+  await mustExist(path.join(outputRoot, "publish", "showcase", "reels", "defend-" + project.key + "-highlight.mp4"));
 }
 
 await mustExist(path.join(outputRoot, "manifest.json"));
