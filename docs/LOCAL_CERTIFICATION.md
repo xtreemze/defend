@@ -119,6 +119,25 @@ Exercise the deterministic stories and their controls, including maximum-size st
 
 A generated lockfile belongs only to the dependency/workspace PR that explicitly owns it. Inspect it before committing and keep unrelated local work out of that commit.
 
+#### CI visual showcase evidence
+
+The hybrid-engine showcase is a CI-native evidence lane rather than a substitute for local gameplay certification. Its dedicated workflow must remain isolated from normal smoke discovery and should be green before presentation media is treated as current.
+
+For a local reproduction after the shared workspace is installed and Chromium/FFmpeg are available:
+
+```sh
+cd experiments
+pnpm --filter @defend/hybrid-engine-lab wasm
+pnpm --filter @defend/hybrid-engine-lab exec vite --host 127.0.0.1
+# in another shell:
+cd experiments/hybrid-engine
+pnpm showcase:contract
+pnpm showcase:capture
+pnpm showcase:render
+pnpm showcase:verify
+```
+
+A complete run contains 5/5 desktop scenes, 5/5 mobile scenes, ten WebM recordings, ten screenshots, ten scene metadata files, two MP4 reels, ten GIFs, a generated README snippet, and a size report. The published README images are sourced from stable GitHub Pages paths; temporary Actions artifact URLs are evidence only.
 ### Lane C — Rust and Babylon/Bevy experiments
 
 For the dependency-light Rust core:
