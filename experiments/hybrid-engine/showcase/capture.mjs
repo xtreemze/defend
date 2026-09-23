@@ -17,6 +17,15 @@ const { chromium } = requireFromStorybook("playwright");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+async function activate(page, project, target) {
+  if (project.key === "mobile") {
+    await target.tap();
+    return;
+  }
+  await target.hover();
+  await target.click();
+}
+
 async function ensureControls(page) {
   const toggle = page.getByRole("button", { name: "Controls" });
   if ((await toggle.count()) === 0) return;
@@ -78,7 +87,7 @@ async function runArena(page, project, checkpoint) {
     await page.mouse.move(box.x + box.width * 0.54, box.y + box.height * 0.55);
     await page.mouse.wheel(0, -420);
     await sleep(400);
-    await page.locator("#arena-camera").click();
+    await activate(page, project, page.locator("#arena-camera"));
   } else {
     await page.touchscreen.tap(
       Math.round(box.x + box.width * 0.52),
@@ -87,65 +96,74 @@ async function runArena(page, project, checkpoint) {
   }
 
   const pause = page.locator("#arena-pause");
-  await pause.click();
+  if (project.key === "desktop") {
+    await pause.hover();
+    await page.keyboard.press("Space");
+  } else {
+    await activate(page, project, pause);
+  }
   assert.equal(await pause.getAttribute("aria-pressed"), "true");
   assert.match((await pause.textContent()) ?? "", /Resume simulation/);
   await checkpoint();
-  await pause.click();
+  if (project.key === "desktop") {
+    await page.keyboard.press("Space");
+  } else {
+    await activate(page, project, pause);
+  }
   assert.equal(await pause.getAttribute("aria-pressed"), "false");
   if (project.key === "desktop") {
-    await page.locator("#arena-camera").click();
+    await activate(page, project, page.locator("#arena-camera"));
   }
 }
 
-async function runMothership(page, _project, checkpoint) {
+async function runMothership(page, project, checkpoint) {
   const fast = page.locator("#fast");
-  await fast.click();
+  await activate(page, project, fast);
   assert.match((await fast.textContent()) ?? "", /Normal drain/);
   await sleep(650);
 
   const camera = page.locator("#camera");
   const before = (await camera.textContent()) ?? "";
-  await camera.click();
+  await activate(page, project, camera);
   assert.notEqual((await camera.textContent()) ?? "", before);
   await checkpoint();
-  await camera.click();
-  await fast.click();
+  await activate(page, project, camera);
+  await activate(page, project, fast);
   assert.match((await fast.textContent()) ?? "", /Fast drain/);
-  await page.locator("#reset").click();
+  await activate(page, project, page.locator("#reset"));
 }
 
-async function runNavigation(page, _project, checkpoint) {
+async function runNavigation(page, project, checkpoint) {
   const metrics = page.locator("#metrics");
   const initial = (await metrics.textContent()) ?? "";
-  await page.locator("#far").click();
+  await activate(page, project, page.locator("#far"));
   await sleep(850);
   const moved = (await metrics.textContent()) ?? "";
   assert.notEqual(moved, initial, "navigation metrics must change after targeting");
 
   const camera = page.locator("#camera");
   const before = (await camera.textContent()) ?? "";
-  await camera.click();
+  await activate(page, project, camera);
   assert.notEqual((await camera.textContent()) ?? "", before);
   await checkpoint();
-  await camera.click();
-  await page.locator("#reset").click();
+  await activate(page, project, camera);
+  await activate(page, project, page.locator("#reset"));
 }
 
-async function runGeothermal(page, _project, checkpoint) {
+async function runGeothermal(page, project, checkpoint) {
   const pressure = page.locator("#pressure");
-  await pressure.click();
+  await activate(page, project, pressure);
   assert.match((await pressure.textContent()) ?? "", /Normal pressure/);
   await sleep(900);
-  await page.locator("#eruption").click();
+  await activate(page, project, page.locator("#eruption"));
   await sleep(500);
   await checkpoint();
-  await pressure.click();
+  await activate(page, project, pressure);
   assert.match((await pressure.textContent()) ?? "", /Accelerate pressure/);
-  await page.locator("#reset").click();
+  await activate(page, project, page.locator("#reset"));
 }
 
-async function runTowerTerrain(page, _project, checkpoint) {
+async function runTowerTerrain(page, project, checkpoint) {
   const metrics = page.locator("#metrics");
   const readProjectileCount = async () => {
     const text = (await metrics.textContent()) ?? "";
@@ -154,7 +172,7 @@ async function runTowerTerrain(page, _project, checkpoint) {
   };
 
   const before = await readProjectileCount();
-  await page.locator("#miss2").click();
+  await activate(page, project, page.locator("#miss2"));
   await page.waitForFunction(
     ({ previous }) => {
       const text = document.querySelector("#metrics")?.textContent ?? "";
@@ -164,10 +182,10 @@ async function runTowerTerrain(page, _project, checkpoint) {
     { previous: before },
     { timeout: 3000 },
   );
-  await page.locator("#drop").click();
+  await activate(page, project, page.locator("#drop"));
   await sleep(500);
   await checkpoint();
-  await page.locator("#reset").click();
+  await activate(page, project, page.locator("#reset"));
 }
 
 const actions = {
