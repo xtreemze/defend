@@ -120,14 +120,19 @@ jobs:
         working-directory: experiments/hybrid-engine
         run: cat artifacts/e2e-media/sizes.json
 
+      - name: Collect preview-server log
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p experiments/hybrid-engine/artifacts/e2e-media
+          cp /tmp/defend-showcase-vite.log experiments/hybrid-engine/artifacts/e2e-media/vite.log 2>/dev/null || true
+
       - name: Upload complete showcase evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: defend-e2e-showcase-${{ github.sha }}
-          path: |
-            experiments/hybrid-engine/artifacts/e2e-media/
-            /tmp/defend-showcase-vite.log
+          path: experiments/hybrid-engine/artifacts/e2e-media/
           retention-days: 14
           if-no-files-found: error
 
