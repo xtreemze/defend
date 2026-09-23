@@ -71,6 +71,16 @@ jobs:
           grep -q '/defend/assets/' experiments/hybrid-engine/dist/index.html
           grep -q 'Defend — Deterministic Arena' experiments/hybrid-engine/dist/index.html
 
+      - name: Preserve published showcase media
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          rm -rf /tmp/defend-published-showcase
+          mkdir -p /tmp/defend-published-showcase
+          git fetch origin gh-pages:refs/remotes/origin/gh-pages || true
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git archive origin/gh-pages showcase 2>/dev/null | tar -x -C /tmp/defend-published-showcase || true
+          fi
       - name: Publish verified preview to gh-pages
         if: github.event_name != 'pull_request'
         working-directory: experiments/hybrid-engine/dist
@@ -78,6 +88,9 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         shell: bash
         run: |
+          if [ -d /tmp/defend-published-showcase/showcase ]; then
+            cp -R /tmp/defend-published-showcase/showcase ./showcase
+          fi
           touch .nojekyll
           git init
           git checkout -b gh-pages
