@@ -79,9 +79,9 @@ async function renderProject(project) {
       "-i",
       input,
       "-vf",
-      "fps=10,scale=" +
+      "fps=" + showcase.gif.fps + ",scale=" +
         project.gifWidth +
-        ":-2:flags=lanczos,palettegen=max_colors=96:stats_mode=diff",
+        ":-2:flags=lanczos,palettegen=max_colors=" + showcase.gif.colors + ":stats_mode=diff",
       "-frames:v",
       "1",
       palette,
@@ -94,7 +94,7 @@ async function renderProject(project) {
       "-i",
       palette,
       "-lavfi",
-      "fps=10,scale=" +
+      "fps=" + showcase.gif.fps + ",scale=" +
         project.gifWidth +
         ":-2:flags=lanczos[x];[x][1:v]paletteuse=dither=sierra2_4a:diff_mode=rectangle",
       "-loop",
@@ -181,8 +181,27 @@ async function reportSizes() {
     process.stdout.write(project.key + " total: " + total + " bytes\n");
   }
   report.totals.combined = combined;
+  report.budgets = showcase.gif.budgets;
   process.stdout.write("combined GIF payload: " + combined + " bytes\n");
   await writeFile(path.join(outputRoot, "sizes.json"), JSON.stringify(report, null, 2) + "\n");
+
+  for (const project of showcase.projects) {
+    for (const scene of showcase.scenes) {
+      const size = report[project.key][scene.id];
+      if (size > showcase.gif.budgets.perFile) {
+        throw new Error(project.key + " " + scene.id + " exceeds per-file GIF budget: " + size);
+      }
+    }
+  }
+  if (report.totals.desktop > showcase.gif.budgets.desktopTotal) {
+    throw new Error("desktop GIF payload exceeds budget: " + report.totals.desktop);
+  }
+  if (report.totals.mobile > showcase.gif.budgets.mobileTotal) {
+    throw new Error("mobile GIF payload exceeds budget: " + report.totals.mobile);
+  }
+  if (report.totals.combined > showcase.gif.budgets.combined) {
+    throw new Error("combined GIF payload exceeds budget: " + report.totals.combined);
+  }
 }
 
 async function main() {
