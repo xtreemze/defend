@@ -6,6 +6,7 @@ export default {
   outputDir: "./artifacts/e2e-media/playwright",
   projects: showcase.projects.map((project) => ({
     name: project.name,
+    metadata: { showcase: project },
     use: {
       browserName: "chromium",
       viewport: project.viewport,
