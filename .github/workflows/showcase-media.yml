@@ -1,0 +1,153 @@
+name: showcase-media
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/showcase-media.yml'
+      - '.github/workflows/pages.yml'
+      - 'README.md'
+      - 'docs/SHOWCASE.md'
+      - 'experiments/pnpm-lock.yaml'
+      - 'experiments/pnpm-workspace.yaml'
+      - 'experiments/storybook/package.json'
+      - 'experiments/hybrid-engine/**'
+      - 'rust-toolchain.toml'
+      - 'Cargo.lock'
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/showcase-media.yml'
+      - '.github/workflows/pages.yml'
+      - 'README.md'
+      - 'docs/SHOWCASE.md'
+      - 'experiments/hybrid-engine/**'
+  workflow_dispatch:
+
+concurrency:
+  group: showcase-media-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  showcase:
+    name: Capture and render showcase
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Setup Node
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version: 24.20.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2
+        with:
+          version: 11.25.0
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: 1.98.1
+          targets: wasm32-unknown-unknown
+          components: rustfmt,clippy
+
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa
+        with:
+          version: v0.15.0
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install modern workspace
+        working-directory: experiments
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        working-directory: experiments
+        run: pnpm --filter @defend/storybook-lab exec playwright install --with-deps chromium
+
+      - name: Run media contract tests
+        working-directory: experiments/hybrid-engine
+        run: pnpm showcase:contract
+
+      - name: Build showcase target
+        working-directory: experiments
+        run: |
+          pnpm --filter @defend/hybrid-engine-lab wasm
+          pnpm --filter @defend/hybrid-engine-lab exec tsc --noEmit
+          pnpm --filter @defend/hybrid-engine-lab exec vite build
+
+      - name: Start real preview server
+        working-directory: experiments
+        shell: bash
+        run: |
+          nohup pnpm --filter @defend/hybrid-engine-lab exec vite --host 127.0.0.1 > /tmp/defend-showcase-vite.log 2>&1 &
+          echo $! > /tmp/defend-showcase-vite.pid
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:5173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/defend-showcase-vite.log
+          exit 1
+
+      - name: Capture desktop and mobile scenes
+        working-directory: experiments/hybrid-engine
+        env:
+          SHOWCASE_BASE_URL: http://127.0.0.1:5173
+        run: pnpm showcase:capture
+
+      - name: Render two reels and ten GIFs
+        working-directory: experiments/hybrid-engine
+        run: pnpm showcase:render
+
+      - name: Verify media evidence bundle
+        working-directory: experiments/hybrid-engine
+        run: pnpm showcase:verify
+
+      - name: Report media sizes
+        working-directory: experiments/hybrid-engine
+        run: cat artifacts/e2e-media/sizes.json
+
+      - name: Upload complete showcase evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: defend-e2e-showcase-${{ github.sha }}
+          path: |
+            experiments/hybrid-engine/artifacts/e2e-media/
+            /tmp/defend-showcase-vite.log
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Publish stable showcase media to gh-pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          rm -rf /tmp/defend-gh-pages
+          git clone --depth 1 --branch gh-pages "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /tmp/defend-gh-pages
+          rm -rf /tmp/defend-gh-pages/showcase
+          cp -R experiments/hybrid-engine/artifacts/e2e-media/publish/showcase /tmp/defend-gh-pages/showcase
+          cd /tmp/defend-gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add showcase
+          if git diff --cached --quiet; then
+            echo "showcase media unchanged"
+            exit 0
+          fi
+          git commit -m "Publish showcase media from ${GITHUB_SHA}"
+          git push origin gh-pages
