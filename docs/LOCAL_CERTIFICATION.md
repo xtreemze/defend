@@ -92,7 +92,7 @@ Prefer one coherent recorded browser session over repeated restarts for every is
 
 Subsequent repository-safety cleanup also removed the historical package commands/helpers that staged/versioned/pushed Git state, recursively deleted `node_modules`, invoked unpinned PWA Builder code, or exposed broken archive/config-check workflows.
 
-The historical export path is deliberately still present. `preexportp` removes/rebuilds `dist/`, so do not run `npm run exportp` as an ordinary build gate; use it only when the campaign explicitly includes historical export/PWA-output characterization.
+The historical export path remains available but is explicitly quarantined. `npm run legacy:export` first removes/rebuilds `dist/` through `node/prepareLegacyExport.js`, then runs the historical packaging path. It is not an ordinary validation command; the default VS Code build task and normal certification gate use the non-destructive `npm run build`. Run `legacy:export` only when a campaign explicitly includes historical export/PWA-output characterization.
 
 The root has no committed npm lockfile and still contains a historical Yarn lockfile. Record which package manager actually reconstructs the baseline, capture the resolved dependency tree/audit as evidence, and do not silently create or commit a new root lockfile during certification.
 
