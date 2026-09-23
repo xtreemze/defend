@@ -71,6 +71,10 @@ Published reels are available under:
 
 The root README uses these stable Pages URLs rather than temporary Actions artifact URLs.
 
+## GIF delivery budget
+
+README media is intentionally constrained to 8 fps, a 64-color generated palette, Lanczos scaling, 640 px desktop width, and 300 px mobile width. CI fails if any GIF exceeds 4.5 MB, if the desktop set exceeds 10 MB, if the mobile set exceeds 6 MB, or if the combined ten-GIF payload exceeds 15 MB. These are upper bounds, not targets; scenes should remain as short as practical.
+
 ## Presentation guidance
 
 Use the desktop reel when presenting the wide-screen systems view and the mobile reel when presenting touch/responsive behavior. For documents, editorials, issue reports, and README sections, prefer the individual feature GIFs because each scene is designed to stand alone and return near its initial state for a natural loop.
