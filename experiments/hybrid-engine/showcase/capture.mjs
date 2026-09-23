@@ -98,6 +98,9 @@ async function runArena(page, project, checkpoint) {
   const pause = page.locator("#arena-pause");
   if (project.key === "desktop") {
     await pause.hover();
+    await page.evaluate(() => {
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    });
     await page.keyboard.press("Space");
   } else {
     await activate(page, project, pause);
