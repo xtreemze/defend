@@ -206,4 +206,4 @@ In particular, preserve the closed energy economy, temporary defenses, physical 
 
 ## License
 
-Defend is licensed under the [GNU General Public License v3.0](./LICENSE).
+Defend is proprietary software. **All rights are reserved.** No permission is granted to copy, modify, redistribute, sublicense, or create derivative works except with prior express written authorization from the applicable copyright holder. See [LICENSE](./LICENSE) for the complete terms and third-party/historical-license boundaries.
