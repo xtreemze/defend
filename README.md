@@ -34,31 +34,31 @@ The modern preview is recorded by CI in real Chromium. Desktop and mobile showca
 
 Babylon presents the battlefield while fixed-step Bevy/WASM state remains authoritative.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/01-deterministic-arena.gif" alt="Defend deterministic arena desktop showcase" width="640">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/01-deterministic-arena.gif" alt="Defend deterministic arena desktop showcase" width="620">
 
 #### Finite-energy mothership
 
 Finite reserve, hover drain, and reversible defender/raider perspective.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership desktop showcase" width="640">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/02-finite-energy-mothership.gif" alt="Defend finite-energy mothership desktop showcase" width="620">
 
 #### Raid navigation
 
 Target-sector selection drives physically constrained mothership movement.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/03-raid-navigation.gif" alt="Defend raid navigation desktop showcase" width="640">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/03-raid-navigation.gif" alt="Defend raid navigation desktop showcase" width="620">
 
 #### Geothermal energy
 
 Local finite energy, pressure, conduits, and eruption remain part of the battlefield.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/04-geothermal-energy.gif" alt="Defend geothermal energy desktop showcase" width="640">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/04-geothermal-energy.gif" alt="Defend geothermal energy desktop showcase" width="620">
 
 #### Towers and terrain
 
 Turret misses and impacts operate against the same deformable terrain surface.
 
-<img src="https://xtreemze.github.io/defend/showcase/desktop/05-towers-and-terrain.gif" alt="Defend towers and terrain desktop showcase" width="640">
+<img src="https://xtreemze.github.io/defend/showcase/desktop/05-towers-and-terrain.gif" alt="Defend towers and terrain desktop showcase" width="620">
 
 ### Mobile
 
