@@ -64,6 +64,13 @@ The GitHub Pages build uses this package as the current modern Defend preview. T
 
 The shell is deliberately dependency-free. It is a deployment/presentation boundary, not a second simulation state store and not a substitute for the planned Lit component package while that architecture remains under separate certification.
 
+## CI visual showcase
+
+The modern preview also owns a dedicated browser-media contract under `showcase/`. It records five representative capabilities in both desktop (1440×900) and mobile (390×844, touch-enabled portrait) Chromium contexts, with an assertion at each demonstrated state.
+
+`showcase/manifest.mjs` is the shared source of feature names, descriptions, paths, filenames, viewport intent, and publication labels. `showcase/capture.mjs` records raw WebM, screenshots, and metadata from the real preview; `showcase/render.mjs` uses FFmpeg to create separate desktop/mobile H.264 reels and palette-optimized looping GIFs; `showcase/verify.mjs` rejects incomplete bundles.
+
+The workflow is `.github/workflows/showcase-media.yml`. It is intentionally separate from ordinary browser smoke discovery, publishes stable media under `/defend/showcase/` on `gh-pages`, and uploads the full raw/finished evidence bundle for inspection. See [`../../docs/SHOWCASE.md`](../../docs/SHOWCASE.md).
 ## Current fixture
 
 The fixture creates 128 semantic bodies in the Rust/Bevy ECS runtime. Babylon creates lightweight instances and renders a copied xyz snapshot from the authoritative runtime.
