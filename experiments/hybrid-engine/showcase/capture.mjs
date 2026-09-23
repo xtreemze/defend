@@ -26,6 +26,15 @@ async function activate(page, project, target) {
   await target.click();
 }
 
+async function pressArenaPauseShortcut(page) {
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+  await page.keyboard.press("Space");
+}
+
 async function ensureControls(page) {
   const toggle = page.getByRole("button", { name: "Controls" });
   if ((await toggle.count()) === 0) return;
@@ -109,7 +118,7 @@ async function runArena(page, project, checkpoint) {
   assert.match((await pause.textContent()) ?? "", /Resume simulation/);
   await checkpoint();
   if (project.key === "desktop") {
-    await page.keyboard.press("Space");
+    await pressArenaPauseShortcut(page);
   } else {
     await activate(page, project, pause);
   }
