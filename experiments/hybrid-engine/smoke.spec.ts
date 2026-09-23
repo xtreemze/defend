@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "playwright/test";
 
 const BASE_URL = 'http://localhost:5173';
 
@@ -12,13 +12,6 @@ const PAGES = [
 ];
 
 test.describe('Hybrid engine browser smoke tests', () => {
-  let serverProcess: any;
-
-  test.beforeAll(async () => {
-    // Note: In CI, the server should be started before running tests
-    // This test assumes the Vite dev server is already running
-  });
-
   for (const page of PAGES) {
     test(`${page.name} page loads without errors`, async ({ browser }) => {
       const context = await browser.newContext();
@@ -61,9 +54,7 @@ test.describe('Hybrid engine browser smoke tests', () => {
       }
 
       // Fail if there were console errors (except expected ones)
-      const ignoredErrors = [
-        // Add patterns for expected errors here if needed
-      ];
+      const ignoredErrors: readonly string[] = [];
 
       const unexpectedErrors = consoleErrors.filter(
         (err) =>
@@ -80,7 +71,7 @@ test.describe('Hybrid engine browser smoke tests', () => {
       // Verify WASM module is loaded
       const wasmLoaded = await page_obj.evaluate(() => {
         // Check if the WASM module is available in the window object
-        return (window as any).defend_hybrid_runtime !== undefined;
+        return "defend_hybrid_runtime" in globalThis;
       });
 
       expect(wasmLoaded).toBe(

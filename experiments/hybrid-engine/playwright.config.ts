@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "playwright/test";
 
 /**
  * Browser smoke tests for the hybrid engine.
