@@ -30,11 +30,21 @@ async function renderProject(project) {
   const normalized = [];
   for (const scene of showcase.scenes) {
     const input = path.join(outputRoot, "raw", project.key, scene.id + ".webm");
+    const metadata = JSON.parse(
+      await readFile(path.join(outputRoot, "raw", project.key, scene.id + ".json"), "utf8"),
+    );
+    const trimArgs = [
+      "-ss",
+      metadata.trim.startSeconds.toFixed(3),
+      "-t",
+      metadata.trim.durationSeconds.toFixed(3),
+    ];
     const normalizedVideo = path.join(normalizedProject, scene.id + ".mp4");
     normalized.push(normalizedVideo);
 
     run("ffmpeg", [
       "-y",
+      ...trimArgs,
       "-i",
       input,
       "-an",
@@ -65,6 +75,7 @@ async function renderProject(project) {
     const gif = path.join(gifProject, scene.id + ".gif");
     run("ffmpeg", [
       "-y",
+      ...trimArgs,
       "-i",
       input,
       "-vf",
@@ -75,6 +86,7 @@ async function renderProject(project) {
     ]);
     run("ffmpeg", [
       "-y",
+      ...trimArgs,
       "-i",
       input,
       "-i",
