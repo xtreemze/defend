@@ -44,14 +44,19 @@ test("capture preserves raw video screenshots and metadata", async () => {
   assert.match(source, /browserErrors/);
 });
 
-test("renderer keeps separate reels and optimized infinite GIFs", async () => {
+test("renderer keeps separate reels and budgeted optimized infinite GIFs", async () => {
   const source = await read("experiments/hybrid-engine/showcase/render.mjs");
   assert.ok(source.includes('defend-" + project.key + "-highlight.mp4'));
-  assert.match(source, /palettegen=max_colors=96/);
+  assert.equal(showcase.gif.fps, 8);
+  assert.equal(showcase.gif.colors, 64);
+  assert.equal(showcase.gif.budgets.combined, 15_000_000);
+  assert.match(source, /showcase\.gif\.colors/);
+  assert.match(source, /showcase\.gif\.fps/);
   assert.match(source, /paletteuse=/);
   assert.ok(source.includes('"-loop"'));
   assert.ok(source.includes('"0"'));
   assert.match(source, /flags=lanczos/);
+  assert.match(source, /exceeds budget/);
 });
 
 test("normal browser smoke discovery excludes showcase files", async () => {
