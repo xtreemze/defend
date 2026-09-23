@@ -2,11 +2,13 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Browser smoke tests for the hybrid engine.
- * These tests verify that the built Vite application loads without errors
- * and that WASM initialization succeeds.
+ * Showcase capture is deliberately isolated under showcase/ and has its own
+ * media configuration/workflow.
  */
 export default defineConfig({
-  testDir: './smoke.spec.ts',
+  testDir: '.',
+  testMatch: 'smoke.spec.ts',
+  testIgnore: ['showcase/**'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
