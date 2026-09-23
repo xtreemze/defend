@@ -172,6 +172,26 @@ If stack ancestry has changed since #92 was updated, refresh it before testing.
 
 Experiments that depend on a behavior-preserving parent PR should be tested only after that parent's parity contract succeeds.
 
+### Lane F — cross-system audit certification
+
+Use issue #226 to select the audit surfaces relevant to the candidate SHA.
+
+For #223, capture repeated restart/scene-recreation resource counts plus representative stress observations for simulation, rendering, JS/WASM memory, physics, workers and audio. Evidence should be sufficient to detect monotonic growth or stale ownership; do not infer leak freedom from one successful run.
+
+For #224, run seeded replay/checkpoint fixtures under differing render cadence and exercise stale/out-of-order advisory worker results. Where supported, destroy/recreate presentation mid-run and confirm the semantic checkpoint sequence remains equivalent. Record protocol/runtime versions with replay artifacts.
+
+For #225, capture the machine-readable diagnostics/capability snapshot and exercise representative safe failure/fallback paths available in the campaign environment. Distinguish expected unsupported capability from a product defect, and verify fallback never leaves competing renderer/physics/state authorities alive.
+
+For the existing audit owners referenced by #226:
+
+- #33: exercise pointer/touch/camera arbitration, focus/keyboard accessibility, responsive/orientation behavior, install/offline/update behavior where available;
+- #137: verify pause/reload/reconstruction behavior for any promoted durable world-history state;
+- #152: retain supply-chain/license/release evidence when dependency or distributable boundaries change;
+- #204: verify DOM overlay focus/pointer capture does not become a second gameplay/input authority;
+- #217: update the parity matrix with the tested seam and its exact evidence.
+
+Presentation/showcase artifacts may supplement these observations but do not substitute for correctness, determinism, resource or fallback evidence.
+
 ## 5. Evidence fan-out
 
 One runtime observation can support several issues, but copy the relevant excerpt to each owning issue/PR.
@@ -206,9 +226,10 @@ When a campaign cannot cover everything, follow the current ordering in #92. As 
 1. current `master` historical build/browser baseline when it is stale or required for parity decisions;
 2. dependency/workspace/toolchain targets that unblock many later PRs;
 3. modern Storybook/browser laboratory gates;
-4. live behavior-preserving PR queue from #92;
-5. Rust core and hybrid-engine targets;
-6. top stacked design experiments;
-7. deeper performance, audio and PWA investigations.
+4. cross-system audit targets from #226 that unblock ownership or promotion decisions;
+5. live behavior-preserving PR queue from #92;
+6. Rust core and hybrid-engine targets;
+7. top stacked design experiments;
+8. deeper performance, audio and PWA investigations.
 
 This order is chosen to maximize how much later online development can proceed without another local session.
