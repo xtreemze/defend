@@ -1,0 +1,5 @@
+import{n as e}from"./rolldown-runtime-B0Z9INg1.js";import{n as t,t as n}from"./shaderStore-DBiNfWDC.js";import{n as r,t as i}from"./sceneUboDeclaration-BucOHbCW.js";import{n as a,t as o}from"./meshUboDeclaration-DDlgBu5O.js";var s,c,l,u;e((()=>{t(),i(),o(),s=`volumetricLightingRenderVolumeVertexShader`,c=`#include<sceneUboDeclaration>
+#include<meshUboDeclaration>
+attribute position : vec3f;varying vWorldPos: vec4f;@vertex
+fn main(input : VertexInputs)->FragmentInputs {let worldPos=mesh.world*vec4f(vertexInputs.position,1.0);vertexOutputs.vWorldPos=worldPos;vertexOutputs.position=scene.viewProjection*worldPos;}
+`,n.ShadersStoreWGSL[s]||(n.ShadersStoreWGSL[s]=c),l=[r,a];for(let e of l)n.IncludesShadersStoreWGSL[e.name]||(n.IncludesShadersStoreWGSL[e.name]=e.shader);u={name:s,shader:c}}))();export{u as volumetricLightingRenderVolumeVertexShaderWGSL};

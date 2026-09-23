@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-B0Z9INg1.js";function t(...e){let n=e=>!!e&&typeof e==`object`;return e.reduce((e,r)=>{let i=Object.keys(r);for(let a of i){let i=e[a],o=r[a];e[a]=Array.isArray(i)&&Array.isArray(o)?i.concat(o):n(i)&&n(o)?t(i,o):o}return e},{})}var n=e((()=>{}));export{n,t};

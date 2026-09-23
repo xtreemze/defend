@@ -1,0 +1,6 @@
+import{n as e,r as t}from"./rolldown-runtime-B0Z9INg1.js";import{n,t as r}from"./shaderStore-DBiNfWDC.js";import{r as i,t as a}from"./helperFunctions-CklT_CQT.js";import{n as o,t as s}from"./pbrBRDFFunctions-CWPBPXSx.js";import{i as c,n as l,r as u,t as d}from"./hdrFilteringFunctions-D32dZ0XS.js";var f=t({hdrFilteringPixelShaderWGSL:()=>g}),p,m,h,g,_=e((()=>{n(),i(),c(),s(),l(),p=`hdrFilteringPixelShader`,m=`#include<helperFunctions>
+#include<importanceSampling>
+#include<pbrBRDFFunctions>
+#include<hdrFilteringFunctions>
+uniform alphaG: f32;var inputTextureSampler: sampler;var inputTexture: texture_cube<f32>;uniform vFilteringInfo: vec2f;uniform hdrScale: f32;varying direction: vec3f;@fragment
+fn main(input: FragmentInputs)->FragmentOutputs {var color: vec3f=radiance(uniforms.alphaG,inputTexture,inputTextureSampler,input.direction,uniforms.vFilteringInfo);fragmentOutputs.color= vec4f(color*uniforms.hdrScale,1.0);}`,r.ShadersStoreWGSL[p]||(r.ShadersStoreWGSL[p]=m),h=[a,u,o,d];for(let e of h)r.IncludesShadersStoreWGSL[e.name]||(r.IncludesShadersStoreWGSL[e.name]=e.shader);g={name:p,shader:m}}));export{f as n,_ as r,g as t};

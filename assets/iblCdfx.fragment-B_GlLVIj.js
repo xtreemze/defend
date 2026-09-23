@@ -1,0 +1,4 @@
+import{n as e,r as t}from"./rolldown-runtime-B0Z9INg1.js";import{n,t as r}from"./shaderStore-DBiNfWDC.js";var i=t({iblCdfxPixelShader:()=>s}),a,o,s,c=e((()=>{n(),a=`iblCdfxPixelShader`,o=`precision highp sampler2D;
+#define PI 3.1415927
+varying vec2 vUV;uniform sampler2D cdfy;void main(void) {ivec2 cdfyRes=textureSize(cdfy,0);ivec2 currentPixel=ivec2(gl_FragCoord.xy);float cdfx=0.0;for (int x=1; x<=currentPixel.x; x++) {cdfx+=texelFetch(cdfy,ivec2(x-1,cdfyRes.y-1),0).x;}
+gl_FragColor=vec4(vec3(cdfx),1.0);}`,r.ShadersStore[a]||(r.ShadersStore[a]=o),s={name:a,shader:o}}));export{i as n,c as r,s as t};

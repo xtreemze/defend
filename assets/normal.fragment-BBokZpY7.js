@@ -1,0 +1,67 @@
+import{n as e}from"./rolldown-runtime-B0Z9INg1.js";import{n as t,t as n}from"./shaderStore-DBiNfWDC.js";import{i as r,o as i,r as a,t as o}from"./clipPlaneFragmentDeclaration-BSFYK0Pi.js";import{a as s,n as c,r as l,t as u}from"./fogFragment-A7zB_yUn.js";import{n as d,t as f}from"./logDepthFragment-BQfCxjhi.js";import{r as p,t as m}from"./helperFunctions-CklT_CQT.js";import{n as h,t as g}from"./lightFragment-Co9EmatE.js";import{n as _,o as v,s as y,t as b}from"./shadowsFragmentFunctions-B1-uvnta.js";import{n as x,t as S}from"./lightsFragmentFunctions-YkWMvqWB.js";import{n as C,t as w}from"./logDepthDeclaration-xoumPMwY.js";import{n as T,t as E}from"./depthPrePass-CI4Wrsnz.js";import{n as D,t as O}from"./imageProcessingCompatibility-D-xt4V5m.js";var k,A,j,M;e((()=>{t(),p(),v(),S(),b(),a(),w(),s(),i(),T(),g(),f(),c(),D(),k=`normalPixelShader`,A=`uniform vEyePosition: vec4f;uniform vDiffuseColor: vec4f;varying vPositionW: vec3f;
+#ifdef NORMAL
+varying vNormalW: vec3f;
+#endif
+#ifdef LIGHTING
+#include<helperFunctions>
+#include<lightUboDeclaration>[0]
+#include<lightUboDeclaration>[1]
+#include<lightUboDeclaration>[2]
+#include<lightUboDeclaration>[3]
+#include<lightsFragmentFunctions>
+#include<shadowsFragmentFunctions>
+#endif
+#ifdef DIFFUSE
+varying vDiffuseUV: vec2f;var diffuseSamplerSampler: sampler;var diffuseSampler: texture_2d<f32>;uniform vDiffuseInfos: vec2f;
+#endif
+#include<clipPlaneFragmentDeclaration>
+#include<logDepthDeclaration>
+#include<fogFragmentDeclaration>
+#if defined(CLUSTLIGHT_BATCH) && CLUSTLIGHT_BATCH>0
+varying vViewDepth: f32;
+#endif
+#define CUSTOM_FRAGMENT_DEFINITIONS
+@fragment
+fn main(input: FragmentInputs)->FragmentOutputs {
+#define CUSTOM_FRAGMENT_MAIN_BEGIN
+#include<clipPlaneFragment>
+var viewDirectionW: vec3f=normalize(uniforms.vEyePosition.xyz-fragmentInputs.vPositionW);var baseColor: vec4f= vec4f(1.,1.,1.,1.);var diffuseColor: vec3f=uniforms.vDiffuseColor.rgb;var alpha: f32=uniforms.vDiffuseColor.a;
+#ifdef DIFFUSE
+baseColor=textureSample(diffuseSampler,diffuseSamplerSampler,fragmentInputs.vDiffuseUV);
+#ifdef ALPHATEST
+if (baseColor.a<0.4) {discard;}
+#endif
+#define DEPTHPREPASS_SKIP_EARLY_RETURN
+#include<depthPrePass>
+#ifndef DEPTHPREPASS
+baseColor=vec4f(baseColor.rgb*uniforms.vDiffuseInfos.y,baseColor.a);
+#endif
+#endif
+#ifndef DEPTHPREPASS
+#ifdef NORMAL
+baseColor=mix(baseColor, vec4f(fragmentInputs.vNormalW,1.0),0.5);
+#endif
+#ifdef NORMAL
+var normalW: vec3f=normalize(fragmentInputs.vNormalW);
+#else
+var normalW: vec3f= vec3f(1.0,1.0,1.0);
+#endif
+#ifdef LIGHTING
+var diffuseBase: vec3f= vec3f(0.,0.,0.);var info: lightingInfo;var shadow: f32=1.;var glossiness: f32=0.;var aggShadow: f32=0.;var numLights: f32=0.;
+#include<lightFragment>[0]
+#include<lightFragment>[1]
+#include<lightFragment>[2]
+#include<lightFragment>[3]
+var finalDiffuse: vec3f=clamp(diffuseBase*diffuseColor,vec3f(0.0),vec3f(1.0))*baseColor.rgb;
+#else
+var finalDiffuse: vec3f= baseColor.rgb;
+#endif
+var color: vec4f= vec4f(finalDiffuse,alpha);
+#include<logDepthFragment>
+#include<fogFragment>
+fragmentOutputs.color=color;
+#include<imageProcessingCompatibility>
+#define CUSTOM_FRAGMENT_MAIN_END
+#endif
+}
+`,n.ShadersStoreWGSL[k]||(n.ShadersStoreWGSL[k]=A),j=[m,y,x,_,o,C,l,r,E,h,d,u,O];for(let e of j)n.IncludesShadersStoreWGSL[e.name]||(n.IncludesShadersStoreWGSL[e.name]=e.shader);M={name:k,shader:A}}))();export{M as normalPixelShaderWGSL};

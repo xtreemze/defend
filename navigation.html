@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#08050d" />
+    <meta name="description" content="Choose a raid sector and inspect physically constrained mothership approach planning." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>Defend — Raid Navigation</title>
+    <style>
+      html, body, #app, canvas { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+      body { background: #08050d; color: #e8d8c0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      canvas { display: block; touch-action: none; }
+      #metrics { position: fixed; top: 12px; left: 12px; z-index: 3; min-width: 260px; padding: 8px 10px; border: 1px solid rgba(66, 216, 210, .35); background: rgba(8, 5, 13, .8); font-size: 12px; line-height: 1.45; pointer-events: none; white-space: pre; }
+      #controls { position: fixed; right: 12px; top: 12px; z-index: 4; display: flex; gap: 6px; flex-wrap: wrap; max-width: 440px; justify-content: flex-end; }
+      button { border: 1px solid rgba(214, 145, 76, .48); background: rgba(18, 10, 27, .9); color: #e8d8c0; padding: 7px 9px; font: inherit; cursor: pointer; }
+      button:hover, button:focus-visible { border-color: rgba(66, 216, 210, .85); outline: none; }
+      #hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 3; padding: 6px 9px; background: rgba(8, 5, 13, .72); border: 1px solid rgba(214, 145, 76, .25); font-size: 12px; pointer-events: none; text-align: center; }
+    </style>
+    <script type="module" crossorigin src="/defend/assets/navigation-tGt3DCyU.js"></script>
+    <link rel="modulepreload" crossorigin href="/defend/assets/rolldown-runtime-B0Z9INg1.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/observable-DYy0npVD.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/performanceConfigurator-DQUdBSUa.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/engineStore-CLCGp4Wf.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.scalar.functions-C1dzaNLg.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/typeStore-Cabm4lgz.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.vector.pure-BAbqkt6K.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.color.pure-jwlNow8J.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/logger-7Rt2cEsq.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/devTools-CSwCTXIr.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/webRequest-DEnZ6L_7.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/domManagement-XOIG4Y14.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/precisionDate-D2sMycUV.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/tools.functions-CBU2gXU_.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/bufferUtils-DbWsVGda.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/guid-DrdrWLSZ.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/tools.pure-DAKX4exm.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/decorators-BejFUSV1.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/decorators.serialization-BuLgX-8o.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/node-KwC2rhYf.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/smartArray-6kp0bwvn.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/uniformBuffer-CYIeb8wO.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/shaderStore-DBiNfWDC.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/internalTexture-DIA8YYqG.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/abstractEngine.pure-BYhefqYr.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/thinEngine.pure-DkoXIIOW.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/buffer.pure-CtkrCo9r.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/pickingInfo-C90G1_mL.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/floatingOriginMatrixOverrides-r5Tgogtl.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/sceneComponent-DQpRGkDD.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.plane-mxQYSpzw.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.frustum-CZQY5uBK.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/lightConstants-BNz98yWw.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.path-C4weFQQl.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/abstractEngine-DVkY9uN2.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/materialHelper.functions-BMq8-IXb.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/drawWrapper-qt_VAvWQ.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/material.pure-VcSaoKvg.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.axis-DADQsPUo.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/preload-helper-ClNS6Nl5.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/math.viewport-B0EYaFH9.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/abstractEngine.renderPass.pure-XRwwiEm1.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/compatibilityOptions-CUTKKIpl.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/mesh.pure-CFr3xoE_.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/engineRegistration.pure-CPEpUP4b.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/hemisphericLight.pure-CZIQ5ySY.js">
+    <link rel="modulepreload" crossorigin href="/defend/assets/pointLight.pure-DfDce5vo.js">
+    <link rel="stylesheet" crossorigin href="/defend/assets/engineRegistration-CG5YFllK.css">
+  </head>
+  <body>
+    <div id="app"><canvas id="renderCanvas"></canvas></div>
+    <div id="metrics">initializing…</div>
+    <div id="controls">
+      <button id="reset" type="button">Reset [R]</button>
+      <button id="near" type="button">Target near silo [1]</button>
+      <button id="far" type="button">Target outer sector [2]</button>
+      <button id="camera" type="button">Defender view [C]</button>
+    </div>
+    <div id="hint">Tap/click the surface to choose a raid sector. The mothership moves physically toward an offset launch position; unsafe central targets are projected out of the silo field. The three-set planner can commit a composition or deliberately hold.</div>
+      <noscript><div style="position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:#08050d;color:#f3eadf;font:16px system-ui,sans-serif;text-align:center">Defend requires JavaScript and WebAssembly to run this interactive preview.</div></noscript>
+  </body>
+</html>

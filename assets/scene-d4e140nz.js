@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-B0Z9INg1.js";import{ir as t,sr as n}from"./engineRegistration.pure-CPEpUP4b.js";var r=e((()=>{n(),n(),t()}));export{r as t};
