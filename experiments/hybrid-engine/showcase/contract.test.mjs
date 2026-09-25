@@ -68,17 +68,22 @@ test("showcase Chromium disables throttling for dedicated capture", async () => 
   assert.match(source, /--disable-gpu-vsync/);
 });
 
-test("renderer keeps 60 fps canonical reels and 60 fps animated WebPs", async () => {
+test("renderer keeps 60 fps canonical reels and frame-exact animated WebPs", async () => {
   const source = await read("experiments/hybrid-engine/showcase/render.mjs");
+  const workflow = await read(".github/workflows/showcase-media.yml");
   assert.ok(source.includes('defend-" + project.key + "-highlight.mp4'));
   assert.equal(showcase.webp.fps, 60);
   assert.equal(showcase.webp.budgets.combined, 15_000_000);
   assert.match(source, /showcase\.capture\.videoFps/);
-  assert.match(source, /libwebp_anim/);
+  assert.match(source, /webpFrameDurationMs/);
+  assert.match(source, /"webpmux"/);
+  assert.match(source, /"libwebp"/);
+  assert.doesNotMatch(source, /libwebp_anim/);
   assert.ok(source.includes('"-loop"'));
   assert.ok(source.includes('"0"'));
   assert.match(source, /flags=lanczos/);
   assert.match(source, /exceeds per-file WebP budget/);
+  assert.match(workflow, /apt-get install -y ffmpeg webp/);
 });
 
 test("verifier proves explicit raw frame count before accepting 60 fps output", async () => {
