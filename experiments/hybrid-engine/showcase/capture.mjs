@@ -208,11 +208,113 @@ const actions = {
   towerTerrain: runTowerTerrain,
 };
 
+async function startCanvasCapture(page, project) {
+  const requestedFps = showcase.capture.videoFps;
+  const videoBitsPerSecond = project.key === "desktop" ? 20_000_000 : 8_000_000;
+  const result = await page.evaluate(
+    async ({ fps, bitrate }) => {
+      const canvas = document.querySelector("#renderCanvas");
+      if (!(canvas instanceof HTMLCanvasElement) || canvas.width <= 0 || canvas.height <= 0) {
+        throw new Error("Showcase canvas is unavailable or has no render surface.");
+      }
+
+      const stream = canvas.captureStream(fps);
+      const mimeType =
+        ["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm"].find((candidate) =>
+          MediaRecorder.isTypeSupported(candidate),
+        ) ?? "";
+      const options = { videoBitsPerSecond: bitrate };
+      const recorder =
+        mimeType === ""
+          ? new MediaRecorder(stream, options)
+          : new MediaRecorder(stream, { ...options, mimeType });
+      const chunks = [];
+      recorder.addEventListener("dataavailable", (event) => {
+        if (event.data.size > 0) chunks.push(event.data);
+      });
+
+      window.__defendShowcaseCapture = {
+        recorder,
+        chunks,
+        stream,
+        width: canvas.width,
+        height: canvas.height,
+        mimeType: recorder.mimeType || mimeType || "video/webm",
+      };
+
+      recorder.start(250);
+      if (recorder.state !== "recording") {
+        throw new Error("Showcase recorder failed to enter recording state.");
+      }
+      await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+      return {
+        width: canvas.width,
+        height: canvas.height,
+        mimeType: recorder.mimeType || mimeType || "video/webm",
+      };
+    },
+    { fps: requestedFps, bitrate: videoBitsPerSecond },
+  );
+
+  return { ...result, requestedFps, videoBitsPerSecond };
+}
+
+async function stopCanvasCapture(page) {
+  return page.evaluate(async () => {
+    const state = window.__defendShowcaseCapture;
+    if (!state) throw new Error("No active showcase capture exists.");
+
+    await new Promise((resolve, reject) => {
+      state.recorder.addEventListener("stop", resolve, { once: true });
+      state.recorder.addEventListener(
+        "error",
+        () => reject(new Error("MediaRecorder failed while finalizing showcase capture.")),
+        { once: true },
+      );
+      state.recorder.stop();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    if (state.chunks.length === 0) {
+      throw new Error("Showcase capture produced an empty video stream.");
+    }
+
+    const blob = new Blob(state.chunks, { type: state.mimeType });
+    const videoBase64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener(
+        "load",
+        () => {
+          if (typeof reader.result !== "string") {
+            reject(new Error("Unable to serialize showcase capture."));
+            return;
+          }
+          const comma = reader.result.indexOf(",");
+          resolve(comma === -1 ? reader.result : reader.result.slice(comma + 1));
+        },
+        { once: true },
+      );
+      reader.addEventListener(
+        "error",
+        () => reject(reader.error ?? new Error("FileReader failed.")),
+        { once: true },
+      );
+      reader.readAsDataURL(blob);
+    });
+
+    for (const track of state.stream.getTracks()) track.stop();
+    window.__defendShowcaseCapture = undefined;
+    return {
+      videoBase64,
+      width: state.width,
+      height: state.height,
+      mimeType: state.mimeType,
+    };
+  });
+}
+
 async function recordScene(browser, project, scene) {
   const formRoot = path.join(outputRoot, "raw", project.key);
-  const videoScratch = path.join(outputRoot, "playwright", project.key, scene.id);
   await mkdir(formRoot, { recursive: true });
-  await mkdir(videoScratch, { recursive: true });
 
   const context = await browser.newContext({
     viewport: project.viewport,
@@ -220,15 +322,8 @@ async function recordScene(browser, project, scene) {
     isMobile: project.device.isMobile,
     colorScheme: "dark",
     reducedMotion: "no-preference",
-    recordVideo: {
-      dir: videoScratch,
-      size: project.viewport,
-    },
   });
   const page = await context.newPage();
-  const recordingStartedAt = Date.now();
-  const video = page.video();
-  assert.ok(video, "Playwright video capture must be active");
 
   const browserErrors = [];
   page.on("pageerror", (error) => browserErrors.push(error.message));
@@ -250,7 +345,9 @@ async function recordScene(browser, project, scene) {
   await ensureControls(page);
   await addBranding(page, project, scene);
   await sleep(450);
-  const sceneStartMs = Date.now() - recordingStartedAt;
+
+  const captureInfo = await startCanvasCapture(page, project);
+  const startedAt = Date.now();
 
   let checkpointTaken = false;
   const screenshotPath = path.join(formRoot, scene.id + ".png");
@@ -263,20 +360,33 @@ async function recordScene(browser, project, scene) {
   assert.ok(action, "unknown showcase action " + scene.action);
   await action(page, project, checkpoint);
   assert.equal(checkpointTaken, true, scene.id + " must capture its demonstrated state");
-  await sleep(550);
-  const sceneEndMs = Date.now() - recordingStartedAt;
 
+  const targetMs = Math.round(scene.durationSeconds * 1000);
+  const elapsedMs = Date.now() - startedAt;
+  if (elapsedMs < targetMs) await sleep(targetMs - elapsedMs);
+
+  const capture = await stopCanvasCapture(page);
+  const captureWallSeconds = (Date.now() - startedAt) / 1000;
   assert.deepEqual(browserErrors, [], scene.id + " produced browser errors");
 
+  await writeFile(
+    path.join(formRoot, scene.id + ".webm"),
+    Buffer.from(capture.videoBase64, "base64"),
+  );
   const metadata = {
     product: showcase.product,
     project: project.name,
     formFactor: project.key,
     viewport: project.viewport,
     scene,
-    trim: {
-      startSeconds: Math.max(0, (sceneStartMs - 150) / 1000),
-      durationSeconds: Math.max(0.5, (sceneEndMs - sceneStartMs + 300) / 1000),
+    durationSeconds: scene.durationSeconds,
+    requestedFps: captureInfo.requestedFps,
+    videoBitsPerSecond: captureInfo.videoBitsPerSecond,
+    captureWallSeconds,
+    source: {
+      width: capture.width,
+      height: capture.height,
+      mimeType: capture.mimeType,
     },
     capturedAt: new Date().toISOString(),
   };
@@ -285,16 +395,14 @@ async function recordScene(browser, project, scene) {
     JSON.stringify(metadata, null, 2) + "\n",
   );
 
-  const videoPath = path.join(formRoot, scene.id + ".webm");
   await context.close();
-  await video.saveAs(videoPath);
 }
 
 async function main() {
   await rm(outputRoot, { recursive: true, force: true });
   await mkdir(outputRoot, { recursive: true });
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(mediaConfig.launchOptions);
   try {
     for (const configuredProject of mediaConfig.projects) {
       const project = configuredProject.metadata.showcase;
