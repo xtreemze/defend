@@ -26,7 +26,7 @@ The larger campaign is built around a systemic inversion: **becoming too success
 
 ## Product in motion
 
-The modern preview is recorded by CI in real Chromium. Dynamic scenes are captured directly from the WebGL canvas with a 60 fps target, and CI measures decoded raw-frame timestamps before encoding so a slower source cannot pass merely because FFmpeg pads it to 60 fps. Desktop and mobile showcase the same five systems with form-factor-appropriate interaction; source recordings, screenshots, metadata, 60 fps H.264 reels, and 60 fps animated WebPs remain attached to each workflow run. See [`docs/SHOWCASE.md`](./docs/SHOWCASE.md) for the evidence and publication contract.
+The modern preview is recorded by CI in real Chromium. Dynamic scenes use a frame-exact capture path: Playwright controls application time at 60 Hz and Chromium explicitly samples one real `#renderCanvas` frame per tick with `CanvasCaptureMediaStreamTrack.requestFrame()`. CI requires all 180 source frames for each three-second scene before FFmpeg is allowed to retime or encode them, so a slow CI runner cannot be disguised by duplicated frames. Desktop and mobile showcase the same five systems with form-factor-appropriate interaction; source recordings, screenshots, metadata, 60 fps H.264 reels, and 60 fps animated WebPs remain attached to each workflow run. See [`docs/SHOWCASE.md`](./docs/SHOWCASE.md) for the evidence and publication contract.
 
 ### Desktop
 
