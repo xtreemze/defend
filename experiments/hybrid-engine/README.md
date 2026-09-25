@@ -68,7 +68,7 @@ The shell is deliberately dependency-free. It is a deployment/presentation bound
 
 The modern preview also owns a dedicated browser-media contract under `showcase/`. It records five representative capabilities in both desktop (1440×900) and mobile (390×844, touch-enabled portrait) Chromium contexts, with an assertion at each demonstrated state.
 
-`showcase/manifest.mjs` is the shared source of feature names, descriptions, paths, filenames, viewport intent, and publication labels. `showcase/capture.mjs` records raw WebM, screenshots, and metadata from the real preview; `showcase/render.mjs` uses FFmpeg to create separate desktop/mobile H.264 reels and palette-optimized looping GIFs; `showcase/verify.mjs` rejects incomplete bundles.
+`showcase/manifest.mjs` is the shared source of feature names, descriptions, paths, filenames, viewport intent, 60 fps capture targets, and publication labels. `showcase/capture.mjs` records the real WebGL canvas directly with a VP8-first `MediaRecorder`, plus full-viewport screenshots and metadata; `showcase/render.mjs` creates 60 fps H.264 scene videos/reels and 60 fps animated WebPs; `showcase/verify.mjs` uses decoded raw-frame timestamps to reject captures below 59 actual frames/s before accepting any normalized output.
 
 The workflow is `.github/workflows/showcase-media.yml`. It is intentionally separate from ordinary browser smoke discovery, publishes stable media under `/defend/showcase/` on `gh-pages`, and uploads the full raw/finished evidence bundle for inspection. See [`../../docs/SHOWCASE.md`](../../docs/SHOWCASE.md).
 ## Current fixture
