@@ -39,22 +39,23 @@ test("exactly five shared feature intents drive ten 60 fps captures", () => {
   assert.ok(showcase.scenes.every((scene) => scene.durationSeconds >= 3));
 });
 
-test("capture records the real canvas directly and preserves screenshots and metadata", async () => {
+test("capture preserves every real canvas sample before video encoding", async () => {
   const source = await read("experiments/hybrid-engine/showcase/capture.mjs");
-  assert.match(source, /canvas\.captureStream\(0\)/);
-  assert.match(source, /new MediaRecorder/);
-  assert.ok(
-    source.includes('["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm"]'),
-  );
-  assert.match(source, /videoBitsPerSecond/);
+  assert.equal(showcase.capture.sourceFrameQuality, 0.92);
+  assert.match(source, /canvas\.toDataURL\("image\/webp"/);
+  assert.match(source, /frame-%03d\.webp/);
+  assert.match(source, /"libvpx"/);
+  assert.match(source, /"passthrough"/);
   assert.match(source, /page\.screenshot/);
   assert.match(source, /capturedAt/);
-  assert.match(source, /track\.requestFrame\(\)/);
   assert.match(source, /page\.clock\.install\(\)/);
   assert.match(source, /page\.clock\.runFor/);
-  assert.match(source, /manual-request-frame-virtual-clock/);
-  assert.match(source, /requestedFps/);
+  assert.match(source, /frame-exact-canvas-snapshots-virtual-clock/);
+  assert.match(source, /capturedFrameCount/);
+  assert.match(source, /derivedFromCapturedFrames/);
   assert.match(source, /browserErrors/);
+  assert.doesNotMatch(source, /MediaRecorder/);
+  assert.doesNotMatch(source, /captureStream/);
   assert.doesNotMatch(source, /recordVideo/);
 });
 
@@ -91,10 +92,13 @@ test("verifier proves explicit raw frame count before accepting 60 fps output", 
   const workflow = await read(".github/workflows/showcase-media.yml");
   assert.match(source, /"ffprobe"/);
   assert.match(source, /best_effort_timestamp_time/);
+  assert.match(source, /assertSourceFrameSequence/);
   assert.match(source, /assertExactRawFrames/);
-  assert.match(source, /manual-request-frame-virtual-clock/);
+  assert.match(source, /frame-exact-canvas-snapshots-virtual-clock/);
+  assert.match(source, /assertVp8/);
   assert.match(source, /assertEncodedCadence/);
   assert.match(source, /assertAnimatedWebpCadence/);
+  assert.match(source, /frameDurationsMs/);
   assert.match(source, /value\.length > 0/);
   assert.match(workflow, /showcase:verify --source-only/);
 });
