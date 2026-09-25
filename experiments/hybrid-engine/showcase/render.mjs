@@ -90,8 +90,7 @@ async function renderProject(project) {
       expectedFrames +
       ",setpts=N/(" +
       showcase.capture.videoFps +
-      "*TB),fps=" +
-      showcase.capture.videoFps;
+      "*TB)";
     const normalizedVideo = path.join(normalizedProject, scene.id + ".mp4");
     normalized.push(normalizedVideo);
 
@@ -111,6 +110,10 @@ async function renderProject(project) {
         ":" +
         project.viewport.height +
         ":(ow-iw)/2:(oh-ih)/2",
+      "-frames:v",
+      String(expectedFrames),
+      "-fps_mode",
+      "passthrough",
       "-c:v",
       "libx264",
       "-preset",
