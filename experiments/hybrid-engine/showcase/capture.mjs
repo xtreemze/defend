@@ -3,6 +3,7 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import { spawnSync } from "node:child_process";
 import showcase from "./manifest.mjs";
 import mediaConfig from "./playwright.showcase.config.mjs";
 
@@ -208,74 +209,43 @@ const actions = {
   towerTerrain: runTowerTerrain,
 };
 
-async function startCanvasCapture(page, project) {
-  const requestedFps = showcase.capture.videoFps;
-  const videoBitsPerSecond = project.key === "desktop" ? 12_000_000 : 6_000_000;
-  const result = await page.evaluate(
-    async ({ fps, bitrate }) => {
-      const canvas = document.querySelector("#renderCanvas");
-      if (!(canvas instanceof HTMLCanvasElement) || canvas.width <= 0 || canvas.height <= 0) {
-        throw new Error("Showcase canvas is unavailable or has no render surface.");
-      }
-
-      const stream = canvas.captureStream(0);
-      const track = stream.getVideoTracks()[0];
-      if (!track || typeof track.requestFrame !== "function") {
-        throw new Error("Manual canvas frame capture is unavailable in this Chromium build.");
-      }
-
-      const mimeType =
-        ["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm"].find((candidate) =>
-          MediaRecorder.isTypeSupported(candidate),
-        ) ?? "";
-      const options = { videoBitsPerSecond: bitrate };
-      const recorder =
-        mimeType === ""
-          ? new MediaRecorder(stream, options)
-          : new MediaRecorder(stream, { ...options, mimeType });
-      const chunks = [];
-      recorder.addEventListener("dataavailable", (event) => {
-        if (event.data.size > 0) chunks.push(event.data);
-      });
-
-      window.__defendShowcaseCapture = {
-        recorder,
-        chunks,
-        stream,
-        track,
-        width: canvas.width,
-        height: canvas.height,
-        mimeType: recorder.mimeType || mimeType || "video/webm",
-        requestedFps: fps,
-        requestedFrames: 0,
-      };
-
-      recorder.start(250);
-      if (recorder.state !== "recording") {
-        throw new Error("Showcase recorder failed to enter recording state.");
-      }
-      return {
-        width: canvas.width,
-        height: canvas.height,
-        mimeType: recorder.mimeType || mimeType || "video/webm",
-      };
-    },
-    { fps: requestedFps, bitrate: videoBitsPerSecond },
-  );
-
-  return { ...result, requestedFps, videoBitsPerSecond };
+function run(command, args) {
+  const result = spawnSync(command, args, { stdio: "inherit" });
+  if (result.status !== 0) {
+    throw new Error(command + " failed with exit code " + result.status);
+  }
 }
 
-async function requestCanvasFrame(page) {
-  await page.evaluate(() => {
-    const state = window.__defendShowcaseCapture;
-    if (!state) throw new Error("No active showcase capture exists.");
-    state.track.requestFrame();
-    state.requestedFrames += 1;
+async function canvasInfo(page) {
+  return page.evaluate(() => {
+    const canvas = document.querySelector("#renderCanvas");
+    if (!(canvas instanceof HTMLCanvasElement) || canvas.width <= 0 || canvas.height <= 0) {
+      throw new Error("Showcase canvas is unavailable or has no render surface.");
+    }
+    return { width: canvas.width, height: canvas.height };
   });
 }
 
-async function captureVirtualFrames(page, frameCount, fps) {
+async function snapshotCanvasWebp(page, quality) {
+  return page.evaluate((sourceQuality) => {
+    const canvas = document.querySelector("#renderCanvas");
+    if (!(canvas instanceof HTMLCanvasElement)) {
+      throw new Error("Showcase canvas is unavailable.");
+    }
+    const dataUrl = canvas.toDataURL("image/webp", sourceQuality);
+    const prefix = "data:image/webp;base64,";
+    if (!dataUrl.startsWith(prefix)) {
+      throw new Error("Chromium did not produce a WebP canvas snapshot.");
+    }
+    return dataUrl.slice(prefix.length);
+  }, quality);
+}
+
+async function captureVirtualFrames(page, frameRoot, frameCount, fps) {
+  const source = await canvasInfo(page);
+  await rm(frameRoot, { recursive: true, force: true });
+  await mkdir(frameRoot, { recursive: true });
+
   const pageNow = await page.evaluate(() => Date.now());
   // pauseAt() only moves forward. Leave enough headroom for the Playwright
   // round-trip so the target cannot become stale before Chromium applies it.
@@ -283,76 +253,61 @@ async function captureVirtualFrames(page, frameCount, fps) {
   const wallStart = Date.now();
 
   try {
-    await requestCanvasFrame(page);
-    for (let frame = 1; frame < frameCount; frame += 1) {
-      const previousTarget = Math.round(((frame - 1) * 1000) / fps);
-      const nextTarget = Math.round((frame * 1000) / fps);
-      await page.clock.runFor(nextTarget - previousTarget);
-      await requestCanvasFrame(page);
+    for (let frameIndex = 0; frameIndex < frameCount; frameIndex += 1) {
+      if (frameIndex > 0) {
+        const previousTarget = Math.round(((frameIndex - 1) * 1000) / fps);
+        const nextTarget = Math.round((frameIndex * 1000) / fps);
+        await page.clock.runFor(nextTarget - previousTarget);
+      }
+
+      const frameBase64 = await snapshotCanvasWebp(page, showcase.capture.sourceFrameQuality);
+      const frameNumber = String(frameIndex + 1).padStart(3, "0");
+      await writeFile(
+        path.join(frameRoot, "frame-" + frameNumber + ".webp"),
+        Buffer.from(frameBase64, "base64"),
+      );
     }
   } finally {
     await page.clock.resume();
   }
 
   return {
+    ...source,
     requestedFrames: frameCount,
+    capturedFrames: frameCount,
+    sourceMimeType: "image/webp",
     virtualDurationSeconds: (frameCount - 1) / fps,
     wallDurationSeconds: (Date.now() - wallStart) / 1000,
   };
 }
 
-async function stopCanvasCapture(page) {
-  return page.evaluate(async () => {
-    const state = window.__defendShowcaseCapture;
-    if (!state) throw new Error("No active showcase capture exists.");
-
-    await new Promise((resolve, reject) => {
-      state.recorder.addEventListener("stop", resolve, { once: true });
-      state.recorder.addEventListener(
-        "error",
-        () => reject(new Error("MediaRecorder failed while finalizing showcase capture.")),
-        { once: true },
-      );
-      state.recorder.stop();
-    });
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    if (state.chunks.length === 0) {
-      throw new Error("Showcase capture produced an empty video stream.");
-    }
-
-    const blob = new Blob(state.chunks, { type: state.mimeType });
-    const videoBase64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        () => {
-          if (typeof reader.result !== "string") {
-            reject(new Error("Unable to serialize showcase capture."));
-            return;
-          }
-          const comma = reader.result.indexOf(",");
-          resolve(comma === -1 ? reader.result : reader.result.slice(comma + 1));
-        },
-        { once: true },
-      );
-      reader.addEventListener(
-        "error",
-        () => reject(reader.error ?? new Error("FileReader failed.")),
-        { once: true },
-      );
-      reader.readAsDataURL(blob);
-    });
-
-    for (const track of state.stream.getTracks()) track.stop();
-    window.__defendShowcaseCapture = undefined;
-    return {
-      videoBase64,
-      width: state.width,
-      height: state.height,
-      mimeType: state.mimeType,
-      requestedFrames: state.requestedFrames,
-    };
-  });
+function encodeRawEvidenceWebm(frameRoot, output, project, frameCount) {
+  const bitrate = project.key === "desktop" ? "12M" : "6M";
+  run("ffmpeg", [
+    "-y",
+    "-framerate",
+    String(showcase.capture.videoFps),
+    "-start_number",
+    "1",
+    "-i",
+    path.join(frameRoot, "frame-%03d.webp"),
+    "-frames:v",
+    String(frameCount),
+    "-an",
+    "-c:v",
+    "libvpx",
+    "-deadline",
+    "realtime",
+    "-cpu-used",
+    "8",
+    "-b:v",
+    bitrate,
+    "-pix_fmt",
+    "yuv420p",
+    "-fps_mode",
+    "passthrough",
+    output,
+  ]);
 }
 
 async function recordScene(browser, project, scene) {
@@ -391,35 +346,31 @@ async function recordScene(browser, project, scene) {
   await sleep(450);
 
   let checkpointTaken = false;
-  let captureInfo;
-  let capture;
   let frameCapture;
   const screenshotPath = path.join(formRoot, scene.id + ".png");
+  const frameRoot = path.join(formRoot, scene.id + "-frames");
   const checkpoint = async () => {
     await page.screenshot({ path: screenshotPath, fullPage: false });
     checkpointTaken = true;
 
-    captureInfo = await startCanvasCapture(page, project);
     const expectedFrames = Math.round(scene.durationSeconds * showcase.capture.videoFps);
     frameCapture = await captureVirtualFrames(
       page,
+      frameRoot,
       expectedFrames,
       showcase.capture.videoFps,
     );
-    capture = await stopCanvasCapture(page);
   };
 
   const action = actions[scene.action];
   assert.ok(action, "unknown showcase action " + scene.action);
   await action(page, project, checkpoint);
   assert.equal(checkpointTaken, true, scene.id + " must capture its demonstrated state");
-  assert.ok(captureInfo && capture && frameCapture, scene.id + " must capture frame-exact video");
+  assert.ok(frameCapture, scene.id + " must capture a frame-exact source sequence");
   assert.deepEqual(browserErrors, [], scene.id + " produced browser errors");
 
-  await writeFile(
-    path.join(formRoot, scene.id + ".webm"),
-    Buffer.from(capture.videoBase64, "base64"),
-  );
+  const rawVideoPath = path.join(formRoot, scene.id + ".webm");
+  encodeRawEvidenceWebm(frameRoot, rawVideoPath, project, frameCapture.capturedFrames);
   const metadata = {
     product: showcase.product,
     project: project.name,
@@ -427,17 +378,25 @@ async function recordScene(browser, project, scene) {
     viewport: project.viewport,
     scene,
     durationSeconds: scene.durationSeconds,
-    requestedFps: captureInfo.requestedFps,
+    requestedFps: showcase.capture.videoFps,
     requestedFrameCount: frameCapture.requestedFrames,
+    capturedFrameCount: frameCapture.capturedFrames,
     virtualDurationSeconds: frameCapture.virtualDurationSeconds,
     captureWallSeconds: frameCapture.wallDurationSeconds,
-    videoBitsPerSecond: captureInfo.videoBitsPerSecond,
-    captureMode: "manual-request-frame-virtual-clock",
+    captureMode: "frame-exact-canvas-snapshots-virtual-clock",
     source: {
-      width: capture.width,
-      height: capture.height,
-      mimeType: capture.mimeType,
-      requestedFrames: capture.requestedFrames,
+      width: frameCapture.width,
+      height: frameCapture.height,
+      mimeType: frameCapture.sourceMimeType,
+      quality: showcase.capture.sourceFrameQuality,
+      frameDirectory: path.basename(frameRoot),
+      requestedFrames: frameCapture.requestedFrames,
+      capturedFrames: frameCapture.capturedFrames,
+    },
+    evidenceVideo: {
+      container: "webm",
+      codec: "vp8",
+      derivedFromCapturedFrames: true,
     },
     capturedAt: new Date().toISOString(),
   };
