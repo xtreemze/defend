@@ -68,10 +68,10 @@ jobs:
         with:
           version: v0.15.0
 
-      - name: Install FFmpeg
+      - name: Install media tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg webp
 
       - name: Install modern workspace
         working-directory: experiments
