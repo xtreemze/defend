@@ -21,6 +21,7 @@ export const showcase = {
   capture: {
     videoFps: 60,
     minimumEncodedFps: 59,
+    sourceFrameQuality: 0.92,
   },
   webp: {
     fps: 60,
