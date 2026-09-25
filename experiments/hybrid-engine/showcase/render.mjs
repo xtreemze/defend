@@ -30,6 +30,17 @@ async function renderProject(project) {
   const normalized = [];
   for (const scene of showcase.scenes) {
     const input = path.join(outputRoot, "raw", project.key, scene.id + ".webm");
+    const metadata = JSON.parse(
+      await readFile(path.join(outputRoot, "raw", project.key, scene.id + ".json"), "utf8"),
+    );
+    const expectedFrames = metadata.requestedFrameCount;
+    const frameFilter =
+      "trim=end_frame=" +
+      expectedFrames +
+      ",setpts=N/(" +
+      showcase.capture.videoFps +
+      "*TB),fps=" +
+      showcase.capture.videoFps;
     const normalizedVideo = path.join(normalizedProject, scene.id + ".mp4");
     normalized.push(normalizedVideo);
 
@@ -39,8 +50,7 @@ async function renderProject(project) {
       input,
       "-an",
       "-vf",
-      "fps=" +
-        showcase.capture.videoFps +
+      frameFilter +
         ",scale=" +
         project.viewport.width +
         ":" +
@@ -70,7 +80,7 @@ async function renderProject(project) {
       input,
       "-an",
       "-vf",
-      "fps=" + showcase.webp.fps + ",scale=" + project.webpWidth + ":-2:flags=lanczos",
+      frameFilter + ",scale=" + project.webpWidth + ":-2:flags=lanczos",
       "-c:v",
       "libwebp_anim",
       "-lossless",
