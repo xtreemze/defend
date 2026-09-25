@@ -94,8 +94,8 @@ function assertReportedHighFrameRate(file) {
   const stream = probeJson(file);
   const fps = Math.max(frameRate(stream.avg_frame_rate), frameRate(stream.r_frame_rate));
   assert.ok(
-    Number.isFinite(fps) && fps >= showcase.capture.minimumCapturedFps,
-    file + " must report at least " + showcase.capture.minimumCapturedFps + " fps; got " + fps,
+    Number.isFinite(fps) && fps >= showcase.capture.minimumEncodedFps,
+    file + " must report at least " + showcase.capture.minimumEncodedFps + " fps; got " + fps,
   );
 }
 
@@ -127,12 +127,12 @@ function assertEncodedCadence(file, expectedFrames, label) {
   assert.ok(Number.isFinite(duration) && duration > 0, "Invalid decoded frame duration for " + file);
   const fps = (timestamps.length - 1) / duration;
   assert.ok(
-    fps >= showcase.capture.minimumCapturedFps,
+    fps >= showcase.capture.minimumEncodedFps,
     file +
       " decodes at " +
       fps.toFixed(2) +
       " fps; expected at least " +
-      showcase.capture.minimumCapturedFps +
+      showcase.capture.minimumEncodedFps +
       " fps for " +
       label,
   );
@@ -179,12 +179,12 @@ async function assertAnimatedWebpCadence(file, expectedFrames) {
   assert.ok(stats.durationMs > 0, file + " must have a positive animation duration");
   const fps = stats.frameCount / (stats.durationMs / 1000);
   assert.ok(
-    fps >= showcase.capture.minimumCapturedFps,
+    fps >= showcase.capture.minimumEncodedFps,
     file +
       " WebP animation cadence is " +
       fps.toFixed(2) +
       " fps; expected at least " +
-      showcase.capture.minimumCapturedFps,
+      showcase.capture.minimumEncodedFps,
   );
 }
 
