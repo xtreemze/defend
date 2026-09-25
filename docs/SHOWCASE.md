@@ -18,8 +18,8 @@ Each capability has one desktop scene and one mobile scene. Desktop is captured 
 
 A successful showcase run preserves:
 
-- five raw desktop WebM recordings, screenshots, and scene metadata;
-- five raw mobile WebM recordings, screenshots, and scene metadata;
+- five desktop source-frame sequences (180 canvas snapshots each), VP8 WebM evidence recordings, screenshots, and scene metadata;
+- five mobile source-frame sequences (180 canvas snapshots each), VP8 WebM evidence recordings, screenshots, and scene metadata;
 - `defend-desktop-highlight.mp4`;
 - `defend-mobile-highlight.mp4`;
 - five 60 fps animated desktop WebPs;
@@ -32,11 +32,11 @@ The artifact layout is rooted at `experiments/hybrid-engine/artifacts/e2e-media/
 
 ## Capture and frame-rate policy
 
-Dynamic evidence is captured directly from `#renderCanvas`, but Defend does not treat GitHub runner wall-clock speed as the media clock. Playwright's Clock API controls `requestAnimationFrame`, `performance`, and timers while the capture is active. For each three-second scene, CI advances application time in 16/17 ms increments and explicitly requests one canvas frame per tick through `canvas.captureStream(0)` + `CanvasCaptureMediaStreamTrack.requestFrame()`. That produces exactly 180 source frame requests at a 60 Hz application-time cadence.
+Dynamic evidence is captured directly from `#renderCanvas`, but Defend does not treat GitHub runner wall-clock speed as the media clock. Playwright's Clock API controls `requestAnimationFrame`, `performance`, and timers while capture is active. For each three-second scene, CI advances application time in 16/17 ms increments and serializes the canvas itself to one source WebP at every tick. That produces exactly 180 independently preserved browser samples at a 60 Hz application-time cadence.
 
-The browser recorder prefers VP8 over VP9 and is used only as a container for those explicitly requested source frames. Desktop capture targets 12 Mbps and mobile capture targets 6 Mbps. Dedicated showcase Chromium also disables background timer/render throttling and frame-rate/vsync limits.
+`MediaRecorder` is deliberately not trusted as the source-of-truth because CI proved it can drop requested canvas frames. Once all 180 source snapshots exist, FFmpeg derives a VP8 WebM evidence video from that exact image sequence with frame passthrough. Dedicated showcase Chromium also disables background timer/render throttling and frame-rate/vsync limits.
 
-This is intentionally an offline, frame-exact capture contract rather than a claim that GitHub's software-rendered runner can render Defend at 60 frames per wall-clock second. Before FFmpeg runs, `showcase/verify.mjs --source-only` decodes the raw WebM and requires exactly 180 frames per three-second scene, matching the 180 explicit frame requests recorded in metadata. If Chromium drops even one requested source frame, CI fails before encoding.
+This is intentionally an offline, frame-exact capture contract rather than a claim that GitHub's software-rendered runner can render Defend at 60 frames per wall-clock second. `showcase/verify.mjs --source-only` requires the exact 180-file source sequence, then independently decodes the derived VP8 WebM and requires the same 180-frame count and measured cadence. Missing source samples therefore cannot be concealed by FFmpeg duplication.
 
 FFmpeg then retimes those already-captured frames with `setpts=N/(60*TB)`; it is not permitted to manufacture a 60 fps source by duplicating a slower recording. The final verifier requires each H.264 scene video and reel to contain the expected decoded frame count at at least 59 fps. For animated WebP, FFmpeg first encodes each scaled source sample as a single-frame WebP and the official `webpmux` tool assembles all 180 frames with an exact 17/16/17 ms cadence. This avoids `libwebp_anim` frame coalescing. The final verifier independently parses RIFF `ANIM`/`ANMF` chunks and requires the exact 180-frame sequence, every per-frame duration, and the exact three-second total because FFprobe does not reliably expose animated-WebP timing on the Ubuntu build used by CI.
 
@@ -51,8 +51,8 @@ The workflow:
 3. installs real Chromium through the existing Playwright dependency;
 4. installs FFmpeg and the official WebP tools;
 5. builds the real hybrid-engine preview;
-6. records five desktop and five mobile scenes with 180 explicit source-frame requests each;
-7. verifies the raw source frame count before any normalization or encoding;
+6. captures five desktop and five mobile scenes as 180 explicit canvas snapshots each and derives VP8 evidence WebMs from those exact sequences;
+7. verifies all 1,800 source snapshots plus the decoded VP8 frame count/cadence before presentation normalization;
 8. renders ten source-resolution 60 fps H.264 scene videos and the two 60 fps H.264 highlight reels;
 9. encodes 180 single-frame WebPs per scene and muxes each set into a frame-exact 60 fps animated WebP;
 10. verifies final decoded frame counts/cadence plus the animated-WebP frame structure;
