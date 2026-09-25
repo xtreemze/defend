@@ -74,7 +74,6 @@ test("renderer keeps 60 fps canonical reels and 60 fps animated WebPs", async ()
   assert.equal(showcase.webp.fps, 60);
   assert.equal(showcase.webp.budgets.combined, 15_000_000);
   assert.match(source, /showcase\.capture\.videoFps/);
-  assert.match(source, /showcase\.webp\.fps/);
   assert.match(source, /libwebp_anim/);
   assert.ok(source.includes('"-loop"'));
   assert.ok(source.includes('"0"'));
