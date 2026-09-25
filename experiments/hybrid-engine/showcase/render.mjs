@@ -19,6 +19,57 @@ function run(command, args) {
   }
 }
 
+function webpFrameDurationMs(frameIndex, fps) {
+  const start = Math.round((frameIndex * 1000) / fps);
+  const end = Math.round(((frameIndex + 1) * 1000) / fps);
+  return end - start;
+}
+
+async function renderAnimatedWebp({
+  input,
+  output,
+  frameFilter,
+  frameWidth,
+  expectedFrames,
+  frameRoot,
+}) {
+  await rm(frameRoot, { recursive: true, force: true });
+  await mkdir(frameRoot, { recursive: true });
+  const pattern = path.join(frameRoot, "frame-%03d.webp");
+
+  run("ffmpeg", [
+    "-y",
+    "-i",
+    input,
+    "-an",
+    "-vf",
+    frameFilter + ",scale=" + frameWidth + ":-2:flags=lanczos",
+    "-frames:v",
+    String(expectedFrames),
+    "-c:v",
+    "libwebp",
+    "-lossless",
+    "0",
+    "-compression_level",
+    String(showcase.webp.compressionLevel),
+    "-q:v",
+    String(showcase.webp.quality),
+    pattern,
+  ]);
+
+  const muxArgs = [];
+  for (let frameIndex = 0; frameIndex < expectedFrames; frameIndex += 1) {
+    const frameNumber = String(frameIndex + 1).padStart(3, "0");
+    const frameFile = path.join(frameRoot, "frame-" + frameNumber + ".webp");
+    const durationMs = webpFrameDurationMs(frameIndex, showcase.webp.fps);
+    muxArgs.push("-frame", frameFile, "+" + durationMs + "+0+0+0-b");
+  }
+  muxArgs.push("-loop", "0", "-o", output);
+  run("webpmux", muxArgs);
+
+  await rm(frameRoot, { recursive: true, force: true });
+}
+
 async function renderProject(project) {
   const normalizedProject = path.join(normalizedRoot, project.key);
   const webpProject = path.join(webpsRoot, project.key);
@@ -74,25 +125,14 @@ async function renderProject(project) {
     ]);
 
     const webp = path.join(webpProject, scene.id + ".webp");
-    run("ffmpeg", [
-      "-y",
-      "-i",
+    await renderAnimatedWebp({
       input,
-      "-an",
-      "-vf",
-      frameFilter + ",scale=" + project.webpWidth + ":-2:flags=lanczos",
-      "-c:v",
-      "libwebp_anim",
-      "-lossless",
-      "0",
-      "-compression_level",
-      String(showcase.webp.compressionLevel),
-      "-q:v",
-      String(showcase.webp.quality),
-      "-loop",
-      "0",
-      webp,
-    ]);
+      output: webp,
+      frameFilter,
+      frameWidth: project.webpWidth,
+      expectedFrames,
+      frameRoot: path.join(normalizedProject, scene.id + "-webp-frames"),
+    });
     await copyFile(webp, path.join(publishProject, scene.id + ".webp"));
   }
 
