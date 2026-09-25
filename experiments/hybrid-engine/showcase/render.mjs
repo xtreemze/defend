@@ -8,7 +8,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.resolve(here, "..");
 const outputRoot = path.resolve(packageRoot, showcase.outputRoot);
 const reelsRoot = path.join(outputRoot, "reels");
-const gifsRoot = path.join(outputRoot, "gifs");
+const webpsRoot = path.join(outputRoot, "webps");
 const normalizedRoot = path.join(outputRoot, "playwright", "normalized");
 const publishRoot = path.join(outputRoot, "publish", "showcase");
 
@@ -21,35 +21,27 @@ function run(command, args) {
 
 async function renderProject(project) {
   const normalizedProject = path.join(normalizedRoot, project.key);
-  const gifProject = path.join(gifsRoot, project.key);
+  const webpProject = path.join(webpsRoot, project.key);
   const publishProject = path.join(publishRoot, project.key);
   await mkdir(normalizedProject, { recursive: true });
-  await mkdir(gifProject, { recursive: true });
+  await mkdir(webpProject, { recursive: true });
   await mkdir(publishProject, { recursive: true });
 
   const normalized = [];
   for (const scene of showcase.scenes) {
     const input = path.join(outputRoot, "raw", project.key, scene.id + ".webm");
-    const metadata = JSON.parse(
-      await readFile(path.join(outputRoot, "raw", project.key, scene.id + ".json"), "utf8"),
-    );
-    const trimArgs = [
-      "-ss",
-      metadata.trim.startSeconds.toFixed(3),
-      "-t",
-      metadata.trim.durationSeconds.toFixed(3),
-    ];
     const normalizedVideo = path.join(normalizedProject, scene.id + ".mp4");
     normalized.push(normalizedVideo);
 
     run("ffmpeg", [
       "-y",
-      ...trimArgs,
       "-i",
       input,
       "-an",
       "-vf",
-      "fps=30,scale=" +
+      "fps=" +
+        showcase.capture.videoFps +
+        ",scale=" +
         project.viewport.width +
         ":" +
         project.viewport.height +
@@ -71,37 +63,27 @@ async function renderProject(project) {
       normalizedVideo,
     ]);
 
-    const palette = path.join(normalizedProject, scene.id + "-palette.png");
-    const gif = path.join(gifProject, scene.id + ".gif");
+    const webp = path.join(webpProject, scene.id + ".webp");
     run("ffmpeg", [
       "-y",
-      ...trimArgs,
       "-i",
       input,
+      "-an",
       "-vf",
-      "fps=" + showcase.gif.fps + ",scale=" +
-        project.gifWidth +
-        ":-2:flags=lanczos,palettegen=max_colors=" + showcase.gif.colors + ":stats_mode=diff",
-      "-frames:v",
-      "1",
-      palette,
-    ]);
-    run("ffmpeg", [
-      "-y",
-      ...trimArgs,
-      "-i",
-      input,
-      "-i",
-      palette,
-      "-lavfi",
-      "fps=" + showcase.gif.fps + ",scale=" +
-        project.gifWidth +
-        ":-2:flags=lanczos[x];[x][1:v]paletteuse=dither=sierra2_4a:diff_mode=rectangle",
+      "fps=" + showcase.webp.fps + ",scale=" + project.webpWidth + ":-2:flags=lanczos",
+      "-c:v",
+      "libwebp_anim",
+      "-lossless",
+      "0",
+      "-compression_level",
+      String(showcase.webp.compressionLevel),
+      "-q:v",
+      String(showcase.webp.quality),
       "-loop",
       "0",
-      gif,
+      webp,
     ]);
-    await copyFile(gif, path.join(publishProject, scene.id + ".gif"));
+    await copyFile(webp, path.join(publishProject, scene.id + ".webp"));
   }
 
   const concatFile = path.join(normalizedProject, "concat.txt");
@@ -132,7 +114,7 @@ async function buildReadmeSnippet() {
   const lines = [
     "## Product in motion",
     "",
-    "CI records these scenes from the real modern preview in Chromium. Desktop and mobile use the same product capabilities with form-factor-appropriate interaction.",
+    "CI records these scenes from the real modern preview in Chromium. Raw canvas capture is measured before encoding and must sustain at least 59 actual frames per second against a 60 fps target.",
     "",
   ];
 
@@ -140,7 +122,7 @@ async function buildReadmeSnippet() {
     lines.push("### " + (project.key === "desktop" ? "Desktop" : "Mobile"), "");
     for (const scene of showcase.scenes) {
       const url =
-        showcase.publishedBaseUrl + "/" + project.key + "/" + scene.id + ".gif";
+        showcase.publishedBaseUrl + "/" + project.key + "/" + scene.id + ".webp";
       lines.push(
         "#### " + scene.title,
         "",
@@ -153,7 +135,7 @@ async function buildReadmeSnippet() {
           " " +
           project.key +
           ' showcase" width="' +
-          project.gifWidth +
+          project.webpWidth +
           '">',
         "",
       );
@@ -170,7 +152,7 @@ async function reportSizes() {
   for (const project of showcase.projects) {
     let total = 0;
     for (const scene of showcase.scenes) {
-      const file = path.join(gifsRoot, project.key, scene.id + ".gif");
+      const file = path.join(webpsRoot, project.key, scene.id + ".webp");
       const size = (await stat(file)).size;
       report[project.key][scene.id] = size;
       total += size;
@@ -181,32 +163,32 @@ async function reportSizes() {
     process.stdout.write(project.key + " total: " + total + " bytes\n");
   }
   report.totals.combined = combined;
-  report.budgets = showcase.gif.budgets;
-  process.stdout.write("combined GIF payload: " + combined + " bytes\n");
+  report.budgets = showcase.webp.budgets;
+  process.stdout.write("combined animated WebP payload: " + combined + " bytes\n");
   await writeFile(path.join(outputRoot, "sizes.json"), JSON.stringify(report, null, 2) + "\n");
 
   for (const project of showcase.projects) {
     for (const scene of showcase.scenes) {
       const size = report[project.key][scene.id];
-      if (size > showcase.gif.budgets.perFile) {
-        throw new Error(project.key + " " + scene.id + " exceeds per-file GIF budget: " + size);
+      if (size > showcase.webp.budgets.perFile) {
+        throw new Error(project.key + " " + scene.id + " exceeds per-file WebP budget: " + size);
       }
     }
   }
-  if (report.totals.desktop > showcase.gif.budgets.desktopTotal) {
-    throw new Error("desktop GIF payload exceeds budget: " + report.totals.desktop);
+  if (report.totals.desktop > showcase.webp.budgets.desktopTotal) {
+    throw new Error("desktop WebP payload exceeds budget: " + report.totals.desktop);
   }
-  if (report.totals.mobile > showcase.gif.budgets.mobileTotal) {
-    throw new Error("mobile GIF payload exceeds budget: " + report.totals.mobile);
+  if (report.totals.mobile > showcase.webp.budgets.mobileTotal) {
+    throw new Error("mobile WebP payload exceeds budget: " + report.totals.mobile);
   }
-  if (report.totals.combined > showcase.gif.budgets.combined) {
-    throw new Error("combined GIF payload exceeds budget: " + report.totals.combined);
+  if (report.totals.combined > showcase.webp.budgets.combined) {
+    throw new Error("combined WebP payload exceeds budget: " + report.totals.combined);
   }
 }
 
 async function main() {
   await rm(reelsRoot, { recursive: true, force: true });
-  await rm(gifsRoot, { recursive: true, force: true });
+  await rm(webpsRoot, { recursive: true, force: true });
   await rm(normalizedRoot, { recursive: true, force: true });
   await rm(publishRoot, { recursive: true, force: true });
   await mkdir(reelsRoot, { recursive: true });
