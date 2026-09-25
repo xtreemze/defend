@@ -8,19 +8,25 @@ export const showcase = {
       name: "Desktop Showcase",
       viewport: { width: 1440, height: 900 },
       device: { hasTouch: false, isMobile: false },
-      gifWidth: 620,
+      webpWidth: 620,
     },
     {
       key: "mobile",
       name: "Mobile Showcase",
       viewport: { width: 390, height: 844 },
       device: { hasTouch: true, isMobile: true },
-      gifWidth: 300,
+      webpWidth: 300,
     },
   ],
-  gif: {
-    fps: 8,
-    colors: 64,
+  capture: {
+    videoFps: 60,
+    minimumCapturedFps: 59,
+    minimumDurationRatio: 0.97,
+  },
+  webp: {
+    fps: 60,
+    quality: 60,
+    compressionLevel: 6,
     budgets: {
       perFile: 4_500_000,
       desktopTotal: 10_000_000,
@@ -35,6 +41,7 @@ export const showcase = {
       path: "/",
       description: "Orbit the Babylon battlefield while the fixed-step Bevy/WASM simulation remains authoritative.",
       action: "arena",
+      durationSeconds: 3,
     },
     {
       id: "02-finite-energy-mothership",
@@ -42,6 +49,7 @@ export const showcase = {
       path: "/mothership.html",
       description: "Expose the mothership's finite reserve, hover drain, and reversible camera perspective.",
       action: "mothership",
+      durationSeconds: 3,
     },
     {
       id: "03-raid-navigation",
@@ -49,6 +57,7 @@ export const showcase = {
       path: "/navigation.html",
       description: "Select raid sectors and watch the mothership approach through physically constrained navigation.",
       action: "navigation",
+      durationSeconds: 3,
     },
     {
       id: "04-geothermal-energy",
@@ -56,6 +65,7 @@ export const showcase = {
       path: "/geothermal.html",
       description: "Accelerate local pressure and expose finite subsurface energy as a tactical world system.",
       action: "geothermal",
+      durationSeconds: 3,
     },
     {
       id: "05-towers-and-terrain",
@@ -63,6 +73,7 @@ export const showcase = {
       path: "/tower-terrain.html",
       description: "Demonstrate finite turret behavior, missed shots, impacts, and deformation on shared terrain.",
       action: "towerTerrain",
+      durationSeconds: 3,
     },
   ],
 };
