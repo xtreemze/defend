@@ -34,7 +34,7 @@ test("exactly five shared feature intents drive ten 60 fps captures", () => {
   );
   assert.equal(showcase.projects.length * showcase.scenes.length, 10);
   assert.equal(showcase.capture.videoFps, 60);
-  assert.equal(showcase.capture.minimumCapturedFps, 59);
+  assert.equal(showcase.capture.minimumEncodedFps, 59);
   assert.equal(showcase.webp.fps, showcase.capture.videoFps);
   assert.ok(showcase.scenes.every((scene) => scene.durationSeconds >= 3));
 });
