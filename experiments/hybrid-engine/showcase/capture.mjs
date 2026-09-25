@@ -210,7 +210,7 @@ const actions = {
 
 async function startCanvasCapture(page, project) {
   const requestedFps = showcase.capture.videoFps;
-  const videoBitsPerSecond = project.key === "desktop" ? 20_000_000 : 8_000_000;
+  const videoBitsPerSecond = project.key === "desktop" ? 12_000_000 : 6_000_000;
   const result = await page.evaluate(
     async ({ fps, bitrate }) => {
       const canvas = document.querySelector("#renderCanvas");
@@ -218,7 +218,12 @@ async function startCanvasCapture(page, project) {
         throw new Error("Showcase canvas is unavailable or has no render surface.");
       }
 
-      const stream = canvas.captureStream(fps);
+      const stream = canvas.captureStream(0);
+      const track = stream.getVideoTracks()[0];
+      if (!track || typeof track.requestFrame !== "function") {
+        throw new Error("Manual canvas frame capture is unavailable in this Chromium build.");
+      }
+
       const mimeType =
         ["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm"].find((candidate) =>
           MediaRecorder.isTypeSupported(candidate),
@@ -237,16 +242,18 @@ async function startCanvasCapture(page, project) {
         recorder,
         chunks,
         stream,
+        track,
         width: canvas.width,
         height: canvas.height,
         mimeType: recorder.mimeType || mimeType || "video/webm",
+        requestedFps: fps,
+        requestedFrames: 0,
       };
 
       recorder.start(250);
       if (recorder.state !== "recording") {
         throw new Error("Showcase recorder failed to enter recording state.");
       }
-      await new Promise((resolve) => requestAnimationFrame(() => resolve()));
       return {
         width: canvas.width,
         height: canvas.height,
@@ -257,6 +264,39 @@ async function startCanvasCapture(page, project) {
   );
 
   return { ...result, requestedFps, videoBitsPerSecond };
+}
+
+async function requestCanvasFrame(page) {
+  await page.evaluate(() => {
+    const state = window.__defendShowcaseCapture;
+    if (!state) throw new Error("No active showcase capture exists.");
+    state.track.requestFrame();
+    state.requestedFrames += 1;
+  });
+}
+
+async function captureVirtualFrames(page, frameCount, fps) {
+  const virtualStart = await page.evaluate(() => Date.now());
+  await page.clock.pauseAt(virtualStart);
+  const wallStart = Date.now();
+
+  try {
+    await requestCanvasFrame(page);
+    for (let frame = 1; frame < frameCount; frame += 1) {
+      const previousTarget = Math.round(((frame - 1) * 1000) / fps);
+      const nextTarget = Math.round((frame * 1000) / fps);
+      await page.clock.runFor(nextTarget - previousTarget);
+      await requestCanvasFrame(page);
+    }
+  } finally {
+    await page.clock.resume();
+  }
+
+  return {
+    requestedFrames: frameCount,
+    virtualDurationSeconds: (frameCount - 1) / fps,
+    wallDurationSeconds: (Date.now() - wallStart) / 1000,
+  };
 }
 
 async function stopCanvasCapture(page) {
@@ -324,6 +364,7 @@ async function recordScene(browser, project, scene) {
     reducedMotion: "no-preference",
   });
   const page = await context.newPage();
+  await page.clock.install();
 
   const browserErrors = [];
   page.on("pageerror", (error) => browserErrors.push(error.message));
@@ -346,27 +387,30 @@ async function recordScene(browser, project, scene) {
   await addBranding(page, project, scene);
   await sleep(450);
 
-  const captureInfo = await startCanvasCapture(page, project);
-  const startedAt = Date.now();
-
   let checkpointTaken = false;
+  let captureInfo;
+  let capture;
+  let frameCapture;
   const screenshotPath = path.join(formRoot, scene.id + ".png");
   const checkpoint = async () => {
     await page.screenshot({ path: screenshotPath, fullPage: false });
     checkpointTaken = true;
+
+    captureInfo = await startCanvasCapture(page, project);
+    const expectedFrames = Math.round(scene.durationSeconds * showcase.capture.videoFps);
+    frameCapture = await captureVirtualFrames(
+      page,
+      expectedFrames,
+      showcase.capture.videoFps,
+    );
+    capture = await stopCanvasCapture(page);
   };
 
   const action = actions[scene.action];
   assert.ok(action, "unknown showcase action " + scene.action);
   await action(page, project, checkpoint);
   assert.equal(checkpointTaken, true, scene.id + " must capture its demonstrated state");
-
-  const targetMs = Math.round(scene.durationSeconds * 1000);
-  const elapsedMs = Date.now() - startedAt;
-  if (elapsedMs < targetMs) await sleep(targetMs - elapsedMs);
-
-  const capture = await stopCanvasCapture(page);
-  const captureWallSeconds = (Date.now() - startedAt) / 1000;
+  assert.ok(captureInfo && capture && frameCapture, scene.id + " must capture frame-exact video");
   assert.deepEqual(browserErrors, [], scene.id + " produced browser errors");
 
   await writeFile(
@@ -381,12 +425,16 @@ async function recordScene(browser, project, scene) {
     scene,
     durationSeconds: scene.durationSeconds,
     requestedFps: captureInfo.requestedFps,
+    requestedFrameCount: frameCapture.requestedFrames,
+    virtualDurationSeconds: frameCapture.virtualDurationSeconds,
+    captureWallSeconds: frameCapture.wallDurationSeconds,
     videoBitsPerSecond: captureInfo.videoBitsPerSecond,
-    captureWallSeconds,
+    captureMode: "manual-request-frame-virtual-clock",
     source: {
       width: capture.width,
       height: capture.height,
       mimeType: capture.mimeType,
+      requestedFrames: capture.requestedFrames,
     },
     capturedAt: new Date().toISOString(),
   };
