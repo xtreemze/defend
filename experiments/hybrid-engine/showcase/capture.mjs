@@ -276,8 +276,10 @@ async function requestCanvasFrame(page) {
 }
 
 async function captureVirtualFrames(page, frameCount, fps) {
-  const virtualStart = await page.evaluate(() => Date.now());
-  await page.clock.pauseAt(virtualStart);
+  const pageNow = await page.evaluate(() => Date.now());
+  // pauseAt() only moves forward. Leave enough headroom for the Playwright
+  // round-trip so the target cannot become stale before Chromium applies it.
+  await page.clock.pauseAt(pageNow + 1_000);
   const wallStart = Date.now();
 
   try {
