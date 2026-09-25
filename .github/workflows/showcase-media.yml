@@ -113,6 +113,10 @@ jobs:
           SHOWCASE_BASE_URL: http://127.0.0.1:5173
         run: pnpm showcase:capture
 
+      - name: Verify frame-exact raw 60 fps source capture
+        working-directory: experiments/hybrid-engine
+        run: pnpm showcase:verify --source-only
+
       - name: Render two 60 fps reels and ten 60 fps WebPs
         working-directory: experiments/hybrid-engine
         run: pnpm showcase:render
