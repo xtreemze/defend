@@ -348,6 +348,7 @@ async function stopCanvasCapture(page) {
       width: state.width,
       height: state.height,
       mimeType: state.mimeType,
+      requestedFrames: state.requestedFrames,
     };
   });
 }
