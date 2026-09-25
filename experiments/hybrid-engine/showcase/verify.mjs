@@ -25,7 +25,7 @@ function probeJson(file) {
       "-select_streams",
       "v:0",
       "-show_entries",
-      "stream=width,height,avg_frame_rate,r_frame_rate",
+      "stream=codec_name,width,height,avg_frame_rate,r_frame_rate",
       "-of",
       "json",
       file,
@@ -88,6 +88,27 @@ function assertDimensions(file, expected) {
 function assertWidth(file, expectedWidth) {
   const stream = probeJson(file);
   assert.equal(stream.width, expectedWidth, file + " width must match presentation target");
+}
+
+function assertVp8(file) {
+  const stream = probeJson(file);
+  assert.equal(stream.codec_name, "vp8", file + " must use VP8 for raw evidence");
+}
+
+async function assertSourceFrameSequence(frameRoot, expectedFrames, expectedDimensions) {
+  const frameFiles = (await readdir(frameRoot)).filter((file) => file.endsWith(".webp")).sort();
+  const expectedNames = Array.from(
+    { length: expectedFrames },
+    (_, index) => "frame-" + String(index + 1).padStart(3, "0") + ".webp",
+  );
+  assert.deepEqual(
+    frameFiles,
+    expectedNames,
+    frameRoot + " must contain one explicit canvas snapshot for every 60 Hz source tick",
+  );
+  await Promise.all(frameFiles.map((file) => mustExist(path.join(frameRoot, file))));
+  assertDimensions(path.join(frameRoot, frameFiles[0]), expectedDimensions);
+  assertDimensions(path.join(frameRoot, frameFiles.at(-1)), expectedDimensions);
 }
 
 function assertReportedHighFrameRate(file) {
@@ -217,6 +238,7 @@ async function verifySources() {
       const rawVideo = rawBase + ".webm";
       const screenshot = rawBase + ".png";
       const metadataPath = rawBase + ".json";
+      const frameRoot = path.join(outputRoot, "raw", project.key, scene.id + "-frames");
       await mustExist(rawVideo);
       await mustExist(screenshot);
       await mustExist(metadataPath);
@@ -226,13 +248,22 @@ async function verifySources() {
       assert.equal(metadata.requestedFps, showcase.capture.videoFps);
       assert.equal(metadata.durationSeconds, scene.durationSeconds);
       assert.equal(metadata.requestedFrameCount, expectedFrames);
+      assert.equal(metadata.capturedFrameCount, expectedFrames);
       assert.equal(metadata.source.requestedFrames, expectedFrames);
-      assert.equal(metadata.captureMode, "manual-request-frame-virtual-clock");
+      assert.equal(metadata.source.capturedFrames, expectedFrames);
+      assert.equal(metadata.captureMode, "frame-exact-canvas-snapshots-virtual-clock");
       assert.equal(metadata.source.width, project.viewport.width);
       assert.equal(metadata.source.height, project.viewport.height);
+      assert.equal(metadata.source.mimeType, "image/webp");
+      assert.equal(metadata.source.quality, showcase.capture.sourceFrameQuality);
+      assert.equal(metadata.evidenceVideo.codec, "vp8");
+      assert.equal(metadata.evidenceVideo.derivedFromCapturedFrames, true);
 
+      await assertSourceFrameSequence(frameRoot, expectedFrames, project.viewport);
       assertDimensions(rawVideo, project.viewport);
+      assertVp8(rawVideo);
       assertExactRawFrames(rawVideo, expectedFrames);
+      assertEncodedCadence(rawVideo, expectedFrames, "raw VP8 evidence video");
       assertDimensions(screenshot, project.viewport);
     }
 
@@ -251,6 +282,11 @@ async function verifySources() {
       rawFiles.filter((file) => file.endsWith(".json")).length,
       5,
       project.key + " must contain exactly five metadata files",
+    );
+    assert.equal(
+      rawFiles.filter((file) => file.endsWith("-frames")).length,
+      5,
+      project.key + " must contain exactly five source-frame directories",
     );
   }
 }
@@ -325,11 +361,11 @@ async function verifyRenderedOutputs() {
 await verifySources();
 if (sourceOnly) {
   process.stdout.write(
-    "showcase source verification passed: 10 frame-exact raw captures at 60 virtual Hz\n",
+    "showcase source verification passed: 1,800 explicit canvas samples and 10 frame-exact VP8 evidence videos at 60 virtual Hz\n",
   );
 } else {
   await verifyRenderedOutputs();
   process.stdout.write(
-    "showcase verification passed: 10 frame-exact raw captures, 10 screenshots, 10 60 fps MP4s, 10 60 fps WebPs, 2 60 fps reels\n",
+    "showcase verification passed: 1,800 explicit canvas samples, 10 VP8 evidence videos, 10 screenshots, 10 60 fps MP4s, 10 frame-exact 60 fps WebPs, 2 60 fps reels\n",
   );
 }
