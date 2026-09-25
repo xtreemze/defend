@@ -113,11 +113,11 @@ jobs:
           SHOWCASE_BASE_URL: http://127.0.0.1:5173
         run: pnpm showcase:capture
 
-      - name: Render two reels and ten GIFs
+      - name: Render two 60 fps reels and ten 60 fps WebPs
         working-directory: experiments/hybrid-engine
         run: pnpm showcase:render
 
-      - name: Verify media evidence bundle
+      - name: Verify measured 60 fps media evidence bundle
         working-directory: experiments/hybrid-engine
         run: pnpm showcase:verify
 
