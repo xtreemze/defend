@@ -32,13 +32,13 @@ The artifact layout is rooted at `experiments/hybrid-engine/artifacts/e2e-media/
 
 ## Capture and frame-rate policy
 
-Dynamic evidence is captured directly from `#renderCanvas` with `HTMLCanvasElement.captureStream(60)` and a browser `MediaRecorder`, rather than relying on Playwright's generic page-video recorder. The recorder prefers VP8 over VP9 to reduce real-time encoding pressure. Desktop capture targets 20 Mbps and mobile capture targets 8 Mbps.
+Dynamic evidence is captured directly from `#renderCanvas`, but Defend does not treat GitHub runner wall-clock speed as the media clock. Playwright's Clock API controls `requestAnimationFrame`, `performance`, and timers while the capture is active. For each three-second scene, CI advances application time in 16/17 ms increments and explicitly requests one canvas frame per tick through `canvas.captureStream(0)` + `CanvasCaptureMediaStreamTrack.requestFrame()`. That produces exactly 180 source frame requests at a 60 Hz application-time cadence.
 
-Dedicated showcase Chromium runs disable background timer throttling, renderer/background occlusion throttling, the frame-rate limit, and GPU vsync. These flags reduce CI-specific capture pressure, but they are not accepted as proof of frame rate.
+The browser recorder prefers VP8 over VP9 and is used only as a container for those explicitly requested source frames. Desktop capture targets 12 Mbps and mobile capture targets 6 Mbps. Dedicated showcase Chromium also disables background timer/render throttling and frame-rate/vsync limits.
 
-The 60 fps request is only a target. Before FFmpeg normalization, `showcase/verify.mjs` decodes the raw WebM frame timestamps with FFprobe and requires at least 59 actual captured frames per second across at least 97% of the intended three-second scene duration. A slower source cannot pass merely because FFmpeg duplicates frames or reports a nominal 60 fps stream.
+This is intentionally an offline, frame-exact capture contract rather than a claim that GitHub's software-rendered runner can render Defend at 60 frames per wall-clock second. Before FFmpeg runs, `showcase/verify.mjs --source-only` decodes the raw WebM and requires exactly 180 frames per three-second scene, matching the 180 explicit frame requests recorded in metadata. If Chromium drops even one requested source frame, CI fails before encoding.
 
-FFmpeg then produces source-resolution H.264 scene videos and highlight reels at 60 fps. Animated WebP presentation derivatives also preserve the 60 fps temporal cadence while being spatially scaled for README/document use.
+FFmpeg then retimes those already-captured frames with `setpts=N/(60*TB)`; it is not permitted to manufacture a 60 fps source by duplicating a slower recording. The final verifier requires each H.264 scene video and reel to contain the expected decoded frame count at at least 59 fps. Animated WebP is validated independently by parsing its RIFF `ANIM`/`ANMF` frame chunks and duration, because FFprobe does not reliably expose animated-WebP frame timing on the Ubuntu FFmpeg build used by CI.
 
 ## CI ownership
 
@@ -51,13 +51,14 @@ The workflow:
 3. installs real Chromium through the existing Playwright dependency;
 4. installs FFmpeg;
 5. builds the real hybrid-engine preview;
-6. records five desktop and five mobile scenes;
-7. renders ten source-resolution 60 fps H.264 scene videos and the two 60 fps H.264 highlight reels;
-8. renders ten 60 fps animated WebP presentation derivatives;
-9. verifies raw decoded capture cadence plus every required source and finished output;
-10. reports media sizes;
-11. uploads the complete evidence bundle;
-12. publishes the stable showcase media to `gh-pages` after successful `master` runs.
+6. records five desktop and five mobile scenes with 180 explicit source-frame requests each;
+7. verifies the raw source frame count before any normalization or encoding;
+8. renders ten source-resolution 60 fps H.264 scene videos and the two 60 fps H.264 highlight reels;
+9. renders ten 60 fps animated WebP presentation derivatives;
+10. verifies final decoded frame counts/cadence plus the animated-WebP frame structure;
+11. reports media sizes;
+12. uploads the complete evidence bundle;
+13. publishes the stable showcase media to `gh-pages` after successful `master` runs.
 
 The normal Playwright smoke configuration explicitly ignores `showcase/**`. Showcase capture therefore cannot silently expand the ordinary exhaustive browser-test surface.
 
