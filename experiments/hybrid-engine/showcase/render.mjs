@@ -124,7 +124,7 @@ async function buildReadmeSnippet() {
   const lines = [
     "## Product in motion",
     "",
-    "CI records these scenes from the real modern preview in Chromium. Raw canvas capture is measured before encoding and must sustain at least 59 actual frames per second against a 60 fps target.",
+    "CI records these scenes from the real modern preview in Chromium. Each three-second scene is sampled as exactly 180 explicit canvas frames on a controlled 60 Hz application clock before encoding.",
     "",
   ];
 
