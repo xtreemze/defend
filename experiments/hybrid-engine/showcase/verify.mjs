@@ -150,6 +150,7 @@ async function probeAnimatedWebp(file) {
   let offset = 12;
   let frameCount = 0;
   let durationMs = 0;
+  const frameDurationsMs = [];
   let hasAnimationHeader = false;
 
   while (offset + 8 <= buffer.length) {
@@ -160,12 +161,22 @@ async function probeAnimatedWebp(file) {
     if (fourcc === "ANMF") {
       assert.ok(size >= 16, file + " contains a truncated ANMF chunk");
       frameCount += 1;
-      durationMs += uint24le(buffer, dataOffset + 12);
+      const frameDurationMs = uint24le(buffer, dataOffset + 12);
+      frameDurationsMs.push(frameDurationMs);
+      durationMs += frameDurationMs;
     }
     offset = dataOffset + size + (size & 1);
   }
 
-  return { frameCount, durationMs, hasAnimationHeader };
+  return { frameCount, durationMs, frameDurationsMs, hasAnimationHeader };
+}
+
+function expectedWebpFrameDurations(frameCount) {
+  return Array.from({ length: frameCount }, (_, frameIndex) => {
+    const start = Math.round((frameIndex * 1000) / showcase.webp.fps);
+    const end = Math.round(((frameIndex + 1) * 1000) / showcase.webp.fps);
+    return end - start;
+  });
 }
 
 async function assertAnimatedWebpCadence(file, expectedFrames) {
@@ -176,7 +187,18 @@ async function assertAnimatedWebpCadence(file, expectedFrames) {
     expectedFrames,
     file + " must contain exactly " + expectedFrames + " animated WebP frames",
   );
-  assert.ok(stats.durationMs > 0, file + " must have a positive animation duration");
+  const expectedDurations = expectedWebpFrameDurations(expectedFrames);
+  assert.deepEqual(
+    stats.frameDurationsMs,
+    expectedDurations,
+    file + " must preserve the exact millisecond cadence for every 60 fps WebP frame",
+  );
+  const expectedDurationMs = Math.round((expectedFrames * 1000) / showcase.webp.fps);
+  assert.equal(
+    stats.durationMs,
+    expectedDurationMs,
+    file + " must preserve the exact animation duration",
+  );
   const fps = stats.frameCount / (stats.durationMs / 1000);
   assert.ok(
     fps >= showcase.capture.minimumEncodedFps,
