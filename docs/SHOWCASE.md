@@ -38,7 +38,7 @@ The browser recorder prefers VP8 over VP9 and is used only as a container for th
 
 This is intentionally an offline, frame-exact capture contract rather than a claim that GitHub's software-rendered runner can render Defend at 60 frames per wall-clock second. Before FFmpeg runs, `showcase/verify.mjs --source-only` decodes the raw WebM and requires exactly 180 frames per three-second scene, matching the 180 explicit frame requests recorded in metadata. If Chromium drops even one requested source frame, CI fails before encoding.
 
-FFmpeg then retimes those already-captured frames with `setpts=N/(60*TB)`; it is not permitted to manufacture a 60 fps source by duplicating a slower recording. The final verifier requires each H.264 scene video and reel to contain the expected decoded frame count at at least 59 fps. Animated WebP is validated independently by parsing its RIFF `ANIM`/`ANMF` frame chunks and duration, because FFprobe does not reliably expose animated-WebP frame timing on the Ubuntu FFmpeg build used by CI.
+FFmpeg then retimes those already-captured frames with `setpts=N/(60*TB)`; it is not permitted to manufacture a 60 fps source by duplicating a slower recording. The final verifier requires each H.264 scene video and reel to contain the expected decoded frame count at at least 59 fps. For animated WebP, FFmpeg first encodes each scaled source sample as a single-frame WebP and the official `webpmux` tool assembles all 180 frames with an exact 17/16/17 ms cadence. This avoids `libwebp_anim` frame coalescing. The final verifier independently parses RIFF `ANIM`/`ANMF` chunks and requires the exact 180-frame sequence, every per-frame duration, and the exact three-second total because FFprobe does not reliably expose animated-WebP timing on the Ubuntu build used by CI.
 
 ## CI ownership
 
@@ -49,12 +49,12 @@ The workflow:
 1. validates configuration contracts;
 2. installs the pinned modern workspace;
 3. installs real Chromium through the existing Playwright dependency;
-4. installs FFmpeg;
+4. installs FFmpeg and the official WebP tools;
 5. builds the real hybrid-engine preview;
 6. records five desktop and five mobile scenes with 180 explicit source-frame requests each;
 7. verifies the raw source frame count before any normalization or encoding;
 8. renders ten source-resolution 60 fps H.264 scene videos and the two 60 fps H.264 highlight reels;
-9. renders ten 60 fps animated WebP presentation derivatives;
+9. encodes 180 single-frame WebPs per scene and muxes each set into a frame-exact 60 fps animated WebP;
 10. verifies final decoded frame counts/cadence plus the animated-WebP frame structure;
 11. reports media sizes;
 12. uploads the complete evidence bundle;
@@ -64,7 +64,7 @@ The normal Playwright smoke configuration explicitly ignores `showcase/**`. Show
 
 ## Dependency decision
 
-The pipeline deliberately reuses the existing pinned Playwright installation in `experiments/storybook/` for Chromium automation and uses system FFmpeg for deterministic media composition. It does not add Remotion, a browser video editor, a native OpenGL editing stack, or another rendering framework solely for showcase generation.
+The pipeline deliberately reuses the existing pinned Playwright installation in `experiments/storybook/` for Chromium automation, system FFmpeg for deterministic video/frame encoding, and the official libwebp `webpmux` utility for frame-exact animated-WebP assembly. It does not add Remotion, a browser video editor, a native OpenGL editing stack, or another rendering framework solely for showcase generation.
 
 This keeps capture tied to the same browser automation already used by the repository and keeps rendering reproducible in Linux CI.
 
@@ -84,7 +84,7 @@ The root README uses these stable Pages URLs rather than temporary Actions artif
 
 ## Animated WebP delivery budget
 
-README motion preserves the 60 fps capture cadence in animated WebP, uses lossy quality 60 with compression level 6, Lanczos scaling, 620 px desktop width, and 300 px mobile width. CI fails if any WebP exceeds 4.5 MB, if the desktop set exceeds 10 MB, if the mobile set exceeds 6 MB, or if the combined ten-WebP payload exceeds 15 MB. These are upper bounds, not targets; scenes should remain as short as practical.
+README motion preserves the 60 fps capture cadence in animated WebP as exactly 180 frames over three seconds using 17/16/17 ms frame durations, lossy quality 60 with compression level 6, Lanczos scaling, 620 px desktop width, and 300 px mobile width. CI fails if any WebP exceeds 4.5 MB, if the desktop set exceeds 10 MB, if the mobile set exceeds 6 MB, or if the combined ten-WebP payload exceeds 15 MB. These are upper bounds, not targets; scenes should remain as short as practical.
 
 ## Presentation guidance
 
