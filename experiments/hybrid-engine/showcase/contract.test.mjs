@@ -41,7 +41,7 @@ test("exactly five shared feature intents drive ten 60 fps captures", () => {
 
 test("capture records the real canvas directly and preserves screenshots and metadata", async () => {
   const source = await read("experiments/hybrid-engine/showcase/capture.mjs");
-  assert.match(source, /canvas\.captureStream\(fps\)/);
+  assert.match(source, /canvas\.captureStream\(0\)/);
   assert.match(source, /new MediaRecorder/);
   assert.ok(
     source.includes('["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm"]'),
@@ -49,6 +49,10 @@ test("capture records the real canvas directly and preserves screenshots and met
   assert.match(source, /videoBitsPerSecond/);
   assert.match(source, /page\.screenshot/);
   assert.match(source, /capturedAt/);
+  assert.match(source, /track\.requestFrame\(\)/);
+  assert.match(source, /page\.clock\.install\(\)/);
+  assert.match(source, /page\.clock\.runFor/);
+  assert.match(source, /manual-request-frame-virtual-clock/);
   assert.match(source, /requestedFps/);
   assert.match(source, /browserErrors/);
   assert.doesNotMatch(source, /recordVideo/);
@@ -78,14 +82,17 @@ test("renderer keeps 60 fps canonical reels and 60 fps animated WebPs", async ()
   assert.match(source, /exceeds per-file WebP budget/);
 });
 
-test("verifier measures decoded raw cadence before accepting encoded 60 fps output", async () => {
+test("verifier proves explicit raw frame count before accepting 60 fps output", async () => {
   const source = await read("experiments/hybrid-engine/showcase/verify.mjs");
+  const workflow = await read(".github/workflows/showcase-media.yml");
   assert.match(source, /"ffprobe"/);
   assert.match(source, /best_effort_timestamp_time/);
-  assert.match(source, /assertDecodedCadence/);
-  assert.match(source, /minimumCapturedFps/);
-  assert.match(source, /raw Chromium capture/);
-  assert.match(source, /60 fps animated WebP/);
+  assert.match(source, /assertExactRawFrames/);
+  assert.match(source, /manual-request-frame-virtual-clock/);
+  assert.match(source, /assertEncodedCadence/);
+  assert.match(source, /assertAnimatedWebpCadence/);
+  assert.match(source, /value\.length > 0/);
+  assert.match(workflow, /showcase:verify --source-only/);
 });
 
 test("normal browser smoke discovery excludes showcase files", async () => {
