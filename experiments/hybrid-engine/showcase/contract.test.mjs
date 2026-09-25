@@ -20,7 +20,7 @@ test("showcase has explicit desktop and mobile projects", () => {
   assert.equal(showcase.projects[1].device.hasTouch, true);
 });
 
-test("exactly five shared feature intents drive ten captures", () => {
+test("exactly five shared feature intents drive ten 60 fps captures", () => {
   assert.equal(showcase.scenes.length, 5);
   assert.deepEqual(
     showcase.scenes.map((scene) => scene.id),
@@ -33,32 +33,59 @@ test("exactly five shared feature intents drive ten captures", () => {
     ],
   );
   assert.equal(showcase.projects.length * showcase.scenes.length, 10);
+  assert.equal(showcase.capture.videoFps, 60);
+  assert.equal(showcase.capture.minimumCapturedFps, 59);
+  assert.equal(showcase.webp.fps, showcase.capture.videoFps);
+  assert.ok(showcase.scenes.every((scene) => scene.durationSeconds >= 3));
 });
 
-test("capture preserves raw video screenshots and metadata", async () => {
+test("capture records the real canvas directly and preserves screenshots and metadata", async () => {
   const source = await read("experiments/hybrid-engine/showcase/capture.mjs");
-  assert.match(source, /recordVideo/);
+  assert.match(source, /canvas\.captureStream\(fps\)/);
+  assert.match(source, /new MediaRecorder/);
+  assert.ok(
+    source.includes('["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm"]'),
+  );
+  assert.match(source, /videoBitsPerSecond/);
   assert.match(source, /page\.screenshot/);
-  assert.match(source, /video\.saveAs/);
   assert.match(source, /capturedAt/);
+  assert.match(source, /requestedFps/);
   assert.match(source, /browserErrors/);
-  assert.match(source, /target\.tap\(\)/);
-  assert.match(source, /keyboard\.press\("Space"\)/);
+  assert.doesNotMatch(source, /recordVideo/);
 });
 
-test("renderer keeps separate reels and budgeted optimized infinite GIFs", async () => {
+test("showcase Chromium disables throttling for dedicated capture", async () => {
+  const source = await read("experiments/hybrid-engine/showcase/playwright.showcase.config.mjs");
+  assert.match(source, /video: "off"/);
+  assert.match(source, /--disable-background-timer-throttling/);
+  assert.match(source, /--disable-renderer-backgrounding/);
+  assert.match(source, /--disable-backgrounding-occluded-windows/);
+  assert.match(source, /--disable-frame-rate-limit/);
+  assert.match(source, /--disable-gpu-vsync/);
+});
+
+test("renderer keeps 60 fps canonical reels and 60 fps animated WebPs", async () => {
   const source = await read("experiments/hybrid-engine/showcase/render.mjs");
   assert.ok(source.includes('defend-" + project.key + "-highlight.mp4'));
-  assert.equal(showcase.gif.fps, 8);
-  assert.equal(showcase.gif.colors, 64);
-  assert.equal(showcase.gif.budgets.combined, 15_000_000);
-  assert.match(source, /showcase\.gif\.colors/);
-  assert.match(source, /showcase\.gif\.fps/);
-  assert.match(source, /paletteuse=/);
+  assert.equal(showcase.webp.fps, 60);
+  assert.equal(showcase.webp.budgets.combined, 15_000_000);
+  assert.match(source, /showcase\.capture\.videoFps/);
+  assert.match(source, /showcase\.webp\.fps/);
+  assert.match(source, /libwebp_anim/);
   assert.ok(source.includes('"-loop"'));
   assert.ok(source.includes('"0"'));
   assert.match(source, /flags=lanczos/);
-  assert.match(source, /exceeds budget/);
+  assert.match(source, /exceeds per-file WebP budget/);
+});
+
+test("verifier measures decoded raw cadence before accepting encoded 60 fps output", async () => {
+  const source = await read("experiments/hybrid-engine/showcase/verify.mjs");
+  assert.match(source, /"ffprobe"/);
+  assert.match(source, /best_effort_timestamp_time/);
+  assert.match(source, /assertDecodedCadence/);
+  assert.match(source, /minimumCapturedFps/);
+  assert.match(source, /raw Chromium capture/);
+  assert.match(source, /60 fps animated WebP/);
 });
 
 test("normal browser smoke discovery excludes showcase files", async () => {
@@ -67,11 +94,11 @@ test("normal browser smoke discovery excludes showcase files", async () => {
   assert.match(source, /showcase/);
 });
 
-test("README and Pages publishing reference both stable GIF collections", async () => {
+test("README and Pages publishing reference both stable WebP collections", async () => {
   const readme = await read("README.md");
   const workflow = await read(".github/workflows/showcase-media.yml");
-  assert.match(readme, /showcase\/desktop\/01-deterministic-arena\.gif/);
-  assert.match(readme, /showcase\/mobile\/01-deterministic-arena\.gif/);
+  assert.match(readme, /showcase\/desktop\/01-deterministic-arena\.webp/);
+  assert.match(readme, /showcase\/mobile\/01-deterministic-arena\.webp/);
   assert.match(workflow, /publish\/showcase/);
   assert.match(workflow, /gh-pages/);
   assert.match(workflow, /vite preview --host 127\.0\.0\.1 --port 5173/);
