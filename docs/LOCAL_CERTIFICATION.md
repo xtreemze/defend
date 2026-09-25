@@ -137,7 +137,7 @@ pnpm showcase:render
 pnpm showcase:verify
 ```
 
-A complete run contains 5/5 desktop scenes, 5/5 mobile scenes, ten WebM recordings, ten screenshots, ten scene metadata files, two MP4 reels, ten GIFs, a generated README snippet, and a size report. The published README images are sourced from stable GitHub Pages paths; temporary Actions artifact URLs are evidence only.
+A complete run contains 5/5 desktop scenes, 5/5 mobile scenes, ten raw WebM recordings measured at at least 59 actual decoded frames/s against a 60 fps target, ten screenshots, ten scene metadata files, ten 60 fps H.264 scene videos, two 60 fps MP4 reels, ten 60 fps animated WebPs, a generated README snippet, and a size report. The published README images are sourced from stable GitHub Pages paths; temporary Actions artifact URLs are evidence only.
 ### Lane C — Rust and Babylon/Bevy experiments
 
 For the dependency-light Rust core:
