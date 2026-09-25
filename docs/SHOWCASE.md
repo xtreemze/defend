@@ -69,7 +69,7 @@ This keeps capture tied to the same browser automation already used by the repos
 
 ## Stable presentation URLs
 
-Published GIFs are available under:
+Published animated WebPs are available under:
 
 - `https://xtreemze.github.io/defend/showcase/desktop/<scene>.webp`
 - `https://xtreemze.github.io/defend/showcase/mobile/<scene>.webp`
