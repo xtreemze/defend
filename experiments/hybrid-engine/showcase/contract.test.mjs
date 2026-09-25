@@ -76,7 +76,7 @@ test("renderer keeps 60 fps canonical reels and frame-exact animated WebPs", asy
   assert.equal(showcase.webp.fps, 60);
   assert.equal(showcase.webp.budgets.combined, 15_000_000);
   assert.match(source, /showcase\.capture\.videoFps/);
-  assert.match(source, /"fps_mode",\s*"passthrough"/);
+  assert.match(source, /"-fps_mode",\s*"passthrough"/);
   assert.match(source, /"-frames:v"/);
   assert.doesNotMatch(source, /,fps=/);
   assert.match(source, /webpFrameDurationMs/);
