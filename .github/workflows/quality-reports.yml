@@ -102,14 +102,14 @@ jobs:
             2>&1 | tee artifacts/quality/coverage.txt
 
       - name: Build Lighthouse target
-        id: lighthouse-build
+        id: lighthouse_build
         continue-on-error: true
         working-directory: experiments
         run: pnpm --filter @defend/hybrid-engine-lab build
 
       - name: Start Lighthouse preview
-        id: lighthouse-preview
-        if: steps.lighthouse-build.outcome == 'success'
+        id: lighthouse_preview
+        if: steps.lighthouse_build.outcome == 'success'
         continue-on-error: true
         working-directory: experiments
         shell: bash
@@ -131,7 +131,7 @@ jobs:
           exit 1
 
       - name: Run Lighthouse audit
-        if: steps.lighthouse-preview.outcome == 'success'
+        if: steps.lighthouse_preview.outcome == 'success'
         continue-on-error: true
         working-directory: experiments/hybrid-engine
         shell: bash
