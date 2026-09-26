@@ -68,10 +68,10 @@ jobs:
         with:
           version: v0.15.0
 
-      - name: Install FFmpeg
+      - name: Install media tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg webp
 
       - name: Install modern workspace
         working-directory: experiments
@@ -113,11 +113,15 @@ jobs:
           SHOWCASE_BASE_URL: http://127.0.0.1:5173
         run: pnpm showcase:capture
 
-      - name: Render two reels and ten GIFs
+      - name: Verify frame-exact raw 60 fps source capture
+        working-directory: experiments/hybrid-engine
+        run: pnpm showcase:verify --source-only
+
+      - name: Render two 60 fps reels and ten 60 fps WebPs
         working-directory: experiments/hybrid-engine
         run: pnpm showcase:render
 
-      - name: Verify media evidence bundle
+      - name: Verify measured 60 fps media evidence bundle
         working-directory: experiments/hybrid-engine
         run: pnpm showcase:verify
 

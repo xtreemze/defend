@@ -3,6 +3,7 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import { spawnSync } from "node:child_process";
 import showcase from "./manifest.mjs";
 import mediaConfig from "./playwright.showcase.config.mjs";
 
@@ -208,11 +209,110 @@ const actions = {
   towerTerrain: runTowerTerrain,
 };
 
+function run(command, args) {
+  const result = spawnSync(command, args, { stdio: "inherit" });
+  if (result.status !== 0) {
+    throw new Error(command + " failed with exit code " + result.status);
+  }
+}
+
+async function canvasInfo(page) {
+  return page.evaluate(() => {
+    const canvas = document.querySelector("#renderCanvas");
+    if (!(canvas instanceof HTMLCanvasElement) || canvas.width <= 0 || canvas.height <= 0) {
+      throw new Error("Showcase canvas is unavailable or has no render surface.");
+    }
+    return { width: canvas.width, height: canvas.height };
+  });
+}
+
+async function snapshotCanvasWebp(page, quality) {
+  return page.evaluate((sourceQuality) => {
+    const canvas = document.querySelector("#renderCanvas");
+    if (!(canvas instanceof HTMLCanvasElement)) {
+      throw new Error("Showcase canvas is unavailable.");
+    }
+    const dataUrl = canvas.toDataURL("image/webp", sourceQuality);
+    const prefix = "data:image/webp;base64,";
+    if (!dataUrl.startsWith(prefix)) {
+      throw new Error("Chromium did not produce a WebP canvas snapshot.");
+    }
+    return dataUrl.slice(prefix.length);
+  }, quality);
+}
+
+async function captureVirtualFrames(page, frameRoot, frameCount, fps) {
+  const source = await canvasInfo(page);
+  await rm(frameRoot, { recursive: true, force: true });
+  await mkdir(frameRoot, { recursive: true });
+
+  const pageNow = await page.evaluate(() => Date.now());
+  // pauseAt() only moves forward. Leave enough headroom for the Playwright
+  // round-trip so the target cannot become stale before Chromium applies it.
+  await page.clock.pauseAt(pageNow + 1_000);
+  const wallStart = Date.now();
+
+  try {
+    for (let frameIndex = 0; frameIndex < frameCount; frameIndex += 1) {
+      if (frameIndex > 0) {
+        const previousTarget = Math.round(((frameIndex - 1) * 1000) / fps);
+        const nextTarget = Math.round((frameIndex * 1000) / fps);
+        await page.clock.runFor(nextTarget - previousTarget);
+      }
+
+      const frameBase64 = await snapshotCanvasWebp(page, showcase.capture.sourceFrameQuality);
+      const frameNumber = String(frameIndex + 1).padStart(3, "0");
+      await writeFile(
+        path.join(frameRoot, "frame-" + frameNumber + ".webp"),
+        Buffer.from(frameBase64, "base64"),
+      );
+    }
+  } finally {
+    await page.clock.resume();
+  }
+
+  return {
+    ...source,
+    requestedFrames: frameCount,
+    capturedFrames: frameCount,
+    sourceMimeType: "image/webp",
+    virtualDurationSeconds: (frameCount - 1) / fps,
+    wallDurationSeconds: (Date.now() - wallStart) / 1000,
+  };
+}
+
+function encodeRawEvidenceWebm(frameRoot, output, project, frameCount) {
+  const bitrate = project.key === "desktop" ? "12M" : "6M";
+  run("ffmpeg", [
+    "-y",
+    "-framerate",
+    String(showcase.capture.videoFps),
+    "-start_number",
+    "1",
+    "-i",
+    path.join(frameRoot, "frame-%03d.webp"),
+    "-frames:v",
+    String(frameCount),
+    "-an",
+    "-c:v",
+    "libvpx",
+    "-deadline",
+    "realtime",
+    "-cpu-used",
+    "8",
+    "-b:v",
+    bitrate,
+    "-pix_fmt",
+    "yuv420p",
+    "-fps_mode",
+    "passthrough",
+    output,
+  ]);
+}
+
 async function recordScene(browser, project, scene) {
   const formRoot = path.join(outputRoot, "raw", project.key);
-  const videoScratch = path.join(outputRoot, "playwright", project.key, scene.id);
   await mkdir(formRoot, { recursive: true });
-  await mkdir(videoScratch, { recursive: true });
 
   const context = await browser.newContext({
     viewport: project.viewport,
@@ -220,15 +320,9 @@ async function recordScene(browser, project, scene) {
     isMobile: project.device.isMobile,
     colorScheme: "dark",
     reducedMotion: "no-preference",
-    recordVideo: {
-      dir: videoScratch,
-      size: project.viewport,
-    },
   });
   const page = await context.newPage();
-  const recordingStartedAt = Date.now();
-  const video = page.video();
-  assert.ok(video, "Playwright video capture must be active");
+  await page.clock.install();
 
   const browserErrors = [];
   page.on("pageerror", (error) => browserErrors.push(error.message));
@@ -250,33 +344,59 @@ async function recordScene(browser, project, scene) {
   await ensureControls(page);
   await addBranding(page, project, scene);
   await sleep(450);
-  const sceneStartMs = Date.now() - recordingStartedAt;
 
   let checkpointTaken = false;
+  let frameCapture;
   const screenshotPath = path.join(formRoot, scene.id + ".png");
+  const frameRoot = path.join(formRoot, scene.id + "-frames");
   const checkpoint = async () => {
     await page.screenshot({ path: screenshotPath, fullPage: false });
     checkpointTaken = true;
+
+    const expectedFrames = Math.round(scene.durationSeconds * showcase.capture.videoFps);
+    frameCapture = await captureVirtualFrames(
+      page,
+      frameRoot,
+      expectedFrames,
+      showcase.capture.videoFps,
+    );
   };
 
   const action = actions[scene.action];
   assert.ok(action, "unknown showcase action " + scene.action);
   await action(page, project, checkpoint);
   assert.equal(checkpointTaken, true, scene.id + " must capture its demonstrated state");
-  await sleep(550);
-  const sceneEndMs = Date.now() - recordingStartedAt;
-
+  assert.ok(frameCapture, scene.id + " must capture a frame-exact source sequence");
   assert.deepEqual(browserErrors, [], scene.id + " produced browser errors");
 
+  const rawVideoPath = path.join(formRoot, scene.id + ".webm");
+  encodeRawEvidenceWebm(frameRoot, rawVideoPath, project, frameCapture.capturedFrames);
   const metadata = {
     product: showcase.product,
     project: project.name,
     formFactor: project.key,
     viewport: project.viewport,
     scene,
-    trim: {
-      startSeconds: Math.max(0, (sceneStartMs - 150) / 1000),
-      durationSeconds: Math.max(0.5, (sceneEndMs - sceneStartMs + 300) / 1000),
+    durationSeconds: scene.durationSeconds,
+    requestedFps: showcase.capture.videoFps,
+    requestedFrameCount: frameCapture.requestedFrames,
+    capturedFrameCount: frameCapture.capturedFrames,
+    virtualDurationSeconds: frameCapture.virtualDurationSeconds,
+    captureWallSeconds: frameCapture.wallDurationSeconds,
+    captureMode: "frame-exact-canvas-snapshots-virtual-clock",
+    source: {
+      width: frameCapture.width,
+      height: frameCapture.height,
+      mimeType: frameCapture.sourceMimeType,
+      quality: showcase.capture.sourceFrameQuality,
+      frameDirectory: path.basename(frameRoot),
+      requestedFrames: frameCapture.requestedFrames,
+      capturedFrames: frameCapture.capturedFrames,
+    },
+    evidenceVideo: {
+      container: "webm",
+      codec: "vp8",
+      derivedFromCapturedFrames: true,
     },
     capturedAt: new Date().toISOString(),
   };
@@ -285,16 +405,14 @@ async function recordScene(browser, project, scene) {
     JSON.stringify(metadata, null, 2) + "\n",
   );
 
-  const videoPath = path.join(formRoot, scene.id + ".webm");
   await context.close();
-  await video.saveAs(videoPath);
 }
 
 async function main() {
   await rm(outputRoot, { recursive: true, force: true });
   await mkdir(outputRoot, { recursive: true });
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(mediaConfig.launchOptions);
   try {
     for (const configuredProject of mediaConfig.projects) {
       const project = configuredProject.metadata.showcase;
