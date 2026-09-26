@@ -1,0 +1,217 @@
+name: quality-reports
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/quality-reports.yml'
+      - 'experiments/pnpm-lock.yaml'
+      - 'experiments/pnpm-workspace.yaml'
+      - 'experiments/package.json'
+      - 'experiments/hybrid-engine/**'
+      - 'rust-toolchain.toml'
+      - 'Cargo.lock'
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/quality-reports.yml'
+      - 'experiments/pnpm-lock.yaml'
+      - 'experiments/pnpm-workspace.yaml'
+      - 'experiments/package.json'
+      - 'experiments/hybrid-engine/**'
+      - 'rust-toolchain.toml'
+      - 'Cargo.lock'
+  workflow_dispatch:
+
+concurrency:
+  group: quality-reports
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  report:
+    name: Quality reports (non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Setup Node
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version: 24.20.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2
+        with:
+          version: 11.25.0
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: 1.98.1
+          targets: wasm32-unknown-unknown
+          components: rustfmt,clippy
+
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa
+        with:
+          version: v0.15.0
+
+      - name: Prepare report directory
+        if: always()
+        shell: bash
+        run: mkdir -p experiments/hybrid-engine/artifacts/quality
+
+      - name: Install modern workspace
+        continue-on-error: true
+        working-directory: experiments
+        run: pnpm install --frozen-lockfile
+
+      - name: Biome lint and format report
+        continue-on-error: true
+        working-directory: experiments/hybrid-engine
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm check 2>&1 | tee artifacts/quality/biome.txt
+
+      - name: Install Vitest coverage provider
+        continue-on-error: true
+        working-directory: experiments/hybrid-engine
+        run: pnpm add --save-dev --lockfile=false --ignore-scripts @vitest/coverage-v8@4.1.11
+
+      - name: Run unit tests with coverage
+        continue-on-error: true
+        working-directory: experiments/hybrid-engine
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm exec vitest run \
+            --coverage \
+            --coverage.provider=v8 \
+            --coverage.reporter=text \
+            --coverage.reporter=json-summary \
+            --coverage.reporter=html \
+            2>&1 | tee artifacts/quality/coverage.txt
+
+      - name: Build Lighthouse target
+        id: lighthouse-build
+        continue-on-error: true
+        working-directory: experiments
+        run: pnpm --filter @defend/hybrid-engine-lab build
+
+      - name: Start Lighthouse preview
+        id: lighthouse-preview
+        if: steps.lighthouse-build.outcome == 'success'
+        continue-on-error: true
+        working-directory: experiments
+        shell: bash
+        run: |
+          nohup pnpm --filter @defend/hybrid-engine-lab exec vite preview \
+            --host 127.0.0.1 \
+            --port 4173 \
+            > /tmp/defend-lighthouse-vite.log 2>&1 &
+          echo $! > /tmp/defend-lighthouse-vite.pid
+
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          cat /tmp/defend-lighthouse-vite.log
+          exit 1
+
+      - name: Run Lighthouse audit
+        if: steps.lighthouse-preview.outcome == 'success'
+        continue-on-error: true
+        working-directory: experiments/hybrid-engine
+        shell: bash
+        run: |
+          pnpm dlx lighthouse@13.5.0 http://127.0.0.1:4173/ \
+            --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=html \
+            --output=json \
+            --output-path=artifacts/quality/lighthouse
+
+      - name: Collect Lighthouse server log
+        if: always()
+        shell: bash
+        run: |
+          cp /tmp/defend-lighthouse-vite.log \
+            experiments/hybrid-engine/artifacts/quality/lighthouse-vite.log \
+            2>/dev/null || true
+
+      - name: Publish report summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Non-blocking quality reports"
+            echo
+            echo "These diagnostics do not gate the Pages build or deployment."
+            echo
+            if [ -f experiments/hybrid-engine/coverage/coverage-summary.json ]; then
+              node - <<'NODE'
+          const fs = require('node:fs');
+          const summary = JSON.parse(
+            fs.readFileSync('experiments/hybrid-engine/coverage/coverage-summary.json', 'utf8'),
+          ).total;
+          const metric = (name) => summary[name] ? `${summary[name].pct}%` : 'n/a';
+          console.log(`Coverage: lines ${metric('lines')}, statements ${metric('statements')}, functions ${metric('functions')}, branches ${metric('branches')}`);
+          NODE
+            fi
+            if [ -f experiments/hybrid-engine/artifacts/quality/lighthouse.report.json ]; then
+              node - <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(
+            fs.readFileSync('experiments/hybrid-engine/artifacts/quality/lighthouse.report.json', 'utf8'),
+          );
+          const score = (id) => {
+            const value = report.categories?.[id]?.score;
+            return typeof value === 'number' ? Math.round(value * 100) : 'n/a';
+          };
+          console.log(
+            `Lighthouse: performance ${score('performance')}, accessibility ${score('accessibility')}, best practices ${score('best-practices')}, SEO ${score('seo')}`,
+          );
+          NODE
+            fi
+          } | tee experiments/hybrid-engine/artifacts/quality/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload latest quality report
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: defend-quality-report
+          path: |
+            experiments/hybrid-engine/artifacts/quality/
+            experiments/hybrid-engine/coverage/
+          retention-days: 2
+          if-no-files-found: warn
+
+      - name: Delete older quality report artifacts
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh api --paginate \
+            "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=defend-quality-report&per_page=100" \
+            --jq '.artifacts[] | [.id, .workflow_run.id] | @tsv' |
+          while IFS=$'\t' read -r artifact_id run_id; do
+            if [ -n "$artifact_id" ] && [ "$run_id" != "$GITHUB_RUN_ID" ]; then
+              gh api -X DELETE \
+                "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}"
+            fi
+          done
