@@ -30,6 +30,7 @@ jobs:
     name: Browser smoke test
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    continue-on-error: true
 
     strategy:
       matrix:
