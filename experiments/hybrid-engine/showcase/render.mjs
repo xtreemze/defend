@@ -26,9 +26,8 @@ function webpFrameDurationMs(frameIndex, fps) {
 }
 
 async function renderAnimatedWebp({
-  input,
+  inputPattern,
   output,
-  frameFilter,
   frameWidth,
   expectedFrames,
   frameRoot,
@@ -39,11 +38,15 @@ async function renderAnimatedWebp({
 
   run("ffmpeg", [
     "-y",
+    "-framerate",
+    String(showcase.capture.videoFps),
+    "-start_number",
+    "1",
     "-i",
-    input,
+    inputPattern,
     "-an",
     "-vf",
-    frameFilter + ",scale=" + frameWidth + ":-2:flags=lanczos",
+    "scale=" + frameWidth + ":-2:flags=lanczos",
     "-frames:v",
     String(expectedFrames),
     "-c:v",
@@ -80,28 +83,26 @@ async function renderProject(project) {
 
   const normalized = [];
   for (const scene of showcase.scenes) {
-    const input = path.join(outputRoot, "raw", project.key, scene.id + ".webm");
+    const frameRoot = path.join(outputRoot, "raw", project.key, scene.id + "-frames");
+    const inputPattern = path.join(frameRoot, "frame-%03d.webp");
     const metadata = JSON.parse(
       await readFile(path.join(outputRoot, "raw", project.key, scene.id + ".json"), "utf8"),
     );
     const expectedFrames = metadata.requestedFrameCount;
-    const frameFilter =
-      "trim=end_frame=" +
-      expectedFrames +
-      ",setpts=N/(" +
-      showcase.capture.videoFps +
-      "*TB)";
     const normalizedVideo = path.join(normalizedProject, scene.id + ".mp4");
     normalized.push(normalizedVideo);
 
     run("ffmpeg", [
       "-y",
+      "-framerate",
+      String(showcase.capture.videoFps),
+      "-start_number",
+      "1",
       "-i",
-      input,
+      inputPattern,
       "-an",
       "-vf",
-      frameFilter +
-        ",scale=" +
+      "scale=" +
         project.viewport.width +
         ":" +
         project.viewport.height +
@@ -129,9 +130,8 @@ async function renderProject(project) {
 
     const webp = path.join(webpProject, scene.id + ".webp");
     await renderAnimatedWebp({
-      input,
+      inputPattern,
       output: webp,
-      frameFilter,
       frameWidth: project.webpWidth,
       expectedFrames,
       frameRoot: path.join(normalizedProject, scene.id + "-webp-frames"),
