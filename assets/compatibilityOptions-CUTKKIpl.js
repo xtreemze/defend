@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-B0Z9INg1.js";function t(e){n=e}var n,r,i=e((()=>{n=!1,r={get UseOpenGLOrientationForUV(){return n},set UseOpenGLOrientationForUV(e){n=e}}}));export{n as i,i as n,t as r,r as t};
