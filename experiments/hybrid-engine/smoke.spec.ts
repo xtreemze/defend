@@ -134,19 +134,13 @@ test.describe('Hybrid engine browser smoke tests', () => {
     });
     expect(response?.status()).toBeLessThan(400);
 
-    const selection = await expect
+    await expect
       .poll(() =>
-        page_obj.evaluate(() => ({
-          backend: document.documentElement.dataset.renderer,
-          requested: document.documentElement.dataset.rendererRequested,
-          fallback: document.documentElement.dataset.rendererFallback,
-        }))
+        page_obj.evaluate(
+          () => document.documentElement.dataset.rendererRequested,
+        )
       )
-      .not.toEqual({
-        backend: undefined,
-        requested: undefined,
-        fallback: undefined,
-      });
+      .toBe('webgpu');
 
     const renderer = await page_obj.evaluate(() => ({
       backend: document.documentElement.dataset.renderer,
