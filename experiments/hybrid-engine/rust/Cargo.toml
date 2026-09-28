@@ -21,11 +21,9 @@ opt-level = "s"
 panic = "abort"
 strip = "symbols"
 
-# wasm-pack 0.13.1 downloads Binaryen 117, whose wasm-opt does not enable
-# bulk memory or non-trapping float-to-int conversions by default. rustc emits
-# both for wasm32-unknown-unknown, so the default `-O` invocation fails
-# validation with "Bulk memory operations require bulk memory". Enabling the
-# features rustc already targets keeps the optimization pass running instead of
-# disabling it.
+# Keep wasm-opt's validation feature set explicit. rustc emits bulk-memory and
+# non-trapping float-to-int operations for wasm32-unknown-unknown; passing these
+# features explicitly prevents optimizer-default drift from rejecting valid
+# compiler output.
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-O', '--enable-bulk-memory', '--enable-nontrapping-float-to-int']
