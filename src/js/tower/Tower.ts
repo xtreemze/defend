@@ -13,6 +13,10 @@ import { towerGlobals, projectileGlobals } from "../main/globalVariables";
 import { Position2D } from "../enemy/Enemy";
 import { EnemySphere } from "../enemy/enemyBorn";
 
+interface TowerMetadata {
+	level: number;
+}
+
 class Tower {
 	constructor(
 		level: number = 1 | 2 | 3,
@@ -25,6 +29,7 @@ class Tower {
 		let tower = towerGlobals.towerBaseMesh.clone(
 			name, undefined, true, false
 		) as Mesh;
+		tower.metadata = { level } as TowerMetadata;
 
 		tower.physicsImpostor = new PhysicsImpostor(
 			tower,
@@ -39,6 +44,10 @@ class Tower {
 		addTower(tower, level);
 		towerGlobals.allPositions = towerBasePositions(scene);
 	}
+}
+
+function towerLevel(tower: Mesh): number {
+	return (tower.metadata as TowerMetadata).level;
 }
 
 function towerBasePositions(scene: Scene) {
@@ -146,6 +155,7 @@ export {
 	Tower,
 	destroyTower,
 	towerBasePositions,
+	towerLevel,
 	shotClearsTower,
 	rotateTurret
 };
