@@ -1,7 +1,6 @@
 import {
   ArcRotateCamera,
   Color3,
-  Engine,
   HemisphericLight,
   type Mesh,
   MeshBuilder,
@@ -13,6 +12,10 @@ import {
   VertexBuffer,
   VertexData,
 } from "@babylonjs/core/pure";
+import {
+  createRenderEngine,
+  rendererDiagnosticLabel,
+} from "./renderEngine";
 import {
   accumulateDepression,
   radialDeformationDepth,
@@ -141,10 +144,8 @@ async function main(): Promise<void> {
     throw new Error("Tower terrain lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, {
-    antialias: true,
-    adaptToDeviceRatio: true,
-  });
+  const renderer = await createRenderEngine(canvas);
+  const { engine } = renderer;
   const scene = new Scene(engine);
   scene.clearColor.set(0.018, 0.012, 0.027, 1);
 
@@ -805,6 +806,7 @@ async function main(): Promise<void> {
       return `T${tower.level} ${tower.phase.padEnd(11)} ${power.padEnd(13)}${slew}${tower.readyToFire ? " READY" : ""}`;
     });
     metrics.textContent = [
+      `renderer: ${rendererDiagnosticLabel(renderer)}`,
       "TOWER / TERRAIN PHYSICS LAB",
       ...towerLines,
       `projectiles: ${projectiles.length}`,
