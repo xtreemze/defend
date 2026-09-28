@@ -1,0 +1,21 @@
+{
+  "name": "@defend/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./webawesome": "./src/webawesome.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@awesome.me/webawesome": "3.13.0",
+    "lit": "3.3.3"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}

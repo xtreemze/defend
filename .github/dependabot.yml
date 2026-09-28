@@ -17,6 +17,12 @@ updates:
         patterns:
           - "storybook"
           - "@storybook/*"
+      ui-web-components:
+        applies-to: version-updates
+        patterns:
+          - "lit"
+          - "@lit/*"
+          - "@awesome.me/webawesome"
       vite-vitest-browser-tooling:
         applies-to: version-updates
         patterns:

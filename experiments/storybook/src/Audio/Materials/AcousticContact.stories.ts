@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/html-vite";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { expect } from "storybook/test";
 import {
   deriveAcousticExcitation,

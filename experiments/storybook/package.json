@@ -13,8 +13,9 @@
     "test-storybook": "pnpm test"
   },
   "devDependencies": {
+    "@defend/ui": "workspace:*",
     "@storybook/addon-vitest": "10.6.0",
-    "@storybook/html-vite": "10.6.0",
+    "@storybook/web-components-vite": "10.6.0",
     "@types/node": "24.10.0",
     "@vitest/browser-playwright": "4.1.11",
     "playwright": "1.62.1",

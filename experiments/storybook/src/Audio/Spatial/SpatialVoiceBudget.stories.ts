@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/html-vite";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { expect, userEvent } from "storybook/test";
 import type {
   SpatialAudioCalibration,

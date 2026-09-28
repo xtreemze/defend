@@ -1,4 +1,4 @@
-import { setProjectAnnotations } from "@storybook/html-vite";
+import { setProjectAnnotations } from "@storybook/web-components-vite";
 import { beforeAll } from "vitest";
 import * as previewAnnotations from "./preview";
 

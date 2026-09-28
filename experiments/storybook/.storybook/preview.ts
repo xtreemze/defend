@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/html-vite";
+import type { Preview } from "@storybook/web-components-vite";
 
 const preview: Preview = {
   parameters: {
@@ -8,7 +8,7 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ["Diagnostics", "Foundations", "Audio", "Arena", "Gameplay"]
+        order: ["Diagnostics", "UI", "Foundations", "Audio", "Arena", "Gameplay"]
       }
     }
   }
