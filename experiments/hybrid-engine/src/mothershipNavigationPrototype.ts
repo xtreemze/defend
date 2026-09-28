@@ -1,7 +1,6 @@
 import {
   ArcRotateCamera,
   Color3,
-  Engine,
   HemisphericLight,
   type Mesh,
   MeshBuilder,
@@ -12,6 +11,10 @@ import {
   TransformNode,
   Vector3,
 } from "@babylonjs/core/pure";
+import {
+  createRenderEngine,
+  rendererDiagnosticLabel,
+} from "./renderEngine";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
 // registers none of the prototype extensions they rely on at runtime. Register
@@ -425,10 +428,8 @@ async function main(): Promise<void> {
     throw new Error("Navigation lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, {
-    adaptToDeviceRatio: true,
-    antialias: true,
-  });
+  const renderer = await createRenderEngine(canvas);
+  const { engine } = renderer;
   const scene = new Scene(engine);
   scene.clearColor.set(0.02, 0.012, 0.034, 1);
 
@@ -725,6 +726,7 @@ async function main(): Promise<void> {
         new Vector3(state.desiredPosition.x, 0, state.desiredPosition.z),
       );
       metrics.textContent = [
+        `renderer: ${rendererDiagnosticLabel(renderer)}`,
         "Mothership navigation / silo-attraction PoC",
         `phase: ${state.phase}`,
         `reserve: ${(state.reserve * 100).toFixed(1)}%`,

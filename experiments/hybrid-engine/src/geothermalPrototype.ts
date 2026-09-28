@@ -1,7 +1,6 @@
 import {
   ArcRotateCamera,
   Color3,
-  Engine,
   HemisphericLight,
   Mesh,
   MeshBuilder,
@@ -11,6 +10,10 @@ import {
   StandardMaterial,
   Vector3,
 } from "@babylonjs/core/pure";
+import {
+  createRenderEngine,
+  rendererDiagnosticLabel,
+} from "./renderEngine";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
 // registers none of the prototype extensions they rely on at runtime. Register
@@ -479,10 +482,8 @@ async function main(): Promise<void> {
     throw new Error("Geothermal lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, {
-    adaptToDeviceRatio: true,
-    antialias: true,
-  });
+  const renderer = await createRenderEngine(canvas);
+  const { engine } = renderer;
   const scene = new Scene(engine);
   scene.clearColor.set(0.02, 0.012, 0.034, 1);
 
@@ -993,6 +994,7 @@ async function main(): Promise<void> {
           tower.tier > 1 && tower.supported && !tower.melted && globalFiring,
       ).length;
       metrics.textContent = [
+        `renderer: ${rendererDiagnosticLabel(renderer)}`,
         "Planetary geothermal / tower-power PoC",
         ...sourceLines,
         `supported towers: ${supported}/${towers.length}`,

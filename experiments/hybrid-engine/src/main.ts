@@ -1,7 +1,6 @@
 import {
   ArcRotateCamera,
   Color3,
-  Engine,
   HemisphericLight,
   MeshBuilder,
   RegisterInstancedMesh,
@@ -10,6 +9,10 @@ import {
   StandardMaterial,
   Vector3,
 } from "@babylonjs/core/pure";
+import {
+  createRenderEngine,
+  rendererDiagnosticLabel,
+} from "./renderEngine";
 import initRuntime, { DefendRuntime } from "../pkg/defend_hybrid_runtime.js";
 import {
   advanceFixedStep,
@@ -41,10 +44,8 @@ async function main(): Promise<void> {
     throw new Error("Hybrid arena DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, {
-    adaptToDeviceRatio: true,
-    antialias: true,
-  });
+  const renderer = await createRenderEngine(canvas);
+  const { engine } = renderer;
   const scene = new Scene(engine);
   scene.clearColor.set(0.031, 0.019, 0.051, 1);
 
@@ -242,6 +243,7 @@ async function main(): Promise<void> {
     if (frame % 15 === 0) {
       const fingerprint = runtime.state_fingerprint();
       metrics.textContent = [
+        `renderer: ${rendererDiagnosticLabel(renderer)}`,
         "Defend modern preview — Babylon 9 + Bevy 0.19 ECS/WASM",
         `bodies: ${BODY_COUNT}`,
         `fps: ${engine.getFps().toFixed(1)}`,
@@ -252,7 +254,7 @@ async function main(): Promise<void> {
         `render alpha: ${renderAlpha.toFixed(2)}`,
         `snapshot: ${snapshotBytes} B/frame + ${snapshotIds.length * Uint32Array.BYTES_PER_ELEMENT} B identity table`,
         `dropped catch-up time: ${(fixedStepState.droppedSeconds * 1000).toFixed(1)} ms`,
-        `WebGPU available: ${"gpu" in navigator}`,
+        `WebGPU API exposed: ${"gpu" in navigator}`,
         `crossOriginIsolated: ${String(crossOriginIsolated)}`,
         "?inspect=1 enables Babylon Inspector CLI bridge",
       ].join("\n");
