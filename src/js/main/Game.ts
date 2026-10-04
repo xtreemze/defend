@@ -17,9 +17,6 @@ import { getGlobalPerformanceMonitor } from "../utility/performanceMonitor";
 import { getGlobalLazyLoadingOrchestrator } from "../utility/lazyLoadingOrchestrator";
 import { getGlobalMaterialFactory } from "../utility/materialFactory";
 import { getGlobalParticlePoolManager } from "../utility/particlePoolManager";
-import { getGlobalProjectilePoolManager } from "../projectile/projectilePoolManager";
-import { getGlobalEnemyPoolManager } from "../enemy/enemyPoolManager";
-import { getGlobalFragmentPoolManager } from "../enemy/fragmentPoolManager";
 import { getGlobalAudioManager } from "../utility/audioManager";
 import { initializeGlobalRenderingOptimizer, getGlobalRenderingOptimizer } from "../utility/renderingOptimizer";
 
@@ -156,15 +153,6 @@ class Game {
 		// Initialize particle pool
 		const particlePool = getGlobalParticlePoolManager(this.scene);
 
-		// Initialize projectile pool (will be created after projectile instances are available)
-		const projectilePool = getGlobalProjectilePoolManager();
-
-		// Initialize enemy pool
-		const enemyPool = getGlobalEnemyPoolManager(this.scene);
-
-		// Initialize fragment pool
-		const fragmentPool = getGlobalFragmentPoolManager(this.scene);
-
 		// Initialize audio manager (lazy loads on first sound)
 		const audioManager = getGlobalAudioManager();
 
@@ -192,9 +180,6 @@ class Game {
 			const renderStats = renderingOptimizer.getStats();
 			perfMonitor.registerMaterialCacheStats(factory.getStats());
 			perfMonitor.registerParticlePoolStats(particlePool.getStats());
-			perfMonitor.registerProjectilePoolStats(projectilePool.getStats());
-			perfMonitor.registerEnemyPoolStats(enemyPool.getStats());
-			perfMonitor.registerFragmentPoolStats(fragmentPool.getStats());
 			perfMonitor.registerAudioStats(audioManager.getStats());
 			perfMonitor.registerRenderingStats(renderStats);
 			perfMonitor.logStats();

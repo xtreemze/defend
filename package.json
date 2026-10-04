@@ -85,5 +85,9 @@
         "JavaScript",
         "Mobile",
         "Game"
-    ]
+    ],
+    "resolutions": {
+        "@types/node": "12.20.55",
+        "@types/minimatch": "3.0.5"
+    }
 }

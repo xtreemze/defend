@@ -40,8 +40,7 @@ function currencyCollide(enemy: EnemySphere, scene: Scene, level: number) {
 								enemyRotation,
 								enemyLinearVelocity,
 								enemyAngularVelocity,
-								true,
-								scene
+								true
 								);
 
 								// enemy.hitPoints = 0;

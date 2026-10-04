@@ -9,6 +9,7 @@ export class ImpostorLifecycleManager {
   private disposalBatchSize = 10;
   private disposalInterval = 500; // ms
   private lastDisposalTime = 0;
+  private flushTimer: number | null = null;
   private createdCount = 0;
   private disposedCount = 0;
 
@@ -34,6 +35,12 @@ export class ImpostorLifecycleManager {
     ) {
       this.processBatch();
       this.lastDisposalTime = now;
+    } else if (this.flushTimer === null) {
+      // Never leave a destroyed body in the physics world during a lull
+      this.flushTimer = window.setTimeout(() => {
+        this.flushTimer = null;
+        this.processBatch();
+      }, 50);
     }
   }
 
