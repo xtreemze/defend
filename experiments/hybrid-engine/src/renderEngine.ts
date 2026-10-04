@@ -2,6 +2,7 @@ import { Engine } from "@babylonjs/core/pure";
 import type { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import {
   parseRendererPreference,
+  wantsDrawingBufferCapture,
   type RendererPreference,
 } from "./rendererPreference";
 
@@ -65,7 +66,8 @@ export async function createRenderEngine(
   canvas: HTMLCanvasElement,
   search = window.location.search,
 ): Promise<RendererSelection> {
-  const requested = parseRendererPreference(search);
+  const capture = wantsDrawingBufferCapture(search);
+  const requested = capture ? "webgl" : parseRendererPreference(search);
   let fallbackReason: RendererFallbackReason | undefined;
 
   if (requested !== "webgl") {
@@ -83,7 +85,11 @@ export async function createRenderEngine(
   }
 
   const selection: RendererSelection = {
-    engine: new Engine(canvas, true, ENGINE_OPTIONS),
+    engine: new Engine(
+      canvas,
+      true,
+      capture ? { ...ENGINE_OPTIONS, preserveDrawingBuffer: true } : ENGINE_OPTIONS,
+    ),
     requested,
     backend: "webgl",
     ...(fallbackReason ? { fallbackReason } : {}),

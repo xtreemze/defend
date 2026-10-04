@@ -111,6 +111,7 @@ test("verifier proves explicit raw frame count before accepting 60 fps output", 
   assert.doesNotMatch(source, /function assertWidth/);
   assert.match(source, /frameDurationsMs/);
   assert.match(source, /value\.length > 0/);
+  assert.match(source, /split\(","\)\[0\]/);
   assert.match(workflow, /showcase:verify --source-only/);
 });
 
@@ -128,4 +129,38 @@ test("README and Pages publishing reference both stable WebP collections", async
   assert.match(workflow, /publish\/showcase/);
   assert.match(workflow, /gh-pages/);
   assert.match(workflow, /vite preview --host 127\.0\.0\.1 --port 5173/);
+});
+
+test("modern web delivery set (AV1 WebM, H.264 fallback, AVIF poster) is rendered and verified", async () => {
+  const render = await read("experiments/hybrid-engine/showcase/render.mjs");
+  const verify = await read("experiments/hybrid-engine/showcase/verify.mjs");
+  assert.deepEqual(showcase.web.widths, { desktop: 960, mobile: 390 });
+  assert.ok(showcase.web.budgets.total <= 8_000_000);
+  assert.match(render, /"libsvtav1"/);
+  assert.match(render, /"libaom-av1"/);
+  assert.match(render, /"-still-picture"/);
+  assert.match(render, /\.avif/);
+  assert.ok(render.includes('-highlight.webm'));
+  assert.match(render, /exceeds web budget/);
+  assert.match(verify, /codec_name, "av1"/);
+  assert.match(verify, /assertAvif/);
+});
+
+test("presentation site plays the AV1 loops with H.264 fallback and AVIF posters", async () => {
+  const html = await read("experiments/hybrid-engine/index.html");
+  assert.doesNotMatch(html, /showcase\/[a-z]+\/[0-9a-z-]+\.gif/);
+  assert.match(html, /type='video\/webm; codecs=av01\.0\.08M\.08'/);
+  assert.match(html, /type="video\/mp4"/);
+  assert.match(html, /poster="\.\/showcase\/desktop\/05-towers-and-terrain\.avif"/);
+});
+
+test("capture reads real pixels: drawing buffer preserved and blank frames fail verification", async () => {
+  const capture = await read("experiments/hybrid-engine/showcase/capture.mjs");
+  const engine = await read("experiments/hybrid-engine/src/renderEngine.ts");
+  const verify = await read("experiments/hybrid-engine/showcase/verify.mjs");
+  assert.match(capture, /"capture"/);
+  assert.match(engine, /preserveDrawingBuffer: true/);
+  assert.match(engine, /wantsDrawingBufferCapture/);
+  assert.ok(showcase.capture.minimumFrameBytesPerMegapixel >= 5_000);
+  assert.match(verify, /canvas snapshot is blank/);
 });

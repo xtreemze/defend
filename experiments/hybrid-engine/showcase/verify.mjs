@@ -50,6 +50,8 @@ function frameRate(value) {
   return numerator / denominator;
 }
 
+// ffprobe 6.x appends side-data columns (e.g. x264's SEI user data) to the first
+// frame's CSV row; only the first column is the timestamp.
 function probeFrameTimestamps(file) {
   const result = spawnSync(
     "ffprobe",
@@ -73,7 +75,7 @@ function probeFrameTimestamps(file) {
 
   return result.stdout
     .split(/\r?\n/u)
-    .map((value) => value.trim())
+    .map((value) => value.split(",")[0].trim())
     .filter((value) => value.length > 0)
     .map(Number)
     .filter((value) => Number.isFinite(value));
@@ -90,6 +92,11 @@ function assertVp8(file) {
   assert.equal(stream.codec_name, "vp8", file + " must use VP8 for raw evidence");
 }
 
+function assertPresentationGeometry(file, expectedWidth) {
+  const stream = probeJson(file);
+  assert.equal(stream.width, expectedWidth, file + " width must match presentation target");
+}
+
 async function assertSourceFrameSequence(frameRoot, expectedFrames, expectedDimensions) {
   const frameFiles = (await readdir(frameRoot)).filter((file) => file.endsWith(".webp")).sort();
   const expectedNames = Array.from(
@@ -102,6 +109,16 @@ async function assertSourceFrameSequence(frameRoot, expectedFrames, expectedDime
     frameRoot + " must contain one explicit canvas snapshot for every 60 Hz source tick",
   );
   await Promise.all(frameFiles.map((file) => mustExist(path.join(frameRoot, file))));
+  for (const index of [0, Math.floor(expectedFrames / 2), expectedFrames - 1]) {
+    const size = (await stat(path.join(frameRoot, frameFiles[index]))).size;
+    const minimumBytes =
+      showcase.capture.minimumFrameBytesPerMegapixel *
+      ((expectedDimensions.width * expectedDimensions.height) / 1_000_000);
+    assert.ok(
+      size >= minimumBytes,
+      frameRoot + " frame " + (index + 1) + " is only " + size + " bytes; the canvas snapshot is blank",
+    );
+  }
   assertDimensions(path.join(frameRoot, frameFiles[0]), expectedDimensions);
   assertDimensions(path.join(frameRoot, frameFiles.at(-1)), expectedDimensions);
 }
@@ -156,6 +173,15 @@ function assertEncodedCadence(file, expectedFrames, label) {
 
 function uint24le(buffer, offset) {
   return buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16);
+}
+
+async function assertAvif(file) {
+  const buffer = await readFile(file);
+  assert.equal(buffer.subarray(4, 8).toString("ascii"), "ftyp", file + " must be an ISOBMFF file");
+  assert.ok(
+    buffer.subarray(8, 32).toString("ascii").includes("avif"),
+    file + " must declare the avif brand",
+  );
 }
 
 async function probeAnimatedWebp(file) {
@@ -327,6 +353,26 @@ async function verifyRenderedOutputs() {
 
       await assertAnimatedWebpCadence(webp, expectedFrames, project.webpWidth);
       await assertAnimatedWebpCadence(publishedWebp, expectedFrames, project.webpWidth);
+
+      const webWidth = showcase.web.widths[project.key];
+      const webSet = {
+        av1: path.join(outputRoot, "web", project.key, scene.id + ".webm"),
+        h264: path.join(outputRoot, "web", project.key, scene.id + ".mp4"),
+        avif: path.join(outputRoot, "web", project.key, scene.id + ".avif"),
+      };
+      for (const file of Object.values(webSet)) {
+        await mustExist(file);
+        await mustExist(
+          path.join(outputRoot, "publish", "showcase", project.key, path.basename(file)),
+        );
+      }
+      assert.equal(probeJson(webSet.av1).codec_name, "av1", webSet.av1 + " must be AV1");
+      assert.equal(probeJson(webSet.h264).codec_name, "h264", webSet.h264 + " must be H.264");
+      assertPresentationGeometry(webSet.av1, webWidth);
+      assertPresentationGeometry(webSet.h264, webWidth);
+      assertEncodedCadence(webSet.av1, expectedFrames, "AV1 web loop");
+      assertEncodedCadence(webSet.h264, expectedFrames, "H.264 web fallback");
+      await assertAvif(webSet.avif);
     }
 
     const webpFiles = (await readdir(path.join(outputRoot, "webps", project.key))).filter((file) =>
@@ -347,6 +393,13 @@ async function verifyRenderedOutputs() {
     assertDimensions(reel, project.viewport);
     assertReportedHighFrameRate(reel);
     assertEncodedCadence(reel, projectFrameTotal, "60 fps highlight reel");
+    const av1Reel = path.join(outputRoot, "reels", "defend-" + project.key + "-highlight.webm");
+    await mustExist(av1Reel);
+    await mustExist(
+      path.join(outputRoot, "publish", "showcase", "reels", path.basename(av1Reel)),
+    );
+    assert.equal(probeJson(av1Reel).codec_name, "av1", av1Reel + " must be AV1");
+    assertEncodedCadence(av1Reel, projectFrameTotal, "AV1 highlight reel");
   }
 
   await mustExist(path.join(outputRoot, "manifest.json"));
@@ -369,6 +422,6 @@ if (sourceOnly) {
 } else {
   await verifyRenderedOutputs();
   process.stdout.write(
-    "showcase verification passed: 1,800 explicit canvas samples, 10 VP8 evidence videos, 10 screenshots, 10 60 fps MP4s, 10 frame-exact 60 fps WebPs, 2 60 fps reels\n",
+    "showcase verification passed: 1,800 explicit canvas samples, 10 VP8 evidence videos, 10 screenshots, 10 60 fps MP4s, 10 frame-exact 60 fps WebPs, 2 60 fps reels, 10 AV1 + 10 H.264 web loops, 10 AVIF posters, 2 AV1 reels\n",
   );
 }
