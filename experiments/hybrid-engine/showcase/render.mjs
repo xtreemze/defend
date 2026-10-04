@@ -11,6 +11,7 @@ const reelsRoot = path.join(outputRoot, "reels");
 const webpsRoot = path.join(outputRoot, "webps");
 const normalizedRoot = path.join(outputRoot, "playwright", "normalized");
 const publishRoot = path.join(outputRoot, "publish", "showcase");
+const webRoot = path.join(outputRoot, "web");
 
 function run(command, args) {
   const result = spawnSync(command, args, { stdio: "inherit" });
@@ -73,15 +74,57 @@ async function renderAnimatedWebp({
   await rm(frameRoot, { recursive: true, force: true });
 }
 
+async function renderWebSet({ project, scene, inputPattern, expectedFrames, screenshot, webProject, publishProject }) {
+  const width = showcase.web.widths[project.key];
+  const scale = "scale=" + width + ":-2:flags=lanczos";
+  const base = path.join(webProject, scene.id);
+  const input = ["-y", "-framerate", String(showcase.capture.videoFps), "-start_number", "1", "-i", inputPattern, "-an", "-vf", scale, "-frames:v", String(expectedFrames)];
+
+  run("ffmpeg", [
+    ...input,
+    "-c:v", "libsvtav1",
+    "-crf", String(showcase.web.av1.crf),
+    "-preset", String(showcase.web.av1.preset),
+    "-g", String(showcase.web.av1.keyframeInterval),
+    "-pix_fmt", "yuv420p",
+    base + ".webm",
+  ]);
+  run("ffmpeg", [
+    ...input,
+    "-fps_mode", "passthrough",
+    "-c:v", "libx264",
+    "-preset", showcase.web.h264.preset,
+    "-crf", String(showcase.web.h264.crf),
+    "-pix_fmt", "yuv420p",
+    "-movflags", "+faststart",
+    base + ".mp4",
+  ]);
+  run("ffmpeg", [
+    "-y", "-i", screenshot, "-vf", scale,
+    "-c:v", "libaom-av1", "-still-picture", "1",
+    "-crf", String(showcase.web.avif.crf),
+    "-cpu-used", String(showcase.web.avif.cpuUsed),
+    "-pix_fmt", "yuv420p",
+    base + ".avif",
+  ]);
+  for (const extension of [".webm", ".mp4", ".avif"]) {
+    await copyFile(base + extension, path.join(publishProject, scene.id + extension));
+  }
+  return base + ".webm";
+}
+
 async function renderProject(project) {
   const normalizedProject = path.join(normalizedRoot, project.key);
   const webpProject = path.join(webpsRoot, project.key);
+  const webProject = path.join(webRoot, project.key);
+  await mkdir(webProject, { recursive: true });
   const publishProject = path.join(publishRoot, project.key);
   await mkdir(normalizedProject, { recursive: true });
   await mkdir(webpProject, { recursive: true });
   await mkdir(publishProject, { recursive: true });
 
   const normalized = [];
+  const av1Scenes = [];
   for (const scene of showcase.scenes) {
     const frameRoot = path.join(outputRoot, "raw", project.key, scene.id + "-frames");
     const inputPattern = path.join(frameRoot, "frame-%03d.webp");
@@ -137,6 +180,18 @@ async function renderProject(project) {
       frameRoot: path.join(normalizedProject, scene.id + "-webp-frames"),
     });
     await copyFile(webp, path.join(publishProject, scene.id + ".webp"));
+
+    av1Scenes.push(
+      await renderWebSet({
+        project,
+        scene,
+        inputPattern,
+        expectedFrames,
+        screenshot: path.join(outputRoot, "raw", project.key, scene.id + ".png"),
+        webProject,
+        publishProject,
+      }),
+    );
   }
 
   const concatFile = path.join(normalizedProject, "concat.txt");
@@ -161,11 +216,22 @@ async function renderProject(project) {
   ]);
   await mkdir(path.join(publishRoot, "reels"), { recursive: true });
   await copyFile(reel, path.join(publishRoot, "reels", path.basename(reel)));
+
+  const av1ConcatFile = path.join(webProject, "concat.txt");
+  await writeFile(
+    av1ConcatFile,
+    av1Scenes.map((file) => "file '" + file.replaceAll("'", "'\\''") + "'").join("\n") + "\n",
+  );
+  const av1Reel = path.join(reelsRoot, "defend-" + project.key + "-highlight.webm");
+  run("ffmpeg", ["-y", "-f", "concat", "-safe", "0", "-i", av1ConcatFile, "-c", "copy", av1Reel]);
+  await copyFile(av1Reel, path.join(publishRoot, "reels", path.basename(av1Reel)));
 }
 
 async function buildReadmeSnippet() {
   const lines = [
     "## Product in motion",
+    "",
+    "AV1 WebM loops, H.264 MP4 fallbacks and AVIF posters for the presentation site are published beside each animated WebP under `showcase/<form-factor>/`; the WebPs below are for GitHub's README, which cannot embed video.",
     "",
     "CI records these scenes from the real modern preview in Chromium. Each three-second scene is sampled as exactly 180 explicit canvas frames on a controlled 60 Hz application clock before encoding.",
     "",
@@ -217,6 +283,28 @@ async function reportSizes() {
   }
   report.totals.combined = combined;
   report.budgets = showcase.webp.budgets;
+
+  report.web = { budgets: showcase.web.budgets, files: {}, total: 0 };
+  for (const project of showcase.projects) {
+    for (const scene of showcase.scenes) {
+      for (const [kind, extension, budget] of [
+        ["av1", ".webm", showcase.web.budgets.perVideo],
+        ["h264", ".mp4", showcase.web.budgets.perVideo],
+        ["avif", ".avif", showcase.web.budgets.perPoster],
+      ]) {
+        const size = (await stat(path.join(webRoot, project.key, scene.id + extension))).size;
+        report.web.files[project.key + "/" + scene.id + "." + kind] = size;
+        report.web.total += size;
+        if (size > budget) {
+          throw new Error(project.key + " " + scene.id + " " + kind + " exceeds web budget: " + size);
+        }
+      }
+    }
+  }
+  process.stdout.write("AV1 + H.264 + AVIF delivery payload: " + report.web.total + " bytes\n");
+  if (report.web.total > showcase.web.budgets.total) {
+    throw new Error("web delivery payload exceeds budget: " + report.web.total);
+  }
   process.stdout.write("combined animated WebP payload: " + combined + " bytes\n");
   await writeFile(path.join(outputRoot, "sizes.json"), JSON.stringify(report, null, 2) + "\n");
 
@@ -242,6 +330,7 @@ async function reportSizes() {
 async function main() {
   await rm(reelsRoot, { recursive: true, force: true });
   await rm(webpsRoot, { recursive: true, force: true });
+  await rm(webRoot, { recursive: true, force: true });
   await rm(normalizedRoot, { recursive: true, force: true });
   await rm(publishRoot, { recursive: true, force: true });
   await mkdir(reelsRoot, { recursive: true });

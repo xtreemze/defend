@@ -22,6 +22,9 @@ export const showcase = {
     videoFps: 60,
     minimumEncodedFps: 59,
     sourceFrameQuality: 0.92,
+    // Blank WebP canvas snapshots are ~2-4 KB per megapixel; real renders of
+    // these dark scenes are at least ~18 KB per megapixel.
+    minimumFrameBytesPerMegapixel: 8_000,
   },
   webp: {
     fps: 60,
@@ -32,6 +35,19 @@ export const showcase = {
       desktopTotal: 10_000_000,
       mobileTotal: 6_000_000,
       combined: 15_000_000,
+    },
+  },
+  // Delivery set for GitHub Pages and the presentation site: AV1 WebM loops
+  // (Chrome/Edge/Firefox/Safari 17+), H.264 MP4 fallback and AVIF posters.
+  web: {
+    widths: { desktop: 960, mobile: 390 },
+    av1: { crf: 36, preset: 6, keyframeInterval: 120 },
+    h264: { crf: 26, preset: "slow" },
+    avif: { crf: 32, cpuUsed: 6 },
+    budgets: {
+      perVideo: 1_500_000,
+      perPoster: 400_000,
+      total: 8_000_000,
     },
   },
   scenes: [

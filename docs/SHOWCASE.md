@@ -68,6 +68,21 @@ The pipeline deliberately reuses the existing pinned Playwright installation in 
 
 This keeps capture tied to the same browser automation already used by the repository and keeps rendering reproducible in Linux CI.
 
+## Real pixels, not blank canvases
+
+Frames are read with `canvas.toDataURL()`, which returns a blank image unless the WebGL drawing buffer is preserved. Capture therefore loads each scene with `?capture`, which forces the WebGL backend with `preserveDrawingBuffer: true` (normal play is unchanged). `verify.mjs` fails any source sequence whose first, middle or last frame is smaller than `capture.minimumFrameBytesPerMegapixel`, so a blank capture can no longer pass as a successful run. The arena scene starts capturing after the simulation is resumed so it shows motion rather than a paused frame.
+
+## Web delivery formats
+
+For GitHub Pages and the presentation site the renderer also produces, per scene and form factor (960 px desktop, 390 px mobile):
+
+- `<scene>.webm` — AV1 (SVT-AV1, CRF 36, 60 fps) loop, the primary format for Chrome, Edge and Firefox;
+- `<scene>.mp4` — H.264 fallback for browsers without AV1;
+- `<scene>.avif` — still poster from the scene screenshot (AVIF is far smaller than PNG/WebP at equal quality);
+- `reels/defend-<form-factor>-highlight.webm` — AV1 highlight reel beside the existing H.264 reel.
+
+The site embeds them with `<video autoplay muted loop playsinline poster=...>` and `<source>` entries ordered AV1 then H.264. Animated WebPs remain for the GitHub README, which cannot embed video. `sizes.json` records every web file and `showcase.web.budgets` caps each video, each poster and the total; the AV1/H.264/AVIF set is roughly five times smaller than the animated WebPs.
+
 ## Stable presentation URLs
 
 Published animated WebPs are available under:

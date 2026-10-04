@@ -117,7 +117,6 @@ async function runArena(page, project, checkpoint) {
   }
   assert.equal(await pause.getAttribute("aria-pressed"), "true");
   assert.match((await pause.textContent()) ?? "", /Resume simulation/);
-  await checkpoint();
   if (project.key === "desktop") {
     await pressArenaPauseShortcut(page);
   } else {
@@ -127,6 +126,8 @@ async function runArena(page, project, checkpoint) {
   if (project.key === "desktop") {
     await activate(page, project, page.locator("#arena-camera"));
   }
+  // Capture the running simulation: a checkpoint taken while paused is a frozen frame.
+  await checkpoint();
 }
 
 async function runMothership(page, project, checkpoint) {
@@ -330,7 +331,8 @@ async function recordScene(browser, project, scene) {
     if (message.type() === "error") browserErrors.push(message.text());
   });
 
-  const response = await page.goto(baseURL + scene.path, {
+  const separator = scene.path.includes("?") ? "&" : "?";
+  const response = await page.goto(baseURL + scene.path + separator + "capture", {
     waitUntil: "networkidle",
     timeout: 30_000,
   });

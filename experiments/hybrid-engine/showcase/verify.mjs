@@ -109,6 +109,16 @@ async function assertSourceFrameSequence(frameRoot, expectedFrames, expectedDime
     frameRoot + " must contain one explicit canvas snapshot for every 60 Hz source tick",
   );
   await Promise.all(frameFiles.map((file) => mustExist(path.join(frameRoot, file))));
+  for (const index of [0, Math.floor(expectedFrames / 2), expectedFrames - 1]) {
+    const size = (await stat(path.join(frameRoot, frameFiles[index]))).size;
+    const minimumBytes =
+      showcase.capture.minimumFrameBytesPerMegapixel *
+      ((expectedDimensions.width * expectedDimensions.height) / 1_000_000);
+    assert.ok(
+      size >= minimumBytes,
+      frameRoot + " frame " + (index + 1) + " is only " + size + " bytes; the canvas snapshot is blank",
+    );
+  }
   assertDimensions(path.join(frameRoot, frameFiles[0]), expectedDimensions);
   assertDimensions(path.join(frameRoot, frameFiles.at(-1)), expectedDimensions);
 }
@@ -163,6 +173,22 @@ function assertEncodedCadence(file, expectedFrames, label) {
 
 function uint24le(buffer, offset) {
   return buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16);
+}
+
+async function assertWebpCanvasWidth(file, expectedWidth) {
+  const buffer = await readFile(file);
+  assert.equal(buffer.subarray(12, 16).toString("ascii"), "VP8X", file + " must be an extended (animated) WebP");
+  const canvasWidth = uint24le(buffer, 24) + 1;
+  assert.equal(canvasWidth, expectedWidth, file + " canvas width must match presentation target");
+}
+
+async function assertAvif(file) {
+  const buffer = await readFile(file);
+  assert.equal(buffer.subarray(4, 8).toString("ascii"), "ftyp", file + " must be an ISOBMFF file");
+  assert.ok(
+    buffer.subarray(8, 32).toString("ascii").includes("avif"),
+    file + " must declare the avif brand",
+  );
 }
 
 async function probeAnimatedWebp(file) {
@@ -323,9 +349,29 @@ async function verifyRenderedOutputs() {
       assertReportedHighFrameRate(normalized);
       assertEncodedCadence(normalized, expectedFrames, "normalized 60 fps video");
 
-      assertWidth(webp, project.webpWidth);
+      await assertWebpCanvasWidth(webp, project.webpWidth);
       await assertAnimatedWebpCadence(webp, expectedFrames);
       await assertAnimatedWebpCadence(publishedWebp, expectedFrames);
+
+      const webWidth = showcase.web.widths[project.key];
+      const webSet = {
+        av1: path.join(outputRoot, "web", project.key, scene.id + ".webm"),
+        h264: path.join(outputRoot, "web", project.key, scene.id + ".mp4"),
+        avif: path.join(outputRoot, "web", project.key, scene.id + ".avif"),
+      };
+      for (const file of Object.values(webSet)) {
+        await mustExist(file);
+        await mustExist(
+          path.join(outputRoot, "publish", "showcase", project.key, path.basename(file)),
+        );
+      }
+      assert.equal(probeJson(webSet.av1).codec_name, "av1", webSet.av1 + " must be AV1");
+      assert.equal(probeJson(webSet.h264).codec_name, "h264", webSet.h264 + " must be H.264");
+      assertWidth(webSet.av1, webWidth);
+      assertWidth(webSet.h264, webWidth);
+      assertEncodedCadence(webSet.av1, expectedFrames, "AV1 web loop");
+      assertEncodedCadence(webSet.h264, expectedFrames, "H.264 web fallback");
+      await assertAvif(webSet.avif);
     }
 
     const webpFiles = (await readdir(path.join(outputRoot, "webps", project.key))).filter((file) =>
@@ -346,6 +392,13 @@ async function verifyRenderedOutputs() {
     assertDimensions(reel, project.viewport);
     assertReportedHighFrameRate(reel);
     assertEncodedCadence(reel, projectFrameTotal, "60 fps highlight reel");
+    const av1Reel = path.join(outputRoot, "reels", "defend-" + project.key + "-highlight.webm");
+    await mustExist(av1Reel);
+    await mustExist(
+      path.join(outputRoot, "publish", "showcase", "reels", path.basename(av1Reel)),
+    );
+    assert.equal(probeJson(av1Reel).codec_name, "av1", av1Reel + " must be AV1");
+    assertEncodedCadence(av1Reel, projectFrameTotal, "AV1 highlight reel");
   }
 
   await mustExist(path.join(outputRoot, "manifest.json"));
@@ -368,6 +421,6 @@ if (sourceOnly) {
 } else {
   await verifyRenderedOutputs();
   process.stdout.write(
-    "showcase verification passed: 1,800 explicit canvas samples, 10 VP8 evidence videos, 10 screenshots, 10 60 fps MP4s, 10 frame-exact 60 fps WebPs, 2 60 fps reels\n",
+    "showcase verification passed: 1,800 explicit canvas samples, 10 VP8 evidence videos, 10 screenshots, 10 60 fps MP4s, 10 frame-exact 60 fps WebPs, 2 60 fps reels, 10 AV1 + 10 H.264 web loops, 10 AVIF posters, 2 AV1 reels\n",
   );
 }
