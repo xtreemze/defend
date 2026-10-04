@@ -43,6 +43,24 @@ jobs:
         with:
           version: 11.25.0
 
+      - name: Restore frozen classic lockfile
+        shell: bash
+        run: git show 992d54c2b97d3449bf5a6d2fc0912ba96484c829:package-lock.json > package-lock.json
+
+      - name: Install classic MVP dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build classic MVP
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: npm run build
+
+      - name: Stage classic MVP
+        shell: bash
+        run: |
+          rm -rf /tmp/defend-classic
+          mv dist /tmp/defend-classic
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@nightly
         with:
@@ -66,10 +84,17 @@ jobs:
           pnpm --filter @defend/hybrid-engine-lab exec tsc --noEmit
           pnpm --filter @defend/hybrid-engine-lab exec vite build --base=/defend/
 
+      - name: Add classic MVP to Pages artifact
+        shell: bash
+        run: |
+          mkdir -p experiments/hybrid-engine/dist/classic
+          cp -R /tmp/defend-classic/. experiments/hybrid-engine/dist/classic/
+
       - name: Verify Pages artifact
         shell: bash
         run: |
           test -f experiments/hybrid-engine/dist/index.html
+          test -f experiments/hybrid-engine/dist/classic/index.html
           test -f experiments/hybrid-engine/dist/arena.html
           test -f experiments/hybrid-engine/dist/mothership.html
           test -f experiments/hybrid-engine/dist/navigation.html
@@ -79,6 +104,8 @@ jobs:
           test -f experiments/hybrid-engine/dist/favicon.svg
           grep -q '/defend/assets/' experiments/hybrid-engine/dist/index.html
           grep -q 'Defend — physics-driven strategy' experiments/hybrid-engine/dist/index.html
+          grep -q 'Play Defend — classic MVP' experiments/hybrid-engine/dist/index.html
+          grep -q 'renderCanvas' experiments/hybrid-engine/dist/classic/index.html
           grep -q 'Defend — Deterministic Arena' experiments/hybrid-engine/dist/arena.html
           grep -q 'Game manual' experiments/hybrid-engine/dist/index.html
 
