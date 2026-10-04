@@ -12,9 +12,6 @@ export class PerformanceMonitor {
   private isMonitoring = false;
   private materialCacheStats: any = null;
   private particlePoolStats: any = null;
-  private projectilePoolStats: any = null;
-  private enemyPoolStats: any = null;
-  private fragmentPoolStats: any = null;
   private audioStats: any = null;
   private renderingStats: any = null;
 
@@ -97,27 +94,6 @@ export class PerformanceMonitor {
   }
 
   /**
-   * Register projectile pool stats for logging
-   */
-  registerProjectilePoolStats(stats: any): void {
-    this.projectilePoolStats = stats;
-  }
-
-  /**
-   * Register enemy pool stats for logging
-   */
-  registerEnemyPoolStats(stats: any): void {
-    this.enemyPoolStats = stats;
-  }
-
-  /**
-   * Register fragment pool stats for logging
-   */
-  registerFragmentPoolStats(stats: any): void {
-    this.fragmentPoolStats = stats;
-  }
-
-  /**
    * Register audio stats for logging
    */
   registerAudioStats(stats: any): void {
@@ -149,16 +125,6 @@ export class PerformanceMonitor {
     }
     if (this.particlePoolStats) {
       console.log(`Particle Pool - Pool: ${this.particlePoolStats.poolSize}, InUse: ${this.particlePoolStats.inUse}, Reused: ${this.particlePoolStats.reuseCount}`);
-    }
-    if (this.projectilePoolStats) {
-      console.log(`Projectile Pool - L2: ${this.projectilePoolStats.poolL2.total}/${this.projectilePoolStats.poolL2.inUse}, L3: ${this.projectilePoolStats.poolL3.total}/${this.projectilePoolStats.poolL3.inUse}, Reused: ${this.projectilePoolStats.reusePct}%`);
-    }
-    if (this.enemyPoolStats) {
-      const poolsStr = Object.entries(this.enemyPoolStats.pools).map((entry: any) => `L${entry[0]}: ${entry[1].total}/${entry[1].inUse}`).join(", ");
-      console.log(`Enemy Pool - ${poolsStr}, Reused: ${this.enemyPoolStats.reusePct}%`);
-    }
-    if (this.fragmentPoolStats) {
-      console.log(`Fragment Pool - Total: ${this.fragmentPoolStats.total}, InUse: ${this.fragmentPoolStats.inUse}, Reused: ${this.fragmentPoolStats.reusePct}%`);
     }
     if (this.audioStats) {
       console.log(`Audio - Cache: ${this.audioStats.cacheSize}, Hits: ${this.audioStats.cacheHits}, Misses: ${this.audioStats.cacheMisses}, Hit Rate: ${this.audioStats.hitRate}%`);
