@@ -16,7 +16,7 @@
       <nav aria-label="Primary">
         <a href="#history">History</a><a href="#playgrounds">Playgrounds</a><a href="#manual">Manual</a><a href="#tactics">Tactics</a>
       </nav>
-      <a class="button button-small" href="./arena.html">Play game</a>
+      <a class="button button-small" href="./classic/">Play classic game</a>
     </header>
 
     <main id="main">
@@ -26,7 +26,7 @@
           <h1 id="hero-title">Protect the energy that keeps you alive.</h1>
           <p class="lede">Defend is a strategy game about scarcity, temporary fortifications, and manipulating a physical battlefield. Energy is your health, construction budget, defended resource, and the economic consequence of combat.</p>
           <div class="actions">
-            <a class="button" href="./arena.html">Play Defend</a>
+            <a class="button" href="./classic/">Play Defend — classic MVP</a>
             <a class="button button-quiet" href="#manual">Read the game manual</a>
           </div>
           <dl class="hero-facts">
@@ -48,7 +48,7 @@
           <li><time datetime="2018-07">July 2018</time><div><h3>PWA work</h3><p>The project explores installable web delivery while keeping the game browser-first.</p></div></li>
           <li><time datetime="2018-12">December 2018</time><div><h3>Babylon.js community release</h3><p>Defend is shared publicly as a 3D tower-defense webgame and later becomes part of the Babylon.js Community Demos collection.</p><p><a href="https://forum.babylonjs.com/t/defend-tower-defense-webgame/458">Original Babylon.js community thread</a> · <a href="https://www.babylonjs.com/community/">Babylon.js Community Demos</a></p></div></li>
           <li><time datetime="2026-09">September 2026</time><div><h3>Modernization program</h3><p>The project formalizes its game-design manual, deterministic contracts, Storybook laboratories, Rust/WASM core, and a Babylon 9 hybrid-engine preview.</p></div></li>
-          <li><time datetime="2026-10">Now</time><div><h3>Playable systems, parity in progress</h3><p>The modern Pages build exposes working systems while the historical implementation remains the behavioral baseline until full gameplay parity is certified.</p></div></li>
+          <li><time datetime="2026-10">Now</time><div><h3>Classic MVP remains the game</h3><p>The complete historical MVP remains the primary playable Defend experience. Modern systems are published separately as unfinished experiments until full gameplay parity is certified.</p></div></li>
         </ol>
 
         <div class="split feature-card">
@@ -56,15 +56,15 @@
             <p class="eyebrow">Historical version</p>
             <h3>The original is still the reference game.</h3>
             <p>The historical Webpack/Babylon.js 3/Cannon application contains the complete original gameplay loop: direct world interaction, tower placement and upgrades, attacking spheres, energy recovery, finite-lived enemies, procedural sound, victory/defeat and restart behavior.</p>
-            <p class="status-note"><strong>Playable archive status:</strong> its source and generated PWA artifacts remain preserved in the repository, but the current GitHub Pages deployment is intentionally the modern preview. The legacy dependency graph is quarantined and should not be silently rebuilt into production without certification.</p>
-            <div class="actions"><a class="button button-quiet" href="https://github.com/xtreemze/defend">Open historical source</a><a class="button button-quiet" href="https://forum.babylonjs.com/t/defend-tower-defense-webgame/458">See the 2018 release</a></div>
+            <p class="status-note"><strong>Playable MVP:</strong> the classic implementation is published on this site as the current complete game while modernization continues. The experimental routes below are development previews and do not replace the MVP until parity is certified.</p>
+            <div class="actions"><a class="button" href="./classic/">Play the classic MVP</a><a class="button button-quiet" href="https://github.com/xtreemze/defend">Open historical source</a><a class="button button-quiet" href="https://forum.babylonjs.com/t/defend-tower-defense-webgame/458">See the 2018 release</a></div>
           </div>
           <img src="./showcase/desktop/01-deterministic-arena.gif" alt="Modern deterministic arena inspired by the original Defend battlefield" />
         </div>
       </section>
 
       <section class="section" id="playgrounds" aria-labelledby="playgrounds-title">
-        <div class="section-heading"><p class="eyebrow">Improved version</p><h2 id="playgrounds-title">The future game is being built as inspectable systems.</h2><p>Each playground isolates a real part of the intended game so mechanics can be evaluated before they become production authority.</p></div>
+        <div class="section-heading"><p class="eyebrow">Unfinished development experiments</p><h2 id="playgrounds-title">The future game is being built as inspectable systems.</h2><p>These playgrounds are experimental development surfaces, not the current game. Each isolates a real part of the intended modernization so mechanics can be evaluated before they become production authority.</p></div>
         <div class="card-grid">
           <a class="system-card" href="./arena.html"><span>01</span><h3>Deterministic arena</h3><p>Fixed-step Bevy/WASM semantic state with Babylon rendering.</p></a>
           <a class="system-card" href="./mothership.html"><span>02</span><h3>Finite-energy mothership</h3><p>Hover drain, depletion, instability and physical consequence.</p></a>

@@ -3,7 +3,7 @@
 <p align="center"><strong>A physics-driven strategy game about finite energy, temporary defenses, and the cost of perfect deterrence.</strong></p>
 
 <p align="center">
-  <a href="https://xtreemze.github.io/defend/">Project site</a> ·\n  <a href="https://xtreemze.github.io/defend/arena.html">Play Defend</a> ·
+  <a href="https://xtreemze.github.io/defend/">Project site</a> ·\n  <a href="https://xtreemze.github.io/defend/classic/">Play Defend</a> ·
   <a href="./docs/GAME_DESIGN_MANUAL.md">Game design manual</a> ·
   <a href="./docs/ROADMAP.md">Development roadmap</a> ·
   <a href="./AGENTS.md">Development contract</a> ·
@@ -131,7 +131,7 @@ Raiders share the same physical world but differ through size, mass, momentum, s
 
 ## Repository status
 
-Defend is an older playable web game undergoing a deliberate modernization. GitHub Pages now publishes the modern Babylon/Bevy/WASM systems preview, while the historical implementation remains available as the behavioral reference until the replacement path reaches full gameplay parity and MCP certification.
+Defend is an older playable web game undergoing a deliberate modernization. GitHub Pages presents the project at the root and publishes the complete classic MVP at `/classic/`. The Babylon/Bevy/WASM routes remain unfinished development experiments until the replacement path reaches full gameplay parity and MCP certification.
 
 | Area | Role today |
 | --- | --- |
@@ -141,7 +141,7 @@ Defend is an older playable web game undergoing a deliberate modernization. GitH
 | [`docs/design/`](./docs/design/) | **Focused system chapters and experiments** for energy flow, world ecology, mothership/raider play, geothermal power, locomotion, terrain, and related mechanics. |
 | [`crates/defend-core/`](./crates/defend-core/) | **Dependency-light deterministic Rust core** for formulas, topology, and contracts that benefit from portable executable tests. |
 | [`experiments/storybook/`](./experiments/storybook/) | **Interactive systems laboratory** for deterministic fixtures, design experiments, visual inspection, and behavior certification. |
-| [`experiments/hybrid-engine/`](./experiments/hybrid-engine/) | **Current GitHub Pages modern preview.** Babylon 9 renders while a headless modular Bevy/Rust WASM runtime owns semantic simulation state; the deployed scenes exercise real modern subsystems without yet claiming complete historical-game parity. |
+| [`experiments/hybrid-engine/`](./experiments/hybrid-engine/) | **Unfinished modernization experiments.** Babylon 9 renders while a headless modular Bevy/Rust WASM runtime owns semantic simulation state; the deployed scenes exercise real modern subsystems without claiming to be the current game until historical-game parity is certified. |
 
 ### Modernization direction
 
