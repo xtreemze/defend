@@ -11,7 +11,8 @@ export default defineConfig({
     target: "es2022",
     rollupOptions: {
       input: {
-        main: "index.html",
+        site: "index.html",
+        arena: "arena.html",
         mothership: "mothership.html",
         navigation: "navigation.html",
         geothermal: "geothermal.html",
