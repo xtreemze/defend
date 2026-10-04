@@ -3,10 +3,10 @@
  * Pre-allocates enemy meshes per level and reuses them via acquire/release
  */
 
-import { Mesh, MeshBuilder, Scene, InstancedMesh } from "../utility/babylonOptimized";
+import { Mesh, MeshBuilder, Scene } from "../utility/babylonOptimized";
 
 interface PooledEnemy {
-  mesh: Mesh | InstancedMesh;
+  mesh: Mesh;
   inUse: boolean;
   level: number;
 }
@@ -46,13 +46,13 @@ export class EnemyPoolManager {
     baseMesh.setEnabled(false);
     this.baseMeshes.set(level, baseMesh);
 
-    // Create instance pool for this level
+    // Create reusable mesh pool for this level
     const pool: PooledEnemy[] = [];
     for (let i = 0; i < this.poolSizePerLevel; i++) {
-      const instance = baseMesh.createInstance(`enemy_l${level}_pool_${i}`) as InstancedMesh;
-      instance.setEnabled(false);
+      const pooledMesh = baseMesh.clone(`enemy_l${level}_pool_${i}`) as Mesh;
+      pooledMesh.setEnabled(false);
       pool.push({
-        mesh: instance,
+        mesh: pooledMesh,
         inUse: false,
         level
       });
@@ -64,7 +64,7 @@ export class EnemyPoolManager {
   /**
    * Acquire an enemy mesh from the pool
    */
-  acquireEnemy(level: number): Mesh | InstancedMesh | null {
+  acquireEnemy(level: number): Mesh | null {
     // Initialize pool if needed
     if (!this.pools.has(level)) {
       this.initializeLevel(level);
@@ -80,10 +80,10 @@ export class EnemyPoolManager {
       // Expand pool if needed
       const baseMesh = this.baseMeshes.get(level);
       if (baseMesh && pool.length < this.poolSizePerLevel * 2) {
-        const instance = baseMesh.createInstance(`enemy_l${level}_dynamic_${pool.length}`) as InstancedMesh;
-        instance.setEnabled(false);
+        const pooledMesh = baseMesh.clone(`enemy_l${level}_dynamic_${pool.length}`) as Mesh;
+        pooledMesh.setEnabled(false);
         pooled = {
-          mesh: instance,
+          mesh: pooledMesh,
           inUse: false,
           level
         };
@@ -104,7 +104,7 @@ export class EnemyPoolManager {
   /**
    * Release an enemy mesh back to the pool
    */
-  releaseEnemy(mesh: Mesh | InstancedMesh, level: number): void {
+  releaseEnemy(mesh: Mesh, level: number): void {
     const pool = this.pools.get(level);
     if (!pool) return;
 
