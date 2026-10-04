@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-B0Z9INg1.js";import{c as t,o as n}from"./math.vector.pure-BAbqkt6K.js";var r,i,a,o=e((()=>{t(),(function(e){e[e.LOCAL=0]=`LOCAL`,e[e.WORLD=1]=`WORLD`,e[e.BONE=2]=`BONE`})(r||={}),i=class{},i.X=new n(1,0,0),i.Y=new n(0,1,0),i.Z=new n(0,0,1),(function(e){e[e.X=0]=`X`,e[e.Y=1]=`Y`,e[e.Z=2]=`Z`})(a||={})}));export{o as i,a as n,r,i as t};

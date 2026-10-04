@@ -1,0 +1,3 @@
+import{n as e}from"./rolldown-runtime-B0Z9INg1.js";import{n as t,t as n}from"./shaderStore-DBiNfWDC.js";var r,i,a;e((()=>{t(),r=`handleVertexShader`,i=`attribute position: vec3f;uniform positionOffset: vec3f;uniform worldViewProjection: mat4x4f;uniform scale: f32;@vertex
+fn main(input: VertexInputs)->FragmentInputs {let vPos: vec4f=vec4f((vertexInputs.position+uniforms.positionOffset)*uniforms.scale,1.0);vertexOutputs.position=uniforms.worldViewProjection*vPos;}
+`,n.ShadersStoreWGSL[r]||(n.ShadersStoreWGSL[r]=i),a={name:r,shader:i}}))();export{a as handleVertexShaderWGSL};
