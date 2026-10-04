@@ -106,6 +106,7 @@ test("verifier proves explicit raw frame count before accepting 60 fps output", 
   assert.match(source, /assertAnimatedWebpCadence/);
   assert.match(source, /frameDurationsMs/);
   assert.match(source, /value\.length > 0/);
+  assert.match(source, /split\(","\)\[0\]/);
   assert.match(workflow, /showcase:verify --source-only/);
 });
 

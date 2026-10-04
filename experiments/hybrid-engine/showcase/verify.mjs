@@ -50,6 +50,8 @@ function frameRate(value) {
   return numerator / denominator;
 }
 
+// ffprobe 6.x appends side-data columns (e.g. x264's SEI user data) to the first
+// frame's CSV row; only the first column is the timestamp.
 function probeFrameTimestamps(file) {
   const result = spawnSync(
     "ffprobe",
@@ -73,7 +75,7 @@ function probeFrameTimestamps(file) {
 
   return result.stdout
     .split(/\r?\n/u)
-    .map((value) => value.trim())
+    .map((value) => value.split(",")[0].trim())
     .filter((value) => value.length > 0)
     .map(Number)
     .filter((value) => Number.isFinite(value));
