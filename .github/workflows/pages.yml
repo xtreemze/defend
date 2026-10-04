@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build modern preview
+    name: Build project site and game
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -51,7 +51,7 @@ jobs:
         working-directory: experiments
         run: pnpm install --frozen-lockfile
 
-      - name: Build modern Pages preview
+      - name: Build GitHub Pages site
         working-directory: experiments
         run: |
           pnpm --filter @defend/hybrid-engine-lab wasm
@@ -84,7 +84,7 @@ jobs:
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
             git archive origin/gh-pages showcase 2>/dev/null | tar -x -C /tmp/defend-published-showcase || true
           fi
-      - name: Publish verified preview to gh-pages
+      - name: Publish landing site and game to gh-pages
         if: github.event_name != 'pull_request'
         working-directory: experiments/hybrid-engine/dist
         env:

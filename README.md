@@ -3,7 +3,7 @@
 <p align="center"><strong>A physics-driven strategy game about finite energy, temporary defenses, and the cost of perfect deterrence.</strong></p>
 
 <p align="center">
-  <a href="https://xtreemze.github.io/defend/">Explore the project site</a> ·
+  <a href="https://xtreemze.github.io/defend/">Project site</a> ·\n  <a href="https://xtreemze.github.io/defend/arena.html">Play Defend</a> ·
   <a href="./docs/GAME_DESIGN_MANUAL.md">Game design manual</a> ·
   <a href="./docs/ROADMAP.md">Development roadmap</a> ·
   <a href="./AGENTS.md">Development contract</a> ·
