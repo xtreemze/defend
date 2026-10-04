@@ -52,8 +52,8 @@ export function detectDeviceCapabilities(): DeviceCapabilities {
     },
     medium: {
       maxParticles: 80,
-      glowKernelSize: 8,
-      glowTextureRatio: 0.3,
+      glowKernelSize: 24,
+      glowTextureRatio: 0.4,
       impostorLimit: 60,
       enemyFragments: 1,
       targetFPS: 45

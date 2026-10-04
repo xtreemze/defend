@@ -11,9 +11,7 @@ export class PerformanceMonitor {
   private maxFrameTime = 0;
   private isMonitoring = false;
   private materialCacheStats: any = null;
-  private particlePoolStats: any = null;
   private audioStats: any = null;
-  private renderingStats: any = null;
 
   /**
    * Start monitoring performance
@@ -87,24 +85,10 @@ export class PerformanceMonitor {
   }
 
   /**
-   * Register particle pool stats for logging
-   */
-  registerParticlePoolStats(stats: any): void {
-    this.particlePoolStats = stats;
-  }
-
-  /**
    * Register audio stats for logging
    */
   registerAudioStats(stats: any): void {
     this.audioStats = stats;
-  }
-
-  /**
-   * Register rendering stats for logging
-   */
-  registerRenderingStats(stats: any): void {
-    this.renderingStats = stats;
   }
 
   /**
@@ -123,15 +107,8 @@ export class PerformanceMonitor {
     if (this.materialCacheStats) {
       console.log(`Material Cache - Cached: ${this.materialCacheStats.cachedCount}, Memory: ${this.materialCacheStats.totalMemory}`);
     }
-    if (this.particlePoolStats) {
-      console.log(`Particle Pool - Pool: ${this.particlePoolStats.poolSize}, InUse: ${this.particlePoolStats.inUse}, Reused: ${this.particlePoolStats.reuseCount}`);
-    }
     if (this.audioStats) {
       console.log(`Audio - Cache: ${this.audioStats.cacheSize}, Hits: ${this.audioStats.cacheHits}, Misses: ${this.audioStats.cacheMisses}, Hit Rate: ${this.audioStats.hitRate}%`);
-    }
-    if (this.renderingStats) {
-      const glowStatus = this.renderingStats.glowEnabled ? "enabled" : "disabled";
-      console.log(`Rendering - Glow: ${glowStatus} (intensity: ${this.renderingStats.glowIntensity.toFixed(2)}), Avg FPS: ${this.renderingStats.averageFPS}, Min: ${this.renderingStats.minFPS}`);
     }
   }
 }
