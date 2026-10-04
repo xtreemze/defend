@@ -1,7 +1,6 @@
 import {
   ArcRotateCamera,
   Color3,
-  Engine,
   HemisphericLight,
   MeshBuilder,
   PointLight,
@@ -11,6 +10,10 @@ import {
   TransformNode,
   Vector3,
 } from "@babylonjs/core/pure";
+import {
+  createRenderEngine,
+  rendererDiagnosticLabel,
+} from "./renderEngine";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
 // registers none of the prototype extensions they rely on at runtime. Register
@@ -372,10 +375,8 @@ async function main(): Promise<void> {
     throw new Error("Mothership lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, {
-    adaptToDeviceRatio: true,
-    antialias: true,
-  });
+  const renderer = await createRenderEngine(canvas);
+  const { engine } = renderer;
   const scene = new Scene(engine);
   scene.clearColor.set(0.02, 0.012, 0.034, 1);
 
@@ -617,6 +618,7 @@ async function main(): Promise<void> {
     if (frame % 8 === 0) {
       const drainMultiplier = state.fastDrain ? FAST_DRAIN_MULTIPLIER : 1;
       metrics.textContent = [
+        `renderer: ${rendererDiagnosticLabel(renderer)}`,
         "Defend mothership PoC — issue #80",
         `phase: ${state.phase}`,
         `reserve: ${(state.reserve * 100).toFixed(1)}%`,

@@ -97,6 +97,70 @@ test.describe('Hybrid engine browser smoke tests', () => {
     });
   }
 
+  test('renderer query forces the WebGL baseline', async ({ browser }) => {
+    const context = await browser.newContext();
+    const page_obj = await context.newPage();
+
+    const response = await page_obj.goto(`${BASE_URL}/?renderer=webgl`, {
+      waitUntil: 'networkidle',
+    });
+    expect(response?.status()).toBeLessThan(400);
+
+    await expect
+      .poll(() =>
+        page_obj.evaluate(() => ({
+          backend: document.documentElement.dataset.renderer,
+          requested: document.documentElement.dataset.rendererRequested,
+          fallback: document.documentElement.dataset.rendererFallback,
+        }))
+      )
+      .toEqual({
+        backend: 'webgl',
+        requested: 'webgl',
+        fallback: undefined,
+      });
+
+    await context.close();
+  });
+
+  test('WebGPU request activates WebGPU or reports an explicit WebGL fallback', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext();
+    const page_obj = await context.newPage();
+
+    const response = await page_obj.goto(`${BASE_URL}/?renderer=webgpu`, {
+      waitUntil: 'networkidle',
+    });
+    expect(response?.status()).toBeLessThan(400);
+
+    await expect
+      .poll(() =>
+        page_obj.evaluate(
+          () => document.documentElement.dataset.rendererRequested,
+        )
+      )
+      .toBe('webgpu');
+
+    const renderer = await page_obj.evaluate(() => ({
+      backend: document.documentElement.dataset.renderer,
+      requested: document.documentElement.dataset.rendererRequested,
+      fallback: document.documentElement.dataset.rendererFallback,
+    }));
+    expect(renderer.requested).toBe('webgpu');
+    expect(['webgpu', 'webgl']).toContain(renderer.backend);
+    if (renderer.backend === 'webgl') {
+      expect([
+        'webgpu-unavailable',
+        'webgpu-initialization-failed',
+      ]).toContain(renderer.fallback);
+    } else {
+      expect(renderer.fallback).toBeUndefined();
+    }
+
+    await context.close();
+  });
+
   test('inspect mode loads without errors', async ({ browser }) => {
     const context = await browser.newContext();
     const page_obj = await context.newPage();
