@@ -115,10 +115,7 @@ export class EnemyPoolManager {
       // Reset position and rotation for next use
       mesh.position.set(0, 0, 0);
       mesh.rotation.set(0, 0, 0);
-      if (mesh.physicsImpostor) {
-        mesh.physicsImpostor.setLinearVelocity(undefined as any);
-        mesh.physicsImpostor.setAngularVelocity(undefined as any);
-      }
+      mesh.physicsImpostor = null;
     }
   }
 

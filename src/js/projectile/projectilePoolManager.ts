@@ -105,10 +105,7 @@ export class ProjectilePoolManager {
       // Reset position and rotation for next use
       instance.position.set(0, 0, 0);
       instance.rotation.set(0, 0, 0);
-      if (instance.physicsImpostor) {
-        instance.physicsImpostor.setLinearVelocity(undefined as any);
-        instance.physicsImpostor.setAngularVelocity(undefined as any);
-      }
+      instance.physicsImpostor = null;
     }
   }
 
