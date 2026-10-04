@@ -10,13 +10,13 @@ import {
 	PhysicsEngine
 } from "../utility/babylonOptimized";
 
+import * as FX from "../../vendor/wafxr/wafxr";
 import { mapGlobals, enemyGlobals, renderGlobals, projectileGlobals, towerGlobals } from "./globalVariables";
 import { map } from "./map";
 import { detectDeviceCapabilities } from "../utility/deviceDetection";
 import { getGlobalPerformanceMonitor } from "../utility/performanceMonitor";
 import { getGlobalLazyLoadingOrchestrator } from "../utility/lazyLoadingOrchestrator";
 import { getGlobalMaterialFactory } from "../utility/materialFactory";
-import { getGlobalAudioManager } from "../utility/audioManager";
 
 import { titleScreen } from "../gui/titleScreen";
 import { arcCamera } from "./arcCamera";
@@ -110,7 +110,8 @@ class Game {
 			);
 		}
 
-		// Audio will be lazy-loaded on first sound play
+		FX.setVolume(1);
+		FX._tone.Master.mute = true;
 		const gravity = -20;
 		// const gravity = -9.81;
 		// const gravity = -9.81 * 2;
@@ -147,14 +148,10 @@ class Game {
 			this.scene.render();
 		});
 
-		// Initialize audio manager (lazy loads on first sound)
-		const audioManager = getGlobalAudioManager();
-
 		// Log performance stats every 10 seconds (including cache and pool stats)
 		setInterval(() => {
 			const factory = getGlobalMaterialFactory(this.scene);
 			perfMonitor.registerMaterialCacheStats(factory.getStats());
-			perfMonitor.registerAudioStats(audioManager.getStats());
 			perfMonitor.logStats();
 		}, 10000);
 

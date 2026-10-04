@@ -11,7 +11,6 @@ export class PerformanceMonitor {
   private maxFrameTime = 0;
   private isMonitoring = false;
   private materialCacheStats: any = null;
-  private audioStats: any = null;
 
   /**
    * Start monitoring performance
@@ -85,13 +84,6 @@ export class PerformanceMonitor {
   }
 
   /**
-   * Register audio stats for logging
-   */
-  registerAudioStats(stats: any): void {
-    this.audioStats = stats;
-  }
-
-  /**
    * Log performance stats to console
    */
   logStats(): void {
@@ -106,9 +98,6 @@ export class PerformanceMonitor {
     }
     if (this.materialCacheStats) {
       console.log(`Material Cache - Cached: ${this.materialCacheStats.cachedCount}, Memory: ${this.materialCacheStats.totalMemory}`);
-    }
-    if (this.audioStats) {
-      console.log(`Audio - Cache: ${this.audioStats.cacheSize}, Hits: ${this.audioStats.cacheHits}, Misses: ${this.audioStats.cacheMisses}, Hit Rate: ${this.audioStats.hitRate}%`);
     }
   }
 }
