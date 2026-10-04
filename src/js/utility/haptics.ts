@@ -17,7 +17,7 @@ interface HapticSpec {
 
 // Short, distinct pulses; stronger events outrank and interrupt weaker ones.
 const specs: { [key in HapticEvent]: HapticSpec } = {
-	shoot: { pattern: [4], priority: 0, cooldown: 140 },
+	shoot: { pattern: [2], priority: 0, cooldown: 350 },
 	hit: { pattern: [8], priority: 1, cooldown: 100 },
 	explode: { pattern: [22], priority: 2, cooldown: 80 },
 	addTower: { pattern: [12, 25, 12], priority: 3, cooldown: 60 },
