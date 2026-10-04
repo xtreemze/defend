@@ -104,6 +104,11 @@ test("verifier proves explicit raw frame count before accepting 60 fps output", 
   assert.match(source, /assertVp8/);
   assert.match(source, /assertEncodedCadence/);
   assert.match(source, /assertAnimatedWebpCadence/);
+  assert.match(source, /fourcc === "VP8X"/);
+  assert.match(source, /width = uint24le/);
+  assert.match(source, /height = uint24le/);
+  assert.match(source, /width must match presentation target/);
+  assert.doesNotMatch(source, /function assertWidth/);
   assert.match(source, /frameDurationsMs/);
   assert.match(source, /value\.length > 0/);
   assert.match(workflow, /showcase:verify --source-only/);
