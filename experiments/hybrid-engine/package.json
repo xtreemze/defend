@@ -19,7 +19,7 @@
     "@babylonjs/accessibility": "9.29.0",
     "@babylonjs/core": "9.29.0",
     "@babylonjs/havok": "1.3.14",
-    "@dimforge/rapier3d": "0.20.0"
+    "@dimforge/rapier3d": "0.21.0"
   },
   "devDependencies": {
     "@babylonjs/inspector": "9.29.0",
