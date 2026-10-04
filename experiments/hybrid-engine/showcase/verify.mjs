@@ -87,14 +87,14 @@ function assertDimensions(file, expected) {
   assert.equal(stream.height, expected.height, file + " height must match source target");
 }
 
-function assertWidth(file, expectedWidth) {
-  const stream = probeJson(file);
-  assert.equal(stream.width, expectedWidth, file + " width must match presentation target");
-}
-
 function assertVp8(file) {
   const stream = probeJson(file);
   assert.equal(stream.codec_name, "vp8", file + " must use VP8 for raw evidence");
+}
+
+function assertWidth(file, expectedWidth) {
+  const stream = probeJson(file);
+  assert.equal(stream.width, expectedWidth, file + " width must match presentation target");
 }
 
 async function assertSourceFrameSequence(frameRoot, expectedFrames, expectedDimensions) {
@@ -175,13 +175,6 @@ function uint24le(buffer, offset) {
   return buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16);
 }
 
-async function assertWebpCanvasWidth(file, expectedWidth) {
-  const buffer = await readFile(file);
-  assert.equal(buffer.subarray(12, 16).toString("ascii"), "VP8X", file + " must be an extended (animated) WebP");
-  const canvasWidth = uint24le(buffer, 24) + 1;
-  assert.equal(canvasWidth, expectedWidth, file + " canvas width must match presentation target");
-}
-
 async function assertAvif(file) {
   const buffer = await readFile(file);
   assert.equal(buffer.subarray(4, 8).toString("ascii"), "ftyp", file + " must be an ISOBMFF file");
@@ -201,11 +194,18 @@ async function probeAnimatedWebp(file) {
   let durationMs = 0;
   const frameDurationsMs = [];
   let hasAnimationHeader = false;
+  let width = 0;
+  let height = 0;
 
   while (offset + 8 <= buffer.length) {
     const fourcc = buffer.subarray(offset, offset + 4).toString("ascii");
     const size = buffer.readUInt32LE(offset + 4);
     const dataOffset = offset + 8;
+    if (fourcc === "VP8X") {
+      assert.ok(size >= 10, file + " contains a truncated VP8X chunk");
+      width = uint24le(buffer, dataOffset + 4) + 1;
+      height = uint24le(buffer, dataOffset + 7) + 1;
+    }
     if (fourcc === "ANIM") hasAnimationHeader = true;
     if (fourcc === "ANMF") {
       assert.ok(size >= 16, file + " contains a truncated ANMF chunk");
@@ -217,7 +217,7 @@ async function probeAnimatedWebp(file) {
     offset = dataOffset + size + (size & 1);
   }
 
-  return { frameCount, durationMs, frameDurationsMs, hasAnimationHeader };
+  return { frameCount, durationMs, frameDurationsMs, hasAnimationHeader, width, height };
 }
 
 function expectedWebpFrameDurations(frameCount) {
@@ -228,9 +228,11 @@ function expectedWebpFrameDurations(frameCount) {
   });
 }
 
-async function assertAnimatedWebpCadence(file, expectedFrames) {
+async function assertAnimatedWebpCadence(file, expectedFrames, expectedWidth) {
   const stats = await probeAnimatedWebp(file);
   assert.equal(stats.hasAnimationHeader, true, file + " must contain an ANIM chunk");
+  assert.equal(stats.width, expectedWidth, file + " width must match presentation target");
+  assert.ok(stats.height > 0, file + " must report a positive WebP canvas height");
   assert.equal(
     stats.frameCount,
     expectedFrames,
@@ -349,9 +351,8 @@ async function verifyRenderedOutputs() {
       assertReportedHighFrameRate(normalized);
       assertEncodedCadence(normalized, expectedFrames, "normalized 60 fps video");
 
-      await assertWebpCanvasWidth(webp, project.webpWidth);
-      await assertAnimatedWebpCadence(webp, expectedFrames);
-      await assertAnimatedWebpCadence(publishedWebp, expectedFrames);
+      await assertAnimatedWebpCadence(webp, expectedFrames, project.webpWidth);
+      await assertAnimatedWebpCadence(publishedWebp, expectedFrames, project.webpWidth);
 
       const webWidth = showcase.web.widths[project.key];
       const webSet = {

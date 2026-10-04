@@ -104,6 +104,11 @@ test("verifier proves explicit raw frame count before accepting 60 fps output", 
   assert.match(source, /assertVp8/);
   assert.match(source, /assertEncodedCadence/);
   assert.match(source, /assertAnimatedWebpCadence/);
+  assert.match(source, /fourcc === "VP8X"/);
+  assert.match(source, /width = uint24le/);
+  assert.match(source, /height = uint24le/);
+  assert.match(source, /width must match presentation target/);
+  assert.doesNotMatch(source, /function assertWidth/);
   assert.match(source, /frameDurationsMs/);
   assert.match(source, /value\.length > 0/);
   assert.match(source, /split\(","\)\[0\]/);
@@ -139,7 +144,6 @@ test("modern web delivery set (AV1 WebM, H.264 fallback, AVIF poster) is rendere
   assert.match(render, /exceeds web budget/);
   assert.match(verify, /codec_name, "av1"/);
   assert.match(verify, /assertAvif/);
-  assert.match(verify, /assertWebpCanvasWidth/);
 });
 
 test("presentation site plays the AV1 loops with H.264 fallback and AVIF posters", async () => {
