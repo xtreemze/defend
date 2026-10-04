@@ -2,10 +2,12 @@ import * as FX from "../../vendor/wafxr/wafxr";
 import { Mesh } from "../utility/babylonOptimized";
 import { towerGlobals, mapGlobals, enemyGlobals } from "./globalVariables";
 import { EnemySphere } from "../enemy/enemyBorn";
+import { haptic } from "../utility/haptics";
 
 const third = 1 / 3;
 
 function shoot(originMesh: Mesh, level: number) {
+	haptic("shoot");
 	if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
 		setTimeout(() => {
 			mapGlobals.projectileSounds -= 1;
@@ -33,6 +35,7 @@ function shoot(originMesh: Mesh, level: number) {
 }
 
 function damage(enemy: EnemySphere) {
+	haptic("hit");
 	if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
 		setTimeout(() => {
 			mapGlobals.projectileSounds -= 1;
@@ -60,6 +63,7 @@ function damage(enemy: EnemySphere) {
 }
 
 function damageCurrency(enemy: EnemySphere) {
+	haptic("bankHit");
 	if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
 		setTimeout(() => {
 			mapGlobals.simultaneousSounds -= 1;
@@ -88,6 +92,7 @@ function damageCurrency(enemy: EnemySphere) {
 }
 
 function enemyExplode(enemy: EnemySphere, level: number) {
+	haptic("explode");
 	if (mapGlobals.projectileSounds < mapGlobals.projectileSoundLimit) {
 		setTimeout(() => {
 			mapGlobals.projectileSounds -= 1;
@@ -117,6 +122,7 @@ function enemyExplode(enemy: EnemySphere, level: number) {
 }
 
 function newWave() {
+	haptic("newWave");
 	if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
 		setTimeout(() => {
 			mapGlobals.simultaneousSounds -= 1;
@@ -140,6 +146,7 @@ function newWave() {
 }
 
 function addTower(tower: Mesh, level: number) {
+	haptic("addTower");
 	if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
 		setTimeout(() => {
 			mapGlobals.simultaneousSounds -= 1;
@@ -166,6 +173,7 @@ function addTower(tower: Mesh, level: number) {
 }
 
 function removeTower(tower: Mesh, level: number) {
+	haptic("removeTower");
 	if (mapGlobals.simultaneousSounds < mapGlobals.soundLimit) {
 		setTimeout(() => {
 			mapGlobals.simultaneousSounds -= 1;
@@ -192,6 +200,7 @@ function removeTower(tower: Mesh, level: number) {
 }
 
 function defeated() {
+	haptic("defeat");
 	if (mapGlobals.soundOn) {
 		FX.play({
 			volume: -12,
@@ -210,6 +219,7 @@ function defeated() {
 }
 
 function victory() {
+	haptic("victory");
 	if (mapGlobals.soundOn) {
 		FX.play({
 			volume: -12,
