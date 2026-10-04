@@ -32,7 +32,7 @@ export const showcase = {
     {
       id: "01-deterministic-arena",
       title: "Deterministic arena",
-      path: "/",
+      path: "/arena.html",
       description: "Orbit the Babylon battlefield while the fixed-step Bevy/WASM simulation remains authoritative.",
       action: "arena",
     },
