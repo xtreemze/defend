@@ -9,7 +9,6 @@ import {
 	PhysicsImpostor,
 	Scene,
 	Material,
-	InstancedMesh,
 	MeshBuilder
 } from "../utility/babylonOptimized";
 import {

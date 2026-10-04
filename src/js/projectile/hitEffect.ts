@@ -35,23 +35,14 @@ export function hitEffect(
 						economyGlobals.currentBalance = economyGlobals.maxBalance;
 					}
 				}
-				// Skip material changes on pooled meshes (InstancedMesh) which may have read-only material
 				if (enemy.material && enemy.material === materialGlobals.hitMaterial) {
 					setTimeout(() => {
-						try {
-							if (enemy && enemy.material) {
-								enemy.material = materialGlobals.hitMaterial;
-							}
-						} catch (e) {
-							// Material assignment may fail on instanced/pooled meshes
+						if (enemy && enemy.material) {
+							enemy.material = materialGlobals.hitMaterial;
 						}
 					}, 64);
-					try {
-						if (enemy && enemy.material) {
-							enemy.material = materialGlobals.damagedMaterial;
-						}
-					} catch (e) {
-						// Material assignment may fail on instanced/pooled meshes
+					if (enemy && enemy.material) {
+						enemy.material = materialGlobals.damagedMaterial;
 					}
 				}
 
