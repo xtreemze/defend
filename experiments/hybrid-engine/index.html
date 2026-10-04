@@ -4,28 +4,108 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#08050d" />
-    <meta name="description" content="Babylon presentation driven by a fixed-step Bevy ECS/WASM simulation." />
+    <meta name="description" content="Defend — a physics-driven strategy game about finite energy, temporary defenses, and systemic survival." />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <title>Defend — Deterministic Arena</title>
-    <style>
-      html, body, #app, canvas { width: 100%; height: 100%; margin: 0; overflow: hidden; }
-      body { background: #08050d; color: #e8d8c0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-      canvas { display: block; touch-action: none; }
-      #metrics { position: fixed; top: 12px; left: 12px; z-index: 2; padding: 8px 10px; border: 1px solid rgba(214, 145, 76, .35); background: rgba(8, 5, 13, .78); font-size: 12px; line-height: 1.45; pointer-events: none; }
-    </style>
-    <link rel="stylesheet" href="/src/preview-shell.css" />
+    <link rel="stylesheet" href="/src/site.css" />
+    <title>Defend — physics-driven strategy</title>
   </head>
   <body>
-    <div id="app"><canvas id="renderCanvas"></canvas></div>
-    <div id="metrics">initializing…</div>
-    <div id="controls" role="toolbar" aria-label="Arena controls">
-      <button id="arena-pause" type="button">Pause simulation [Space]</button>
-      <button id="arena-restart" type="button">Restart arena [R]</button>
-      <button id="arena-camera" type="button">Reset camera [C]</button>
-    </div>
-    <div id="hint">Orbit with drag, zoom with wheel or pinch, or open Start here to jump into the interactive systems.</div>
-    <script type="module" src="/src/previewShell.ts"></script>
-    <script type="module" src="/src/main.ts"></script>
-      <noscript><div style="position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:#08050d;color:#f3eadf;font:16px system-ui,sans-serif;text-align:center">Defend requires JavaScript and WebAssembly to run this interactive preview.</div></noscript>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Defend home"><span class="brand-mark" aria-hidden="true"></span><strong>DEFEND</strong></a>
+      <nav aria-label="Primary">
+        <a href="#history">History</a><a href="#playgrounds">Playgrounds</a><a href="#manual">Manual</a><a href="#tactics">Tactics</a>
+      </nav>
+      <a class="button button-small" href="./arena.html">Open modern preview</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Physics-driven strategy · Babylon.js · browser native</p>
+          <h1 id="hero-title">Protect the energy that keeps you alive.</h1>
+          <p class="lede">Defend is a strategy game about scarcity, temporary fortifications, and manipulating a physical battlefield. Energy is your health, construction budget, defended resource, and the economic consequence of combat.</p>
+          <div class="actions">
+            <a class="button" href="./arena.html">Explore the modern build</a>
+            <a class="button button-quiet" href="#manual">Read the game manual</a>
+          </div>
+          <dl class="hero-facts">
+            <div><dt>Core loop</dt><dd>Build · redirect · recover · endure</dd></div>
+            <div><dt>Battlefield</dt><dd>3D physics, momentum, obstruction and ejection</dd></div>
+            <div><dt>Architecture</dt><dd>Babylon presentation + deterministic Rust/WASM experiments</dd></div>
+          </dl>
+        </div>
+        <figure class="hero-media">
+          <img src="./showcase/desktop/05-towers-and-terrain.gif" alt="Defend modern towers and terrain systems preview" />
+          <figcaption>Current systems preview — towers, projectile misses, impacts and deformable terrain.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section" id="history" aria-labelledby="history-title">
+        <div class="section-heading"><p class="eyebrow">History</p><h2 id="history-title">One playable game, then a deliberate rebuild.</h2><p>The modernization treats the original as a behavioral reference rather than discarding it. New systems must prove that they preserve Defend's identity before replacing historical ownership.</p></div>
+        <ol class="timeline">
+          <li><time datetime="2018-05">May 2018</time><div><h3>Repository begins</h3><p>The first public commits establish the original browser game.</p></div></li>
+          <li><time datetime="2018-07">July 2018</time><div><h3>PWA work</h3><p>The project explores installable web delivery while keeping the game browser-first.</p></div></li>
+          <li><time datetime="2018-12">December 2018</time><div><h3>Babylon.js community release</h3><p>Defend is shared publicly as a 3D tower-defense webgame and later becomes part of the Babylon.js Community Demos collection.</p><p><a href="https://forum.babylonjs.com/t/defend-tower-defense-webgame/458">Original Babylon.js community thread</a> · <a href="https://www.babylonjs.com/community/">Babylon.js Community Demos</a></p></div></li>
+          <li><time datetime="2026-09">September 2026</time><div><h3>Modernization program</h3><p>The project formalizes its game-design manual, deterministic contracts, Storybook laboratories, Rust/WASM core, and a Babylon 9 hybrid-engine preview.</p></div></li>
+          <li><time datetime="2026-10">Now</time><div><h3>Playable systems, parity in progress</h3><p>The modern Pages build exposes working systems while the historical implementation remains the behavioral baseline until full gameplay parity is certified.</p></div></li>
+        </ol>
+
+        <div class="split feature-card">
+          <div>
+            <p class="eyebrow">Historical version</p>
+            <h3>The original is still the reference game.</h3>
+            <p>The historical Webpack/Babylon.js 3/Cannon application contains the complete original gameplay loop: direct world interaction, tower placement and upgrades, attacking spheres, energy recovery, finite-lived enemies, procedural sound, victory/defeat and restart behavior.</p>
+            <p class="status-note"><strong>Playable archive status:</strong> its source and generated PWA artifacts remain preserved in the repository, but the current GitHub Pages deployment is intentionally the modern preview. The legacy dependency graph is quarantined and should not be silently rebuilt into production without certification.</p>
+            <div class="actions"><a class="button button-quiet" href="https://github.com/xtreemze/defend">Open historical source</a><a class="button button-quiet" href="https://forum.babylonjs.com/t/defend-tower-defense-webgame/458">See the 2018 release</a></div>
+          </div>
+          <img src="./showcase/desktop/01-deterministic-arena.gif" alt="Modern deterministic arena inspired by the original Defend battlefield" />
+        </div>
+      </section>
+
+      <section class="section" id="playgrounds" aria-labelledby="playgrounds-title">
+        <div class="section-heading"><p class="eyebrow">Improved version</p><h2 id="playgrounds-title">The future game is being built as inspectable systems.</h2><p>Each playground isolates a real part of the intended game so mechanics can be evaluated before they become production authority.</p></div>
+        <div class="card-grid">
+          <a class="system-card" href="./arena.html"><span>01</span><h3>Deterministic arena</h3><p>Fixed-step Bevy/WASM semantic state with Babylon rendering.</p></a>
+          <a class="system-card" href="./mothership.html"><span>02</span><h3>Finite-energy mothership</h3><p>Hover drain, depletion, instability and physical consequence.</p></a>
+          <a class="system-card" href="./navigation.html"><span>03</span><h3>Raid navigation</h3><p>Sector selection and physically constrained mothership approach planning.</p></a>
+          <a class="system-card" href="./geothermal.html"><span>04</span><h3>Geothermal energy</h3><p>Finite local energy, conduits, pressure, depletion and eruption.</p></a>
+          <a class="system-card" href="./routing.html"><span>05</span><h3>Surface routing</h3><p>Shared geometry alters both raider travel and recoverable-energy flow.</p></a>
+          <a class="system-card" href="./tower-terrain.html"><span>06</span><h3>Towers & terrain</h3><p>Deployment, drilling, finite turret slew, misses and terrain deformation.</p></a>
+        </div>
+        <div class="principles">
+          <article><h3>Energy is everything</h3><p>One reserve connects survival, construction, combat recovery and later strategic operating cost.</p></article>
+          <article><h3>Physics is gameplay</h3><p>Mass, momentum, collision, obstruction, knockback, falling and spatial clearance matter tactically.</p></article>
+          <article><h3>Time is a weapon</h3><p>Raiders are finite-lived. Delay, trapping and inefficient routing can defeat them without raw damage.</p></article>
+          <article><h3>Infrastructure is temporary</h3><p>Towers age and degrade. Building purchases a period of control, not permanent accumulation.</p></article>
+        </div>
+      </section>
+
+      <section class="section manual" id="manual" aria-labelledby="manual-title">
+        <div class="section-heading"><p class="eyebrow">Game manual</p><h2 id="manual-title">How Defend works.</h2><p>This manual distinguishes the historical playable loop from mechanics still being developed for the improved version.</p></div>
+
+        <details open><summary>Objective and economy</summary><div class="manual-body"><p>Protect the central energy silo. The same reserve is your health, build budget and defended resource. Spending makes the fortress stronger but reduces the margin you are protecting. Projectile damage can return energy, while surviving raiders that reach the silo drain it.</p><p>A strong defense therefore balances immediate safety against future sustainability. The intended campaign eventually exposes the paradox that complete deterrence can remove the interaction that replenishes the system.</p></div></details>
+        <details open><summary>Historical controls and interaction</summary><div class="manual-body"><ul><li><strong>Orbit / inspect:</strong> drag the 3D scene; wheel or pinch controls camera distance through Babylon's ArcRotate camera.</li><li><strong>Place a tower:</strong> interact directly with an available ground position. Placement occurs in-world rather than through a separate construction screen.</li><li><strong>Upgrade a tower:</strong> tap/click an existing tower base. The next tier is constructed when reserve and placement rules permit.</li><li><strong>Observe state:</strong> the HUD communicates energy and battle state while geometry, motion, material changes and procedural sound communicate threats.</li><li><strong>Restart:</strong> after victory or defeat, restart the scenario from the game UI.</li></ul><p>Touch and pointer interaction are part of the historical design; the modernization preserves direct world manipulation and adds explicit accessible alternatives where needed.</p></div></details>
+        <details open><summary>Towers</summary><div class="manual-body unit-grid"><article><h3>T1 — Barrier / Deflector</h3><p>Low-cost spatial control. It does not need direct damage to matter: block lanes, create congestion, lengthen routes and buy time against finite-lived raiders.</p></article><article><h3>T2 — Interceptor</h3><p>Responsive granular projectile defense. Frequent packets suit lighter or mixed threats, target switching and active correction.</p></article><article><h3>T3 — Siege / Impulse Cannon</h3><p>Slower, higher-commitment fire with larger projectile packets and stronger impulse. Placement and timing matter because misses are costly and cadence is slower.</p></article><p class="span-all">Higher tiers are not permanent upgrades. Towers age; stronger tiers degrade through lower tiers and eventually disappear. The improved version extends this with visible construction, maintenance, finite slew and geothermal dependencies.</p></div></details>
+        <details open><summary>Enemies / raiders</summary><div class="manual-body unit-grid"><article><h3>R1 — Scout / Swarm Raider</h3><p>Small and comparatively cheap. Its size and flexibility make narrow routes useful and large-cadence weapons easier to waste.</p></article><article><h3>R2 — Breaker</h3><p>Medium pressure body. It occupies the middle of the physical and economic trade space rather than relying on a hidden damage-type rule.</p></article><article><h3>R3 — Titan / Siege Boulder</h3><p>Large, expensive and persistent. Greater inertia makes displacement harder, but a trapped or ejected Titan represents a much larger lost investment.</p></article><p class="span-all">Raiders can be defeated by damage, delay, obstruction, redirection, finite-life expiry or physical ejection. They share the same physical world and should differ through continuous properties—size, mass, momentum, survivability and mobility—not arbitrary immunities.</p></div></details>
+        <details><summary>Combat and physics</summary><div class="manual-body"><ul><li>Projectiles carry both damage and impulse; moving an enemy can be as valuable as damaging it.</li><li>Friendly geometry changes line-of-fire and movement, so tower placement reshapes the battle.</li><li>Falling or being pushed off the viable arena is a valid defeat condition.</li><li>Enemy finite life means a wall can win simply by delaying contact long enough.</li><li>Modern experiments add deformable terrain, physical energy flow, local geothermal sources and bounded surface routing.</li></ul></div></details>
+        <details><summary>Mothership, raids and role inversion — improved version</summary><div class="manual-body"><p>The longer-term design turns the defended silo into a mothership. The player then uses the same energy economy from the other side: operating the ship, selecting sectors and investing energy into raiders that must extract more value than they cost. Existing defenses become the obstacles the player once built.</p><p>This inversion is not yet full production gameplay; current playgrounds expose finite mothership energy, raid navigation and energy/world-ecology components independently.</p></div></details>
+        <details><summary>Modern playground controls</summary><div class="manual-body"><p>Every playground exposes its current scene controls in the <strong>Controls</strong> panel. Keyboard shortcuts are printed in the buttons themselves. Common interactions include drag to orbit, wheel/pinch to zoom, Space to pause where supported, R to reset/rebuild, C to change/reset camera, and scene-specific controls for energy, eruption, routing, migration or target selection.</p><p>The playgrounds are experiments, so their controls are evidence surfaces rather than the final game input scheme.</p></div></details>
+      </section>
+
+      <section class="section" id="tactics" aria-labelledby="tactics-title">
+        <div class="section-heading"><p class="eyebrow">Tips & tactics</p><h2 id="tactics-title">Win the physical problem, not only the damage race.</h2></div>
+        <div class="tips-grid">
+          <article><span>01</span><h3>Spend only for the problem you have.</h3><p>Energy spent on unnecessary upgrades weakens the reserve you are defending.</p></article>
+          <article><span>02</span><h3>Use barriers to manufacture time.</h3><p>A longer path or congested lane can let finite-life raiders expire without an expensive kill.</p></article>
+          <article><span>03</span><h3>Fight near edges when impulse favors you.</h3><p>Ejection can end a threat before its HP reaches zero. Heavy shots become positional tools.</p></article>
+          <article><span>04</span><h3>Match cadence to composition.</h3><p>T2's frequent packets reduce overkill on light targets; T3's larger impulses matter when inertia becomes the problem.</p></article>
+          <article><span>05</span><h3>Leave yourself recovery paths.</h3><p>The improved energy-flow model makes geometry relevant to whether released energy can return to the reserve.</p></article>
+          <article><span>06</span><h3>Do not confuse quiet with safety.</h3><p>The campaign's central trap is perfect deterrence: fewer attacks can eventually mean less recoverable energy.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer><p>Defend is an active modernization of the original 2018 browser game.</p><nav aria-label="Project links"><a href="https://github.com/xtreemze/defend">GitHub</a><a href="https://github.com/xtreemze/defend/blob/master/docs/GAME_DESIGN_MANUAL.md">Design manual</a><a href="https://github.com/xtreemze/defend/blob/master/docs/ROADMAP.md">Roadmap</a></nav></footer>
   </body>
 </html>
