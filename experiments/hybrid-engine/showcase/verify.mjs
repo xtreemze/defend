@@ -92,7 +92,7 @@ function assertVp8(file) {
   assert.equal(stream.codec_name, "vp8", file + " must use VP8 for raw evidence");
 }
 
-function assertWidth(file, expectedWidth) {
+function assertPresentationGeometry(file, expectedWidth) {
   const stream = probeJson(file);
   assert.equal(stream.width, expectedWidth, file + " width must match presentation target");
 }
@@ -368,8 +368,8 @@ async function verifyRenderedOutputs() {
       }
       assert.equal(probeJson(webSet.av1).codec_name, "av1", webSet.av1 + " must be AV1");
       assert.equal(probeJson(webSet.h264).codec_name, "h264", webSet.h264 + " must be H.264");
-      assertWidth(webSet.av1, webWidth);
-      assertWidth(webSet.h264, webWidth);
+      assertPresentationGeometry(webSet.av1, webWidth);
+      assertPresentationGeometry(webSet.h264, webWidth);
       assertEncodedCadence(webSet.av1, expectedFrames, "AV1 web loop");
       assertEncodedCadence(webSet.h264, expectedFrames, "H.264 web fallback");
       await assertAvif(webSet.avif);
