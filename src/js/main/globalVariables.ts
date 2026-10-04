@@ -140,7 +140,7 @@ const renderGlobals = {
 	gpuParticles: true,
 	pipelineOn: false, // Disabled by default for better mobile performance
 	glow: true,
-	glowIntensity: 1.5, // Reduced from 2.7 for better performance
+	glowIntensity: 2.7,
 	sharpenning: false,
 	antialiasing: false,
 	depthOfField: false,
