@@ -7,7 +7,7 @@ type PreviewRoute = {
 
 const ROUTES: readonly PreviewRoute[] = [
   {
-    file: "index.html",
+    file: "arena.html",
     label: "Arena",
     title: "Deterministic Arena",
     description: "Babylon presentation driven by a fixed-step Bevy ECS/WASM simulation."
@@ -46,7 +46,7 @@ const ROUTES: readonly PreviewRoute[] = [
 
 function currentRoute(): PreviewRoute {
   const lastSegment = location.pathname.split("/").filter(Boolean).at(-1);
-  const file = lastSegment?.endsWith(".html") ? lastSegment : "index.html";
+  const file = lastSegment?.endsWith(".html") ? lastSegment : "arena.html";
   return ROUTES.find((route) => route.file === file) ?? ROUTES[0];
 }
 
@@ -238,7 +238,7 @@ function buildShell(): void {
     );
   });
 
-  if (route.file === "index.html") {
+  if (route.file === "arena.html") {
     const introKey = "defend.preview.start-dismissed";
     let introDismissed = false;
     try {

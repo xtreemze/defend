@@ -92,7 +92,7 @@ Prefer one coherent recorded browser session over repeated restarts for every is
 
 Subsequent repository-safety cleanup also removed the historical package commands/helpers that staged/versioned/pushed Git state, recursively deleted `node_modules`, invoked unpinned PWA Builder code, or exposed broken archive/config-check workflows.
 
-The historical export path is deliberately still present. `preexportp` removes/rebuilds `dist/`, so do not run `npm run exportp` as an ordinary build gate; use it only when the campaign explicitly includes historical export/PWA-output characterization.
+The historical export path remains available but is explicitly quarantined. `npm run legacy:export` first removes/rebuilds `dist/` through `node/prepareLegacyExport.js`, then runs the historical packaging path. It is not an ordinary validation command; the default VS Code build task and normal certification gate use the non-destructive `npm run build`. Run `legacy:export` only when a campaign explicitly includes historical export/PWA-output characterization.
 
 The root has no committed npm lockfile and still contains a historical Yarn lockfile. Record which package manager actually reconstructs the baseline, capture the resolved dependency tree/audit as evidence, and do not silently create or commit a new root lockfile during certification.
 
@@ -119,6 +119,25 @@ Exercise the deterministic stories and their controls, including maximum-size st
 
 A generated lockfile belongs only to the dependency/workspace PR that explicitly owns it. Inspect it before committing and keep unrelated local work out of that commit.
 
+#### CI visual showcase evidence
+
+The hybrid-engine showcase is a CI-native evidence lane rather than a substitute for local gameplay certification. Its dedicated workflow must remain isolated from normal smoke discovery and should be green before presentation media is treated as current.
+
+For a local reproduction after the shared workspace is installed and Chromium/FFmpeg are available:
+
+```sh
+cd experiments
+pnpm --filter @defend/hybrid-engine-lab wasm
+pnpm --filter @defend/hybrid-engine-lab exec vite --host 127.0.0.1
+# in another shell:
+cd experiments/hybrid-engine
+pnpm showcase:contract
+pnpm showcase:capture
+pnpm showcase:render
+pnpm showcase:verify
+```
+
+A complete run contains 5/5 desktop scenes, 5/5 mobile scenes, ten WebM recordings, ten screenshots, ten scene metadata files, two MP4 reels, ten GIFs, a generated README snippet, and a size report. The published README images are sourced from stable GitHub Pages paths; temporary Actions artifact URLs are evidence only.
 ### Lane C — Rust and Babylon/Bevy experiments
 
 For the dependency-light Rust core:
@@ -152,6 +171,26 @@ When a top child contains all parent experiments and preserves their pages/fixtu
 If stack ancestry has changed since #92 was updated, refresh it before testing.
 
 Experiments that depend on a behavior-preserving parent PR should be tested only after that parent's parity contract succeeds.
+
+### Lane F — cross-system audit certification
+
+Use issue #226 to select the audit surfaces relevant to the candidate SHA.
+
+For #223, capture repeated restart/scene-recreation resource counts plus representative stress observations for simulation, rendering, JS/WASM memory, physics, workers and audio. Evidence should be sufficient to detect monotonic growth or stale ownership; do not infer leak freedom from one successful run.
+
+For #224, run seeded replay/checkpoint fixtures under differing render cadence and exercise stale/out-of-order advisory worker results. Where supported, destroy/recreate presentation mid-run and confirm the semantic checkpoint sequence remains equivalent. Record protocol/runtime versions with replay artifacts.
+
+For #225, capture the machine-readable diagnostics/capability snapshot and exercise representative safe failure/fallback paths available in the campaign environment. Distinguish expected unsupported capability from a product defect, and verify fallback never leaves competing renderer/physics/state authorities alive.
+
+For the existing audit owners referenced by #226:
+
+- #33: exercise pointer/touch/camera arbitration, focus/keyboard accessibility, responsive/orientation behavior, install/offline/update behavior where available;
+- #137: verify pause/reload/reconstruction behavior for any promoted durable world-history state;
+- #152: retain supply-chain/license/release evidence when dependency or distributable boundaries change;
+- #204: verify DOM overlay focus/pointer capture does not become a second gameplay/input authority;
+- #217: update the parity matrix with the tested seam and its exact evidence.
+
+Presentation/showcase artifacts may supplement these observations but do not substitute for correctness, determinism, resource or fallback evidence.
 
 ## 5. Evidence fan-out
 
@@ -187,9 +226,10 @@ When a campaign cannot cover everything, follow the current ordering in #92. As 
 1. current `master` historical build/browser baseline when it is stale or required for parity decisions;
 2. dependency/workspace/toolchain targets that unblock many later PRs;
 3. modern Storybook/browser laboratory gates;
-4. live behavior-preserving PR queue from #92;
-5. Rust core and hybrid-engine targets;
-6. top stacked design experiments;
-7. deeper performance, audio and PWA investigations.
+4. cross-system audit targets from #226 that unblock ownership or promotion decisions;
+5. live behavior-preserving PR queue from #92;
+6. Rust core and hybrid-engine targets;
+7. top stacked design experiments;
+8. deeper performance, audio and PWA investigations.
 
 This order is chosen to maximize how much later online development can proceed without another local session.

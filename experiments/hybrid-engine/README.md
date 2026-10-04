@@ -64,6 +64,41 @@ The GitHub Pages build uses this package as the current modern Defend preview. T
 
 The shell is deliberately dependency-free. It is a deployment/presentation boundary, not a second simulation state store and not a substitute for the planned Lit component package while that architecture remains under separate certification.
 
+## CI visual showcase
+
+The modern preview also owns a dedicated browser-media contract under `showcase/`. It records five representative capabilities in both desktop (1440×900) and mobile (390×844, touch-enabled portrait) Chromium contexts, with an assertion at each demonstrated state.
+
+`showcase/manifest.mjs` is the shared source of feature names, descriptions, paths, filenames, viewport intent, and publication labels. `showcase/capture.mjs` records raw WebM, screenshots, and metadata from the real preview; `showcase/render.mjs` uses FFmpeg to create separate desktop/mobile H.264 reels and palette-optimized looping GIFs; `showcase/verify.mjs` rejects incomplete bundles.
+
+The workflow is `.github/workflows/showcase-media.yml`. It is intentionally separate from ordinary browser smoke discovery, publishes stable media under `/defend/showcase/` on `gh-pages`, and uploads the full raw/finished evidence bundle for inspection. See [`../../docs/SHOWCASE.md`](../../docs/SHOWCASE.md).
+## Rendering backend
+
+All six modern fixtures share one Babylon rendering-engine boundary. The default
+is `renderer=auto`: try Babylon WebGPU first and fall back to WebGL if adapter
+discovery or device initialization fails. This changes presentation only;
+Rust/WASM remains the deterministic semantic authority.
+
+Use query parameters to make comparisons reproducible:
+
+- `?renderer=auto` (or no renderer parameter) — prefer WebGPU, fall back to WebGL.
+- `?renderer=webgpu` — request WebGPU explicitly; a failed request is surfaced as
+  a WebGL fallback rather than making the fixture unusable.
+- `?renderer=webgl` — force the WebGL baseline.
+- Renderer selection composes with existing flags, for example
+  `?renderer=webgl&inspect=1`.
+
+Each fixture reports the active backend in its diagnostics. The document root
+also exposes `data-renderer`, `data-renderer-requested`, and, when applicable,
+`data-renderer-fallback` so Playwright and profiling tools can verify that a
+comparison actually used the intended backend.
+
+WebGPU is a presentation acceleration lane, not a new simulation authority.
+Physics, energy accounting, AI decisions, fixed-step progression and replay
+state must remain outside GPU compute. Candidate follow-up work includes
+presentation-side terrain normal/deformation generation, GPU particle/energy
+effects, and large transform-buffer rendering only after WebGL/WebGPU profiling
+shows a material bottleneck.
+
 ## Current fixture
 
 The fixture creates 128 semantic bodies in the Rust/Bevy ECS runtime. Babylon creates lightweight instances and renders a copied xyz snapshot from the authoritative runtime.

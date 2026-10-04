@@ -5,11 +5,16 @@
   "tasks": [
     {
       "type": "npm",
-      "script": "exportp",
+      "script": "build",
       "group": {
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "type": "npm",
+      "script": "legacy:export",
+      "group": "build"
     }
   ]
 }

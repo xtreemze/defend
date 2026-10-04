@@ -3,3 +3,4 @@ dist/
 pkg/
 rust/target/
 *.log
+artifacts/

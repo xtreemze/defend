@@ -20,7 +20,8 @@ When documents overlap, use this order:
 5. **Causal legibility, conservation, deterrence, and inversion refinement:** issue #103.
 6. **Layered attacker belief/economics/deterrence integration:** issue #128.
 7. **Local/runtime certification:** [`LOCAL_CERTIFICATION.md`](./LOCAL_CERTIFICATION.md) and the live local-executor queue in issue #92.
-8. **Focused implementation issues and PRs:** authoritative for their owned seam only after required evidence and promotion gates are satisfied.
+8. **Cross-system audit coordination:** issue #226, with dedicated runtime-resource (#223), deterministic-protocol (#224), and diagnostics/failure-recovery (#225) audit owners.
+9. **Focused implementation issues and PRs:** authoritative for their owned seam only after required evidence and promotion gates are satisfied.
 
 Experimental implementation does not become canonical merely because it exists in a branch or Storybook fixture.
 
@@ -198,6 +199,29 @@ Promote bounded world residue so history remains visible: impacts, wrecks, deple
 Run full MCP certification across deterministic simulation, browser presentation, interactions, accessibility equivalents, spatial/procedural audio, performance tiers, replay evidence, and both campaign perspectives.
 
 Only after this gate should the legacy implementation be considered eligible for retirement as the primary gameplay path.
+
+## Cross-system audit gate
+
+Subsystem correctness is not sufficient when failures can occur at ownership boundaries. Issue #226 coordinates the remaining audits that must be resolved before the modern path is treated as MCP-ready.
+
+Dedicated audit owners:
+
+- **#223 — runtime lifecycle and resource budgets:** prove bounded ownership and teardown across semantic entities, Babylon resources, physics, workers, audio, WASM wrappers, pools/caches and repeated scene/restart cycles; justify legacy optimization techniques with current measurements rather than copying them automatically.
+- **#224 — deterministic replay and versioned simulation protocol:** certify fixed-step/RNG/event ordering, stable IDs, snapshot/event versioning, render-cadence independence, stale worker rejection, replay checkpoints and useful first-divergence evidence.
+- **#225 — diagnostics and failure recovery:** expose machine-readable runtime/capability state and certify explicit behavior for renderer fallback, context loss, WASM/physics/worker/audio failure, suspension/resume and partial initialization.
+
+Existing owner issues absorb the other audit surfaces rather than creating duplicate architectures:
+
+- #33 owns complete input/camera/picking arbitration, PWA/offline/update behavior and accessibility equivalents.
+- #92 owns exact-SHA evidence integrity and campaign execution.
+- #137 owns bounded persistence/reload/reconstruction semantics for world history.
+- #152 owns supply-chain/release hygiene and third-party/historical-license boundaries.
+- #204 owns DOM focus/input/state boundaries.
+- #217 owns the historical-to-modern behavior parity matrix.
+
+A focused PR does **not** need every audit to be globally complete before merging. It must satisfy the audit contracts applicable to the seam it promotes and must not introduce a known unresolved blocker into a later phase. Full MCP certification requires all relevant #226 audit work to be resolved or explicitly dispositioned with evidence.
+
+Gate: runtime ownership is bounded, semantic replay is diagnosable, degraded/failure paths preserve single-authority rules, and the exact candidate SHA has evidence sufficient for #92 to classify the relevant lanes as PASS, FAIL or BLOCKED.
 
 ## Current critical path
 

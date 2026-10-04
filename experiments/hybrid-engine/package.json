@@ -9,7 +9,11 @@
     "build": "pnpm wasm && tsc --noEmit && vite build",
     "typecheck": "pnpm wasm && tsc --noEmit",
     "test": "vitest run",
-    "check": "biome check ."
+    "check": "biome check .",
+    "showcase:contract": "node --test showcase/contract.test.mjs",
+    "showcase:capture": "node showcase/capture.mjs",
+    "showcase:render": "node showcase/render.mjs",
+    "showcase:verify": "node showcase/verify.mjs"
   },
   "dependencies": {
     "@babylonjs/accessibility": "9.25.0",

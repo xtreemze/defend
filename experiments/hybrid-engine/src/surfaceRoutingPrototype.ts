@@ -1,7 +1,6 @@
 import {
   ArcRotateCamera,
   Color3,
-  Engine,
   HemisphericLight,
   type Mesh,
   MeshBuilder,
@@ -10,6 +9,10 @@ import {
   StandardMaterial,
   Vector3,
 } from "@babylonjs/core/pure";
+import {
+  createRenderEngine,
+  rendererDiagnosticLabel,
+} from "./renderEngine";
 
 // "@babylonjs/core/pure" is the side-effect-free barrel: it exports classes but
 // registers none of the prototype extensions they rely on at runtime. Register
@@ -655,10 +658,8 @@ async function main(): Promise<void> {
     throw new Error("Surface routing lab DOM is incomplete");
   }
 
-  const engine = new Engine(canvas, true, {
-    adaptToDeviceRatio: true,
-    antialias: true,
-  });
+  const renderer = await createRenderEngine(canvas);
+  const { engine } = renderer;
   const scene = new Scene(engine);
   scene.clearColor.set(0.02, 0.012, 0.034, 1);
   const camera = new ArcRotateCamera(
@@ -730,6 +731,7 @@ async function main(): Promise<void> {
       (packet) => packet.state === "collected",
     );
     metrics.textContent = [
+      `renderer: ${rendererDiagnosticLabel(renderer)}`,
       "Shared surface topology proof of concept",
       `R1 navigator: ${raiders[0].state} | collisions ${raiders[0].collisions} | path ${raiders[0].distanceTravelled.toFixed(1)}`,
       `R2 breaker:   ${raiders[1].state} | collisions ${raiders[1].collisions} | path ${raiders[1].distanceTravelled.toFixed(1)}`,
