@@ -62,6 +62,7 @@ jobs:
         shell: bash
         run: |
           test -f experiments/hybrid-engine/dist/index.html
+          test -f experiments/hybrid-engine/dist/arena.html
           test -f experiments/hybrid-engine/dist/mothership.html
           test -f experiments/hybrid-engine/dist/navigation.html
           test -f experiments/hybrid-engine/dist/geothermal.html
@@ -69,7 +70,9 @@ jobs:
           test -f experiments/hybrid-engine/dist/tower-terrain.html
           test -f experiments/hybrid-engine/dist/favicon.svg
           grep -q '/defend/assets/' experiments/hybrid-engine/dist/index.html
-          grep -q 'Defend — Deterministic Arena' experiments/hybrid-engine/dist/index.html
+          grep -q 'Defend — physics-driven strategy' experiments/hybrid-engine/dist/index.html
+          grep -q 'Defend — Deterministic Arena' experiments/hybrid-engine/dist/arena.html
+          grep -q 'Game manual' experiments/hybrid-engine/dist/index.html
 
       - name: Preserve published showcase media
         if: github.event_name != 'pull_request'
