@@ -1,3 +1,13 @@
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: ease-out;
+}
+
 :root {
   color-scheme: dark;
   --preview-bg: #08050d;
@@ -613,5 +623,17 @@ body #caption,
   body #caption,
   .preview-hint {
     color: var(--preview-text) !important;
+  }
+}
+
+
+.preview-brand {
+  view-transition-name: defend-brand;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
   }
 }
