@@ -7,6 +7,7 @@
     <meta name="description" content="Defend — a physics-driven strategy game about finite energy, temporary defenses, and systemic survival." />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/src/site.css" />
+    <link rel="stylesheet" href="https://xtreemze.github.io/timeline/project-site/project-site.css" />
     <title>Defend — physics-driven strategy</title>
   </head>
   <body>
@@ -43,7 +44,12 @@
 
       <section class="section" id="history" aria-labelledby="history-title">
         <div class="section-heading"><p class="eyebrow">History</p><h2 id="history-title">One playable game, then a deliberate rebuild.</h2><p>The modernization treats the original as a behavioral reference rather than discarding it. New systems must prove that they preserve Defend's identity before replacing historical ownership.</p></div>
-        <ol class="timeline">
+        <xt-project-timeline
+          id="defend-history-timeline"
+          hidden
+          aria-label="Defend project history overview"
+        ></xt-project-timeline>
+        <ol class="timeline" data-project-history-fallback>
           <li><time datetime="2018-05">May 2018</time><div><h3>Repository begins</h3><p>The first public commits establish the original browser game.</p></div></li>
           <li><time datetime="2018-07">July 2018</time><div><h3>PWA work</h3><p>The project explores installable web delivery while keeping the game browser-first.</p></div></li>
           <li><time datetime="2018-12">December 2018</time><div><h3>Babylon.js community release</h3><p>Defend is shared publicly as a 3D tower-defense webgame and later becomes part of the Babylon.js Community Demos collection.</p><p><a href="https://forum.babylonjs.com/t/defend-tower-defense-webgame/458">Original Babylon.js community thread</a> · <a href="https://www.babylonjs.com/community/">Babylon.js Community Demos</a></p></div></li>
@@ -107,5 +113,6 @@
     </main>
 
     <footer><p>Defend is an active modernization of the original 2018 browser game.</p><nav aria-label="Project links"><a href="https://github.com/xtreemze/defend">GitHub</a><a href="https://github.com/xtreemze/defend/blob/master/docs/GAME_DESIGN_MANUAL.md">Design manual</a><a href="https://github.com/xtreemze/defend/blob/master/docs/ROADMAP.md">Roadmap</a></nav></footer>
+    <script type="module" src="/src/projectSite.ts"></script>
   </body>
 </html>
