@@ -164,3 +164,26 @@ test("capture reads real pixels: drawing buffer preserved and blank frames fail 
   assert.ok(showcase.capture.minimumFrameBytesPerMegapixel >= 5_000);
   assert.match(verify, /canvas snapshot is blank/);
 });
+
+
+test("presentation uses generic project-site timeline with semantic fallback and native navigation transitions", async () => {
+  const [html, script, siteCss, previewCss] = await Promise.all([
+    read("experiments/hybrid-engine/index.html"),
+    read("experiments/hybrid-engine/src/projectSite.ts"),
+    read("experiments/hybrid-engine/src/site.css"),
+    read("experiments/hybrid-engine/src/preview-shell.css"),
+  ]);
+
+  assert.match(html, /<xt-project-timeline[^>]*id="defend-history-timeline"/);
+  assert.match(html, /data-project-history-fallback/);
+  assert.match(html, /timeline\/project-site\/project-site\.css/);
+  assert.match(script, /timeline\/project-site\/xtreemze-project-site\.js/);
+  assert.match(script, /customElements\.whenDefined\("xt-project-timeline"\)/);
+  assert.match(script, /history\.items\s*=/);
+  assert.match(siteCss, /@view-transition/);
+  assert.match(previewCss, /@view-transition/);
+  assert.match(siteCss, /view-transition-name:\s*defend-brand/);
+  assert.match(previewCss, /view-transition-name:\s*defend-brand/);
+  assert.match(siteCss, /prefers-reduced-motion/);
+  assert.match(previewCss, /prefers-reduced-motion/);
+});
