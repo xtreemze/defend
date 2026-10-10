@@ -9,7 +9,7 @@ export default defineConfig({
   },
   build: {
     target: "es2022",
-    rollupOptions: {
+    rolldownOptions: {
       input: {
         site: "index.html",
         arena: "arena.html",
