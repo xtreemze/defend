@@ -57,10 +57,24 @@ jobs:
           targets: wasm32-unknown-unknown
           components: rustfmt,clippy
 
-      - name: Setup wasm-pack
-        uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa
-        with:
-          version: v0.15.0
+      - name: Setup wasm-pack (verified cross-filesystem-safe install)
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="v0.15.0"
+          target="x86_64-unknown-linux-musl"
+          archive="wasm-pack-${version}-${target}.tar.gz"
+          digest="c09f971ecaed9a2efc80fdcea7a00ef6b53c7fadc8c57d1f61b53a6aa66b668a"
+          temp_dir="$(mktemp -d)"
+          trap 'rm -rf "$temp_dir"' EXIT
+          curl --fail --location --show-error --silent --retry 3 \
+            "https://github.com/wasm-bindgen/wasm-pack/releases/download/${version}/${archive}" \
+            --output "$temp_dir/$archive"
+          printf '%s  %s\n' "$digest" "$temp_dir/$archive" | sha256sum --check --status
+          tar -xzf "$temp_dir/$archive" -C "$temp_dir"
+          mkdir -p "$HOME/.cargo/bin"
+          install -m 0755 "$temp_dir/wasm-pack-${version}-${target}/wasm-pack" "$HOME/.cargo/bin/wasm-pack"
+          "$HOME/.cargo/bin/wasm-pack" --version
 
       - name: pnpm install
         working-directory: experiments
