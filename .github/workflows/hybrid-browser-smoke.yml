@@ -113,13 +113,13 @@ jobs:
           import { chromium } from 'playwright';
 
           const targets = [
-            ['main', '/'],
+            ['main', '/arena.html'],
             ['mothership', '/mothership.html'],
             ['navigation', '/navigation.html'],
             ['routing', '/routing.html'],
             ['geothermal', '/geothermal.html'],
             ['tower-terrain', '/tower-terrain.html'],
-            ['inspect', '/?inspect=1'],
+            ['inspect', '/arena.html?inspect=1'],
           ];
 
           const inspectorCliUnavailable = (message) =>
